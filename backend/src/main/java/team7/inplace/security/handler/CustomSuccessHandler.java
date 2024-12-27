@@ -1,5 +1,8 @@
 package team7.inplace.security.handler;
 
+import static team7.inplace.security.filter.TokenType.ACCESS_TOKEN;
+import static team7.inplace.security.filter.TokenType.REFRESH_TOKEN;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,26 +47,21 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
                 customOAuth2User.id(), customOAuth2User.roles());
         refreshTokenService.saveRefreshToken(customOAuth2User.username(), refreshToken);
         addTokenToResponse(response, accessToken, refreshToken);
-        setRedirectUrlToResponse(request, response, customOAuth2User);
+        setRedirectUrlToResponse(response, customOAuth2User);
     }
 
     private void addTokenToResponse(
             HttpServletResponse response,
             String accessToken, String refreshToken
     ) {
-        ResponseCookie accessTokenCookie = CookieUtil.createCookie(
-                TokenType.ACCESS_TOKEN.getValue(),
-                accessToken);
-        ResponseCookie refreshTokenCookie = CookieUtil.createCookie(
-                TokenType.REFRESH_TOKEN.getValue(),
-                refreshToken);
+        ResponseCookie accessTokenCookie = CookieUtil.createCookie(ACCESS_TOKEN, accessToken);
+        ResponseCookie refreshTokenCookie = CookieUtil.createCookie(REFRESH_TOKEN, refreshToken);
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
     }
 
     private void setRedirectUrlToResponse(
-            HttpServletRequest request,
             HttpServletResponse response,
             CustomOAuth2User customOAuth2User
     ) throws IOException {
