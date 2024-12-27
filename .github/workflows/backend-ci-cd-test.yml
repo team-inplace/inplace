@@ -1,0 +1,109 @@
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: 
+      - 'dev'
+      - 'refs/heads/dev'
+    paths:
+      - 'backend/**'
+      - '.github/**'
+
+permissions:
+  contents: read
+
+jobs:
+  verify-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch name
+        run: |
+          if [[ "${{ github.ref }}" != "refs/heads/dev" ]]; then
+            echo "This workflow should only run on dev branch"
+            exit 1
+          fi
+
+  build-docker-image:
+    needs: verify-branch
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Run chmod to make gradlew executable
+        working-directory: ./backend
+        run: chmod +x ./gradlew
+
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: clean bootJar
+          build-root-directory: ./backend
+
+      - name: Docker image build
+        working-directory: ./backend
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/inplace:test .
+
+      - name: Docker login
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Docker Hub push
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/inplace:test
+
+  deploy-to-test-server:
+      needs: build-docker-image
+      runs-on: ubuntu-latest
+      steps:
+        - name: Verify dev branch
+          run: |
+            if [[ "${{ github.ref }}" != "refs/heads/dev" ]]; then
+              echo "Deployment is only allowed from dev branch"
+              exit 1
+            fi
+
+        - name: Configure SSH
+          run: |
+            mkdir -p ~/.ssh/
+            echo "${{ secrets.SSH_TEST_SERVER_KEY }}" > ~/.ssh/id_rsa
+            chmod 600 ~/.ssh/id_rsa
+            ssh-keyscan -H ${{ secrets.EC2_HOST_TEST_SERVER }} >> ~/.ssh/known_hosts
+
+        - name: Create .env file on server
+          run: |
+            ssh ubuntu@${{ secrets.EC2_HOST_TEST_SERVER }} "echo '${{ secrets.ENV_TEST_SERVER }}' > .env"
+
+        - name: Stop and remove existing container
+          run: |
+            ssh ubuntu@${{ secrets.EC2_HOST_TEST_SERVER }} "
+              if [ \$(sudo docker ps -q --filter name=inplace-test) ]; then
+                sudo docker stop inplace-test
+                sudo docker rm inplace-test
+              fi
+            "
+
+        - name: Docker Pull
+          run: |
+            ssh ubuntu@${{ secrets.EC2_HOST_TEST_SERVER }} "sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/inplace:test"
+
+        - name: Cleanup Docker System
+          run: |
+            ssh ubuntu@${{ secrets.EC2_HOST_TEST_SERVER }} "sudo docker system prune -f"
+
+        - name: Run new container
+          run: |
+            ssh ubuntu@${{ secrets.EC2_HOST_TEST_SERVER }} "
+              sudo docker run -d \
+                --name inplace-test \
+                -p 8080:8080 \
+                --restart unless-stopped \
+                --env-file .env \
+                ${{ secrets.DOCKERHUB_USERNAME }}/inplace:test
+            "

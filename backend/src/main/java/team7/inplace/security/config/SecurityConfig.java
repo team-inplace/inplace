@@ -58,9 +58,8 @@ public class SecurityConfig {
                 .accessDeniedHandler(customAccessDeniedHandler))
             //authentication 경로 설정
             .authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/api/error-logs/**", "/cicd", "crawling/**")
-                .hasRole("ADMIN")
-                .requestMatchers("/admin/**").permitAll()
+                .requestMatchers("/api/error-logs/**", "/cicd", "crawling/**").hasRole("ADMIN")
+                .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/users/**").authenticated()
                 .requestMatchers("/influencers/likes").authenticated()
                 .requestMatchers("/influencers/multiple/likes").authenticated()

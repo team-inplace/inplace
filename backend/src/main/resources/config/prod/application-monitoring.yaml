@@ -1,0 +1,29 @@
+management:
+  server:
+    port: ${MONITORING_PORT}
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health
+      base-path: ${MONITORING_PATH}
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      show-details: never
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    enable:
+      jvm: true
+      process: true
+      system: true
+      http: true
+      logback: true
+      datasource: true
+      hikaricp: true
+      tomcat: true
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+        hikaricp.connections: true

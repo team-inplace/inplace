@@ -1,18 +1,80 @@
 spring:
+  application:
+    name: ${APP_NAME}
+---
+spring:
   config:
+    activate:
+      on-profile: local
     import:
-      - classpath:application-security.yaml
-      - classpath:application-youtube.yaml
-      - classpath:application-kakao.yaml
-      - classpath:application-db.yaml
-      - classpath:application-redis.yaml
-      - classpath:application-s3.yaml
-      - classpath:application-monitoring.yaml
       - optional:file:.env[.properties]
+      - config/local/application-security.yaml
+      - config/local/application-youtube.yaml
+      - config/local/application-kakao.yaml
+      - config/local/application-db.yaml
+      - config/local/application-redis.yaml
+      - config/local/application-s3.yaml
+      - config/local/application-monitoring.yaml
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+      enabled: true
+logging:
+  level:
+    root: INFO
+    team7.inplace: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+    import:
+      - config/dev/application-security.yaml
+      - config/dev/application-youtube.yaml
+      - config/dev/application-kakao.yaml
+      - config/dev/application-db.yaml
+      - config/dev/application-redis.yaml
+      - config/dev/application-s3.yaml
+      - config/dev/application-monitoring.yaml
   servlet:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
       enabled: true
-  application:
-    name: ${APP_NAME}
+logging:
+  level:
+    root: INFO
+    team7.inplace: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import:
+      - config/prod/application-security.yaml
+      - config/prod/application-youtube.yaml
+      - config/prod/application-kakao.yaml
+      - config/prod/application-db.yaml
+      - config/prod/application-redis.yaml
+      - config/prod/application-s3.yaml
+      - config/prod/application-monitoring.yaml
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      enabled: true
+logging:
+  level:
+    root: ERROR
+    team7.inplace: INFO
+    org.springframework.web: ERROR
+    org.springframework.security: ERROR
