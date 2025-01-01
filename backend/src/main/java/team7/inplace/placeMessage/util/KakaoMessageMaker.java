@@ -20,11 +20,11 @@ public class KakaoMessageMaker {
     private final ObjectMapper objectMapper;
 
     public MultiValueMap<String, String> createLocationTemplate(
-            PlaceMessageCommand placeMessageCommand) {
+        PlaceMessageCommand placeMessageCommand) {
         try {
             LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
             body.add(TEMPLATE_OBJECT, objectMapper.writeValueAsString(
-                    LocationTemplate.of(frontEndUrl, placeMessageCommand)));
+                LocationTemplate.of(frontEndUrl, placeMessageCommand)));
             return body;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
@@ -32,11 +32,11 @@ public class KakaoMessageMaker {
     }
 
     public MultiValueMap<String, String> createFeedTemplate(
-            PlaceMessageCommand placeMessageCommand) {
+        PlaceMessageCommand placeMessageCommand, String uuid) {
         try {
             LinkedMultiValueMap<String, String> body = new LinkedMultiValueMap<>();
             body.add(TEMPLATE_OBJECT, objectMapper.writeValueAsString(
-                    FeedTemplate.of(frontEndUrl, placeMessageCommand)));
+                FeedTemplate.of(frontEndUrl, placeMessageCommand, uuid)));
             return body;
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);

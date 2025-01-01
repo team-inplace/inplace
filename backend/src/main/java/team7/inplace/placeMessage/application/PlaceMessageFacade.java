@@ -19,7 +19,9 @@ public class PlaceMessageFacade {
     private final OauthTokenService oauthTokenService;
     private final KakaoMessageService kakaoMessageService;
     private final ScheduledExecutorService scheduledExecutorService;
+    private final UserReviewUuidService userReviewLinkService;
 
+    // 여기서 로그인된 사용자 id가져오고 uuid로 리뷰 요청 링크 만들어야 하는듯?
     public void sendPlaceMessage(Long placeId) throws InplaceException {
         if (AuthorizationUtil.isNotLoginUser()) {
             throw InplaceException.of(UserErrorCode.NOT_FOUND);
@@ -28,8 +30,11 @@ public class PlaceMessageFacade {
         String oauthToken = oauthTokenService.findOAuthTokenByUserId(AuthorizationUtil.getUserId());
         PlaceMessageCommand placeMessageCommand = placeService.getPlaceMessageCommand(placeId);
         kakaoMessageService.sendLocationMessageToMe(oauthToken, placeMessageCommand);
+
+        String uuid = userReviewLinkService.generateReviewUuid(AuthorizationUtil.getUserId(),
+            placeId);
         scheduledExecutorService.schedule(
-            () -> kakaoMessageService.sendFeedMessageToMe(oauthToken, placeMessageCommand), 1,
+            () -> kakaoMessageService.sendFeedMessageToMe(oauthToken, placeMessageCommand, uuid), 1,
             TimeUnit.MINUTES);
     }
 }
