@@ -1,4 +1,4 @@
-package team7.inplace.likedPlace.persistence;
+package team7.inplace.liked.likedPlace.persistence;
 
 import java.util.Optional;
 import java.util.Set;
@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import team7.inplace.likedPlace.domain.LikedPlace;
+import team7.inplace.liked.likedPlace.domain.LikedPlace;
 
 public interface LikedPlaceRepository extends JpaRepository<LikedPlace, Long> {
 

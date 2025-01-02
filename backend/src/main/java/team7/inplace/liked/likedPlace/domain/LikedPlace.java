@@ -1,4 +1,4 @@
-package team7.inplace.likedPlace.domain;
+package team7.inplace.liked.likedPlace.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;

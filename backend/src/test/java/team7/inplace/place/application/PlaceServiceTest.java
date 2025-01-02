@@ -6,7 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import team7.inplace.likedPlace.persistence.LikedPlaceRepository;
+import team7.inplace.liked.likedPlace.persistence.LikedPlaceRepository;
 import team7.inplace.video.persistence.VideoRepository;
 
 @ExtendWith(MockitoExtension.class)

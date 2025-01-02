@@ -1,4 +1,4 @@
-package team7.inplace.favoriteInfluencer;
+package team7.inplace.likedInfluencer;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,9 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import team7.inplace.favoriteInfluencer.application.FavoriteInfluencerService;
-import team7.inplace.favoriteInfluencer.domain.FavoriteInfluencer;
-import team7.inplace.favoriteInfluencer.persistent.FavoriteInfluencerRepository;
+import team7.inplace.liked.likedInfluencer.application.FavoriteInfluencerService;
+import team7.inplace.liked.likedInfluencer.domain.FavoriteInfluencer;
+import team7.inplace.liked.likedInfluencer.persistent.FavoriteInfluencerRepository;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.user.domain.Role;

@@ -1,4 +1,4 @@
-package team7.inplace.favoriteInfluencer.application.dto;
+package team7.inplace.liked.likedInfluencer.application.dto;
 
 import java.util.List;
 

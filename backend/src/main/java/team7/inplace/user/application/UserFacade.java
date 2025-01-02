@@ -3,7 +3,7 @@ package team7.inplace.user.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import team7.inplace.favoriteInfluencer.application.FavoriteInfluencerService;
+import team7.inplace.liked.likedInfluencer.application.FavoriteInfluencerService;
 import team7.inplace.global.annotation.Facade;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;

@@ -1,7 +1,7 @@
 package team7.inplace.place.application.dto;
 
 
-import team7.inplace.likedPlace.domain.LikedPlace;
+import team7.inplace.liked.likedPlace.domain.LikedPlace;
 
 public record LikedPlaceInfo(
         Long placeId,

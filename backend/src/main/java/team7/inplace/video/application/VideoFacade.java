@@ -54,7 +54,7 @@ public class VideoFacade {
         // User 정보를 쿠키에서 추출
         Long userId = AuthorizationUtil.getUserId();
         // 유저 정보를 이용하여 유저가 좋아요를 누른 인플루언서 id 리스트를 조회
-        List<Long> influencerIds = userService.getInfluencerIdsByUsername(userId);
+        List<Long> influencerIds = userService.getInfluencerIdsByUserId(userId);
         // 인플루언서 id를 사용하여 영상을 조회
         return videoService.getVideosByMyInfluencer(influencerIds);
     }

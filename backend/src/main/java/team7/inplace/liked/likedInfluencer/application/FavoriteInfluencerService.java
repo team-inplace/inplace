@@ -1,14 +1,14 @@
-package team7.inplace.favoriteInfluencer.application;
+package team7.inplace.liked.likedInfluencer.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import team7.inplace.favoriteInfluencer.application.dto.FavoriteInfluencerCommand;
-import team7.inplace.favoriteInfluencer.application.dto.FavoriteInfluencerListCommand;
-import team7.inplace.favoriteInfluencer.domain.FavoriteInfluencer;
-import team7.inplace.favoriteInfluencer.persistent.FavoriteInfluencerRepository;
+import team7.inplace.liked.likedInfluencer.application.dto.FavoriteInfluencerListCommand;
+import team7.inplace.liked.likedInfluencer.domain.FavoriteInfluencer;
+import team7.inplace.liked.likedInfluencer.application.dto.FavoriteInfluencerCommand;
+import team7.inplace.liked.likedInfluencer.persistent.FavoriteInfluencerRepository;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.influencer.application.dto.InfluencerInfo;

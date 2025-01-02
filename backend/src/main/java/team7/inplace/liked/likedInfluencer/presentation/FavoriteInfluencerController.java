@@ -1,4 +1,4 @@
-package team7.inplace.favoriteInfluencer.presentation;
+package team7.inplace.liked.likedInfluencer.presentation;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import team7.inplace.favoriteInfluencer.application.FavoriteInfluencerService;
-import team7.inplace.favoriteInfluencer.application.dto.FavoriteInfluencerCommand;
-import team7.inplace.favoriteInfluencer.application.dto.FavoriteInfluencerListCommand;
-import team7.inplace.favoriteInfluencer.presentation.dto.InfluencerLikeRequest;
-import team7.inplace.favoriteInfluencer.presentation.dto.InfluencerListLikeRequest;
+import team7.inplace.liked.likedInfluencer.application.FavoriteInfluencerService;
+import team7.inplace.liked.likedInfluencer.application.dto.FavoriteInfluencerListCommand;
+import team7.inplace.liked.likedInfluencer.presentation.dto.InfluencerLikeRequest;
+import team7.inplace.liked.likedInfluencer.presentation.dto.InfluencerListLikeRequest;
+import team7.inplace.liked.likedInfluencer.application.dto.FavoriteInfluencerCommand;
 
 @RequiredArgsConstructor
 @RestController

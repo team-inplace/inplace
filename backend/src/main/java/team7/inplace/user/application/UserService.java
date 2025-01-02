@@ -3,11 +3,9 @@ package team7.inplace.user.application;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import team7.inplace.favoriteInfluencer.domain.FavoriteInfluencer;
-import team7.inplace.favoriteInfluencer.persistent.FavoriteInfluencerRepository;
+import team7.inplace.liked.likedInfluencer.persistent.FavoriteInfluencerRepository;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.UserErrorCode;
-import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.security.application.CurrentUserProvider;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.user.application.dto.UserCommand;
@@ -18,6 +16,7 @@ import team7.inplace.user.persistence.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -47,13 +46,9 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<Long> getInfluencerIdsByUsername(Long userId) {
-        List<FavoriteInfluencer> likes = favoriteInfluencerRepository.findByUserId(userId);
-        return likes.stream()
-                .filter(FavoriteInfluencer::isLiked)
-                .map(FavoriteInfluencer::getInfluencer)
-                .map(Influencer::getId)
-                .toList();
+    public List<Long> getInfluencerIdsByUserId(Long userId) {
+        Set<Long> likes = favoriteInfluencerRepository.findLikedInfluencerIdsByUserId(userId);
+        return likes.stream().toList();
     }
 
     @Transactional
