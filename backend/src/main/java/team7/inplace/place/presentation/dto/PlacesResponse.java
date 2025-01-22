@@ -9,6 +9,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import team7.inplace.place.application.dto.PlaceQueryInfo;
+import team7.inplace.place.application.dto.PlaceQueryInfo.Marker;
+import team7.inplace.place.domain.Category;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.review.persistence.dto.ReviewQueryResult;
 import team7.inplace.video.persistence.dto.VideoQueryResult.SimpleVideo;
@@ -248,6 +250,31 @@ public class PlacesResponse {
                 location.placeId(),
                 location.longitude(),
                 location.latitude()
+            );
+        }
+    }
+
+    public record Marker(
+        Long placeId,
+        String placeName,
+        String category,
+        String influencerName,
+        Address address,
+        String menuImgUrl
+    ) {
+
+        public static Marker from(PlaceQueryInfo.Marker marker) {
+            return new Marker(
+                marker.place().placeId(),
+                marker.place().placeName(),
+                Category.valueOf(marker.place().category()).getName(),
+                marker.influencerNames(),
+                Address.from(
+                    marker.place().address1(),
+                    marker.place().address2(),
+                    marker.place().address3()
+                ),
+                marker.place().menuImgUrl()
             );
         }
     }
