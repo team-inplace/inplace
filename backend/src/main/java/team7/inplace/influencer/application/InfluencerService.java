@@ -169,4 +169,9 @@ public class InfluencerService {
         return influencerReadRepositoryImpl.getInfluencerDetail(influencerId, userId)
             .orElseThrow(() -> InplaceException.of(InfluencerErrorCode.NOT_FOUND));
     }
+
+    @Transactional
+    public List<String> getInfluencerNamesByPlaceId(Long placeId) {
+        return influencerReadRepositoryImpl.getInfluencerNamesByPlaceId(placeId);
+    }
 }

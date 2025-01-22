@@ -2,6 +2,7 @@ package team7.inplace.influencer.persistence;
 
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -16,6 +17,7 @@ import team7.inplace.video.domain.QVideo;
 public class InfluencerReadRepositoryImpl implements InfluencerReadRepository {
 
     private final JPAQueryFactory queryFactory;
+    private final JPAQueryFactory jpaQueryFactory;
 
     @Override
     public Optional<InfluencerQueryResult.Detail> getInfluencerDetail(
@@ -48,6 +50,16 @@ public class InfluencerReadRepositoryImpl implements InfluencerReadRepository {
                     QLikedInfluencer.likedInfluencer.deleteAt.isNull())
                 .fetchOne()
         );
+    }
+
+    @Override
+    public List<String> getInfluencerNamesByPlaceId(Long placeId) {
+        return jpaQueryFactory
+            .select(QInfluencer.influencer.name)
+            .from(QInfluencer.influencer)
+            .leftJoin(QVideo.video).on(QInfluencer.influencer.id.eq(QVideo.video.influencerId))
+            .where(QVideo.video.placeId.eq(placeId))
+            .fetch();
     }
 
 }
