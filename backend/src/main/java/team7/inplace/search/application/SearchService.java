@@ -24,6 +24,7 @@ import team7.inplace.video.persistence.dto.VideoQueryResult;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class SearchService {
+
     private static final Integer MAX_COMPLETION_RESULTS = 5;
     private static final Integer SEARCH_LIMIT = 10;
 
@@ -36,16 +37,17 @@ public class SearchService {
         var placeSearchInfo = placeSearchRepository.searchAutoComplete(keyword);
 
         var influencerAutoComplete = influencerSearchInfo.stream()
-                .map(info -> new AutoCompletionInfo(info.keyword(), info.score(), SearchType.INFLUENCER))
-                .toList();
+            .map(
+                info -> new AutoCompletionInfo(info.keyword(), info.score(), SearchType.INFLUENCER))
+            .toList();
         var placeAutoComplete = placeSearchInfo.stream()
-                .map(info -> new AutoCompletionInfo(info.keyword(), info.score(), SearchType.PLACE))
-                .toList();
+            .map(info -> new AutoCompletionInfo(info.keyword(), info.score(), SearchType.PLACE))
+            .toList();
 
         return Stream.concat(influencerAutoComplete.stream(), placeAutoComplete.stream())
-                .sorted(Comparator.comparing(AutoCompletionInfo::score).reversed())
-                .limit(MAX_COMPLETION_RESULTS)
-                .toList();
+            .sorted(Comparator.comparing(AutoCompletionInfo::score).reversed())
+            .limit(MAX_COMPLETION_RESULTS)
+            .toList();
     }
 
     public Page<InfluencerQueryResult.Simple> searchInfluencer(String keyword, Pageable pageable) {
@@ -57,22 +59,33 @@ public class SearchService {
 
     public List<InfluencerQueryResult.Simple> searchInfluencer(String keyword) {
         var userId = AuthorizationUtil.getUserId();
-        var influencerInfos = influencerSearchRepository.search(keyword, Pageable.unpaged(), userId);
+        var influencerInfos = influencerSearchRepository.search(
+            keyword,
+            Pageable.ofSize(SEARCH_LIMIT),
+            userId
+        );
 
-        return influencerInfos.getContent().subList(0, Math.min(influencerInfos.getContent().size(), SEARCH_LIMIT));
+        return influencerInfos.getContent();
     }
 
     public List<VideoQueryResult.SimpleVideo> searchVideo(String keyword) {
         var userId = AuthorizationUtil.getUserId();
-        var videoInfos = videoSearchRepository.search(keyword, Pageable.unpaged(), userId);
+        var videoInfos = videoSearchRepository.search(
+            keyword,
+            Pageable.ofSize(SEARCH_LIMIT),
+            userId
+        );
 
-        return videoInfos.getContent().subList(0, Math.min(videoInfos.getContent().size(), SEARCH_LIMIT));
+        return videoInfos.getContent();
     }
 
     public List<SearchQueryResult.Place> searchPlace(String keyword) {
         var userId = AuthorizationUtil.getUserId();
-        var placeInfos = placeSearchRepository.search(keyword, Pageable.unpaged(), userId);
+        var placeInfos = placeSearchRepository.search(keyword,
+            Pageable.ofSize(SEARCH_LIMIT),
+            userId
+        );
 
-        return placeInfos.getContent().subList(0, Math.min(placeInfos.getContent().size(), SEARCH_LIMIT));
+        return placeInfos.getContent();
     }
 }
