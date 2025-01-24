@@ -162,4 +162,8 @@ public class PlaceService {
             influencerFilter
         );
     }
+
+    public PlaceQueryResult.Marker getMarkerInfo(Long placeId) {
+        return placeReadRepository.findPlaceMarkerById(placeId);
+    }
 }

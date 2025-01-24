@@ -36,4 +36,6 @@ public interface PlaceReadRepository {
     );
 
     Page<PlaceQueryResult.DetailedPlaceBulk> findLikedPlacesByUserIdWithPaging(Long userId, Pageable pageable);
+
+    PlaceQueryResult.Marker findPlaceMarkerById(Long placeId);
 }
