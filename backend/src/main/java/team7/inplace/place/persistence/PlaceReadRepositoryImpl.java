@@ -23,9 +23,11 @@ import team7.inplace.place.domain.QOffDay;
 import team7.inplace.place.domain.QOpenTime;
 import team7.inplace.place.domain.QPlace;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.Marker;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.SimplePlace;
 import team7.inplace.place.persistence.dto.QPlaceQueryResult_DetailedPlace;
 import team7.inplace.place.persistence.dto.QPlaceQueryResult_Location;
+import team7.inplace.place.persistence.dto.QPlaceQueryResult_Marker;
 import team7.inplace.place.persistence.dto.QPlaceQueryResult_Menu;
 import team7.inplace.place.persistence.dto.QPlaceQueryResult_MenuBordPhoto;
 import team7.inplace.place.persistence.dto.QPlaceQueryResult_OffDay;
@@ -346,6 +348,23 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
 
         return PageableExecutionUtils.getPage(detailedPlaceBulks, pageable,
             likedPlaceCount::intValue);
+    }
+
+    @Override
+    public Marker findPlaceMarkerById(Long placeId) {
+        return jpaQueryFactory
+            .select(new QPlaceQueryResult_Marker(
+                QPlace.place.id,
+                QPlace.place.name,
+                QPlace.place.category.stringValue(),
+                QPlace.place.address.address1,
+                QPlace.place.address.address2,
+                QPlace.place.address.address3,
+                QPlace.place.menuImgUrl
+            ))
+            .from(QPlace.place)
+            .where(QPlace.place.id.eq(placeId))
+            .fetchOne();
     }
 
     private Map<Long, List<PlaceQueryResult.OffDay>> findOffDaysByPlaceIds(List<Long> placeIds) {

@@ -32,4 +32,13 @@ public class PlaceQueryInfo {
             return new PlaceQueryInfo.Simple(place, video);
         }
     }
+
+    public record Marker(
+        PlaceQueryResult.Marker place,
+        String influencerNames
+    ) {
+        public static PlaceQueryInfo.Marker from(PlaceQueryResult.Marker marker, List<String> influencerNames) {
+            return new PlaceQueryInfo.Marker(marker, String.join(",", influencerNames));
+        }
+    }
 }

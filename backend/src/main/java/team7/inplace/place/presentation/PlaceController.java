@@ -17,10 +17,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.kakao.application.PlaceMessageFacade;
 import team7.inplace.place.application.CategoryService;
+import team7.inplace.place.application.PlaceFacade;
 import team7.inplace.place.application.PlaceService;
 import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand;
 import team7.inplace.place.application.dto.CategoryInfo;
+import team7.inplace.place.application.dto.PlaceQueryInfo;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.place.presentation.dto.CategoriesResponse;
 import team7.inplace.place.presentation.dto.PlaceLikeRequest;
@@ -37,6 +39,7 @@ public class PlaceController implements PlaceControllerApiSpec {
     private final PlaceService placeService;
     private final CategoryService categoryService;
     private final ReviewService reviewService;
+    private final PlaceFacade placeFacade;
 
     @GetMapping
     public ResponseEntity<Page<PlacesResponse.Simple>> getPlaces(
@@ -98,9 +101,15 @@ public class PlaceController implements PlaceControllerApiSpec {
         @PathVariable("id") Long placeId
     ) {
         var placeDetail = placeService.getPlaceDetailInfo(placeId);
-
         var response = PlacesResponse.Detail.from(placeDetail);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/marker")
+    public ResponseEntity<PlacesResponse.Marker> getPlaceForMarker(@PathVariable("id") Long placeId) {
+        PlaceQueryInfo.Marker marker = placeFacade.getMarkerInfo(placeId);
+        PlacesResponse.Marker markerResponse = PlacesResponse.Marker.from(marker);
+        return new ResponseEntity<>(markerResponse, HttpStatus.OK);
     }
 
     @GetMapping("/categories")
