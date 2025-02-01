@@ -24,9 +24,6 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public Page<ReviewQueryResult.Simple> getPlaceReviews(Long placeId, Pageable pageable) {
         Long userId = AuthorizationUtil.getUserId();
-        if (userId == null) {
-            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
-        }
 
         Page<ReviewQueryResult.Simple> reviewResults = reviewReadRepository
             .findSimpleReviewByUserIdAndPlaceId(placeId, userId, pageable);

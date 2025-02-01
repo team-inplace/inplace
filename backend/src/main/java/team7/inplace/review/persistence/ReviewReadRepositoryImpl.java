@@ -2,6 +2,7 @@ package team7.inplace.review.persistence;
 
 import static com.querydsl.core.types.ExpressionUtils.count;
 
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,10 @@ public class ReviewReadRepositoryImpl implements ReviewReadRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<ReviewQueryResult.Detail> findDetailedReviewByUserId(Long userId,
-        Pageable pageable) {
+    public Page<ReviewQueryResult.Detail> findDetailedReviewByUserId(
+        Long userId,
+        Pageable pageable
+    ) {
         jpaQueryFactory
             .select(new QReviewQueryResult_Detail(
                 QReview.review.id,
@@ -73,7 +76,7 @@ public class ReviewReadRepositoryImpl implements ReviewReadRepository {
                 QReview.review.comment,
                 QUser.user.nickname,
                 QReview.review.createdDate,
-                QReview.review.userId.eq(userId)
+                userId == null ? Expressions.FALSE : QReview.review.userId.eq(userId)
             ))
             .from(QReview.review)
             .innerJoin(QUser.user).on(QReview.review.userId.eq(QUser.user.id))

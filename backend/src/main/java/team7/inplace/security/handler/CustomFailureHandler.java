@@ -15,9 +15,10 @@ import team7.inplace.global.exception.code.AuthorizationErrorCode;
 
 public class CustomFailureHandler implements AuthenticationFailureHandler {
 
+    private final ObjectMapper objectMapper;
+
     @Value("${spring.redirect.front-end-url}")
     private String frontEndUrl;
-    private final ObjectMapper objectMapper;
 
     public CustomFailureHandler(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;

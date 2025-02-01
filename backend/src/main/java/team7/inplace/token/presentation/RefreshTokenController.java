@@ -21,23 +21,24 @@ import team7.inplace.token.application.command.TokenCommand.ReIssued;
 
 @RestController
 @RequiredArgsConstructor
+@PreAuthorize("isAuthenticated()")
 public class RefreshTokenController implements RefreshTokenControllerApiSpec {
+
     private final JwtUtil jwtUtil;
     private final RefreshTokenFacade refreshTokenFacade;
 
     @Value("${spring.application.domain}")
     private String domain;
 
-    @PreAuthorize("isAuthenticated()")
     @GetMapping("/refresh-token")
     public ResponseEntity<Void> refreshToken(
-            @CookieValue(value = "refresh_token") Cookie cookie,
-            HttpServletResponse response
+        @CookieValue(value = "refresh_token") Cookie cookie,
+        HttpServletResponse response
     ) {
 
         String refreshToken = cookie.getValue();
         ReIssued reIssuedToken = refreshTokenFacade.getReIssuedRefreshTokenCookie(
-                jwtUtil.getUsername(refreshToken), refreshToken);
+            jwtUtil.getUsername(refreshToken), refreshToken);
         addTokenToCookie(response, reIssuedToken);
 
         return new ResponseEntity<>(HttpStatus.OK);
@@ -45,25 +46,26 @@ public class RefreshTokenController implements RefreshTokenControllerApiSpec {
 
     private void addTokenToCookie(HttpServletResponse response, ReIssued reIssuedToken) {
         var accessTokenCookie = CookieUtil.createHttpOnlyCookie(TokenType.ACCESS_TOKEN.getValue(),
-                reIssuedToken.accessToken(), domain);
+            reIssuedToken.accessToken(), domain);
         var refreshTokenCookie = CookieUtil.createHttpOnlyCookie(TokenType.REFRESH_TOKEN.getValue(),
-                reIssuedToken.refreshToken(), domain);
+            reIssuedToken.refreshToken(), domain);
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
     }
 
-    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/refresh-token")
     public ResponseEntity<Void> deleteRefreshToken(
-            @CookieValue(value = "refresh_token") Cookie cookie,
-            HttpServletResponse response
+        @CookieValue(value = "refresh_token") Cookie cookie,
+        HttpServletResponse response
     ) {
         String refreshToken = cookie.getValue();
         refreshTokenFacade.deleteRefreshToken(refreshToken);
 
-        ResponseCookie accessTokenCookie = CookieUtil.createHttpOnlyCookie(TokenType.ACCESS_TOKEN.getValue(), "", domain);
-        ResponseCookie refreshTokenCookie = CookieUtil.createHttpOnlyCookie(TokenType.REFRESH_TOKEN.getValue(), "", domain);
+        ResponseCookie accessTokenCookie = CookieUtil.createHttpOnlyCookie(
+            TokenType.ACCESS_TOKEN.getValue(), "", domain);
+        ResponseCookie refreshTokenCookie = CookieUtil.createHttpOnlyCookie(
+            TokenType.REFRESH_TOKEN.getValue(), "", domain);
         response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 
