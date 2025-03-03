@@ -138,12 +138,19 @@ public class InfluencerService {
     }
 
     @Transactional()
-    public void updateLastVideo(Long influencerId, String lastVideo) {
+    public void updateLastMediumVideo(Long influencerId, String lastVideo) {
         var influencer = influencerRepository.findById(influencerId)
             .orElseThrow();
         influencer.updateLastVideo(lastVideo);
     }
-    
+
+    @Transactional()
+    public void updateLastLongVideo(Long influencerId, String lastLongVideo) {
+        var influencer = influencerRepository.findById(influencerId)
+            .orElseThrow();
+        influencer.updateLastLongVideo(lastLongVideo);
+    }
+
     //TODO: 추후 쿼리 한번으로 변경
     @Transactional(readOnly = true)
     public Page<InfluencerInfo> getFavoriteInfluencers(Long userId, Pageable pageable) {

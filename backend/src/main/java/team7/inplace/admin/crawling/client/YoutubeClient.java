@@ -2,6 +2,7 @@ package team7.inplace.admin.crawling.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +17,8 @@ import team7.inplace.global.properties.GoogleApiProperties;
 public class YoutubeClient {
 
     private static final String VIDEO_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search";
-    private static final String VIDEO_SEARCH_PARAMS = "?part=snippet&channelId=%s&maxResults=50&key=%s&order=date&type=video";
+    private static final String MEDIUM_VIDEO_SEARCH_PARAMS = "?part=snippet&channelId=%s&maxResults=50&key=%s&order=date&type=video&videoDuration=medium";
+    private static final String LONG_VIDEO_SEARCH_PARAMS = "?part=snippet&channelId=%s&maxResults=50&key=%s&order=date&type=video&videoDuration=long";
     private static final String VIDEO_DETAIL_URL = "https://www.googleapis.com/youtube/v3/videos";
     private static final String VIDEO_DETAIL_PARAMS = "?part=statistics&id=%s&key=%s";
     private final RestTemplate restTemplate;
@@ -38,11 +40,57 @@ public class YoutubeClient {
         return response;
     }
 
-    public List<JsonNode> getVideos(String chanelId, String finalVideoUUID) {
+    public List<JsonNode> getMediumVideos(String chanelId, String finalVideoUUID) {
+        List<JsonNode> videoItems = new ArrayList<>();
+        String nextPageToken = null;
+        var key = Arrays.stream(googleApiProperties.getGoogleKey()).iterator();
+        var curKey = key.next();
+        while (true) {
+            String url =
+                VIDEO_SEARCH_URL + String.format(MEDIUM_VIDEO_SEARCH_PARAMS, chanelId, curKey);
+
+            JsonNode response = null;
+            if (Objects.nonNull(nextPageToken)) {
+                url += "&pageToken=" + nextPageToken;
+            }
+            try {
+                response = restTemplate.getForObject(url, JsonNode.class);
+            } catch (Exception e) {
+                log.error("Youtube API 호출이 실패했습니다. Youtuber Id {}", chanelId);
+                break;
+            }
+
+            if (response.path("error").path("code").asText().equals("403")) {
+                if (key.hasNext()) {
+                    curKey = key.next();
+                    continue;
+                }
+                log.error("Youtube API 호출이 실패했습니다. Youtuber Id {}", chanelId);
+                break;
+            }
+            if (Objects.isNull(response)) {
+                log.error("Youtube API Response가 NULL입니다 {}.", chanelId);
+                break;
+            }
+
+            var containsLastVideo = extractSnippets(videoItems, response.path("items"),
+                finalVideoUUID);
+            if (containsLastVideo) {
+                break;
+            }
+            nextPageToken = response.path("nextPageToken").asText();
+            if (isLastPage(nextPageToken)) {
+                break;
+            }
+        }
+        return videoItems;
+    }
+
+    public List<JsonNode> getLongVidoes(String chanelId, String finalVideoUUID) {
         List<JsonNode> videoItems = new ArrayList<>();
         String nextPageToken = null;
         while (true) {
-            String url = VIDEO_SEARCH_URL + String.format(VIDEO_SEARCH_PARAMS, chanelId,
+            String url = VIDEO_SEARCH_URL + String.format(LONG_VIDEO_SEARCH_PARAMS, chanelId,
                 googleApiProperties.crawlingKey());
 
             JsonNode response = null;

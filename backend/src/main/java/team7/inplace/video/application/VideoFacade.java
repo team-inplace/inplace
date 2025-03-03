@@ -20,17 +20,27 @@ import team7.inplace.video.persistence.dto.VideoQueryResult;
 @Slf4j
 @RequiredArgsConstructor
 public class VideoFacade {
+
     private final VideoService videoService;
     private final InfluencerService influencerService;
     private final PlaceService placeService;
 
     @Transactional
-    public void createVideos(
-            List<VideoCommand.Create> videoCommands,
-            Long influencerId
+    public void createMediumVideos(
+        List<VideoCommand.Create> videoCommands,
+        Long influencerId
     ) {
         videoService.createVideos(videoCommands, influencerId);
-        influencerService.updateLastVideo(influencerId, videoCommands.get(0).videoId());
+        influencerService.updateLastMediumVideo(influencerId, videoCommands.get(0).videoId());
+    }
+
+    @Transactional
+    public void createLongVideos(
+        List<VideoCommand.Create> videoCommands,
+        Long influencerId
+    ) {
+        videoService.createVideos(videoCommands, influencerId);
+        influencerService.updateLastLongVideo(influencerId, videoCommands.get(0).videoId());
     }
 
     @Transactional

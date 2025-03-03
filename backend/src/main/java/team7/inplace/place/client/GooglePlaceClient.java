@@ -31,7 +31,7 @@ public class GooglePlaceClient {
         HttpEntity<String> entity = new HttpEntity<>(headers);
         var response = restTemplate.exchange(url, HttpMethod.GET, entity,
             GooglePlaceClientResponse.Place.class);
-
+        log.info("Google Place API Response: {}", response.getBody());
         return response.getBody();
     }
 }

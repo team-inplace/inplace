@@ -31,10 +31,13 @@ public class YoutubeCrawlingService {
         var crawlInfos = influencers.stream()
             .map(influencer -> {
                 var channel = influencer.getChannelId();
-                var lastVideoUUID = influencer.getLastVideo();
+                var lastMediumVideoId = influencer.getLastVideo();
+                var lastLongVideoId = influencer.getLastLongVideo();
 
-                var videoItems = youtubeClient.getVideos(channel, lastVideoUUID);
-                return new CrawlingInfo.VideoPlaceInfo(influencer.getId(), videoItems);
+                var mediumVideoItems = youtubeClient.getMediumVideos(channel, lastMediumVideoId);
+                var longVideoItems = youtubeClient.getLongVidoes(channel, lastLongVideoId);
+                return new CrawlingInfo.VideoPlaceInfo(influencer.getId(), mediumVideoItems,
+                    longVideoItems);
             }).toList();
 
         return crawlInfos;

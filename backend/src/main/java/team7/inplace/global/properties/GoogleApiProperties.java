@@ -10,4 +10,7 @@ public record GoogleApiProperties(
     String placeKey3
 ) {
 
+    public String[] getGoogleKey() {
+        return new String[]{crawlingKey, placeKey1, placeKey2, placeKey3};
+    }
 }

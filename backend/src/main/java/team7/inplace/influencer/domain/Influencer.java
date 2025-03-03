@@ -56,12 +56,19 @@ public class Influencer extends BaseEntity {
         return this.channel.getLastVideoId();
     }
 
+    public String getLastLongVideo() {
+        return this.channel.getLastLongVideoId();
+    }
+
     public void changeVisibility() {
         this.hidden = !this.hidden;
     }
 
     public void updateLastVideo(String lastVideoId) {
-        this.channel.updateLastVideo(lastVideoId);
+        this.channel.updateLastMediumVideo(lastVideoId);
     }
 
+    public void updateLastLongVideo(String lastLongVideoId) {
+        this.channel.updateLastLongVideo(lastLongVideoId);
+    }
 }

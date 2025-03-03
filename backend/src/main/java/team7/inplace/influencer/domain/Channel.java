@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Embeddable
 @NoArgsConstructor(access = PROTECTED)
 public class Channel {
+
     private String channelTitle;
 
     @Column(nullable = false, columnDefinition = "TEXT")
@@ -19,13 +20,20 @@ public class Channel {
     @Column(nullable = true, columnDefinition = "TEXT")
     private String lastVideoId;
 
+    @Column(nullable = true, columnDefinition = "TEXT")
+    private String lastLongVideoId;
+
     public Channel(String channelTitle, String channelId) {
         this.channelTitle = channelTitle;
         this.channelId = channelId;
         this.lastVideoId = null;
     }
 
-    public void updateLastVideo(String lastVideoId) {
+    public void updateLastMediumVideo(String lastVideoId) {
         this.lastVideoId = lastVideoId;
+    }
+
+    public void updateLastLongVideo(String lastLongVideoId) {
+        this.lastLongVideoId = lastLongVideoId;
     }
 }
