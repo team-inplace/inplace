@@ -117,10 +117,6 @@ public class PlaceController implements PlaceControllerApiSpec {
             })
             .doOnError(e -> log.error("오류 발생: ", e));
     }
-    @GetMapping("/test")
-    public Mono<ResponseEntity<String>> test() {
-        return Mono.just(new ResponseEntity<>("테스트 성공", HttpStatus.OK));
-    }
 
     @GetMapping("/{id}/marker")
     public ResponseEntity<PlacesResponse.Marker> getPlaceForMarker(
