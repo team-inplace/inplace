@@ -70,7 +70,7 @@ describe('좋아요/취소 기능 테스트', () => {
           address3: '대학로',
         }}
         category="맛집"
-        influencerName="성시경"
+        videos={[{ influencerName: '성시경', videoUrl: '' }]}
         longitude="126.570667"
         latitude="33.450701"
         likes={false}

@@ -1,11 +1,12 @@
-import { useEffect, useMemo, useCallback, useRef } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import { useInView } from 'react-intersection-observer';
 import PlaceItem from '@/components/Map/PlaceSection/PlaceItem';
-import { PlaceData, LocationData, PageableData } from '@/types';
+import { PlaceData, LocationData } from '@/types';
 import Loading from '@/components/common/layouts/Loading';
 import NoItem from '@/components/common/layouts/NoItem';
 import { useGetInfinitePlaceList } from '@/api/hooks/useGetInfinitePlaceList';
+import usePlaceList from '@/hooks/Map/usePlaceList';
 
 interface PlaceSectionProps {
   mapBounds: LocationData;
@@ -36,7 +37,6 @@ export default function PlaceSection({
   const previousPlacesRef = useRef<PlaceData[]>([]);
 
   const { ref: loadMoreRef, inView } = useInView({
-    // useInView = Intersection Oberser API를 react hook으로 구현한 것
     root: sectionRef.current,
     rootMargin: '0px',
     threshold: 0, // 요소가 조금이라도 보이면 감지
@@ -49,30 +49,7 @@ export default function PlaceSection({
     center,
     size: 10, // 한 페이지에 보여줄 아이템 개수; 변경하며 api 잘 받아오는지 확인 가능
   });
-
-  const filteredPlaces = useMemo(() => {
-    if (data === undefined) {
-      return previousPlacesRef.current;
-    }
-
-    if (!data.pages) {
-      return [];
-    }
-
-    const newPlaces = data.pages.flatMap((page: PageableData<PlaceData>) => {
-      return page.content;
-    });
-
-    previousPlacesRef.current = newPlaces;
-    return newPlaces;
-  }, [data]);
-
-  useEffect(() => {
-    if (data?.pages) {
-      const places = data.pages.flatMap((page: PageableData<PlaceData>) => page.content);
-      onGetPlaceData(places);
-    }
-  }, [data, onGetPlaceData]);
+  const { filteredPlaces } = usePlaceList({ data, onGetPlaceData });
 
   useEffect(() => {
     if (inView && hasNextPage && !isFetchingNextPage) {
@@ -174,11 +151,11 @@ const ContentContainer = styled.div`
 const PlacesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 30px;
 
   @media screen and (max-width: 768px) {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 20px;
   }
 `;
 

@@ -17,3 +17,18 @@
 .google-search-button:hover {
   background-color: #357abd;
 }
+
+.main-video-update-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.main-video-update-btn:hover {
+  background-color: #c82333;
+}

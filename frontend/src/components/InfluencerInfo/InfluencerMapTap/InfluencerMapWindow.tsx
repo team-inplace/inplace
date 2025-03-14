@@ -4,11 +4,12 @@ import styled from 'styled-components';
 import { TbCurrentLocation } from 'react-icons/tb';
 import { GrPowerCycle } from 'react-icons/gr';
 import Button from '@/components/common/Button';
-import { LocationData, MarkerData, MarkerInfo, PlaceData } from '@/types';
+import { LocationData, MarkerData, PlaceData } from '@/types';
 import InfoWindow from './InfoWindow';
 import BasicImage from '@/assets/images/basic-image.webp';
-import { useGetMarkerInfo } from '@/api/hooks/useGetMarkerInfo';
 import { Text } from '@/components/common/typography/Text';
+import useMapActions from '@/hooks/Map/useMapAction';
+import useMarkerData from '@/hooks/Map/useMarkerData';
 
 interface MapWindowProps {
   influencerImg: string;
@@ -21,7 +22,7 @@ interface MapWindowProps {
   onCompleteFetch: (value: boolean) => void;
   onPlaceSelect: (placeId: number | null) => void;
   isListExpanded?: boolean;
-  onListExpand?: () => void;
+  onListExpand?: (value: boolean) => void;
   onSearchNearby?: (handleSearcNearby: () => void) => void;
 }
 
@@ -41,9 +42,15 @@ export default function InfluencerMapWindow({
 }: MapWindowProps) {
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [markerInfo, setMarkerInfo] = useState<MarkerInfo | PlaceData>();
-  const [shouldFetchData, setShouldFetchData] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const { moveMapToMarker, handleResetCenter } = useMapActions(mapRef);
+  const { markerInfo, handleMarkerClick, handleMapClick } = useMarkerData({
+    selectedPlaceId,
+    placeData,
+    onPlaceSelect,
+    moveMapToMarker,
+    mapRef,
+  });
 
   useEffect(() => {
     const handleResize = () => {
@@ -57,42 +64,6 @@ export default function InfluencerMapWindow({
   const originSize = isMobile ? 26 : 34;
   const userLocationSize = isMobile ? 16 : 24;
   const selectedMarker = markers.find((m) => m.placeId === selectedPlaceId);
-  const MarkerInfoData = useGetMarkerInfo(selectedPlaceId?.toString() || '', shouldFetchData);
-
-  // 마커나 장소 선택시 지도 중심으로 이동
-  const moveMapToMarker = useCallback(
-    (latitude: number, longitude: number) => {
-      if (mapRef.current) {
-        const currentLevel = mapRef.current.getLevel();
-        const baseOffset = -0.007;
-
-        let levelMultiplier;
-        if (currentLevel <= 5) {
-          levelMultiplier = 1;
-        } else if (currentLevel <= 8) {
-          levelMultiplier = currentLevel * 1.05;
-        } else {
-          levelMultiplier = currentLevel * 2;
-        }
-
-        const offsetY = isMobile ? (baseOffset * levelMultiplier) / 5 : 0;
-        const position = new kakao.maps.LatLng(latitude - offsetY, longitude);
-
-        if (mapRef.current.getLevel() > 10) {
-          mapRef.current.setLevel(9, {
-            anchor: position,
-            animate: true,
-          });
-        }
-        setTimeout(() => {
-          if (mapRef.current) {
-            mapRef.current.panTo(position);
-          }
-        }, 100);
-      }
-    },
-    [isMobile],
-  );
 
   useEffect(() => {
     if (selectedPlaceId && selectedMarker) {
@@ -145,37 +116,6 @@ export default function InfluencerMapWindow({
     }
   }, [shouldFetchPlaces, fetchLocation, onCompleteFetch]);
 
-  // 마커 정보를 새로 호출한 후 데이터 업데이트
-  useEffect(() => {
-    if (shouldFetchData && MarkerInfoData.data) {
-      setMarkerInfo(MarkerInfoData.data);
-      setShouldFetchData(false);
-    }
-  }, [MarkerInfoData.data, shouldFetchData]);
-
-  // 마커 정보가 있을 경우 전달, 없을 경우 새로 호출 함수
-  const getMarkerInfoWithPlaceInfo = useCallback(
-    (place: number) => {
-      if (!placeData) return;
-
-      const existData = placeData.find((m) => m.placeId === place);
-      if (existData) {
-        setMarkerInfo(existData);
-        setShouldFetchData(false);
-      } else {
-        setShouldFetchData(true);
-      }
-    },
-    [placeData],
-  );
-
-  // 마커나 장소가 선택되었을 경우
-  useEffect(() => {
-    if (selectedPlaceId) {
-      getMarkerInfoWithPlaceInfo(selectedPlaceId);
-    }
-  }, [selectedPlaceId, placeData, getMarkerInfoWithPlaceInfo]);
-
   const handleSearchNearby = useCallback(() => {
     fetchLocation();
   }, [fetchLocation]);
@@ -183,27 +123,6 @@ export default function InfluencerMapWindow({
   useEffect(() => {
     onSearchNearby?.(handleSearchNearby);
   }, [handleSearchNearby, onSearchNearby]);
-
-  const handleResetCenter = useCallback(() => {
-    if (mapRef.current && userLocation) {
-      mapRef.current.setCenter(new kakao.maps.LatLng(userLocation.lat, userLocation.lng));
-      mapRef.current.setLevel(4);
-    }
-  }, [userLocation]);
-
-  // 마커 클릭 시, 장소와 마커를 선택 상태로
-  const handleMarkerClick = useCallback(
-    (placeId: number, marker: kakao.maps.Marker) => {
-      if (mapRef.current && marker) {
-        onPlaceSelect(selectedPlaceId === placeId ? null : placeId);
-        if (selectedPlaceId !== placeId) {
-          const pos = marker.getPosition();
-          moveMapToMarker(pos.getLat(), pos.getLng());
-        }
-      }
-    },
-    [selectedPlaceId, onPlaceSelect, moveMapToMarker],
-  );
 
   return (
     <>
@@ -218,7 +137,7 @@ export default function InfluencerMapWindow({
           onCreate={(map) => {
             mapRef.current = map;
           }}
-          ref={mapRef}
+          onClick={handleMapClick}
         >
           {userLocation && (
             <MapMarker
@@ -258,24 +177,25 @@ export default function InfluencerMapWindow({
                 lat: selectedMarker.latitude,
                 lng: selectedMarker.longitude,
               }}
+              clickable
             >
-              <InfoWindow
-                data={markerInfo}
-                onClose={() => {
-                  onPlaceSelect(null);
-                }}
-              />
+              <InfoWindow data={markerInfo} />
             </CustomOverlayMap>
           )}
         </Map>
         <ResetButtonContainer>
-          <StyledBtn aria-label="reset_btn" onClick={handleResetCenter} variant="white" size="small">
+          <StyledBtn
+            aria-label="reset_btn"
+            onClick={() => userLocation && handleResetCenter(userLocation)}
+            variant="white"
+            size="small"
+          >
             <TbCurrentLocation size={20} />
           </StyledBtn>
         </ResetButtonContainer>
         {!isListExpanded && (
-          <ListViewButton onClick={onListExpand}>
-            <Text size="xs" weight="normal" variant="white">
+          <ListViewButton onClick={() => onListExpand && onListExpand(true)}>
+            <Text size="xs" variant="white" weight="normal">
               목록 보기
             </Text>
           </ListViewButton>
@@ -330,6 +250,7 @@ const Btn = styled.div`
   border-bottom: 0.5px solid ${({ theme }) => (theme.textColor === '#ffffff' ? '#c3c3c3' : '#6f6f6f')};
   width: fit-content;
   padding-bottom: 4px;
+  margin-bottom: 10px;
   gap: 6px;
   cursor: pointer;
 

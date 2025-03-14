@@ -84,4 +84,13 @@ public class VideoController implements VideoControllerApiSpec {
         videoService.deleteVideo(videoId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @Override
+    @GetMapping("/update")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> updateMainVideos() {
+        videoService.updateCoolVideos();
+        videoService.updateRecentVideos();
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

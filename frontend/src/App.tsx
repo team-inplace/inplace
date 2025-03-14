@@ -8,15 +8,15 @@ import AuthPage from '@/pages/Auth';
 import GlobalStyle from './global';
 import MainPage from './pages/Main';
 import ThemeProvider from './provider/Themes';
+import DetailPage from './pages/Detail';
+import InfluencerInfoPage from '@/pages/InfluencerInfo';
+import InfluencerPage from '@/pages/Influencer';
+import MapPage from './pages/Map';
 
-const DetailPage = lazy(() => import('@/pages/Detail'));
-const InfluencerPage = lazy(() => import('@/pages/Influencer'));
-const MapPage = lazy(() => import('@/pages/Map'));
 const MyPage = lazy(() => import('@/pages/My'));
 const ChoicePage = lazy(() => import('@/pages/Choice'));
 const SearchPage = lazy(() => import('@/pages/Search'));
 // const ReviewPage = lazy(() => import('@/pages/Review'));
-const InfluencerInfoPage = lazy(() => import('@/pages/InfluencerInfo'));
 const NotFoundPage = lazy(() => import('@/pages/NotFound'));
 
 function App() {

@@ -105,3 +105,16 @@ function deleteVideo(element) {
     }
   });
 }
+
+function updateMainVideo() {
+  $.ajax({
+    url: '/videos/update',
+    method: 'GET',
+    success: function() {
+      alert("Main Video가 업데이트 되었습니다.");
+    },
+    error: function () {
+      alert("Main Video 업데이트에 실패하였습니다.");
+    }
+  });
+}

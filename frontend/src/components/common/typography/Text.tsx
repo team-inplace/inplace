@@ -12,7 +12,7 @@ export const Text = styled.span<IText>`
   font-size: ${(props) => {
     switch (props.size) {
       case 'xxs':
-        return '12px';
+        return '14px';
       case 'xs':
         return '16px';
       case 's':

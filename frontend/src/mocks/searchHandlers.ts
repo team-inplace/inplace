@@ -1,6 +1,7 @@
 import { rest } from 'msw';
 import { BASE_URL } from '@/api/instance';
 import { getSearchInfluencerPath, getSearchPlacePath, getSearchVideoPath } from '@/api/hooks/useGetSearchData';
+import { getSearchKeywordPath } from '@/api/hooks/useGetSearchKeyword';
 
 export const searchHandlers = [
   rest.get(`${BASE_URL}/search/complete`, (req, res, ctx) => {
@@ -193,6 +194,17 @@ export const searchHandlers = [
       return searchParam.split('').some((char) => item.placeName.includes(char));
     });
     return res(ctx.status(200), ctx.json(filteredData));
+  }),
+  rest.get(`${BASE_URL}${getSearchKeywordPath()}`, (_, res, ctx) => {
+    const data = [
+      { placeId: 12, longitude: '128.642', latitude: '35.79' },
+      { placeId: 13, longitude: '128.545', latitude: '35.81' },
+      { placeId: 14, longitude: '128.51', latitude: '35.7777' },
+      { placeId: 15, longitude: '128.79', latitude: '35.783222' },
+      { placeId: 16, longitude: '128.71', latitude: '35.02222' },
+    ];
+
+    return res(ctx.status(200), ctx.json(data));
   }),
 ];
 export default searchHandlers;

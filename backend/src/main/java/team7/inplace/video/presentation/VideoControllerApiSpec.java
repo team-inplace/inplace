@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import team7.inplace.video.presentation.dto.VideoResponse;
@@ -56,4 +58,10 @@ public interface VideoControllerApiSpec {
     ResponseEntity<Page<Simple>> readPlaceNullVideo(
         @PageableDefault(page = 0, size = 10) Pageable pageable
     );
+
+    @Operation(
+        summary = "CoolVideo와 RecentVideo 업데이트",
+        description = "CoolVideo(인기순 10개 비디오), RecentVideo(최신순 10개 비디오)를 업데이트 합니다."
+    )
+    ResponseEntity<Void> updateMainVideos();
 }

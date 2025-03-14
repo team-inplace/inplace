@@ -9,12 +9,10 @@ public final class AliasUtil {
 
     public static String makeAlias(String influencerName, Category category) {
         String alias = mapTemplateToCategory(category);
-        return influencerName + " " + alias;
-    }
-
-    public static String makeAlias(String influencerName, String category) {
-        String alias = mapTemplateToCategory(Category.valueOf(category));
-        return influencerName + " " + alias;
+        if(hasBatchim(influencerName)) {
+            return influencerName + "이 " + alias;
+        }
+        return influencerName + "가 " + alias;
     }
 
     // 카테고리에 따라 템플릿을 매핑하는 메서드
@@ -27,5 +25,12 @@ public final class AliasUtil {
             case RESTAURANT -> Template.RESTAURANT.getRandomTemplate();
             default -> Template.NONE.getRandomTemplate();
         };
+    }
+
+    // 받침 유무 확인
+    public static boolean hasBatchim(String word) {
+        char lastChar = word.charAt(word.length() - 1);
+        // 한글 음절의 유니코드 범위에서 받침을 확인
+        return (lastChar - '가') % 28 != 0;
     }
 }

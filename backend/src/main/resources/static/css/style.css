@@ -52,6 +52,9 @@ img {
     border-radius: 10px;
     object-fit: cover;
 }
+button {
+
+}
 .category-container {
     display: flex;
     align-items: center;
@@ -131,3 +134,12 @@ img {
     color: black;
     text-decoration: none;
 }
+
+.title-btn-container {
+    width: 1000px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+

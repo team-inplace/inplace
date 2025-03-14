@@ -1,18 +1,19 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { CustomOverlayMap, Map, MapMarker, MarkerClusterer } from 'react-kakao-maps-sdk';
 import styled from 'styled-components';
 import { TbCurrentLocation } from 'react-icons/tb';
 import { GrPowerCycle } from 'react-icons/gr';
 import Button from '@/components/common/Button';
-import { LocationData, MarkerInfo, PlaceData } from '@/types';
+import { LocationData, PlaceData } from '@/types';
 import { useGetAllMarkers } from '@/api/hooks/useGetAllMarkers';
 import InfoWindow from '@/components/InfluencerInfo/InfluencerMapTap/InfoWindow';
-import { useGetMarkerInfo } from '@/api/hooks/useGetMarkerInfo';
 import OriginMarker from '@/assets/images/OriginMarker.png';
 import SelectedMarker from '@/assets/images/InplaceMarker.png';
 import { Text } from '@/components/common/typography/Text';
 import nowLocation from '@/assets/images/now_location.webp';
 import Loading from '@/components/common/layouts/Loading';
+import useMapActions from '@/hooks/Map/useMapAction';
+import useMarkerData from '@/hooks/Map/useMarkerData';
 
 interface MapWindowProps {
   center: { lat: number; lng: number };
@@ -41,9 +42,10 @@ export default function MapWindow({
   isListExpanded,
   onListExpand,
 }: MapWindowProps) {
-  const [map, setMap] = useState<kakao.maps.Map | null>(null);
+  const mapRef = useRef<kakao.maps.Map | null>(null);
+  const [isMapReady, setIsMapReady] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [mapCenter, setMapCenter] = useState({ lat: 37.5665, lng: 126.978 });
+  const [mapCenter, setMapCenter] = useState(center || { lat: 37.5665, lng: 126.978 });
   const [mapBound, setMapBound] = useState<LocationData>({
     topLeftLatitude: 0,
     topLeftLongitude: 0,
@@ -52,9 +54,15 @@ export default function MapWindow({
   });
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [showSearchButton, setShowSearchButton] = useState(false);
-  const [markerInfo, setMarkerInfo] = useState<MarkerInfo | PlaceData>();
-  const [shouldFetchData, setShouldFetchData] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const { moveMapToMarker, handleResetCenter } = useMapActions(mapRef);
+  const { markerInfo, handleMarkerClick, handleMapClick } = useMarkerData({
+    selectedPlaceId,
+    placeData,
+    onPlaceSelect,
+    moveMapToMarker,
+    mapRef,
+  });
 
   useEffect(() => {
     const handleResize = () => {
@@ -75,13 +83,12 @@ export default function MapWindow({
   });
 
   const selectedMarker = markers.find((m) => m.placeId === selectedPlaceId);
-  const MarkerInfoData = useGetMarkerInfo(selectedPlaceId?.toString() || '', shouldFetchData);
 
   const fetchMarkers = useCallback(() => {
-    if (!map) return;
+    if (!mapRef.current) return;
 
-    const bounds = map.getBounds();
-    const currentCenter = map.getCenter();
+    const bounds = mapRef.current.getBounds();
+    const currentCenter = mapRef.current.getCenter();
 
     const newBounds: LocationData = {
       topLeftLatitude: bounds.getNorthEast().getLat(),
@@ -94,73 +101,47 @@ export default function MapWindow({
 
     onCenterChange({ lat: currentCenter.getLat(), lng: currentCenter.getLng() });
     onBoundsChange(newBounds);
-  }, [map, onBoundsChange, onCenterChange]);
+  }, [mapRef.current]);
 
   useEffect(() => {
+    if (!isMapReady) return;
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
+          setIsLoading(false);
           const userLoc = {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           };
           setUserLocation(userLoc);
-          setIsLoading(false);
-          map?.setCenter(new kakao.maps.LatLng(userLoc.lat, userLoc.lng));
+          mapRef.current?.setCenter(new kakao.maps.LatLng(userLoc.lat, userLoc.lng));
           fetchMarkers();
         },
-        (err) => {
-          console.error('Geolocation error:', err);
+        (error) => {
+          console.error('Geolocation error:', error);
+          setIsLoading(false);
+          if (error.code === error.PERMISSION_DENIED) {
+            alert('위치 권한이 차단되었습니다. 위치를 수동으로 설정하세요.');
+          } else if (error.code === error.POSITION_UNAVAILABLE) {
+            alert('위치 정보를 가져올 수 없습니다.');
+          } else if (error.code === error.TIMEOUT) {
+            alert('위치 정보 요청이 시간 초과되었습니다. 다시 시도해주세요.');
+          }
         },
-        { enableHighAccuracy: true },
+        { maximumAge: 30000, timeout: 5000 },
       );
     } else {
-      setIsLoading(true);
+      setIsLoading(false);
       console.warn('Geolocation is not supported by this browser.');
     }
-  }, [map]);
+  }, [isMapReady]);
 
   useEffect(() => {
-    if (map && center) {
+    if (mapRef.current && center) {
       const position = new kakao.maps.LatLng(center.lat, center.lng);
-      map.setCenter(position);
+      mapRef.current.setCenter(position);
     }
-  }, [center, map]);
-
-  // 마커나 장소 선택시 지도 중심으로 이동
-  const moveMapToMarker = useCallback(
-    (latitude: number, longitude: number) => {
-      if (map) {
-        const currentLevel = map.getLevel();
-        const baseOffset = -0.007;
-
-        let levelMultiplier;
-        if (currentLevel <= 5) {
-          levelMultiplier = 1;
-        } else if (currentLevel <= 8) {
-          levelMultiplier = currentLevel * 1.05;
-        } else {
-          levelMultiplier = currentLevel * 2;
-        }
-
-        const offsetY = isMobile ? (baseOffset * levelMultiplier) / 5 : 0;
-        const position = new kakao.maps.LatLng(latitude - offsetY, longitude);
-
-        if (map.getLevel() > 10) {
-          map.setLevel(9, {
-            anchor: position,
-            animate: true,
-          });
-        }
-        setTimeout(() => {
-          if (map) {
-            map.panTo(position);
-          }
-        }, 100);
-      }
-    },
-    [isMobile, map],
-  );
+  }, [center, mapRef.current]);
 
   // 초기 선택 시에만 이동하도록
   useEffect(() => {
@@ -172,63 +153,10 @@ export default function MapWindow({
     }
   }, [selectedPlaceId, moveMapToMarker]);
 
-  // 마커 정보를 새로 호출한 후 데이터 업데이트
-  useEffect(() => {
-    if (shouldFetchData && MarkerInfoData.data) {
-      setMarkerInfo(MarkerInfoData.data);
-      setShouldFetchData(false);
-    }
-  }, [MarkerInfoData.data, shouldFetchData]);
-
-  // 마커 정보가 있을 경우 전달, 없을 경우 새로 호출 함수
-  const getMarkerInfoWithPlaceInfo = useCallback(
-    (place: number) => {
-      if (!placeData) return;
-
-      const existData = placeData.find((m) => m.placeId === place);
-      if (existData) {
-        setMarkerInfo(existData);
-        setShouldFetchData(false);
-      } else {
-        setShouldFetchData(true);
-      }
-    },
-    [placeData],
-  );
-
-  // 마커나 장소가 선택되었을 경우
-  useEffect(() => {
-    if (selectedPlaceId) {
-      getMarkerInfoWithPlaceInfo(selectedPlaceId);
-    }
-  }, [selectedPlaceId, placeData, getMarkerInfoWithPlaceInfo]);
-
   const handleSearchNearby = useCallback(() => {
     fetchMarkers();
     setShowSearchButton(false);
   }, [fetchMarkers]);
-
-  const handleResetCenter = useCallback(() => {
-    if (map && userLocation) {
-      map.setCenter(new kakao.maps.LatLng(userLocation.lat, userLocation.lng));
-      map.setLevel(4);
-      setShowSearchButton(false);
-    }
-  }, [userLocation]);
-
-  // 마커 클릭 시, 장소와 마커를 선택 상태로
-  const handleMarkerClick = useCallback(
-    (placeId: number, marker: kakao.maps.Marker) => {
-      if (map && marker) {
-        onPlaceSelect(selectedPlaceId === placeId ? null : placeId);
-        if (selectedPlaceId !== placeId) {
-          const pos = marker.getPosition();
-          moveMapToMarker(pos.getLat(), pos.getLng());
-        }
-      }
-    },
-    [selectedPlaceId, onPlaceSelect, moveMapToMarker],
-  );
 
   return (
     <MapContainer>
@@ -265,7 +193,8 @@ export default function MapWindow({
         style={{ width: '100%', height: isMobile ? 'auto' : '570px', aspectRatio: isMobile ? '1' : 'auto' }}
         level={4}
         onCreate={(mapInstance) => {
-          setMap(mapInstance);
+          mapRef.current = mapInstance;
+          setIsMapReady(true);
         }}
         onCenterChanged={() => {
           setShowSearchButton(true);
@@ -273,6 +202,7 @@ export default function MapWindow({
         onZoomChanged={() => {
           setShowSearchButton(true);
         }}
+        onClick={handleMapClick}
       >
         {userLocation && (
           <MapMarker
@@ -312,18 +242,19 @@ export default function MapWindow({
               lat: selectedMarker.latitude,
               lng: selectedMarker.longitude,
             }}
+            clickable
           >
-            <InfoWindow
-              data={markerInfo}
-              onClose={() => {
-                onPlaceSelect(null);
-              }}
-            />
+            <InfoWindow data={markerInfo} />
           </CustomOverlayMap>
         )}
       </Map>
       <ResetButtonContainer>
-        <StyledBtn aria-label="reset_btn" onClick={handleResetCenter} variant="white" size="small">
+        <StyledBtn
+          aria-label="reset_btn"
+          onClick={() => userLocation && handleResetCenter(userLocation)}
+          variant="white"
+          size="small"
+        >
           <TbCurrentLocation size={20} />
         </StyledBtn>
       </ResetButtonContainer>

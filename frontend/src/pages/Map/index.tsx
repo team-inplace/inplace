@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import styled from 'styled-components';
 import DropdownMenu from '@/components/Map/DropdownMenu';
 import MapWindow from '@/components/Map/MapWindow';
@@ -7,8 +7,9 @@ import Chip from '@/components/common/Chip';
 import { Text } from '@/components/common/typography/Text';
 import locationOptions from '@/utils/constants/LocationOptions';
 import categoryOptions from '@/utils/constants/CategoryOptions';
-import { LocationData, PlaceData } from '@/types';
 import useGetDropdownName from '@/api/hooks/useGetDropdownName';
+import useTouchDrag from '@/hooks/Map/useTouchDrag';
+import useMapState from '@/hooks/Map/useMapState';
 
 type SelectedOption = {
   main: string;
@@ -19,63 +20,24 @@ type SelectedOption = {
 
 export default function MapPage() {
   const { data: influencerOptions } = useGetDropdownName();
-  const [isListExpanded, setIsListExpanded] = useState(false);
   const [selectedInfluencers, setSelectedInfluencers] = useState<string[]>([]);
   const [selectedLocations, setSelectedLocations] = useState<SelectedOption[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [center, setCenter] = useState({ lat: 37.5665, lng: 126.978 });
-  const [selectedPlaceId, setSelectedPlaceId] = useState<number | null>(null);
-  const [placeData, setPlaceData] = useState<PlaceData[]>([]);
-  const [translateY, setTranslateY] = useState(window.innerHeight);
-  const lastMoveTimeRef = useRef(0);
-  const dragStartRef = useRef<{
-    isDragging: boolean;
-    startY: number;
-    startTranslate: number;
-  }>({ isDragging: false, startY: 0, startTranslate: window.innerHeight });
-
-  const [mapBounds, setMapBounds] = useState<LocationData>({
-    topLeftLatitude: 0,
-    topLeftLongitude: 0,
-    bottomRightLatitude: 0,
-    bottomRightLongitude: 0,
-  });
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    dragStartRef.current = {
-      isDragging: true,
-      startY: e.touches[0].clientY,
-      startTranslate: translateY,
-    };
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!dragStartRef.current.isDragging) return;
-
-    const now = Date.now();
-    if (now - lastMoveTimeRef.current < 50) return;
-
-    lastMoveTimeRef.current = now;
-
-    const delta = e.touches[0].clientY - dragStartRef.current.startY;
-    const newTranslate = dragStartRef.current.startTranslate + delta;
-    const clampedTranslate = Math.max(0, Math.min(window.innerHeight, newTranslate));
-    setTranslateY(clampedTranslate);
-  };
-  const autoCloseThreshold = window.innerHeight * 0.75;
-
-  const handleTouchEnd = () => {
-    dragStartRef.current.isDragging = false;
-
-    const threshold = 50;
-
-    if (Math.abs(translateY - dragStartRef.current.startTranslate) < threshold) {
-      setTranslateY(dragStartRef.current.startTranslate);
-    } else if (translateY > autoCloseThreshold) {
-      setTranslateY(window.innerHeight);
-      setIsListExpanded(false);
-    }
-  };
+  const {
+    center,
+    setCenter,
+    mapBounds,
+    isListExpanded,
+    selectedPlaceId,
+    placeData,
+    setIsListExpanded,
+    handleBoundsChange,
+    handleCenterChange,
+    handlePlaceSelect,
+    handleGetPlaceData,
+  } = useMapState();
+  const { translateY, setTranslateY, handleTouchStart, handleTouchMove, handleTouchEnd } =
+    useTouchDrag(setIsListExpanded);
 
   const filters = useMemo(
     () => ({
@@ -136,27 +98,6 @@ export default function MapPage() {
 
   const handleClearCategory = useCallback((categoryToRemove: string) => {
     setSelectedCategories((prev) => prev.filter((category) => category !== categoryToRemove));
-  }, []);
-
-  const handleBoundsChange = useCallback((bounds: LocationData) => {
-    setMapBounds(bounds);
-  }, []);
-
-  const handleCenterChange = useCallback((newCenter: { lat: number; lng: number }) => {
-    setCenter(newCenter);
-  }, []);
-
-  const handleGetPlaceData = useCallback((data: PlaceData[]) => {
-    setPlaceData((prevData) => {
-      if (JSON.stringify(prevData) !== JSON.stringify(data)) {
-        return data;
-      }
-      return prevData;
-    });
-  }, []);
-
-  const handlePlaceSelect = useCallback((placeId: number | null) => {
-    setSelectedPlaceId((prevId) => (prevId === placeId ? null : placeId));
   }, []);
 
   const handleListExpand = useCallback(() => {
@@ -288,6 +229,7 @@ const DropdownContainer = styled.div`
 `;
 
 const PlaceSectionDesktop = styled.div`
+  margin-top: 10px;
   @media screen and (max-width: 768px) {
     display: none;
   }

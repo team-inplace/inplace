@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { LocationData, MarkerData, PlaceData } from '@/types';
+import { MarkerData } from '@/types';
 import { useGetAllMarkers } from '@/api/hooks/useGetAllMarkers';
 import InfluencerMapWindow from './InfluencerMapWindow';
 import InfluencerPlaceSection from './InfluencerPlaceSection';
+import useTouchDrag from '@/hooks/Map/useTouchDrag';
+import useMapState from '@/hooks/Map/useMapState';
 
 export default function InfluencerMapTap({
   influencerImg,
@@ -12,29 +14,25 @@ export default function InfluencerMapTap({
   influencerImg: string;
   influencerName: string;
 }) {
+  const {
+    center,
+    mapBounds,
+    isListExpanded,
+    selectedPlaceId,
+    placeData,
+    setIsListExpanded,
+    handleBoundsChange,
+    handleCenterChange,
+    handlePlaceSelect,
+    handleGetPlaceData,
+  } = useMapState();
+  const { translateY, setTranslateY, handleTouchStart, handleTouchMove, handleTouchEnd } =
+    useTouchDrag(setIsListExpanded);
   const fetchLocationRef = useRef<() => void>();
-  const [center, setCenter] = useState({ lat: 37.5665, lng: 126.978 });
-  const [mapBounds, setMapBounds] = useState<LocationData>({
-    topLeftLatitude: 40.22639734631998,
-    topLeftLongitude: 117.27774208342159,
-    bottomRightLatitude: 31.274644378932404,
-    bottomRightLongitude: 139.18297869519475,
-  });
-  const [isListExpanded, setIsListExpanded] = useState(false);
   const filters = { categories: [], influencers: [influencerName] };
   const [shouldFetchPlaces, setShouldFetchPlaces] = useState(false);
   const [markers, setMarkers] = useState<MarkerData[]>([]);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [placeData, setPlaceData] = useState<PlaceData[]>([]);
-  const [selectedPlaceId, setSelectedPlaceId] = useState<number | null>(null);
-  const [translateY, setTranslateY] = useState(window.innerHeight);
-  const lastMoveTimeRef = useRef(0);
-  const dragStartRef = useRef<{
-    isDragging: boolean;
-    startY: number;
-    startTranslate: number;
-  }>({ isDragging: false, startY: 0, startTranslate: window.innerHeight });
-
   const { data: fetchedMarkers = [] } = useGetAllMarkers(
     {
       location: mapBounds,
@@ -51,75 +49,13 @@ export default function InfluencerMapTap({
     }
   }, [isInitialLoad, fetchedMarkers]);
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    dragStartRef.current = {
-      isDragging: true,
-      startY: e.touches[0].clientY,
-      startTranslate: translateY,
-    };
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!dragStartRef.current.isDragging) return;
-
-    const now = Date.now();
-    if (now - lastMoveTimeRef.current < 50) return;
-
-    lastMoveTimeRef.current = now;
-
-    const delta = e.touches[0].clientY - dragStartRef.current.startY;
-    const newTranslate = dragStartRef.current.startTranslate + delta;
-    const clampedTranslate = Math.max(0, Math.min(window.innerHeight, newTranslate));
-    setTranslateY(clampedTranslate);
-  };
-  const autoCloseThreshold = window.innerHeight * 0.75;
-
-  const handleTouchEnd = () => {
-    dragStartRef.current.isDragging = false;
-
-    const threshold = 50;
-
-    if (Math.abs(translateY - dragStartRef.current.startTranslate) < threshold) {
-      setTranslateY(dragStartRef.current.startTranslate);
-    } else if (translateY > autoCloseThreshold) {
-      setTranslateY(window.innerHeight);
-      setIsListExpanded(false);
-    }
-  };
-
-  const handleBoundsChange = useCallback((bounds: LocationData) => {
-    setMapBounds(bounds);
-  }, []);
-
-  const handleCenterChange = useCallback((newCenter: { lat: number; lng: number }) => {
-    setCenter(newCenter);
-  }, []);
-
   const handleCompleteFetch = useCallback((value: boolean) => {
     setShouldFetchPlaces(value);
   }, []);
 
-  const handleGetPlaceData = useCallback((data: PlaceData[]) => {
-    setPlaceData((prevData) => {
-      if (JSON.stringify(prevData) !== JSON.stringify(data)) {
-        return data;
-      }
-      return prevData;
-    });
-  }, []);
-
-  // handlePlaceSelect 함수 수정 - 장소 선택 시에만 상태 변경
-  const handlePlaceSelect = useCallback((placeId: number | null) => {
-    setSelectedPlaceId(placeId);
-    if (window.innerWidth <= 768) {
-      setIsListExpanded(false);
-      setTranslateY(window.innerHeight);
-    }
-  }, []);
-
-  const handleListExpand = useCallback(() => {
-    setIsListExpanded(true);
-    setTranslateY(0);
+  const handleListExpand = useCallback((value: boolean) => {
+    setIsListExpanded(value);
+    setTranslateY(value ? 0 : window.innerHeight);
   }, []);
 
   const handleSetSearchNearby = useCallback((fn: () => void) => {
@@ -172,6 +108,8 @@ export default function InfluencerMapTap({
           onGetPlaceData={handleGetPlaceData}
           onPlaceSelect={handlePlaceSelect}
           selectedPlaceId={selectedPlaceId}
+          isListExpanded={isListExpanded}
+          onListExpand={handleListExpand}
           onSearchNearby={() => fetchLocationRef.current?.()}
         />
       </MobilePlaceSection>
