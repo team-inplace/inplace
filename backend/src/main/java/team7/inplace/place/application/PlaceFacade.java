@@ -2,8 +2,10 @@ package team7.inplace.place.application;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import reactor.core.publisher.Mono;
 import team7.inplace.global.annotation.Facade;
 import team7.inplace.influencer.application.InfluencerService;
 import team7.inplace.place.application.command.PlaceLikeCommand;
@@ -17,6 +19,7 @@ import team7.inplace.review.application.ReviewService;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.video.application.VideoService;
 
+@Slf4j
 @Facade
 @RequiredArgsConstructor
 public class PlaceFacade {
@@ -38,19 +41,25 @@ public class PlaceFacade {
         return PlaceInfo.Marker.from(marker, influencerNames);
     }
 
-    public PlaceInfo.Detail getDetailedPlaces(Long placeId) {
+    public Mono<PlaceInfo.Detail> getDetailedPlaces(Long placeId) {
         var userId = AuthorizationUtil.getUserId();
 
-        var placeInfo = placeService.getPlaceInfo(placeId, userId);
-        var videoInfos = videoService.getVideosByPlaceId(placeInfo.placeId());
-        var reviewRates = reviewService.getReviewLikeRate(placeInfo.placeId());
+        var placeInfoMono = Mono.fromCallable(() -> placeService.getPlaceInfo(placeId, userId));
 
-        if (placeInfo.haveNoGooglePlaceId()) {
-            return PlaceInfo.Detail.of(placeInfo, null, videoInfos, reviewRates);
-        }
-        var googlePlace = placeService.getGooglePlaceInfo(placeInfo.googlePlaceId());
+        return placeInfoMono.flatMap(placeInfo -> {
+            var videoInfosMono = Mono.fromCallable(() -> videoService.getVideosByPlaceId(placeInfo.placeId()));
+            var reviewRatesMono = Mono.fromCallable(() -> reviewService.getReviewLikeRate(placeInfo.placeId()));
 
-        return PlaceInfo.Detail.of(placeInfo, googlePlace, videoInfos, reviewRates);
+            if (placeInfo.haveNoGooglePlaceId()) {
+                return Mono.zip(videoInfosMono, reviewRatesMono)
+                    .map(tuple -> PlaceInfo.Detail.of(placeInfo, null, tuple.getT1(), tuple.getT2()));
+            }
+
+            var googlePlaceMono = placeService.getGooglePlaceInfo(placeInfo.googlePlaceId());
+
+            return Mono.zip(googlePlaceMono, videoInfosMono, reviewRatesMono)
+                .map(tuple -> PlaceInfo.Detail.of(placeInfo, tuple.getT1(), tuple.getT2(), tuple.getT3()));
+        });
     }
 
     public List<PlaceQueryResult.Location> getPlaceLocations(
