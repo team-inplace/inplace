@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { RiMenuLine } from 'react-icons/ri';
+import { FaLock, FaLockOpen } from 'react-icons/fa6';
 import { FiSun, FiMoon } from 'react-icons/fi';
 import { motion, Variants } from 'framer-motion';
 import LoginModal from '@/components/common/modals/LoginModal';
@@ -9,6 +10,7 @@ import { Text } from '@/components/common/typography/Text';
 import Logo from '@/assets/images/Logo.svg';
 import useAuth from '@/hooks/useAuth';
 import useTheme from '@/hooks/useTheme';
+import SearchBar from '../SearchBar';
 
 const navVariants: Variants = {
   open: {
@@ -54,93 +56,72 @@ export default function Header() {
 
   return (
     <HeaderContainer ref={headerRef}>
-      <MobileMenuButton aria-label="side_bar" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-        <RiMenuLine size={24} color={isDarkMode ? 'white' : 'grey'} />
-      </MobileMenuButton>
-      <LogoLink to="/">
-        <LogoContainer>
-          <LogoImage src={Logo} alt="인플레이스 로고" />
-          <Text size="l" weight="bold" variant="mint">
-            인플레이스
-          </Text>
-        </LogoContainer>
-      </LogoLink>
-      <DesktopNav>
-        {isAuthenticated ? (
-          <>
-            {location.pathname === '/' && (
-              <NavItem
-                to="https://docs.google.com/forms/d/e/1FAIpQLSeBJcQg0gcVv2au5oFZ1aCLF9O_qbEiJCvnLEd0d1SSLLpDUA/viewform?pli=1"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Text size="xs" weight="normal">
-                  설문조사
-                </Text>
-              </NavItem>
-            )}
-            <NavItem to="/map">
-              <Text size="xs" weight="normal">
-                지도
+      <HeaderContentWrapper>
+        <LeftSection>
+          <MobileMenuButton aria-label="side_bar" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            <RiMenuLine size={24} color={isDarkMode ? 'white' : 'grey'} />
+          </MobileMenuButton>
+          <LogoLink to="/">
+            <LogoContainer>
+              <LogoImage src={Logo} alt="인플레이스 로고" />
+              <Text size="l" weight="bold" variant="mint">
+                인플레이스
               </Text>
-            </NavItem>
-            <NavItem to="/influencer">
-              <Text size="xs" weight="normal">
-                인플루언서
-              </Text>
-            </NavItem>
-            <NavItem to="/my">
-              <Text size="xs" weight="normal">
-                마이페이지
-              </Text>
-            </NavItem>
+            </LogoContainer>
+          </LogoLink>
+        </LeftSection>
+        <NavLinksContainer>
+          <NavItem
+            to="https://docs.google.com/forms/d/e/1FAIpQLSeBJcQg0gcVv2au5oFZ1aCLF9O_qbEiJCvnLEd0d1SSLLpDUA/viewform?pli=1"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Text size="s" weight="normal">
+              설문조사
+            </Text>
+          </NavItem>
+          <NavItem to="/map">
+            <Text size="s" weight="normal">
+              지도
+            </Text>
+          </NavItem>
+          <NavItem to="/influencer">
+            <Text size="s" weight="normal">
+              인플루언서
+            </Text>
+          </NavItem>
+          <NavItem
+            to="/my"
+            style={{
+              visibility: isAuthenticated ? 'visible' : 'hidden',
+              pointerEvents: isAuthenticated ? 'auto' : 'none',
+            }}
+          >
+            <Text size="s" weight="normal">
+              마이페이지
+            </Text>
+          </NavItem>
+        </NavLinksContainer>
+        <RightSection>
+          <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" />
+          {isAuthenticated ? (
             <LoginButton onClick={handleLogout}>
-              <Text size="xs" weight="normal">
-                로그아웃
-              </Text>
+              <FaLockOpen />
             </LoginButton>
-            <ThemeButton aria-label="테마 변경 버튼" onClick={toggleTheme}>
-              {isDarkMode ? <FiSun size={20} color="white" /> : <FiMoon size={20} color="black" />}
-            </ThemeButton>
-          </>
-        ) : (
-          <>
-            {location.pathname === '/' && (
-              <NavItem
-                to="https://docs.google.com/forms/d/e/1FAIpQLSeBJcQg0gcVv2au5oFZ1aCLF9O_qbEiJCvnLEd0d1SSLLpDUA/viewform?pli=1"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Text size="xs" weight="normal">
-                  설문조사
-                </Text>
-              </NavItem>
-            )}
-            <NavItem to="/map">
-              <Text size="xs" weight="normal">
-                지도
-              </Text>
-            </NavItem>
-            <NavItem to="/influencer">
-              <Text size="xs" weight="normal">
-                인플루언서
-              </Text>
-            </NavItem>
+          ) : (
             <LoginModal currentPath={location.pathname}>
               {(openModal: () => void) => (
                 <LoginButton onClick={openModal}>
-                  <Text size="xs" weight="normal">
-                    로그인
-                  </Text>
+                  <FaLock size={20} />
                 </LoginButton>
               )}
             </LoginModal>
-            <ThemeButton aria-label="테마 변경 버튼" onClick={toggleTheme}>
-              {isDarkMode ? <FiSun size={20} color="white" /> : <FiMoon size={20} color="black" />}
-            </ThemeButton>
-          </>
-        )}
-      </DesktopNav>
+          )}
+          <ThemeButton aria-label="테마 변경 버튼" onClick={toggleTheme}>
+            {isDarkMode ? <FiSun size={20} color="white" /> : <FiMoon size={20} color="black" />}
+          </ThemeButton>
+        </RightSection>
+      </HeaderContentWrapper>
       <MobileNav
         as={motion.nav}
         initial="closed"
@@ -247,13 +228,34 @@ export default function Header() {
 
 export const HEADER_HEIGHT = 80;
 
-const HeaderContainer = styled.header`
+const HeaderContainer = styled.header``;
+
+const HeaderContentWrapper = styled.div`
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 20px 0px;
   min-height: 80px;
-  box-sizing: border-box;
+`;
+
+const LeftSection = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const NavLinksContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const RightSection = styled.div`
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
 `;
 
 const LogoLink = styled(Link)`
@@ -276,15 +278,6 @@ const LogoImage = styled.img`
   height: 22px;
   width: 22px;
   margin-right: 10px;
-`;
-
-const DesktopNav = styled.nav`
-  display: flex;
-  align-items: center;
-
-  @media screen and (max-width: 768px) {
-    display: none;
-  }
 `;
 
 const MobileNav = styled(motion.nav)<{ $isOpen: boolean }>`

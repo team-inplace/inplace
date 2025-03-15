@@ -175,7 +175,7 @@ const SearchBarContainer = styled.div`
   align-items: center;
   justify-content: flex-end;
   position: relative;
-  width: 100%;
+  width: 260px;
 
   @media screen and (max-width: 768px) {
     width: 90%;

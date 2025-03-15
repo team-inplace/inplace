@@ -4,7 +4,6 @@ import MainBanner from '@/components/Main/MainBanner';
 import ResearchModal from '@/components/common/modals/ResearchModal';
 
 import { useGetMain } from '@/api/hooks/useGetMain';
-import SearchBar from '@/components/common/SearchBar';
 import useAuth from '@/hooks/useAuth';
 import { useGetLogoutVideo } from '@/api/hooks/useGetLogoutVideo';
 import { useGetMyInfluencerVideo } from '@/api/hooks/useGetMyInfluencerVideo';
@@ -28,7 +27,6 @@ export default function MainPage() {
     <>
       <ResearchModal />
       <Wrapper>
-        <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" />
         <MainBanner items={bannerData} />
         <BaseLayout
           type="influencer"
