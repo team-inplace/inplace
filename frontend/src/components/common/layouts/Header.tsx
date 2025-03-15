@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
-import { RiMenuLine } from 'react-icons/ri';
+import { RiMenuLine, RiCloseLine } from 'react-icons/ri';
 import { FaLock, FaLockOpen } from 'react-icons/fa6';
 import { FiSun, FiMoon } from 'react-icons/fi';
 import { motion, Variants } from 'framer-motion';
@@ -63,9 +63,6 @@ export default function Header() {
     <HeaderContainer ref={headerRef}>
       <HeaderContentWrapper>
         <LeftSection>
-          <MobileMenuButton aria-label="side_bar" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            <RiMenuLine size={24} color={isDarkMode ? 'white' : 'grey'} />
-          </MobileMenuButton>
           <LogoLink to="/">
             <LogoContainer>
               <LogoImage src={Logo} alt="인플레이스 로고" />
@@ -110,23 +107,49 @@ export default function Header() {
           </NavItem>
         </NavLinksContainer>
         <RightSection>
-          <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" />
-          {isAuthenticated ? (
-            <LoginButton onClick={handleLogout}>
-              <FaLockOpen size={20} />
-            </LoginButton>
-          ) : (
-            <LoginModal currentPath={location.pathname}>
-              {(openModal: () => void) => (
-                <LoginButton onClick={openModal}>
-                  <FaLock size={20} />
-                </LoginButton>
-              )}
-            </LoginModal>
-          )}
-          <ThemeButton aria-label="테마 변경 버튼" onClick={toggleTheme}>
-            {isDarkMode ? <FiSun size={20} color="white" /> : <FiMoon size={20} color="black" />}
-          </ThemeButton>
+          <DesktopOnlySearchBar>
+            <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" />
+          </DesktopOnlySearchBar>
+          <MobileOnlyIcons>
+            {!isMenuOpen && (
+              <>
+                <MobileSearchBar>
+                  <SearchBar placeholder="검색하기" />
+                </MobileSearchBar>
+                <MobileMenuButton aria-label="메뉴 열기" onClick={() => setIsMenuOpen(true)}>
+                  <RiMenuLine size={24} color={isDarkMode ? 'white' : 'grey'} />
+                </MobileMenuButton>
+              </>
+            )}
+            {isMenuOpen && (
+              <>
+                <ThemeButton aria-label="테마 변경 버튼" onClick={toggleTheme}>
+                  {isDarkMode ? <FiSun size={20} color="white" /> : <FiMoon size={20} color="black" />}
+                </ThemeButton>
+                <MobileMenuButton aria-label="메뉴 닫기" onClick={() => setIsMenuOpen(false)}>
+                  <RiCloseLine size={24} color={isDarkMode ? 'white' : 'grey'} />
+                </MobileMenuButton>
+              </>
+            )}
+          </MobileOnlyIcons>
+          <DesktopOnlyButtons>
+            {isAuthenticated ? (
+              <LoginButton onClick={handleLogout}>
+                <FaLockOpen size={20} />
+              </LoginButton>
+            ) : (
+              <LoginModal currentPath={location.pathname}>
+                {(openModal: () => void) => (
+                  <LoginButton onClick={openModal}>
+                    <FaLock size={20} />
+                  </LoginButton>
+                )}
+              </LoginModal>
+            )}
+            <ThemeButton aria-label="테마 변경 버튼" onClick={toggleTheme}>
+              {isDarkMode ? <FiSun size={20} color="white" /> : <FiMoon size={20} color="black" />}
+            </ThemeButton>
+          </DesktopOnlyButtons>
         </RightSection>
       </HeaderContentWrapper>
       <MobileNav
@@ -139,11 +162,6 @@ export default function Header() {
         <MenuContainer variants={itemVariants}>
           {isAuthenticated ? (
             <>
-              <MobileNavItem to="" onClick={toggleTheme}>
-                <Text size="xs" weight="normal">
-                  {isDarkMode ? '라이트 모드' : '다크 모드'}
-                </Text>
-              </MobileNavItem>
               {location.pathname === '/' && (
                 <MobileNavItem
                   to="https://docs.google.com/forms/d/e/1FAIpQLSeBJcQg0gcVv2au5oFZ1aCLF9O_qbEiJCvnLEd0d1SSLLpDUA/viewform?pli=1"
@@ -184,11 +202,6 @@ export default function Header() {
             </>
           ) : (
             <>
-              <MobileNavItem to="" onClick={toggleTheme}>
-                <Text size="xs" weight="normal">
-                  {isDarkMode ? '라이트 모드' : '다크 모드'}
-                </Text>
-              </MobileNavItem>
               {location.pathname === '/' && (
                 <MobileNavItem
                   to="https://docs.google.com/forms/d/e/1FAIpQLSeBJcQg0gcVv2au5oFZ1aCLF9O_qbEiJCvnLEd0d1SSLLpDUA/viewform?pli=1"
@@ -241,6 +254,10 @@ const HeaderContentWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   min-height: 80px;
+
+  @media (max-width: 768px) {
+    padding: 0 20px;
+  }
 `;
 
 const LeftSection = styled.div`
@@ -261,19 +278,13 @@ const NavLinksContainer = styled.div`
 const RightSection = styled.div`
   display: flex;
   align-items: center;
-
-  gap: 8px;
+  gap: 26px;
 `;
 
 const LogoLink = styled(Link)`
   text-decoration: none;
   display: flex;
   align-items: center;
-
-  @media screen and (max-width: 768px) {
-    position: absolute;
-    right: 5%;
-  }
 `;
 
 const LogoContainer = styled.div`
@@ -285,6 +296,39 @@ const LogoImage = styled.img`
   height: 22px;
   width: 22px;
   margin-right: 10px;
+`;
+
+const DesktopOnlySearchBar = styled.div`
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const MobileSearchBar = styled.div`
+  width: 140px;
+  & form {
+    right: 30%;
+  }
+`;
+
+const DesktopOnlyButtons = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 30px;
+
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const MobileOnlyIcons = styled.div`
+  display: none;
+
+  @media screen and (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
 `;
 
 const MobileNav = styled(motion.nav)<{ $isOpen: boolean }>`
@@ -333,7 +377,6 @@ const MobileNavItem = styled(Link)`
 `;
 
 const LoginButton = styled.div`
-  margin-left: 20px;
   cursor: pointer;
 `;
 
@@ -342,18 +385,10 @@ const MobileLoginButton = styled.div`
 `;
 
 const MobileMenuButton = styled.button`
-  display: none;
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
-
-  @media screen and (max-width: 768px) {
-    display: block;
-    position: absolute;
-    left: 5%;
-    height: 22px;
-  }
 `;
 
 const MenuContainer = styled(motion.div)`
@@ -370,7 +405,6 @@ const ThemeButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
-  margin-left: 20px;
   padding: 0;
   display: flex;
   align-items: center;
@@ -379,5 +413,9 @@ const ThemeButton = styled.button`
 
   &:hover {
     transform: rotate(30deg);
+  }
+
+  @media screen and (max-width: 768px) {
+    margin-right: 20px;
   }
 `;
