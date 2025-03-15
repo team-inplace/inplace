@@ -15,6 +15,7 @@ export default function SearchBar({ placeholder = '키워드를 입력해주세�
   const [dropDownList, setDropDownList] = useState<SearchComplete[]>([]);
   const [itemIndex, setItemIndex] = useState(-1);
   const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const debouncedInputValue = useDebounce(inputValue, 300);
 
@@ -33,16 +34,18 @@ export default function SearchBar({ placeholder = '키워드를 입력해주세�
     const handleClickOutside = (event: MouseEvent) => {
       if (searchBarRef.current && !searchBarRef.current.contains(event.target as Node)) {
         setIsOpen(false);
+        setIsExpanded(false);
+        setInputValue('');
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
 
-    setIsOpen(inputValue !== '');
+    setIsOpen(inputValue !== '' && isExpanded);
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [searchResults, inputValue]);
+  }, [searchResults, inputValue, isExpanded]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newInputValue = event.target.value;
@@ -61,8 +64,19 @@ export default function SearchBar({ placeholder = '키워드를 입력해주세�
   const handleSearch = (searchValue: string) => {
     if (searchValue.trim()) {
       const query = encodeURIComponent(searchValue);
-      setTimeout(() => setInputValue(''), 0);
+      setTimeout(() => {
+        setInputValue('');
+        setIsExpanded(false);
+      }, 0);
       navigate(`/search?query=${query}`);
+    }
+  };
+
+  const toggleSearchBar = () => {
+    setIsExpanded(!isExpanded);
+    if (isExpanded) {
+      setInputValue('');
+      setIsOpen(false);
     }
   };
 
@@ -88,19 +102,30 @@ export default function SearchBar({ placeholder = '키워드를 입력해주세�
     }
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSearch(inputValue);
+  };
+
   return (
     <SearchBarContainer ref={searchBarRef}>
-      <SearchInputWrapper $isOpen={isOpen}>
-        <SearchInput
-          type="text"
-          value={inputValue}
-          onChange={handleInputChange}
-          onKeyDown={handleDropDownKey}
-          placeholder={placeholder}
-        />
-        <SearchIconWrapper role="button" aria-label="검색" onClick={() => handleSearch(inputValue)} />
-      </SearchInputWrapper>
-      {inputValue && isOpen && (
+      {isExpanded && (
+        <SearchForm $isOpen={isOpen} onSubmit={handleSubmit}>
+          <SearchInput
+            type="text"
+            value={inputValue}
+            onChange={handleInputChange}
+            onKeyDown={handleDropDownKey}
+            placeholder={placeholder}
+          />
+        </SearchForm>
+      )}
+
+      <SearchButton type="button" aria-label="검색" onClick={toggleSearchBar}>
+        <SearchIcon />
+      </SearchButton>
+
+      {inputValue && isOpen && isExpanded && (
         <SearchDropDownBox>
           {dropDownList.length === 0 ? (
             <SearchDropDownItem>해당하는 키워드가 없습니다!</SearchDropDownItem>
@@ -146,33 +171,51 @@ export default function SearchBar({ placeholder = '키워드를 입력해주세�
 }
 
 const SearchBarContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  position: relative;
   width: 100%;
+
   @media screen and (max-width: 768px) {
     width: 90%;
   }
 `;
 
-const SearchInputWrapper = styled.div<{ $isOpen: boolean }>`
+const SearchForm = styled.form<{ $isOpen: boolean }>`
+  height: 34px;
   display: flex;
   align-items: center;
   background: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#414141' : '#ffffff')};
-  padding: 12px 16px;
-  border: 1.5px solid #a5a5a5;
   border-bottom: ${({ $isOpen }) => ($isOpen ? 'none' : null)};
   border-radius: ${({ $isOpen }) => ($isOpen ? '16px 16px 0 0' : '16px')};
+  border: 1.5px solid #a5a5a5;
+  position: absolute;
+  right: 40px;
+  animation: slideFromRight 0.5s cubic-bezier(0.5, -0.5, 0.5, 1.5) forwards;
   z-index: 3;
+
+  @keyframes slideFromRight {
+    from {
+      width: 0;
+      opacity: 0;
+    }
+    to {
+      width: calc(100% - 40px);
+      opacity: 1;
+    }
+  }
 `;
 
 const SearchInput = styled.input`
-  font-size: 16px;
-  flex: 1;
+  font-size: 14px;
+  width: 100%;
   color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#ffffff' : '#333333')};
   background: transparent;
   border: none;
-  margin-right: 8px;
   outline: none;
   z-index: 1;
-  padding: 0;
+  padding: 0 16px;
 
   &::placeholder {
     color: #a5a5a5;
@@ -180,20 +223,29 @@ const SearchInput = styled.input`
   }
 `;
 
-const SearchIconWrapper = styled.div`
+const SearchButton = styled.button`
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 2;
+`;
+
+const SearchIcon = styled.span`
   width: 20px;
   height: 20px;
   background-color: #55ebff;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M23.384,21.619,16.855,15.09a9.284,9.284,0,1,0-1.768,1.768l6.529,6.529a1.266,1.266,0,0,0,1.768,0A1.251,1.251,0,0,0,23.384,21.619ZM2.75,9.5a6.75,6.75,0,1,1,6.75,6.75A6.758,6.758,0,0,1,2.75,9.5Z'/%3E%3C/svg%3E")
     center / contain no-repeat;
-  cursor: pointer;
+  display: block;
 `;
 
 const SearchDropDownBox = styled.ul`
   font-size: 14px;
   display: inline-block;
   position: absolute;
-  width: 960px;
+  width: calc(100% - 37px);
+  right: 40px;
+  top: 24px;
   padding: 8px 0px;
   background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#414141' : '#ffffff')};
   border: 1.5px solid #a5a5a5;
