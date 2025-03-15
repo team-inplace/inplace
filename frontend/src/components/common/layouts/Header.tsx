@@ -54,6 +54,11 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const isActive = (path: string) => {
+    if (path.startsWith('http')) return false;
+    return location.pathname === path;
+  };
+
   return (
     <HeaderContainer ref={headerRef}>
       <HeaderContentWrapper>
@@ -75,17 +80,18 @@ export default function Header() {
             to="https://docs.google.com/forms/d/e/1FAIpQLSeBJcQg0gcVv2au5oFZ1aCLF9O_qbEiJCvnLEd0d1SSLLpDUA/viewform?pli=1"
             target="_blank"
             rel="noopener noreferrer"
+            $isActive={false}
           >
             <Text size="s" weight="normal">
               설문조사
             </Text>
           </NavItem>
-          <NavItem to="/map">
+          <NavItem to="/map" $isActive={isActive('/map')}>
             <Text size="s" weight="normal">
               지도
             </Text>
           </NavItem>
-          <NavItem to="/influencer">
+          <NavItem to="/influencer" $isActive={isActive('/influencer')}>
             <Text size="s" weight="normal">
               인플루언서
             </Text>
@@ -96,6 +102,7 @@ export default function Header() {
               visibility: isAuthenticated ? 'visible' : 'hidden',
               pointerEvents: isAuthenticated ? 'auto' : 'none',
             }}
+            $isActive={isActive('/my')}
           >
             <Text size="s" weight="normal">
               마이페이지
@@ -106,7 +113,7 @@ export default function Header() {
           <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" />
           {isAuthenticated ? (
             <LoginButton onClick={handleLogout}>
-              <FaLockOpen />
+              <FaLockOpen size={20} />
             </LoginButton>
           ) : (
             <LoginModal currentPath={location.pathname}>
@@ -299,11 +306,24 @@ const MobileNav = styled(motion.nav)<{ $isOpen: boolean }>`
   }
 `;
 
-const NavItem = styled(Link)`
+const NavItem = styled(Link)<{ $isActive: boolean }>`
   margin-left: 20px;
   text-decoration: none;
   cursor: pointer;
   color: inherit;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -5px;
+    width: 100%;
+    height: 3px;
+    background-color: #55ebff;
+    transform: ${({ $isActive }) => ($isActive ? 'scaleX(1)' : 'scaleX(0)')};
+    transition: transform 0.3s ease;
+  }
 `;
 
 const MobileNavItem = styled(Link)`
