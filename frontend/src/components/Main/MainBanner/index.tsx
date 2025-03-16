@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { GrPrevious, GrNext } from 'react-icons/gr';
-
 import styled from 'styled-components';
 
 import BannerItem from '@/components/Main/MainBanner/BannerItem';
@@ -8,13 +7,42 @@ import BannerItem from '@/components/Main/MainBanner/BannerItem';
 import { BannerData } from '@/types';
 import NoItem from '@/components/common/layouts/NoItem';
 
-const getTransformValue = ({ $currentIndex, $isMobile }: { $currentIndex: number; $isMobile: boolean }) => {
+const getTransformValue = ({
+  $currentIndex,
+  $isMobile,
+  $items,
+  $isReturning,
+  $animationProgress,
+}: {
+  $currentIndex: number;
+  $isMobile: boolean;
+  $items: BannerData[];
+  $isReturning: boolean;
+  $animationProgress: number;
+}) => {
   if ($isMobile) {
     return `translateX(-${$currentIndex * 100}%)`;
   }
 
-  if ($currentIndex === 0) {
+  if ($currentIndex === 0 && !$isReturning) {
     return 'none';
+  }
+
+  const totalItems = $items.length;
+  const maxIndex = totalItems - 2;
+
+  if ($isReturning) {
+    const startPosition = maxIndex * 50;
+
+    // 애니메이션 위치 계산 (animationProgress는 0(시작)에서 1(완료)로 변함)
+    const position = startPosition - startPosition * $animationProgress;
+
+    return `translateX(-${position}%)`;
+  }
+  const isLastTwoItems = $currentIndex >= maxIndex && $currentIndex <= totalItems - 1;
+
+  if (isLastTwoItems) {
+    return `translateX(-${maxIndex * 50}%)`;
   }
 
   return `translateX(-${$currentIndex * 50}%)`;
@@ -23,6 +51,9 @@ const getTransformValue = ({ $currentIndex, $isMobile }: { $currentIndex: number
 export default function MainBanner({ items = [] }: { items: BannerData[] }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [isReturning, setIsReturning] = useState(false);
+  const [animationProgress, setAnimationProgress] = useState(0);
+  const animationRef = useRef<number | null>(null);
 
   const filteredItems = items.filter((item) => {
     if (isMobile) {
@@ -36,6 +67,29 @@ export default function MainBanner({ items = [] }: { items: BannerData[] }) {
     if (!a.isMain && b.isMain) return 1;
     return 0;
   });
+
+  // 애니메이션 프레임 처리
+  const animateReturn = (startTime: number) => {
+    const animationDuration = 400; // ms
+
+    const animate = (currentTime: number) => {
+      const elapsedTime = currentTime - startTime;
+      const progress = Math.min(elapsedTime / animationDuration, 1);
+
+      setAnimationProgress(progress);
+
+      if (progress < 1) {
+        animationRef.current = requestAnimationFrame(animate);
+      } else {
+        // 애니메이션 완료
+        setIsReturning(false);
+        setAnimationProgress(0);
+        setCurrentIndex(0);
+      }
+    };
+
+    animationRef.current = requestAnimationFrame(animate);
+  };
 
   useEffect(() => {
     const checkMobile = () => {
@@ -53,25 +107,45 @@ export default function MainBanner({ items = [] }: { items: BannerData[] }) {
   }, [isMobile]);
 
   useEffect(() => {
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     const interval = setInterval(() => {
-      if (sortedItems.length > 1) {
-        setCurrentIndex((prevIndex) => {
-          const maxIndex = isMobile ? sortedItems.length - 1 : sortedItems.length - 2;
-          return prevIndex === maxIndex ? 0 : prevIndex + 1;
-        });
+      if (sortedItems.length > 1 && !isReturning) {
+        const maxIndex = isMobile ? sortedItems.length - 1 : sortedItems.length - 2;
+
+        if (currentIndex === maxIndex) {
+          setIsReturning(true);
+          animateReturn(performance.now());
+        } else {
+          setCurrentIndex((prev) => prev + 1);
+        }
       }
     }, 5000);
     return () => clearInterval(interval);
-  }, [sortedItems.length, isMobile]);
+  }, [sortedItems.length, isMobile, currentIndex, isReturning]);
 
   const handleBtnPrevClick = () => {
-    setCurrentIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+    if (!isReturning) {
+      setCurrentIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+    }
   };
 
   const handleBtnNextClick = () => {
-    if (sortedItems.length > 1) {
+    if (sortedItems.length > 1 && !isReturning) {
       const maxIndex = isMobile ? sortedItems.length - 1 : sortedItems.length - 2;
-      setCurrentIndex((prevIndex) => Math.min(prevIndex + 1, maxIndex));
+
+      if (currentIndex === maxIndex) {
+        setIsReturning(true);
+        animateReturn(performance.now());
+      } else {
+        setCurrentIndex((prev) => Math.min(prev + 1, maxIndex));
+      }
     }
   };
 
@@ -81,18 +155,24 @@ export default function MainBanner({ items = [] }: { items: BannerData[] }) {
         <NoItem message="배너 정보가 없어요!" height={400} />
       ) : (
         <>
-          <PrevBtn aria-label="prev_btn" onClick={handleBtnPrevClick} disabled={currentIndex === 0}>
+          <PrevBtn aria-label="prev_btn" onClick={handleBtnPrevClick} disabled={currentIndex === 0 || isReturning}>
             <GrPrevious size={40} />
           </PrevBtn>
           <NextBtn
             aria-label="next_btn"
             onClick={handleBtnNextClick}
-            disabled={currentIndex === (isMobile ? sortedItems.length - 1 : sortedItems.length - 2)}
+            disabled={currentIndex === (isMobile ? sortedItems.length - 1 : sortedItems.length - 2) || isReturning}
           >
             <GrNext size={40} />
           </NextBtn>
           <CarouselWrapper>
-            <CarouselContainer $currentIndex={currentIndex} $isMobile={isMobile}>
+            <CarouselContainer
+              $currentIndex={currentIndex}
+              $isMobile={isMobile}
+              $items={sortedItems}
+              $isReturning={isReturning}
+              $animationProgress={animationProgress}
+            >
               {sortedItems.map((item) => (
                 <BannerItem
                   key={item.id}
@@ -101,7 +181,10 @@ export default function MainBanner({ items = [] }: { items: BannerData[] }) {
                   influencerId={item.influencerId}
                   isMain={item.isMain}
                   isMobile={item.isMobile}
-                  isFirst={currentIndex === 0 && !isMobile}
+                  isFirst={
+                    (currentIndex === 0 && !isReturning && !isMobile) ||
+                    (isReturning && animationProgress > 0.5 && !isMobile)
+                  }
                 />
               ))}
             </CarouselContainer>
@@ -111,6 +194,7 @@ export default function MainBanner({ items = [] }: { items: BannerData[] }) {
     </Container>
   );
 }
+
 const Container = styled.div`
   position: relative;
   width: 100%;
@@ -130,6 +214,11 @@ const PrevBtn = styled.button`
   left: 10px;
   z-index: 1;
   color: white;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 const NextBtn = styled.button`
@@ -140,6 +229,11 @@ const NextBtn = styled.button`
   right: 10px;
   z-index: 1;
   color: white;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 const CarouselWrapper = styled.div`
@@ -149,9 +243,15 @@ const CarouselWrapper = styled.div`
   overflow: hidden;
 `;
 
-const CarouselContainer = styled.div<{ $currentIndex: number; $isMobile: boolean }>`
+const CarouselContainer = styled.div<{
+  $currentIndex: number;
+  $isMobile: boolean;
+  $items: BannerData[];
+  $isReturning: boolean;
+  $animationProgress: number;
+}>`
   display: flex;
-  transition: transform 0.5s ease-in-out;
+  transition: ${(props) => (props.$isReturning ? 'none' : 'transform 0.5s ease-in-out')};
   transform: ${getTransformValue};
   width: 100%;
 `;
