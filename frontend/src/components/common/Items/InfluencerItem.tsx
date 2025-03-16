@@ -3,21 +3,21 @@ import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
 
 import styled from 'styled-components';
 
-import { MdLocationOn } from 'react-icons/md';
+// import { MdLocationOn } from 'react-icons/md';
 import { useCallback, useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Paragraph } from '@/components/common/typography/Paragraph';
-import backCard from '@/assets/images/back-card.webp';
+// import backCard from '@/assets/images/back-card.webp';
 import { InfluencerData } from '@/types';
 import { usePostInfluencerLike } from '@/api/hooks/usePostInfluencerLike';
 import useAuth from '@/hooks/useAuth';
 import LoginModal from '@/components/common/modals/LoginModal';
 import FallbackImage from './FallbackImage';
 
-interface InfluencerItemProps extends InfluencerData {
-  useBackCard?: boolean;
-  useNav?: boolean;
-}
+// interface InfluencerItemProps extends InfluencerData {
+//   useBackCard?: boolean;
+//   useNav?: boolean;
+// }
 
 export default function InfluencerItem({
   influencerId,
@@ -25,9 +25,9 @@ export default function InfluencerItem({
   influencerImgUrl,
   influencerJob,
   likes,
-  useBackCard = true,
-  useNav = true,
-}: InfluencerItemProps) {
+  // useBackCard = true,
+  // useNav = true,
+}: InfluencerData) {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
   const [isLike, setIsLike] = useState(likes);
@@ -81,14 +81,14 @@ export default function InfluencerItem({
             )}
           </LikeIcon>
           <FallbackImage src={influencerImgUrl} alt={influencerName} />
-          {useBackCard && useNav && (
+          {/* {useBackCard && useNav && (
             <BackImageWrapper>
               <MdLocationOn size={50} color="#55EBFF" />
               <Paragraph size="m" weight="bold" variant="white">
                 지도 보기
               </Paragraph>
             </BackImageWrapper>
-          )}
+          )} */}
         </ImageContainer>
         <TextWrapper>
           <Paragraph size="m" weight="bold">
@@ -146,22 +146,22 @@ const ImageContainer = styled.div`
   }
 `;
 
-const BackImageWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  background-image: url(${backCard});
-  background-size: cover;
-  background-position: center;
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-`;
+// const BackImageWrapper = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   align-items: center;
+//   justify-content: center;
+//   position: absolute;
+//   width: 100%;
+//   height: 100%;
+//   top: 0;
+//   left: 0;
+//   background-image: url(${backCard});
+//   background-size: cover;
+//   background-position: center;
+//   opacity: 0;
+//   transition: opacity 0.3s ease-in-out;
+// `;
 const LikeIcon = styled.div`
   position: absolute;
   width: 30px;
