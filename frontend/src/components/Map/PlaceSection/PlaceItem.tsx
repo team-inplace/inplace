@@ -73,15 +73,15 @@ export default function PlaceItem({
             <FallbackImage src={imgSrc} alt={placeName} />
           </ImageContainer>
           <TextContainer>
-            <Text size="s" weight="bold" variant="white">
+            <Text size="s" weight="bold">
               {placeName}
             </Text>
-            <Text size="xxs" weight="normal" variant="#bdbdbd">
+            <Text size="xxs" weight="normal" variant="#a09f9f">
               <FaMapMarkerAlt size={12} />
               {getFullAddress(address)}
             </Text>
             <InfluencerName>
-              <Text size="xxs" weight="normal" variant="white">
+              <Text size="xxs" weight="normal">
                 {videos[0].influencerName}
               </Text>
             </InfluencerName>
@@ -115,6 +115,7 @@ const PlaceCard = styled.div<{ $isSelected: boolean }>`
   height: 102px;
   border-radius: 6px;
   cursor: pointer;
+  color: ${({ theme }) => (theme.textColor === '#ffffff' ? 'white' : '#333333')};
   background-color: ${({ $isSelected, theme }) => {
     if ($isSelected) return theme.backgroundColor === '#292929' ? '#1b1a1a' : '#d5ecec';
     return 'none';
