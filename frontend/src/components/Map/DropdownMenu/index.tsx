@@ -70,11 +70,31 @@ export default function DropdownMenu({
 
   const filteredOptions = useMemo(() => {
     try {
-      return options?.filter((option) => option?.label?.toLowerCase().includes(searchTerm.toLowerCase())) || [];
+      return (
+        options?.filter((option) => {
+          const mainMatch = option?.label?.toLowerCase().includes(searchTerm.toLowerCase());
+
+          const hasMatchingSubOption = option?.subOptions?.some((subOption) =>
+            subOption?.label?.toLowerCase().includes(searchTerm.toLowerCase()),
+          );
+          return mainMatch || hasMatchingSubOption;
+        }) || []
+      );
     } catch {
       return [];
     }
   }, [options, searchTerm]);
+
+  useEffect(() => {
+    if (!searchTerm || !options?.length) return;
+    const mainOptionWithSubMatch = options.find((option) =>
+      option?.subOptions?.some?.((subOption) => subOption?.label?.toLowerCase().includes(searchTerm.toLowerCase())),
+    );
+
+    if (mainOptionWithSubMatch) {
+      setSelectedMainOption(mainOptionWithSubMatch);
+    }
+  }, [searchTerm, options]);
 
   const handleMainOptionClick = (option: Option) => {
     setSelectedMainOption(option);
@@ -130,20 +150,21 @@ export default function DropdownMenu({
 
   const renderSubOptions = () => {
     if (!selectedMainOption || !selectedMainOption.subOptions) return null;
-
     const allOption: Option = {
       label: '전체',
       lat: selectedMainOption.lat,
       lng: selectedMainOption.lng,
     };
+    const filteredSubOptions = [allOption, ...selectedMainOption.subOptions].filter(
+      (subOption) => !searchTerm || subOption.label.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
 
-    return [allOption, ...selectedMainOption.subOptions].map((subOption) => {
+    return filteredSubOptions.map((subOption) => {
       const isFiltered = (selectedOptions as { main: string; sub?: string }[])?.some(
         (item) =>
           item.main === selectedMainOption.label &&
           (subOption.label === '전체' ? !item.sub : item.sub === subOption.label),
       );
-
       return (
         <DropdownItem
           key={subOption.label}
