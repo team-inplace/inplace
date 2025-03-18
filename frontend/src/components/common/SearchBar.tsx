@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import useDebounce from '@/hooks/useDebounce';
 import { useGetSearchComplete } from '@/api/hooks/useGetSearchComplete';
@@ -7,16 +7,23 @@ import { SearchComplete } from '@/types';
 
 interface SearchBarProps {
   placeholder?: string;
+  isSearchPage?: boolean;
+  width?: string;
 }
 
-export default function SearchBar({ placeholder = '키워드를 입력해주세요!' }: SearchBarProps) {
+export default function SearchBar({
+  placeholder = '키워드를 입력해주세요!',
+  isSearchPage = false,
+  width = '260px',
+}: SearchBarProps) {
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState('');
   const [dropDownList, setDropDownList] = useState<SearchComplete[]>([]);
   const [itemIndex, setItemIndex] = useState(-1);
   const [isOpen, setIsOpen] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(isSearchPage);
   const debouncedInputValue = useDebounce(inputValue, 300);
+  const location = useLocation();
 
   const { data: searchResults } = useGetSearchComplete(debouncedInputValue);
 
@@ -33,8 +40,10 @@ export default function SearchBar({ placeholder = '키워드를 입력해주세�
     const handleClickOutside = (event: MouseEvent) => {
       if (searchBarRef.current && !searchBarRef.current.contains(event.target as Node)) {
         setIsOpen(false);
-        setIsExpanded(false);
-        setInputValue('');
+        if (!isSearchPage) {
+          setIsExpanded(false);
+          setInputValue('');
+        }
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -44,7 +53,12 @@ export default function SearchBar({ placeholder = '키워드를 입력해주세�
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [searchResults, inputValue, isExpanded]);
+  }, [searchResults, inputValue, isExpanded, isSearchPage]);
+
+  useEffect(() => {
+    setIsOpen(false);
+    setDropDownList([]);
+  }, [location]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newInputValue = event.target.value;
@@ -63,19 +77,26 @@ export default function SearchBar({ placeholder = '키워드를 입력해주세�
   const handleSearch = (searchValue: string) => {
     if (searchValue.trim()) {
       const query = encodeURIComponent(searchValue);
+
       setTimeout(() => {
         setInputValue('');
-        setIsExpanded(false);
+        if (!isSearchPage) {
+          setIsExpanded(false);
+        }
       }, 0);
       navigate(`/search?query=${query}`);
     }
   };
 
   const toggleSearchBar = () => {
-    setIsExpanded(!isExpanded);
-    if (isExpanded) {
-      setInputValue('');
-      setIsOpen(false);
+    if (isSearchPage) {
+      handleSearch(inputValue);
+    } else {
+      setIsExpanded(!isExpanded);
+      if (isExpanded) {
+        setInputValue('');
+        setIsOpen(false);
+      }
     }
   };
 
@@ -107,25 +128,33 @@ export default function SearchBar({ placeholder = '키워드를 입력해주세�
   };
 
   return (
-    <SearchBarContainer ref={searchBarRef}>
-      {isExpanded && (
-        <SearchForm $isOpen={isOpen} onSubmit={handleSubmit}>
+    <SearchBarContainer ref={searchBarRef} $width={isSearchPage ? '960px' : width} $isSearchPage={isSearchPage}>
+      {(isExpanded || isSearchPage) && (
+        <SearchForm $isOpen={isOpen} onSubmit={handleSubmit} $isSearchPage={isSearchPage}>
           <SearchInput
             type="text"
             value={inputValue}
             onChange={handleInputChange}
             onKeyDown={handleDropDownKey}
             placeholder={placeholder}
+            $isSearchPage={isSearchPage}
           />
+          {isSearchPage && (
+            <SearchButton type="submit" aria-label="검색" $isSearchPage={isSearchPage}>
+              <SearchIcon $isExpanded />
+            </SearchButton>
+          )}
         </SearchForm>
       )}
 
-      <SearchButton type="button" aria-label="검색" onClick={toggleSearchBar}>
-        <SearchIcon isExpanded={isExpanded} />
-      </SearchButton>
+      {!isSearchPage && (
+        <SearchButton type="button" aria-label="검색" onClick={toggleSearchBar} $isSearchPage={isSearchPage}>
+          <SearchIcon $isExpanded={isExpanded} />
+        </SearchButton>
+      )}
 
       {inputValue && isOpen && isExpanded && (
-        <SearchDropDownBox>
+        <SearchDropDownBox $isSearchPage={isSearchPage}>
           {dropDownList.length === 0 ? (
             <SearchDropDownItem>해당하는 키워드가 없습니다!</SearchDropDownItem>
           ) : (
@@ -169,29 +198,31 @@ export default function SearchBar({ placeholder = '키워드를 입력해주세�
   );
 }
 
-const SearchBarContainer = styled.div`
+const SearchBarContainer = styled.div<{ $width: string; $isSearchPage: boolean }>`
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: ${({ $isSearchPage }) => ($isSearchPage ? 'center' : 'flex-end')};
   position: relative;
-  width: 260px;
+  width: ${({ $width }) => $width};
 
   @media screen and (max-width: 768px) {
     width: 90%;
   }
 `;
 
-const SearchForm = styled.form<{ $isOpen: boolean }>`
-  height: 34px;
+const SearchForm = styled.form<{ $isOpen: boolean; $isSearchPage: boolean }>`
+  height: ${({ $isSearchPage }) => ($isSearchPage ? '44px' : '34px')};
   display: flex;
   align-items: center;
+  justify-content: ${({ $isSearchPage }) => ($isSearchPage ? 'space-between' : 'flex-start')};
   background: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#414141' : '#ffffff')};
   border-bottom: ${({ $isOpen }) => ($isOpen ? 'none' : null)};
   border-radius: ${({ $isOpen }) => ($isOpen ? '16px 16px 0 0' : '16px')};
   border: 1.5px solid #a5a5a5;
-  position: absolute;
-  right: 40px;
-  animation: slideFromRight 0.5s cubic-bezier(0.5, -0.5, 0.5, 1.5) forwards;
+  position: ${({ $isSearchPage }) => ($isSearchPage ? 'relative' : 'absolute')};
+  right: ${({ $isSearchPage }) => ($isSearchPage ? 'auto' : '40px')};
+  width: ${({ $isSearchPage }) => ($isSearchPage ? '100%' : 'calc(100% - 40px)')};
+  animation: ${({ $isSearchPage }) => ($isSearchPage ? 'none' : 'slideFromRight 0.5s forwards')};
   z-index: 3;
 
   @keyframes slideFromRight {
@@ -206,8 +237,8 @@ const SearchForm = styled.form<{ $isOpen: boolean }>`
   }
 `;
 
-const SearchInput = styled.input`
-  font-size: 14px;
+const SearchInput = styled.input<{ $isSearchPage: boolean }>`
+  font-size: ${({ $isSearchPage }) => ($isSearchPage ? '16px' : '14px')};
   width: 100%;
   color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#ffffff' : '#333333')};
   background: transparent;
@@ -222,18 +253,19 @@ const SearchInput = styled.input`
   }
 `;
 
-const SearchButton = styled.button`
+const SearchButton = styled.button<{ $isSearchPage?: boolean }>`
   background: transparent;
   border: none;
   cursor: pointer;
   z-index: 2;
+  padding: ${({ $isSearchPage }) => ($isSearchPage ? '0 16px' : '0')};
 `;
 
-const SearchIcon = styled.span<{ isExpanded: boolean }>`
+const SearchIcon = styled.span<{ $isExpanded: boolean }>`
   width: 20px;
   height: 20px;
   background-color: ${(props) => {
-    if (props.isExpanded) return '#55ebff';
+    if (props.$isExpanded) return '#55ebff';
     if (props.theme.backgroundColor === '#292929') return '#ffffff';
     return '#292929';
   }};
@@ -242,13 +274,13 @@ const SearchIcon = styled.span<{ isExpanded: boolean }>`
   display: block;
 `;
 
-const SearchDropDownBox = styled.ul`
+const SearchDropDownBox = styled.ul<{ $isSearchPage: boolean }>`
   font-size: 14px;
   display: inline-block;
   position: absolute;
-  width: calc(100% - 37px);
-  right: 40px;
-  top: 24px;
+  width: ${({ $isSearchPage }) => ($isSearchPage ? '100%' : 'calc(100% - 37px)')};
+  right: ${({ $isSearchPage }) => ($isSearchPage ? 'auto' : '40px')};
+  top: ${({ $isSearchPage }) => ($isSearchPage ? '44px' : '24px')};
   padding: 8px 0px;
   background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#414141' : '#ffffff')};
   border: 1.5px solid #a5a5a5;
@@ -261,7 +293,7 @@ const SearchDropDownBox = styled.ul`
   z-index: 10;
 
   @media screen and (max-width: 768px) {
-    width: 90%;
+    width: ${({ $isSearchPage }) => ($isSearchPage ? '100%' : '90%')};
   }
 `;
 
