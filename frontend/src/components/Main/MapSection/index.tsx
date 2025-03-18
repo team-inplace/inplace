@@ -34,12 +34,14 @@ export default function MapSection() {
             >
               {isMobile ? (
                 <>
-                  내 주변 인플루언서가 방문한
+                  <HighlightText>내 주변</HighlightText> 인플루언서가 방문한
                   <br />
                   장소는 어디일까요?
                 </>
               ) : (
-                '내 주변 인플루언서가 방문한 장소는 어디일까요?'
+                <>
+                  <HighlightText>내 주변</HighlightText> 인플루언서가 방문한 장소는 어디일까요?
+                </>
               )}
             </span>
           </Paragraph>
@@ -61,7 +63,7 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#2f2f2f' : '#d8f4f4')};
-  color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#ffffff' : '#797979')};
+  color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#ffffff' : '#292929')};
   border-radius: 10px;
   padding: 0 42px;
 
@@ -93,6 +95,11 @@ const TextSection = styled.div`
     width: 90%;
     gap: 16px;
   }
+`;
+
+const HighlightText = styled.span`
+  color: #55ebff;
+  font-weight: bold;
 `;
 
 const IconContainer = styled.div`
