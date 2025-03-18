@@ -16,7 +16,6 @@ export default function SearchBar({ placeholder = '키워드를 입력해주세�
   const [itemIndex, setItemIndex] = useState(-1);
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-
   const debouncedInputValue = useDebounce(inputValue, 300);
 
   const { data: searchResults } = useGetSearchComplete(debouncedInputValue);
@@ -122,7 +121,7 @@ export default function SearchBar({ placeholder = '키워드를 입력해주세�
       )}
 
       <SearchButton type="button" aria-label="검색" onClick={toggleSearchBar}>
-        <SearchIcon />
+        <SearchIcon isExpanded={isExpanded} />
       </SearchButton>
 
       {inputValue && isOpen && isExpanded && (
@@ -230,10 +229,14 @@ const SearchButton = styled.button`
   z-index: 2;
 `;
 
-const SearchIcon = styled.span`
+const SearchIcon = styled.span<{ isExpanded: boolean }>`
   width: 20px;
   height: 20px;
-  background-color: #55ebff;
+  background-color: ${(props) => {
+    if (props.isExpanded) return '#55ebff';
+    if (props.theme.backgroundColor === '#292929') return '#ffffff';
+    return '#292929';
+  }};
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M23.384,21.619,16.855,15.09a9.284,9.284,0,1,0-1.768,1.768l6.529,6.529a1.266,1.266,0,0,0,1.768,0A1.251,1.251,0,0,0,23.384,21.619ZM2.75,9.5a6.75,6.75,0,1,1,6.75,6.75A6.758,6.758,0,0,1,2.75,9.5Z'/%3E%3C/svg%3E")
     center / contain no-repeat;
   display: block;
