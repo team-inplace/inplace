@@ -10,6 +10,7 @@ import Pagination from '@/components/common/Pagination';
 import InfluencerSearchBar from '@/components/common/InfluencerSearchBar';
 import { useGetSearchInfluencers } from '@/api/hooks/useGetSearchInfluencers';
 import useDebounce from '@/hooks/useDebounce';
+import useTheme from '@/hooks/useTheme';
 
 export default function ChoicePage() {
   const navigate = useNavigate();
@@ -18,7 +19,8 @@ export default function ChoicePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [inputValue, setInputValue] = useState('');
   const [isMobile, setIsMobile] = useState(false);
-
+  const { theme } = useTheme();
+  const isDarkMode = theme === 'dark';
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
@@ -107,7 +109,7 @@ export default function ChoicePage() {
       <Title>
         <Text size="l" weight="bold">
           관심 있는{' '}
-          <Text size="ll" weight="bold" variant="mint">
+          <Text size="ll" weight="bold" style={{ color: '#47c8d9' }}>
             인플루언서
           </Text>
           를 선택하세요!
@@ -137,7 +139,15 @@ export default function ChoicePage() {
         <Button aria-label="skip_btn" variant="white" style={buttonStyle} onClick={handleSkip}>
           건너뛰기
         </Button>
-        <Button aria-label="start_btn" variant="mint" style={buttonStyle} onClick={handleStart}>
+        <Button
+          aria-label="start_btn"
+          variant="mint"
+          style={{
+            ...buttonStyle,
+            ...(isDarkMode ? {} : { background: '#47c8d9' }),
+          }}
+          onClick={handleStart}
+        >
           시작하기
         </Button>
       </ButtonWrapper>

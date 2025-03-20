@@ -7,7 +7,7 @@ const darkMode = {
 };
 
 const lightMode = {
-  backgroundColor: '#ecfbfb',
+  backgroundColor: '#f7fcff',
   textColor: '#333333',
 };
 

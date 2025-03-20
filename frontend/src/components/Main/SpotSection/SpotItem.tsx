@@ -27,7 +27,7 @@ export default function SpotItem({ videoId, videoAlias, videoUrl, place, isInflu
         {videoAlias}
       </Paragraph>
       <Paragraph size="xs" weight="normal">
-        <FaMapMarkerAlt size={20} color="#55EBFF" />
+        <FaMapMarkerAlt size={20} color="#47c8d9" />
         {place.placeName}
       </Paragraph>
     </Wrapper>

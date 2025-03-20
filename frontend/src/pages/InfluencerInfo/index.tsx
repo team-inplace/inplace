@@ -229,13 +229,13 @@ const Tap = styled.button<{ $active: boolean }>`
   font-weight: bold;
   color: ${(props) => {
     if (!props.$active) return props.theme.textColor === '#ffffff' ? 'white' : '#8c8c8c';
-    return '#55ebff';
+    return '#47c8d9';
   }};
   border: none;
   border-bottom: 3px solid
     ${(props) => {
       if (!props.$active) return props.theme.textColor === '#ffffff' ? 'white' : '#8c8c8c';
-      return '#55ebff';
+      return '#47c8d9';
     }};
   background: none;
   cursor: pointer;
