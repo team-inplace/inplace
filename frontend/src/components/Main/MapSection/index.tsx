@@ -62,7 +62,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#2f2f2f' : '#d8f4f4')};
+  background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#2f2f2f' : '#d0f0f08b')};
   color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#ffffff' : '#292929')};
   border-radius: 10px;
   padding: 0 42px;
@@ -98,7 +98,7 @@ const TextSection = styled.div`
 `;
 
 const HighlightText = styled.span`
-  color: #55ebff;
+  color: #35b1c1;
   font-weight: bold;
 `;
 
@@ -125,7 +125,6 @@ const ConfirmButton = styled.button`
 
   &:hover {
     background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'rgba(255, 255, 255, 0.2)' : '#6dc0d0')};
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 
   @media screen and (max-width: 768px) {
