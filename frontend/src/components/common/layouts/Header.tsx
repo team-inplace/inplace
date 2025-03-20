@@ -66,7 +66,7 @@ export default function Header() {
           <LogoLink to="/">
             <LogoContainer>
               <LogoImage src={Logo} alt="인플레이스 로고" />
-              <Text size="l" weight="bold" variant="mint">
+              <Text size="ll" weight="bold" variant="mint">
                 인플레이스
               </Text>
             </LogoContainer>
@@ -79,17 +79,17 @@ export default function Header() {
             rel="noopener noreferrer"
             $isActive={false}
           >
-            <Text size="s" weight="normal">
+            <Text size="m" weight="normal">
               설문조사
             </Text>
           </NavItem>
           <NavItem to="/map" $isActive={isActive('/map')}>
-            <Text size="s" weight="normal">
+            <Text size="m" weight="normal">
               지도
             </Text>
           </NavItem>
           <NavItem to="/influencer" $isActive={isActive('/influencer')}>
-            <Text size="s" weight="normal">
+            <Text size="m" weight="normal">
               인플루언서
             </Text>
           </NavItem>
@@ -101,7 +101,7 @@ export default function Header() {
             }}
             $isActive={isActive('/my')}
           >
-            <Text size="s" weight="normal">
+            <Text size="m" weight="normal">
               마이페이지
             </Text>
           </NavItem>
@@ -135,19 +135,19 @@ export default function Header() {
           <DesktopOnlyButtons>
             {isAuthenticated ? (
               <LoginButton onClick={handleLogout}>
-                <FaLockOpen size={20} />
+                <FaLockOpen size={22} />
               </LoginButton>
             ) : (
               <LoginModal currentPath={location.pathname}>
                 {(openModal: () => void) => (
                   <LoginButton onClick={openModal}>
-                    <FaLock size={20} />
+                    <FaLock size={22} />
                   </LoginButton>
                 )}
               </LoginModal>
             )}
             <ThemeButton aria-label="테마 변경 버튼" onClick={toggleTheme}>
-              {isDarkMode ? <FiSun size={20} color="white" /> : <FiMoon size={20} color="black" />}
+              {isDarkMode ? <FiSun size={22} color="white" /> : <FiMoon size={22} color="black" />}
             </ThemeButton>
           </DesktopOnlyButtons>
         </RightSection>
