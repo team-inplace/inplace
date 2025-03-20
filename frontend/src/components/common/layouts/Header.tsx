@@ -361,12 +361,16 @@ const NavItem = styled(Link)<{ $isActive: boolean }>`
     content: '';
     position: absolute;
     left: 0;
-    bottom: -5px;
+    bottom: -6px;
     width: 100%;
     height: 3px;
-    background-color: #55ebff;
+    background-color: #47c8d9;
     transform: ${({ $isActive }) => ($isActive ? 'scaleX(1)' : 'scaleX(0)')};
     transition: transform 0.3s ease;
+  }
+
+  &:hover::after {
+    transform: scaleX(1);
   }
 `;
 
