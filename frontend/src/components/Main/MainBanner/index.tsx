@@ -156,14 +156,18 @@ export default function MainBanner({ items = [] }: { items: BannerData[] }) {
       ) : (
         <>
           <PrevBtn aria-label="prev_btn" onClick={handleBtnPrevClick} disabled={currentIndex === 0 || isReturning}>
-            <GrPrevious size={40} />
+            <PrevIconWrapper>
+              <GrPrevious size={40} />
+            </PrevIconWrapper>
           </PrevBtn>
           <NextBtn
             aria-label="next_btn"
             onClick={handleBtnNextClick}
             disabled={currentIndex === (isMobile ? sortedItems.length - 1 : sortedItems.length - 2) || isReturning}
           >
-            <GrNext size={40} />
+            <NextIconWrapper>
+              <GrNext size={40} />
+            </NextIconWrapper>
           </NextBtn>
           <CarouselWrapper>
             <CarouselContainer
@@ -204,6 +208,14 @@ const Container = styled.div`
   @media screen and (max-width: 768px) {
     width: 90%;
   }
+`;
+
+const PrevIconWrapper = styled.div`
+  filter: drop-shadow(-2px 0 2px rgba(0, 0, 0, 0.4));
+`;
+
+const NextIconWrapper = styled.div`
+  filter: drop-shadow(2px 0 2px rgba(0, 0, 0, 0.4));
 `;
 
 const PrevBtn = styled.button`
