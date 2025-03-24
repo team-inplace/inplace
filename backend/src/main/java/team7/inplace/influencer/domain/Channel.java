@@ -18,7 +18,7 @@ public class Channel {
     private String channelId;
 
     @Column(nullable = true, columnDefinition = "TEXT")
-    private String lastVideoId;
+    private String lastMediumVideoId;
 
     @Column(nullable = true, columnDefinition = "TEXT")
     private String lastLongVideoId;
@@ -26,11 +26,11 @@ public class Channel {
     public Channel(String channelTitle, String channelId) {
         this.channelTitle = channelTitle;
         this.channelId = channelId;
-        this.lastVideoId = null;
+        this.lastMediumVideoId = null;
     }
 
     public void updateLastMediumVideo(String lastVideoId) {
-        this.lastVideoId = lastVideoId;
+        this.lastMediumVideoId = lastVideoId;
     }
 
     public void updateLastLongVideo(String lastLongVideoId) {

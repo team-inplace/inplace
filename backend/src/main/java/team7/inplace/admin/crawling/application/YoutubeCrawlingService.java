@@ -31,7 +31,7 @@ public class YoutubeCrawlingService {
         var crawlInfos = influencers.stream()
             .map(influencer -> {
                 var channel = influencer.getChannelId();
-                var lastMediumVideoId = influencer.getLastVideo();
+                var lastMediumVideoId = influencer.getLastMediumVideo();
                 var lastLongVideoId = influencer.getLastLongVideo();
 
                 var mediumVideoItems = youtubeClient.getMediumVideos(channel, lastMediumVideoId);

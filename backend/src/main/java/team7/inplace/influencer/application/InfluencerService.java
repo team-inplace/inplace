@@ -141,7 +141,7 @@ public class InfluencerService {
     public void updateLastMediumVideo(Long influencerId, String lastVideo) {
         var influencer = influencerRepository.findById(influencerId)
             .orElseThrow();
-        influencer.updateLastVideo(lastVideo);
+        influencer.updateLastMediumVideo(lastVideo);
     }
 
     @Transactional()

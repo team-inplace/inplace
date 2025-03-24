@@ -52,8 +52,8 @@ public class Influencer extends BaseEntity {
         return this.channel.getChannelId();
     }
 
-    public String getLastVideo() {
-        return this.channel.getLastVideoId();
+    public String getLastMediumVideo() {
+        return this.channel.getLastMediumVideoId();
     }
 
     public String getLastLongVideo() {
@@ -64,8 +64,8 @@ public class Influencer extends BaseEntity {
         this.hidden = !this.hidden;
     }
 
-    public void updateLastVideo(String lastVideoId) {
-        this.channel.updateLastMediumVideo(lastVideoId);
+    public void updateLastMediumVideo(String lastMediumVideo) {
+        this.channel.updateLastMediumVideo(lastMediumVideo);
     }
 
     public void updateLastLongVideo(String lastLongVideoId) {
