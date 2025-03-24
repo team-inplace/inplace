@@ -27,7 +27,7 @@ public class YoutubeCrawlingService {
         4. 카카오 API를 호출해 장소 정보를 가져온다
      */
     public List<CrawlingInfo.VideoPlaceInfo> crawlAllVideos() {
-        var influencers = influencerRepository.findAll();
+        var influencers = influencerRepository.findAllByOrderByUpdateAtAsc();
         var crawlInfos = influencers.stream()
             .map(influencer -> {
                 var channel = influencer.getChannelId();

@@ -25,4 +25,6 @@ public interface InfluencerRepository extends JpaRepository<Influencer, Long> {
 
     @Query("SELECT i.id FROM Influencer i WHERE i.name = :name")
     Optional<Long> findIdByName(String name);
+
+    List<Influencer> findAllByOrderByUpdateAtAsc();
 }
