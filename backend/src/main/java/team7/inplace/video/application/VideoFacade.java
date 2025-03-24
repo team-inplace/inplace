@@ -30,7 +30,7 @@ public class VideoFacade {
         List<VideoCommand.Create> videoCommands,
         Long influencerId
     ) {
-        videoService.createVideos(videoCommands, influencerId);
+        videoService.createVideos(videoCommands);
         influencerService.updateLastMediumVideo(influencerId, videoCommands.get(0).videoId());
     }
 
@@ -39,7 +39,7 @@ public class VideoFacade {
         List<VideoCommand.Create> videoCommands,
         Long influencerId
     ) {
-        videoService.createVideos(videoCommands, influencerId);
+        videoService.createVideos(videoCommands);
         influencerService.updateLastLongVideo(influencerId, videoCommands.get(0).videoId());
     }
 

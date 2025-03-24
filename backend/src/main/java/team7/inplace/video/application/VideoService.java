@@ -95,7 +95,7 @@ public class VideoService {
     }
 
     @Transactional
-    public void createVideos(List<Create> videoCommands, Long influencerId) {
+    public void createVideos(List<Create> videoCommands) {
         var videos = videoCommands.stream()
             .filter(command -> !videoRepository.existsByUuid(command.videoId()))
             .map(Create::toEntity)

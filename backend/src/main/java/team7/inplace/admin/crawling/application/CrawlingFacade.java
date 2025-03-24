@@ -23,12 +23,14 @@ public class CrawlingFacade {
             if (mediumVideoCommands.isEmpty()) {
                 continue;
             }
+            mediumVideoCommands.sort((a, b) -> b.createdAt().compareTo(a.createdAt()));
             videoFacade.createMediumVideos(mediumVideoCommands, crawlingInfo.influencerId());
 
             var longVideoCommands = crawlingInfo.toLongVideoCommands();
             if (longVideoCommands.isEmpty()) {
                 continue;
             }
+            longVideoCommands.sort((a, b) -> b.createdAt().compareTo(a.createdAt()));
             videoFacade.createLongVideos(longVideoCommands, crawlingInfo.influencerId());
         }
     }
