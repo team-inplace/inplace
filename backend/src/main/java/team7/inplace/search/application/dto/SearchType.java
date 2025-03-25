@@ -1,5 +1,8 @@
 package team7.inplace.search.application.dto;
 
+import team7.inplace.global.exception.InplaceException;
+import team7.inplace.global.exception.code.SearchErrorCode;
+
 public enum SearchType {
     PLACE, INFLUENCER, VIDEO, ALL;
 
@@ -9,7 +12,7 @@ public enum SearchType {
         }
 
         if (!type.equals("all") && !type.equals("place")) {
-            throw new IllegalArgumentException("Invalid type");
+            throw InplaceException.of(SearchErrorCode.SEARCH_TYPE_INVALID);
         }
 
         return SearchType.valueOf(type.toUpperCase());
