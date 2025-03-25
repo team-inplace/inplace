@@ -32,19 +32,21 @@ public class SearchService {
     private final InfluencerSearchRepository influencerSearchRepository;
     private final PlaceSearchRepository placeSearchRepository;
 
-    public List<AutoCompletionInfo> searchAutoCompletions(String keyword) {
-        var influencerSearchInfo = influencerSearchRepository.searchAutoComplete(keyword);
-        var placeSearchInfo = placeSearchRepository.searchAutoComplete(keyword);
-
-        var influencerAutoComplete = influencerSearchInfo.stream()
+    public List<AutoCompletionInfo> searchAutoCompletions(SearchType type, String keyword) {
+        var placeSearchInfo = placeSearchRepository.searchAutoComplete(keyword).stream()
             .map(
                 info -> new AutoCompletionInfo(info.keyword(), info.score(), SearchType.INFLUENCER))
             .toList();
-        var placeAutoComplete = placeSearchInfo.stream()
+
+        if (type.equals(SearchType.PLACE)) {
+            return placeSearchInfo;
+        }
+
+        var influencerSearchInfo = influencerSearchRepository.searchAutoComplete(keyword).stream()
             .map(info -> new AutoCompletionInfo(info.keyword(), info.score(), SearchType.PLACE))
             .toList();
 
-        return Stream.concat(influencerAutoComplete.stream(), placeAutoComplete.stream())
+        return Stream.concat(influencerSearchInfo.stream(), placeSearchInfo.stream())
             .sorted(Comparator.comparing(AutoCompletionInfo::score).reversed())
             .limit(MAX_COMPLETION_RESULTS)
             .toList();
