@@ -8,8 +8,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import team7.inplace.influencer.presentation.dto.InfluencerResponse;
 import team7.inplace.search.application.dto.AutoCompletionInfo;
+import team7.inplace.search.presentation.dto.SearchRequest;
 import team7.inplace.search.presentation.dto.SearchResponse;
 import team7.inplace.video.presentation.dto.VideoResponse;
 
@@ -18,7 +20,9 @@ public interface SearchControllerApiSpec {
 
     @Operation(summary = "추천 검색어를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "검색어 조회 성공")
-    ResponseEntity<List<AutoCompletionInfo>> searchKeywords(String keyword);
+    ResponseEntity<List<AutoCompletionInfo>> searchKeywords(
+        @ModelAttribute SearchRequest.AutoComplete request
+    );
 
     @Operation(summary = "비디오를 검색합니다.")
     @ApiResponse(responseCode = "200", description = "비디오 검색 성공")
@@ -35,6 +39,6 @@ public interface SearchControllerApiSpec {
     @Operation(summary = "인플루언서 검색창 전용 / 페이징 처리된 인플루언서 페이지를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "인플루언서 페이지 조회 성공")
     ResponseEntity<Page<InfluencerResponse.Info>> getInfluencersForPaging(
-            String keyword, @PageableDefault Pageable pageable
+        String keyword, @PageableDefault Pageable pageable
     );
 }
