@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import reactor.core.publisher.Mono;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.global.exception.code.PlaceErrorCode;
@@ -151,7 +152,7 @@ public class PlaceService {
     }
 
     @Transactional(readOnly = true)
-    public GooglePlaceClientResponse.Place getGooglePlaceInfo(String googlePlaceId) {
+    public Mono<GooglePlaceClientResponse.Place> getGooglePlaceInfo(String googlePlaceId) {
         return googlePlaceClient.requestForPlaceDetail(googlePlaceId);
     }
 
