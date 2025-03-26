@@ -1,13 +1,11 @@
 package team7.inplace.place.application;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import team7.inplace.global.annotation.Facade;
-import team7.inplace.influencer.application.InfluencerService;
 import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand;
 import team7.inplace.place.application.command.PlacesCommand.Coordinate;
@@ -27,7 +25,6 @@ import team7.inplace.video.application.VideoService;
 public class PlaceFacade {
 
     private final PlaceService placeService;
-    private final InfluencerService influencerService;
     private final ReviewService reviewService;
     private final VideoService videoService;
 
@@ -54,17 +51,14 @@ public class PlaceFacade {
             return PlaceInfo.Detail.of(placeInfo, null, videoInfos, reviewRates);
         }
 
-        var googlePlaceFuture = placeService.getGooglePlaceInfo(googlePlaceId.get());
+        var googlePlace = placeService.getGooglePlaceInfo(googlePlaceId.get())
+            .exceptionally(e -> null)
+            .join();
         var placeInfo = placeService.getPlaceInfo(placeId, userId);
         var videoInfos = videoService.getVideosByPlaceId(placeId);
         var reviewRates = reviewService.getReviewLikeRate(placeId);
 
-        try {
-            var googlePlace = googlePlaceFuture.get();
-            return PlaceInfo.Detail.of(placeInfo, googlePlace, videoInfos, reviewRates);
-        } catch (InterruptedException | ExecutionException e) {
-            return PlaceInfo.Detail.of(placeInfo, null, videoInfos, reviewRates);
-        }
+        return PlaceInfo.Detail.of(placeInfo, googlePlace, videoInfos, reviewRates);
     }
 
     public List<PlaceQueryResult.Location> getPlaceLocations(
