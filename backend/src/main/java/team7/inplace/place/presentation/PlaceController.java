@@ -57,6 +57,7 @@ public class PlaceController implements PlaceControllerApiSpec {
         @RequestParam Double topLeftLatitude,
         @RequestParam Double bottomRightLongitude,
         @RequestParam Double bottomRightLatitude,
+        @RequestParam(required = false) String regions,
         @RequestParam(required = false) String categories,
         @RequestParam(required = false) String influencers,
         @PageableDefault(page = 0, size = 10) Pageable pageable
@@ -67,8 +68,7 @@ public class PlaceController implements PlaceControllerApiSpec {
                 bottomRightLongitude, bottomRightLatitude,
                 longitude, latitude
             ),
-            new PlacesCommand.FilterParams(categories, influencers),
-            pageable
+            new PlacesCommand.FilterParams(regions, categories, influencers),            pageable
         );
 
         var responses = PlacesResponse.Simple.from(placeSimpleInfos.getContent());
@@ -87,6 +87,7 @@ public class PlaceController implements PlaceControllerApiSpec {
         @RequestParam Double topLeftLatitude,
         @RequestParam Double bottomRightLongitude,
         @RequestParam Double bottomRightLatitude,
+        @RequestParam(required = false, defaultValue = "") String regions,
         @RequestParam(required = false, defaultValue = "") String categories,
         @RequestParam(required = false, defaultValue = "") String influencers
     ) {
@@ -96,7 +97,7 @@ public class PlaceController implements PlaceControllerApiSpec {
                 bottomRightLongitude, bottomRightLatitude,
                 longitude, latitude
             ),
-            new PlacesCommand.FilterParams(categories, influencers)
+            new PlacesCommand.FilterParams(regions, categories, influencers)
         );
 
         return new ResponseEntity<>(

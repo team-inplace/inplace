@@ -3,10 +3,13 @@ package team7.inplace.place.persistence;
 import static com.querydsl.core.types.ExpressionUtils.count;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -74,10 +77,17 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
         Double topLeftLongitude, Double topLeftLatitude,
         Double bottomRightLongitude, Double bottomRightLatitude,
         Double longitude, Double latitude,
-        List<Category> categoryFilters, List<String> influencerFilters,
+        List<Pair<String, String>> regionFilters,
+        List<Category> categoryFilters,
+        List<String> influencerFilters,
         Pageable pageable,
         Long userId
     ) {
+        var locationCondition = locationRegionCondition( // 주소 or 바운더리 검색 조건
+            regionFilters,
+            topLeftLongitude, topLeftLatitude,
+            bottomRightLongitude, bottomRightLatitude
+        );
         var filterExpression = createFilters(categoryFilters, influencerFilters);
         /* 조건에 맞는 장소 ID 목록 조회 */
         List<Long> filteredPlaceId = jpaQueryFactory
@@ -87,8 +97,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
             .leftJoin(QInfluencer.influencer)
             .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id))
             .where(
-                QPlace.place.coordinate.longitude.between(topLeftLongitude, bottomRightLongitude),
-                QPlace.place.coordinate.latitude.between(bottomRightLatitude, topLeftLatitude),
+                locationCondition,
                 filterExpression,
                 QPlace.place.deleteAt.isNull(),
                 QVideo.video.deleteAt.isNull(),
@@ -119,8 +128,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
                     QLikedPlace.likedPlace.userId.isNull())
                 .and(QLikedPlace.likedPlace.isLiked.isTrue()))
             .where(
-                QPlace.place.coordinate.longitude.between(topLeftLongitude, bottomRightLongitude),
-                QPlace.place.coordinate.latitude.between(bottomRightLatitude, topLeftLatitude),
+                locationCondition,
                 filterExpression,
                 QPlace.place.deleteAt.isNull(),
                 QVideo.video.deleteAt.isNull(),
@@ -144,9 +152,15 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
         Double topLeftLatitude,
         Double bottomRightLongitude,
         Double bottomRightLatitude,
+        List<Pair<String, String>> regionFilters,
         List<Category> categoryFilters,
         List<String> influencerFilters
     ) {
+        var locationCondition = locationRegionCondition( // 주소 or 바운더리 검색 조건
+            regionFilters,
+            topLeftLongitude, topLeftLatitude,
+            bottomRightLongitude, bottomRightLatitude
+        );
         var filterExpression = createFilters(categoryFilters, influencerFilters);
 
         List<Long> filteredPlaceId = jpaQueryFactory
@@ -156,8 +170,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
             .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id))
             .leftJoin(QPlace.place).on(QVideo.video.placeId.eq(QPlace.place.id))
             .where(
-                QPlace.place.coordinate.longitude.between(topLeftLongitude, bottomRightLongitude),
-                QPlace.place.coordinate.latitude.between(bottomRightLatitude, topLeftLatitude),
+                locationCondition,
                 filterExpression,
                 QVideo.video.placeId.isNotNull(),
                 QVideo.video.deleteAt.isNull(),
@@ -175,6 +188,32 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
             .from(QPlace.place)
             .where(QPlace.place.id.in(filteredPlaceId))
             .fetch();
+    }
+
+    private BooleanBuilder locationRegionCondition(
+        List<Pair<String, String>> regionFilters,
+        Double topLeftLongitude, Double topLeftLatitude,
+        Double bottomRightLongitude, Double bottomRightLatitude
+    ) {
+        BooleanBuilder expression = new BooleanBuilder();
+
+        if (regionFilters != null && !regionFilters.isEmpty()) {
+            BooleanBuilder regionBuilder = new BooleanBuilder();
+            for (Pair<String, String> region : regionFilters) {
+                BooleanExpression cityCondition = QPlace.place.address.address1.eq(region.getLeft());
+                BooleanExpression districtCondition = region.getRight() == null // '전체'인 경우
+                    ? Expressions.TRUE // address1만 체크하도록 설정
+                    : QPlace.place.address.address2.eq(region.getRight());
+                regionBuilder.or(cityCondition.and(districtCondition));
+            }
+            expression.and(regionBuilder);
+        } else {
+            // 지역 필터가 없으면 기존의 바운더리로 검색
+            expression.and(QPlace.place.coordinate.longitude.between(topLeftLongitude, bottomRightLongitude));
+            expression.and(QPlace.place.coordinate.latitude.between(bottomRightLatitude, topLeftLatitude));
+        }
+
+        return expression;
     }
 
     private BooleanBuilder createFilters(

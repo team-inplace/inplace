@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -71,12 +72,13 @@ public class PlaceService {
         FilterParams filterParamsCommand,
         Pageable pageable
     ) {
+        var regionFilters = filterParamsCommand.getRegionFilters();
         var categoryFilters = filterParamsCommand.getCategoryFilters();
         var influencerFilters = filterParamsCommand.getInfluencerFilters();
 
         // 위치와 필터링으로 Place 조회
         var placesPage = getPlacesByDistance(
-            coordinateCommand, categoryFilters, influencerFilters,
+            coordinateCommand, regionFilters, categoryFilters, influencerFilters,
             pageable, userId);
         if (placesPage.isEmpty()) {
             return new PageImpl<>(List.of(), pageable, 0);
@@ -87,6 +89,7 @@ public class PlaceService {
 
     private Page<PlaceQueryResult.DetailedPlace> getPlacesByDistance(
         Coordinate placesCoordinateCommand,
+        List<Pair<String, String>> regionFilters,
         List<Category> categoryFilters,
         List<String> influencerFilters,
         Pageable pageable,
@@ -99,6 +102,7 @@ public class PlaceService {
             placesCoordinateCommand.bottomRightLatitude(),
             placesCoordinateCommand.longitude(),
             placesCoordinateCommand.latitude(),
+            regionFilters,
             categoryFilters,
             influencerFilters,
             pageable,
@@ -127,14 +131,16 @@ public class PlaceService {
         Coordinate coordinateCommand,
         FilterParams filterParamsCommand
     ) {
-        List<Category> categoryFilter = filterParamsCommand.getCategoryFilters();
-        List<String> influencerFilter = filterParamsCommand.getInfluencerFilters();
+        var regionFilters = filterParamsCommand.getRegionFilters();
+        var categoryFilter = filterParamsCommand.getCategoryFilters();
+        var influencerFilter = filterParamsCommand.getInfluencerFilters();
 
         return placeReadRepository.findPlaceLocationsInMapRange(
             coordinateCommand.topLeftLongitude(),
             coordinateCommand.topLeftLatitude(),
             coordinateCommand.bottomRightLongitude(),
             coordinateCommand.bottomRightLatitude(),
+            regionFilters,
             categoryFilter,
             influencerFilter
         );
