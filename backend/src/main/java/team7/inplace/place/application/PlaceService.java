@@ -3,14 +3,16 @@ package team7.inplace.place.application;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import reactor.core.publisher.Mono;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.global.exception.code.PlaceErrorCode;
@@ -24,7 +26,7 @@ import team7.inplace.place.application.command.PlacesCommand.FilterParams;
 import team7.inplace.place.application.command.PlacesCommand.RegionParam;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.client.GooglePlaceClient;
-import team7.inplace.place.client.GooglePlaceClientResponse;
+import team7.inplace.place.client.GooglePlaceClientResponse.Place;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.persistence.PlaceJpaRepository;
 import team7.inplace.place.persistence.PlaceReadRepository;
@@ -154,15 +156,25 @@ public class PlaceService {
     }
 
     @Transactional(readOnly = true)
+    public Optional<String> getGooglePlaceId(Long placeId) {
+        return placeJpaRepository.findGooglePlaceIdById(placeId);
+    }
+
+    @Transactional(readOnly = true)
     public PlaceQueryResult.DetailedPlace getPlaceInfo(Long userId, Long placeId) {
         return placeReadRepository.findDetailedPlaceById(userId, placeId)
             .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
     }
 
-    @Transactional(readOnly = true)
-    public Mono<GooglePlaceClientResponse.Place> getGooglePlaceInfo(String googlePlaceId) {
-        return googlePlaceClient.requestForPlaceDetail(googlePlaceId);
+    @Async
+    public CompletableFuture<Place> getGooglePlaceInfo(String googlePlaceId) {
+        Place place = googlePlaceClient.requestForPlaceDetail(googlePlaceId);
+        return CompletableFuture.completedFuture(place);
     }
+
+//    public Place getGooglePlaceInfo(String googlePlaceId) {
+//        return googlePlaceClient.requestForPlaceDetail(googlePlaceId);
+//    }
 
     public List<PlaceInfo.Category> getCategories() {
         return Arrays.stream(Category.values())

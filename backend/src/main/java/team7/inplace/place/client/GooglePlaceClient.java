@@ -2,10 +2,13 @@ package team7.inplace.place.client;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestTemplate;
 import team7.inplace.global.properties.GoogleApiProperties;
+import team7.inplace.place.client.GooglePlaceClientResponse.Place;
 
 @Component
 @Slf4j
@@ -16,16 +19,21 @@ public class GooglePlaceClient {
     private final String API_KEY_HEADER = "X-Goog-Api-Key";
     private final String PLACE_DETAIL_URL = "https://places.googleapis.com/v1/places/%s?languageCode=ko";
     private final String FIELD = "id,rating,reservable,regularOpeningHours,reviews,googleMapsUri,accessibilityOptions,parkingOptions,paymentOptions";
-    private final WebClient webClient;
+    private final RestTemplate restTemplate;
     private final GoogleApiProperties googleApiProperties;
 
-    public Mono<GooglePlaceClientResponse.Place> requestForPlaceDetail(String placeId) {
+    public Place requestForPlaceDetail(String placeId) {
         var url = String.format(PLACE_DETAIL_URL, placeId);
-        return webClient.get()
-            .uri(url)
-            .header(FIELD_HEADER, FIELD)
-            .header(API_KEY_HEADER, googleApiProperties.crawlingKey())
-            .retrieve()
-            .bodyToMono(GooglePlaceClientResponse.Place.class);
+        var time = System.currentTimeMillis();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(FIELD_HEADER, FIELD);
+        headers.set(API_KEY_HEADER, googleApiProperties.crawlingKey());
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        var response = restTemplate.exchange(url, HttpMethod.GET, entity,
+            GooglePlaceClientResponse.Place.class);
+        log.info("Time : {}", (System.currentTimeMillis() - time));
+        return response.getBody();
+
     }
 }
