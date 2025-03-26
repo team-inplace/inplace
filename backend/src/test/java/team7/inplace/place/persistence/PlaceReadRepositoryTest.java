@@ -4,6 +4,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,138 @@ class PlaceReadRepositoryTest {
     }
 
     @Test
+    @DisplayName("장소 조회 테스트 - 위치 필터링 (도시-구)")
+    void findPlace_RegionFiltering_City_District() {
+        // given
+        // 바운더리는 있어도 영향 안줌
+        Double topLeftLongitude = 126.5;
+        Double topLeftLatitude = 37.5;
+        Double bottomRightLongitude = 127.4;
+        Double bottomRightLatitude = 36.4;
+        Double longitude = 127.0;
+        Double latitude = 37.0;
+        List<Pair<String, String>> regionFilters = List.of(Pair.of("주소1-1", "주소2-1"));
+        Pageable pageable = PageRequest.of(0, 5);
+        Long userId = null;
+
+        final int expectedTotalContent = 5;
+        final int expectedContentSize = 5;
+        final List<Long> expectedPlaceIds = List.of(1L, 2L, 3L, 4L, 5L);
+
+        // when
+        Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            regionFilters, null, null, pageable, userId
+        );
+
+        // then
+        assertThat(places.getTotalElements()).isEqualTo(expectedTotalContent);
+        assertThat(places.getContent().size()).isEqualTo(expectedContentSize);
+        assertThat(places.getContent().stream().map(DetailedPlace::placeId).toList())
+            .isEqualTo(expectedPlaceIds);
+    }
+
+    @Test
+    @DisplayName("장소 조회 테스트 - 위치 필터링 (도시-전체)")
+    void findPlace_RegionFiltering_City_All() {
+        // given
+        // 바운더리는 있어도 영향 안줌
+        Double topLeftLongitude = 126.5;
+        Double topLeftLatitude = 37.5;
+        Double bottomRightLongitude = 127.4;
+        Double bottomRightLatitude = 36.4;
+        Double longitude = 127.0;
+        Double latitude = 37.0;
+        List<Pair<String, String>> regionFilters = List.of(Pair.of("주소1-1", null));
+        Pageable pageable = PageRequest.of(0, 10);
+        Long userId = null;
+
+        final int expectedTotalContent = 6;
+        final int expectedContentSize = 6;
+        final List<Long> expectedPlaceIds = List.of(1L, 2L, 3L, 4L, 5L, 6L);
+
+        // when
+        Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            regionFilters, null, null, pageable, userId
+        );
+
+        // then
+        assertThat(places.getTotalElements()).isEqualTo(expectedTotalContent);
+        assertThat(places.getContent().size()).isEqualTo(expectedContentSize);
+        assertThat(places.getContent().stream().map(DetailedPlace::placeId).toList())
+            .isEqualTo(expectedPlaceIds);
+    }
+
+    @Test
+    @DisplayName("장소 조회 테스트 - 위치 필터링 (도시-구) 여러 개")
+    void findPlace_RegionFiltering_City_District_Many() {
+        // given
+        // 바운더리는 있어도 영향 안줌
+        Double topLeftLongitude = 126.5;
+        Double topLeftLatitude = 37.5;
+        Double bottomRightLongitude = 127.4;
+        Double bottomRightLatitude = 36.4;
+        Double longitude = 127.0;
+        Double latitude = 37.0;
+        List<Pair<String, String>> regionFilters = List.of(
+            Pair.of("주소1-1", "주소2-1"),
+            Pair.of("주소1-2", "주소2-2"));
+        Pageable pageable = PageRequest.of(0, 10);
+        Long userId = null;
+
+        final int expectedTotalContent = 7;
+        final int expectedContentSize = 7;
+        final List<Long> expectedPlaceIds = List.of(1L, 2L, 3L, 4L, 5L, 7L, 8L);
+
+        // when
+        Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            regionFilters, null, null, pageable, userId
+        );
+
+        // then
+        assertThat(places.getTotalElements()).isEqualTo(expectedTotalContent);
+        assertThat(places.getContent().size()).isEqualTo(expectedContentSize);
+        assertThat(places.getContent().stream().map(DetailedPlace::placeId).toList())
+            .isEqualTo(expectedPlaceIds);
+    }
+
+    @Test
+    @DisplayName("장소 조회 테스트 - 위치 필터링 (도시-전체) + 인플루언서 필터링 + 카테고리 필터링")
+    void findPlace_RegionFiltering_InfluencerFiltering_CategoryFiltering() {
+        // given
+        // 바운더리는 있어도 영향 안줌
+        Double topLeftLongitude = 126.5;
+        Double topLeftLatitude = 37.5;
+        Double bottomRightLongitude = 127.4;
+        Double bottomRightLatitude = 36.4;
+        Double longitude = 127.0;
+        Double latitude = 37.0;
+        List<Pair<String, String>> regionFilters = List.of(Pair.of("주소1-1", null));
+        List<String> influencerFilters= List.of("인플루언서1");
+        List<Category> category = List.of(Category.RESTAURANT, Category.CAFE);
+        Pageable pageable = PageRequest.of(0, 5);
+        Long userId = null;
+
+        final int expectedTotalContent = 2;
+        final int expectedContentSize = 2;
+        final List<Long> expectedPlaceIds = List.of(1L, 2L);
+
+        // when
+        Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            regionFilters, category, influencerFilters, pageable, userId
+        );
+
+        // then
+        assertThat(places.getTotalElements()).isEqualTo(expectedTotalContent);
+        assertThat(places.getContent().size()).isEqualTo(expectedContentSize);
+        assertThat(places.getContent().stream().map(DetailedPlace::placeId).toList())
+            .isEqualTo(expectedPlaceIds);
+    }
+
+    @Test
     @DisplayName("장소 조회 테스트 - 범위 내에 있는 장소 조회")
     void findPlace_InRange_NoFiltering() {
         // given
@@ -55,15 +188,15 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-                topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
-                null, null, pageable, userId
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            null, null, null, pageable, userId
         );
 
         // then
         assertThat(places.getTotalElements()).isEqualTo(expectedTotalContent);
         assertThat(places.getContent().size()).isEqualTo(expectedContentSize);
         assertThat(places.getContent().stream().map(DetailedPlace::placeId).toList())
-                .isEqualTo(expectedPlaceIds);
+            .isEqualTo(expectedPlaceIds);
     }
 
     @Test
@@ -86,15 +219,15 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-                topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
-                category, null, pageable, userId
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            null, category, null, pageable, userId
         );
 
         // then
         assertThat(places.getTotalElements()).isEqualTo(expectedTotalContent);
         assertThat(places.getContent().size()).isEqualTo(expectedContentSize);
         assertThat(places.getContent().stream().map(DetailedPlace::placeId).toList())
-                .isEqualTo(expectedPlaceIds);
+            .isEqualTo(expectedPlaceIds);
     }
 
     @Test
@@ -117,15 +250,15 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-                topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
-                category, null, pageable, userId
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            null, category, null, pageable, userId
         );
 
         // then
         assertThat(places.getTotalElements()).isEqualTo(expectedTotalContent);
         assertThat(places.getContent().size()).isEqualTo(expectedContentSize);
         assertThat(places.getContent().stream().map(DetailedPlace::placeId).toList())
-                .isEqualTo(expectedPlaceIds);
+            .isEqualTo(expectedPlaceIds);
     }
 
     @Test
@@ -148,15 +281,15 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-                topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
-                null, influencerName, pageable, userId
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            null, null, influencerName, pageable, userId
         );
 
         // then
         assertThat(places.getTotalElements()).isEqualTo(expectedTotalContent);
         assertThat(places.getContent().size()).isEqualTo(expectedContentSize);
         assertThat(places.getContent().stream().map(DetailedPlace::placeId).toList())
-                .isEqualTo(expectedPlaceIds);
+            .isEqualTo(expectedPlaceIds);
     }
 
     @Test
@@ -179,15 +312,15 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-                topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
-                null, influencerName, pageable, userId
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            null, null, influencerName, pageable, userId
         );
 
         // then
         assertThat(places.getTotalElements()).isEqualTo(expectedTotalContent);
         assertThat(places.getContent().size()).isEqualTo(expectedContentSize);
         assertThat(places.getContent().stream().map(DetailedPlace::placeId).toList())
-                .isEqualTo(expectedPlaceIds);
+            .isEqualTo(expectedPlaceIds);
     }
 
     @Test
@@ -210,15 +343,15 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-                topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
-                category, null, pageable, userId
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            null, category, null, pageable, userId
         );
 
         // then
         assertThat(places.getTotalElements()).isEqualTo(expectedTotalContent);
         assertThat(places.getContent().size()).isEqualTo(expectedContentSize);
         assertThat(places.getContent().stream().map(DetailedPlace::placeId).toList())
-                .isEqualTo(expectedPlaceIds);
+            .isEqualTo(expectedPlaceIds);
     }
 
     @Test
@@ -241,15 +374,15 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-                topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
-                category, null, pageable, userId
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            null, category, null, pageable, userId
         );
 
         // then
         assertThat(places.getTotalElements()).isEqualTo(expectedTotalContent);
         assertThat(places.getContent().size()).isEqualTo(expectedContentSize);
         assertThat(places.getContent().stream().map(DetailedPlace::placeId).toList())
-                .isEqualTo(expectedPlaceIds);
+            .isEqualTo(expectedPlaceIds);
     }
 
     @Test
@@ -272,15 +405,15 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-                topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
-                null, influencerName, pageable, userId
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            null, null, influencerName, pageable, userId
         );
 
         // then
         assertThat(places.getTotalElements()).isEqualTo(expectedTotalContent);
         assertThat(places.getContent().size()).isEqualTo(expectedContentSize);
         assertThat(places.getContent().stream().map(DetailedPlace::placeId).toList())
-                .isEqualTo(expectedPlaceIds);
+            .isEqualTo(expectedPlaceIds);
     }
 
     @Test
@@ -303,15 +436,15 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-                topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
-                null, influencerName, pageable, userId
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            null, null, influencerName, pageable, userId
         );
 
         // then
         assertThat(places.getTotalElements()).isEqualTo(expectedTotalContent);
         assertThat(places.getContent().size()).isEqualTo(expectedContentSize);
         assertThat(places.getContent().stream().map(DetailedPlace::placeId).toList())
-                .isEqualTo(expectedPlaceIds);
+            .isEqualTo(expectedPlaceIds);
     }
 
     @Test
@@ -335,14 +468,14 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-                topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
-                category, influencerName, pageable, userId
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            null, category, influencerName, pageable, userId
         );
 
         // then
         assertThat(places.getTotalElements()).isEqualTo(expectedTotalContent);
         assertThat(places.getContent().size()).isEqualTo(expectedContentSize);
         assertThat(places.getContent().stream().map(DetailedPlace::placeId).toList())
-                .isEqualTo(expectedPlaceIds);
+            .isEqualTo(expectedPlaceIds);
     }
 }
