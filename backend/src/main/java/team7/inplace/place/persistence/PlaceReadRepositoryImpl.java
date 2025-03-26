@@ -10,6 +10,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,7 @@ import team7.inplace.place.persistence.dto.QPlaceQueryResult_SimplePlace;
 import team7.inplace.video.domain.QVideo;
 
 @Repository
+@Slf4j
 @RequiredArgsConstructor
 public class PlaceReadRepositoryImpl implements PlaceReadRepository {
 
@@ -42,6 +44,8 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
         Long placeId,
         Long userId
     ) {
+        log.info("장소 상세 정보 조회: placeId={}", placeId);
+        log.info("장소 상세 정보 조회: userId={}", userId);
         var detailedPlace = jpaQueryFactory
             .select(new QPlaceQueryResult_DetailedPlace(
                 QPlace.place.id,

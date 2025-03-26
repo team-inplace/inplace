@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import reactor.core.publisher.Mono;
 import team7.inplace.place.presentation.dto.PlaceRequest;
 import team7.inplace.place.presentation.dto.PlacesResponse;
 import team7.inplace.place.presentation.dto.PlacesResponse.Location;
@@ -54,7 +53,7 @@ public interface PlaceControllerApiSpec {
     ResponseEntity<PlacesResponse.Category> getCategories();
 
     @Operation(summary = "장소 상세 조회", description = "장소 ID를 통해 특정 장소의 상세 정보를 조회합니다.")
-    Mono<ResponseEntity<PlacesResponse.Detail>> getPlaceDetail(
+    ResponseEntity<PlacesResponse.Detail> getPlaceDetail(
         @PathVariable("id") Long placeId
     );
 

@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
 import team7.inplace.place.application.PlaceFacade;
 import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.dto.PlaceInfo;
@@ -123,15 +122,13 @@ public class PlaceController implements PlaceControllerApiSpec {
 
     @Override
     @GetMapping("/{id}")
-    public Mono<ResponseEntity<PlacesResponse.Detail>> getPlaceDetail(
+    public ResponseEntity<PlacesResponse.Detail> getPlaceDetail(
         @PathVariable("id") Long placeId
     ) {
-        return placeFacade.getDetailedPlaces(placeId)
-            .map(placeInfo -> {
-                var response = PlacesResponse.Detail.from(placeInfo);
-                return ResponseEntity.ok(response);
-            })
-            .doOnError(e -> log.error("오류 발생: ", e));
+        var placeDetail = placeFacade.getDetailedPlaces(placeId);
+
+        var response = PlacesResponse.Detail.from(placeDetail);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{id}/marker")
