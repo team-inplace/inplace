@@ -4,13 +4,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.global.exception.InplaceException;
@@ -166,15 +164,9 @@ public class PlaceService {
             .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
     }
 
-    @Async
-    public CompletableFuture<Place> getGooglePlaceInfo(String googlePlaceId) {
-        Place place = googlePlaceClient.requestForPlaceDetail(googlePlaceId);
-        return CompletableFuture.completedFuture(place);
+    public Place getGooglePlaceInfo(String googlePlaceId) {
+        return googlePlaceClient.requestForPlaceDetail(googlePlaceId);
     }
-
-//    public Place getGooglePlaceInfo(String googlePlaceId) {
-//        return googlePlaceClient.requestForPlaceDetail(googlePlaceId);
-//    }
 
     public List<PlaceInfo.Category> getCategories() {
         return Arrays.stream(Category.values())

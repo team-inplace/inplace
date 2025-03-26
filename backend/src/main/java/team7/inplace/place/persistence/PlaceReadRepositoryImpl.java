@@ -44,8 +44,6 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
         Long placeId,
         Long userId
     ) {
-        log.info("장소 상세 정보 조회: placeId={}", placeId);
-        log.info("장소 상세 정보 조회: userId={}", userId);
         var detailedPlace = jpaQueryFactory
             .select(new QPlaceQueryResult_DetailedPlace(
                 QPlace.place.id,

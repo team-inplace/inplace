@@ -1,6 +1,7 @@
 package team7.inplace.place.application;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -43,7 +44,6 @@ public class PlaceFacade {
     public PlaceInfo.Detail getDetailedPlaces(Long placeId) {
         var userId = AuthorizationUtil.getUserId();
         var googlePlaceId = placeService.getGooglePlaceId(placeId);
-
         if (googlePlaceId.isEmpty()) {
             var placeInfo = placeService.getPlaceInfo(userId, placeId);
             var videoInfos = videoService.getVideosByPlaceId(placeId);
@@ -51,9 +51,11 @@ public class PlaceFacade {
             return PlaceInfo.Detail.of(placeInfo, null, videoInfos, reviewRates);
         }
 
-        var googlePlace = placeService.getGooglePlaceInfo(googlePlaceId.get())
-            .exceptionally(e -> null)
+        var googlePlace = CompletableFuture.supplyAsync(
+                () -> placeService.getGooglePlaceInfo(googlePlaceId.get())
+            ).exceptionally(e -> null)
             .join();
+
         var placeInfo = placeService.getPlaceInfo(placeId, userId);
         var videoInfos = videoService.getVideosByPlaceId(placeId);
         var reviewRates = reviewService.getReviewLikeRate(placeId);
