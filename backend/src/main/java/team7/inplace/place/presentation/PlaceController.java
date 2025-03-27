@@ -10,17 +10,17 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 import team7.inplace.place.application.PlaceFacade;
 import team7.inplace.place.application.command.PlaceLikeCommand;
-import team7.inplace.place.application.command.PlacesCommand;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.place.presentation.dto.PlaceRequest;
@@ -51,24 +51,15 @@ public class PlaceController implements PlaceControllerApiSpec {
     @Override
     @GetMapping
     public ResponseEntity<Page<PlacesResponse.Simple>> getPlaces(
-        @RequestParam Double longitude,
-        @RequestParam Double latitude,
-        @RequestParam Double topLeftLongitude,
-        @RequestParam Double topLeftLatitude,
-        @RequestParam Double bottomRightLongitude,
-        @RequestParam Double bottomRightLatitude,
-        @RequestParam(required = false) String regions,
-        @RequestParam(required = false) String categories,
-        @RequestParam(required = false) String influencers,
+        @ModelAttribute @Validated PlaceRequest.Coordinate coordinateParams,
+        @ModelAttribute PlaceRequest.Filter filterParams,
         @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
+        log.info("Param : {}", coordinateParams);
+        log.info("Param : {}", filterParams);
         var placeSimpleInfos = placeFacade.getPlacesInMapRange(
-            new PlacesCommand.Coordinate(
-                topLeftLongitude, topLeftLatitude,
-                bottomRightLongitude, bottomRightLatitude,
-                longitude, latitude
-            ),
-            new PlacesCommand.FilterParams(regions, categories, influencers),
+            coordinateParams.toCommand(),
+            filterParams.toCommand(),
             pageable
         );
 
@@ -82,23 +73,12 @@ public class PlaceController implements PlaceControllerApiSpec {
     @Override
     @GetMapping("/all")
     public ResponseEntity<List<PlacesResponse.Location>> getPlaceLocations(
-        @RequestParam Double longitude,
-        @RequestParam Double latitude,
-        @RequestParam Double topLeftLongitude,
-        @RequestParam Double topLeftLatitude,
-        @RequestParam Double bottomRightLongitude,
-        @RequestParam Double bottomRightLatitude,
-        @RequestParam(required = false, defaultValue = "") String regions,
-        @RequestParam(required = false, defaultValue = "") String categories,
-        @RequestParam(required = false, defaultValue = "") String influencers
+        @ModelAttribute @Validated PlaceRequest.Coordinate coordinateParams,
+        @ModelAttribute PlaceRequest.Filter filterParams
     ) {
         List<PlaceQueryResult.Location> placeLocationInfos = placeFacade.getPlaceLocations(
-            new PlacesCommand.Coordinate(
-                topLeftLongitude, topLeftLatitude,
-                bottomRightLongitude, bottomRightLatitude,
-                longitude, latitude
-            ),
-            new PlacesCommand.FilterParams(regions, categories, influencers)
+            coordinateParams.toCommand(),
+            filterParams.toCommand()
         );
 
         return new ResponseEntity<>(

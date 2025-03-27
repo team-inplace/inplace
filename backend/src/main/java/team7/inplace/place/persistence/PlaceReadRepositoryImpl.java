@@ -16,7 +16,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import team7.inplace.influencer.domain.QInfluencer;
 import team7.inplace.liked.likedPlace.domain.QLikedPlace;
-import team7.inplace.place.application.command.PlacesCommand.RegionFilter;
+import team7.inplace.place.application.command.PlacesCommand.RegionParam;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.QPlace;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
@@ -77,7 +77,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
         Double topLeftLongitude, Double topLeftLatitude,
         Double bottomRightLongitude, Double bottomRightLatitude,
         Double longitude, Double latitude,
-        List<RegionFilter> regionFilters,
+        List<RegionParam> regionFilters,
         List<Category> categoryFilters,
         List<String> influencerFilters,
         Pageable pageable,
@@ -152,12 +152,12 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
         Double topLeftLatitude,
         Double bottomRightLongitude,
         Double bottomRightLatitude,
-        List<RegionFilter> regionFilters,
+        List<RegionParam> regionParams,
         List<Category> categoryFilters,
         List<String> influencerFilters
     ) {
         var locationCondition = locationRegionCondition( // 주소 or 바운더리 검색 조건
-            regionFilters,
+            regionParams,
             topLeftLongitude, topLeftLatitude,
             bottomRightLongitude, bottomRightLatitude
         );
@@ -191,15 +191,15 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
     }
 
     private BooleanBuilder locationRegionCondition(
-        List<RegionFilter> regionFilters,
+        List<RegionParam> regionParams,
         Double topLeftLongitude, Double topLeftLatitude,
         Double bottomRightLongitude, Double bottomRightLatitude
     ) {
         BooleanBuilder expression = new BooleanBuilder();
 
-        if (regionFilters != null && !regionFilters.isEmpty()) {
+        if (regionParams != null && !regionParams.isEmpty()) {
             BooleanBuilder regionBuilder = new BooleanBuilder();
-            for (RegionFilter region : regionFilters) {
+            for (RegionParam region : regionParams) {
                 BooleanExpression cityCondition = QPlace.place.address.address1.eq(region.city());
                 BooleanExpression districtCondition = region.district() == null // '전체'인 경우
                     ? Expressions.TRUE // address1만 체크하도록 설정
@@ -209,8 +209,10 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
             expression.and(regionBuilder);
         } else {
             // 지역 필터가 없으면 기존의 바운더리로 검색
-            expression.and(QPlace.place.coordinate.longitude.between(topLeftLongitude, bottomRightLongitude));
-            expression.and(QPlace.place.coordinate.latitude.between(bottomRightLatitude, topLeftLatitude));
+            expression.and(
+                QPlace.place.coordinate.longitude.between(topLeftLongitude, bottomRightLongitude));
+            expression.and(
+                QPlace.place.coordinate.latitude.between(bottomRightLatitude, topLeftLatitude));
         }
 
         return expression;

@@ -47,18 +47,22 @@ public class PlaceFacade {
         var placeInfoMono = Mono.fromCallable(() -> placeService.getPlaceInfo(placeId, userId));
 
         return placeInfoMono.flatMap(placeInfo -> {
-            var videoInfosMono = Mono.fromCallable(() -> videoService.getVideosByPlaceId(placeInfo.placeId()));
-            var reviewRatesMono = Mono.fromCallable(() -> reviewService.getReviewLikeRate(placeInfo.placeId()));
+            var videoInfosMono = Mono.fromCallable(
+                () -> videoService.getVideosByPlaceId(placeInfo.placeId()));
+            var reviewRatesMono = Mono.fromCallable(
+                () -> reviewService.getReviewLikeRate(placeInfo.placeId()));
 
             if (placeInfo.haveNoGooglePlaceId()) {
                 return Mono.zip(videoInfosMono, reviewRatesMono)
-                    .map(tuple -> PlaceInfo.Detail.of(placeInfo, null, tuple.getT1(), tuple.getT2()));
+                    .map(tuple -> PlaceInfo.Detail.of(placeInfo, null, tuple.getT1(),
+                        tuple.getT2()));
             }
 
             var googlePlaceMono = placeService.getGooglePlaceInfo(placeInfo.googlePlaceId());
 
             return Mono.zip(googlePlaceMono, videoInfosMono, reviewRatesMono)
-                .map(tuple -> PlaceInfo.Detail.of(placeInfo, tuple.getT1(), tuple.getT2(), tuple.getT3()));
+                .map(tuple -> PlaceInfo.Detail.of(placeInfo, tuple.getT1(), tuple.getT2(),
+                    tuple.getT3()));
         });
     }
 
@@ -70,7 +74,9 @@ public class PlaceFacade {
     }
 
     public Page<PlaceInfo.Simple> getPlacesInMapRange(
-        Coordinate coordinateCommand, FilterParams filterParamsCommand, Pageable pageable
+        Coordinate coordinateCommand,
+        FilterParams filterParamsCommand,
+        Pageable pageable
     ) {
         var userId = AuthorizationUtil.getUserId();
 

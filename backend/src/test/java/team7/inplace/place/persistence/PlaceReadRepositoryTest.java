@@ -15,7 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import team7.inplace.place.application.command.PlacesCommand.RegionFilter;
+import team7.inplace.place.application.command.PlacesCommand.RegionParam;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.DetailedPlace;
 
@@ -23,6 +23,7 @@ import team7.inplace.place.persistence.dto.PlaceQueryResult.DetailedPlace;
 @ActiveProfiles("test")
 @Sql("/sql/test-place.sql")
 class PlaceReadRepositoryTest {
+
     @Autowired
     private TestEntityManager testEntityManager;
 
@@ -48,7 +49,7 @@ class PlaceReadRepositoryTest {
         Double bottomRightLatitude = 36.4;
         Double longitude = 127.0;
         Double latitude = 37.0;
-        List<RegionFilter> regionFilters = List.of(RegionFilter.of("주소1-1", "주소2-1"));
+        List<RegionParam> regionParams = List.of(RegionParam.of("주소1-1", "주소2-1"));
         Pageable pageable = PageRequest.of(0, 5);
         Long userId = null;
 
@@ -58,8 +59,9 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
-            regionFilters, null, null, pageable, userId
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude,
+            latitude,
+            regionParams, null, null, pageable, userId
         );
 
         // then
@@ -80,7 +82,7 @@ class PlaceReadRepositoryTest {
         Double bottomRightLatitude = 36.4;
         Double longitude = 127.0;
         Double latitude = 37.0;
-        List<RegionFilter> regionFilters = List.of(RegionFilter.of("주소1-1", null));
+        List<RegionParam> regionParams = List.of(RegionParam.of("주소1-1", null));
         Pageable pageable = PageRequest.of(0, 10);
         Long userId = null;
 
@@ -90,8 +92,9 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
-            regionFilters, null, null, pageable, userId
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude,
+            latitude,
+            regionParams, null, null, pageable, userId
         );
 
         // then
@@ -112,9 +115,9 @@ class PlaceReadRepositoryTest {
         Double bottomRightLatitude = 36.4;
         Double longitude = 127.0;
         Double latitude = 37.0;
-        List<RegionFilter> regionFilters = List.of(
-            RegionFilter.of("주소1-1", "주소2-1"),
-            RegionFilter.of("주소1-2", "주소2-2"));
+        List<RegionParam> regionParams = List.of(
+            RegionParam.of("주소1-1", "주소2-1"),
+            RegionParam.of("주소1-2", "주소2-2"));
         Pageable pageable = PageRequest.of(0, 10);
         Long userId = null;
 
@@ -124,8 +127,9 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
-            regionFilters, null, null, pageable, userId
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude,
+            latitude,
+            regionParams, null, null, pageable, userId
         );
 
         // then
@@ -146,8 +150,8 @@ class PlaceReadRepositoryTest {
         Double bottomRightLatitude = 36.4;
         Double longitude = 127.0;
         Double latitude = 37.0;
-        List<RegionFilter> regionFilters = List.of(RegionFilter.of("주소1-1", null));
-        List<String> influencerFilters= List.of("인플루언서1");
+        List<RegionParam> regionParams = List.of(RegionParam.of("주소1-1", null));
+        List<String> influencerFilters = List.of("인플루언서1");
         List<Category> category = List.of(Category.RESTAURANT, Category.CAFE);
         Pageable pageable = PageRequest.of(0, 5);
         Long userId = null;
@@ -158,8 +162,9 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
-            regionFilters, category, influencerFilters, pageable, userId
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude,
+            latitude,
+            regionParams, category, influencerFilters, pageable, userId
         );
 
         // then
@@ -188,7 +193,8 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude,
+            latitude,
             null, null, null, pageable, userId
         );
 
@@ -219,7 +225,8 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude,
+            latitude,
             null, category, null, pageable, userId
         );
 
@@ -250,7 +257,8 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude,
+            latitude,
             null, category, null, pageable, userId
         );
 
@@ -281,7 +289,8 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude,
+            latitude,
             null, null, influencerName, pageable, userId
         );
 
@@ -312,7 +321,8 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude,
+            latitude,
             null, null, influencerName, pageable, userId
         );
 
@@ -343,7 +353,8 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude,
+            latitude,
             null, category, null, pageable, userId
         );
 
@@ -374,7 +385,8 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude,
+            latitude,
             null, category, null, pageable, userId
         );
 
@@ -405,7 +417,8 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude,
+            latitude,
             null, null, influencerName, pageable, userId
         );
 
@@ -436,7 +449,8 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude,
+            latitude,
             null, null, influencerName, pageable, userId
         );
 
@@ -468,7 +482,8 @@ class PlaceReadRepositoryTest {
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
-            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude,
+            topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude,
+            latitude,
             null, category, influencerName, pageable, userId
         );
 

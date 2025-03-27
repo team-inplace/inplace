@@ -20,7 +20,7 @@ import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand.Coordinate;
 import team7.inplace.place.application.command.PlacesCommand.Create;
 import team7.inplace.place.application.command.PlacesCommand.FilterParams;
-import team7.inplace.place.application.command.PlacesCommand.RegionFilter;
+import team7.inplace.place.application.command.PlacesCommand.RegionParam;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.client.GooglePlaceClient;
 import team7.inplace.place.client.GooglePlaceClientResponse;
@@ -72,9 +72,9 @@ public class PlaceService {
         FilterParams filterParamsCommand,
         Pageable pageable
     ) {
-        var regionFilters = filterParamsCommand.getRegionFilters();
-        var categoryFilters = filterParamsCommand.getCategoryFilters();
-        var influencerFilters = filterParamsCommand.getInfluencerFilters();
+        var regionFilters = filterParamsCommand.regions();
+        var categoryFilters = filterParamsCommand.categories();
+        var influencerFilters = filterParamsCommand.influencers();
 
         // 위치와 필터링으로 Place 조회
         var placesPage = getPlacesByDistance(
@@ -89,7 +89,7 @@ public class PlaceService {
 
     private Page<PlaceQueryResult.DetailedPlace> getPlacesByDistance(
         Coordinate placesCoordinateCommand,
-        List<RegionFilter> regionFilters,
+        List<RegionParam> regionParams,
         List<Category> categoryFilters,
         List<String> influencerFilters,
         Pageable pageable,
@@ -102,7 +102,7 @@ public class PlaceService {
             placesCoordinateCommand.bottomRightLatitude(),
             placesCoordinateCommand.longitude(),
             placesCoordinateCommand.latitude(),
-            regionFilters,
+            regionParams,
             categoryFilters,
             influencerFilters,
             pageable,
@@ -131,9 +131,9 @@ public class PlaceService {
         Coordinate coordinateCommand,
         FilterParams filterParamsCommand
     ) {
-        var regionFilters = filterParamsCommand.getRegionFilters();
-        var categoryFilter = filterParamsCommand.getCategoryFilters();
-        var influencerFilter = filterParamsCommand.getInfluencerFilters();
+        var regionFilters = filterParamsCommand.regions();
+        var categoryFilter = filterParamsCommand.categories();
+        var influencerFilter = filterParamsCommand.influencers();
 
         return placeReadRepository.findPlaceLocationsInMapRange(
             coordinateCommand.topLeftLongitude(),
