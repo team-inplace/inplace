@@ -4,7 +4,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import team7.inplace.place.application.command.PlacesCommand.RegionFilter;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.DetailedPlace;
 
@@ -48,7 +48,7 @@ class PlaceReadRepositoryTest {
         Double bottomRightLatitude = 36.4;
         Double longitude = 127.0;
         Double latitude = 37.0;
-        List<Pair<String, String>> regionFilters = List.of(Pair.of("주소1-1", "주소2-1"));
+        List<RegionFilter> regionFilters = List.of(RegionFilter.of("주소1-1", "주소2-1"));
         Pageable pageable = PageRequest.of(0, 5);
         Long userId = null;
 
@@ -80,7 +80,7 @@ class PlaceReadRepositoryTest {
         Double bottomRightLatitude = 36.4;
         Double longitude = 127.0;
         Double latitude = 37.0;
-        List<Pair<String, String>> regionFilters = List.of(Pair.of("주소1-1", null));
+        List<RegionFilter> regionFilters = List.of(RegionFilter.of("주소1-1", null));
         Pageable pageable = PageRequest.of(0, 10);
         Long userId = null;
 
@@ -112,9 +112,9 @@ class PlaceReadRepositoryTest {
         Double bottomRightLatitude = 36.4;
         Double longitude = 127.0;
         Double latitude = 37.0;
-        List<Pair<String, String>> regionFilters = List.of(
-            Pair.of("주소1-1", "주소2-1"),
-            Pair.of("주소1-2", "주소2-2"));
+        List<RegionFilter> regionFilters = List.of(
+            RegionFilter.of("주소1-1", "주소2-1"),
+            RegionFilter.of("주소1-2", "주소2-2"));
         Pageable pageable = PageRequest.of(0, 10);
         Long userId = null;
 
@@ -146,7 +146,7 @@ class PlaceReadRepositoryTest {
         Double bottomRightLatitude = 36.4;
         Double longitude = 127.0;
         Double latitude = 37.0;
-        List<Pair<String, String>> regionFilters = List.of(Pair.of("주소1-1", null));
+        List<RegionFilter> regionFilters = List.of(RegionFilter.of("주소1-1", null));
         List<String> influencerFilters= List.of("인플루언서1");
         List<Category> category = List.of(Category.RESTAURANT, Category.CAFE);
         Pageable pageable = PageRequest.of(0, 5);

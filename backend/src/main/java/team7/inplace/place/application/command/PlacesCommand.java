@@ -4,7 +4,6 @@ import io.micrometer.common.util.StringUtils;
 import java.util.Arrays;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Place;
 import team7.inplace.video.presentation.dto.VideoSearchParams;
@@ -35,20 +34,39 @@ public class PlacesCommand {
         }
     }
 
+    public record RegionFilter(
+        String city,
+        String district
+    ){
+        public static RegionFilter from(
+            String regions
+        ){
+            var parts = regions.split("-");
+            return new RegionFilter(
+                parts[0],
+                "전체".equals(parts[1]) ? null : parts[1]
+            );
+        }
+
+        public static RegionFilter of(
+            String city,
+            String district
+        ){
+            return new RegionFilter(city, district);
+        }
+    }
+
     public record FilterParams(
         String regions,
         String categories,
         String influencers
     ) {
-        public List<Pair<String, String>> getRegionFilters() {
+        public List<RegionFilter> getRegionFilters() {
             if (regionFilterNotExists()) {
                 return null;
             }
             return Arrays.stream(regions.split(","))
-                .map(r -> {
-                    var parts = r.split("-");
-                    return Pair.of(parts[0], "전체".equals(parts[1]) ? null : parts[1]);
-                })
+                .map(RegionFilter::from)
                 .toList();
         }
 

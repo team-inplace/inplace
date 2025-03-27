@@ -9,7 +9,6 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +16,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import team7.inplace.influencer.domain.QInfluencer;
 import team7.inplace.liked.likedPlace.domain.QLikedPlace;
+import team7.inplace.place.application.command.PlacesCommand.RegionFilter;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.QPlace;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
@@ -77,7 +77,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
         Double topLeftLongitude, Double topLeftLatitude,
         Double bottomRightLongitude, Double bottomRightLatitude,
         Double longitude, Double latitude,
-        List<Pair<String, String>> regionFilters,
+        List<RegionFilter> regionFilters,
         List<Category> categoryFilters,
         List<String> influencerFilters,
         Pageable pageable,
@@ -152,7 +152,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
         Double topLeftLatitude,
         Double bottomRightLongitude,
         Double bottomRightLatitude,
-        List<Pair<String, String>> regionFilters,
+        List<RegionFilter> regionFilters,
         List<Category> categoryFilters,
         List<String> influencerFilters
     ) {
@@ -191,7 +191,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
     }
 
     private BooleanBuilder locationRegionCondition(
-        List<Pair<String, String>> regionFilters,
+        List<RegionFilter> regionFilters,
         Double topLeftLongitude, Double topLeftLatitude,
         Double bottomRightLongitude, Double bottomRightLatitude
     ) {
@@ -199,11 +199,11 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
 
         if (regionFilters != null && !regionFilters.isEmpty()) {
             BooleanBuilder regionBuilder = new BooleanBuilder();
-            for (Pair<String, String> region : regionFilters) {
-                BooleanExpression cityCondition = QPlace.place.address.address1.eq(region.getLeft());
-                BooleanExpression districtCondition = region.getRight() == null // '전체'인 경우
+            for (RegionFilter region : regionFilters) {
+                BooleanExpression cityCondition = QPlace.place.address.address1.eq(region.city());
+                BooleanExpression districtCondition = region.district() == null // '전체'인 경우
                     ? Expressions.TRUE // address1만 체크하도록 설정
-                    : QPlace.place.address.address2.eq(region.getRight());
+                    : QPlace.place.address.address2.eq(region.district());
                 regionBuilder.or(cityCondition.and(districtCondition));
             }
             expression.and(regionBuilder);

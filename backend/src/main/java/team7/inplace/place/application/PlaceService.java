@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +20,7 @@ import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand.Coordinate;
 import team7.inplace.place.application.command.PlacesCommand.Create;
 import team7.inplace.place.application.command.PlacesCommand.FilterParams;
+import team7.inplace.place.application.command.PlacesCommand.RegionFilter;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.client.GooglePlaceClient;
 import team7.inplace.place.client.GooglePlaceClientResponse;
@@ -89,7 +89,7 @@ public class PlaceService {
 
     private Page<PlaceQueryResult.DetailedPlace> getPlacesByDistance(
         Coordinate placesCoordinateCommand,
-        List<Pair<String, String>> regionFilters,
+        List<RegionFilter> regionFilters,
         List<Category> categoryFilters,
         List<String> influencerFilters,
         Pageable pageable,

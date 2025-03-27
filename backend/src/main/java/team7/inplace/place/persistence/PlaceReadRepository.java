@@ -2,9 +2,9 @@ package team7.inplace.place.persistence;
 
 import java.util.List;
 import java.util.Optional;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import team7.inplace.place.application.command.PlacesCommand.RegionFilter;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.DetailedPlace;
@@ -22,7 +22,7 @@ public interface PlaceReadRepository {
         Double bottomRightLatitude,
         Double longitude,
         Double latitude,
-        List<Pair<String, String>> regionFilters,
+        List<RegionFilter> regionFilters,
         List<Category> categoryFilters,
         List<String> influencerFilters,
         Pageable pageable,
@@ -34,7 +34,7 @@ public interface PlaceReadRepository {
         Double topLeftLatitude,
         Double bottomRightLongitude,
         Double bottomRightLatitude,
-        List<Pair<String, String>> regionFilters,
+        List<RegionFilter> regionFilters,
         List<Category> categoryFilters,
         List<String> influencerFilters
     );
