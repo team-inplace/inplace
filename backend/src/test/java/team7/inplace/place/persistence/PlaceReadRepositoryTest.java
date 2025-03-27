@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.Page;
@@ -15,18 +16,21 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
+import team7.inplace.container.AbstractMySQLContainerTest;
 import team7.inplace.place.application.command.PlacesCommand.RegionParam;
 import team7.inplace.place.domain.Category;
+import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.DetailedPlace;
 
 @DataJpaTest
-@ActiveProfiles("test")
-@Sql("/sql/test-place.sql")
-class PlaceReadRepositoryTest {
+@ActiveProfiles("test-mysql")
+@Sql(scripts = {"/sql/test-place.sql"}, executionPhase = ExecutionPhase.BEFORE_TEST_CLASS)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
 
     @Autowired
     private TestEntityManager testEntityManager;
-
     private PlaceReadRepository placeReadRepository;
 
     /**
@@ -49,7 +53,7 @@ class PlaceReadRepositoryTest {
         Double bottomRightLatitude = 36.4;
         Double longitude = 127.0;
         Double latitude = 37.0;
-        List<RegionParam> regionParams = List.of(RegionParam.of("주소1-1", "주소2-1"));
+        List<RegionParam> regionParams = List.of(new RegionParam("주소1-1", "주소2-1"));
         Pageable pageable = PageRequest.of(0, 5);
         Long userId = null;
 
@@ -82,7 +86,7 @@ class PlaceReadRepositoryTest {
         Double bottomRightLatitude = 36.4;
         Double longitude = 127.0;
         Double latitude = 37.0;
-        List<RegionParam> regionParams = List.of(RegionParam.of("주소1-1", null));
+        List<RegionParam> regionParams = List.of(new RegionParam("주소1-1", null));
         Pageable pageable = PageRequest.of(0, 10);
         Long userId = null;
 
@@ -116,8 +120,8 @@ class PlaceReadRepositoryTest {
         Double longitude = 127.0;
         Double latitude = 37.0;
         List<RegionParam> regionParams = List.of(
-            RegionParam.of("주소1-1", "주소2-1"),
-            RegionParam.of("주소1-2", "주소2-2"));
+            new RegionParam("주소1-1", "주소2-1"),
+            new RegionParam("주소1-2", "주소2-2"));
         Pageable pageable = PageRequest.of(0, 10);
         Long userId = null;
 
@@ -150,7 +154,7 @@ class PlaceReadRepositoryTest {
         Double bottomRightLatitude = 36.4;
         Double longitude = 127.0;
         Double latitude = 37.0;
-        List<RegionParam> regionParams = List.of(RegionParam.of("주소1-1", null));
+        List<RegionParam> regionParams = List.of(new RegionParam("주소1-1", null));
         List<String> influencerFilters = List.of("인플루언서1");
         List<Category> category = List.of(Category.RESTAURANT, Category.CAFE);
         Pageable pageable = PageRequest.of(0, 5);
@@ -492,5 +496,262 @@ class PlaceReadRepositoryTest {
         assertThat(places.getContent().size()).isEqualTo(expectedContentSize);
         assertThat(places.getContent().stream().map(DetailedPlace::placeId).toList())
             .isEqualTo(expectedPlaceIds);
+    }
+
+    @Test
+    @DisplayName("이름으로 장소 위치 조회 테스트 - 필터링 없음")
+    void findPlaceByName_NoFiltering() {
+        // given
+        String name = "테스트장소10";
+        final int expectedTotalContent = 1;
+        final Long expectedPlaceId = 10L;
+        final Double expectedLongitude = 126.9;
+        final Double expectedLatitude = 36.9;
+
+        // when
+        var places = placeReadRepository.findPlaceLocationsByName(
+            name,
+            null,
+            null,
+            null
+        );
+
+        //then
+        assertThat(places.size()).isEqualTo(expectedTotalContent);
+        assertThat(places.get(0).placeId()).isEqualTo(expectedPlaceId);
+        assertThat(places.get(0).longitude()).isEqualTo(expectedLongitude);
+        assertThat(places.get(0).latitude()).isEqualTo(expectedLatitude);
+    }
+
+    @Test
+    @DisplayName("이름으로 장소 위치 조회 테스트 - 도시-구 필터링")
+    void findPlaceByName_RegionFiltering_City_District() {
+        // given
+        String name = "테스트장소";
+        List<RegionParam> regionParams = List.of(new RegionParam("주소1-1", "주소2-1"));
+        final List<Long> ids = List.of(1L, 2L, 3L, 4L, 5L);
+        final int expectedTotalContent = 5;
+
+        // when
+        var places = placeReadRepository.findPlaceLocationsByName(
+            name,
+            regionParams,
+            null,
+            null
+        );
+
+        //then
+        assertThat(places.size()).isEqualTo(expectedTotalContent);
+        assertThat(places.stream().map(PlaceQueryResult.Location::placeId).toList()).isEqualTo(ids);
+    }
+
+    @Test
+    @DisplayName("이름으로 장소 위치 조회 테스트 - 도시-전체 필터링")
+    void findPlaceByName_RegionFiltering_City_All() {
+        // given
+        String name = "테스트장소";
+        List<RegionParam> regionParams = List.of(new RegionParam("주소1-1", null));
+        final List<Long> ids = List.of(1L, 2L, 3L, 4L, 5L, 6L);
+        final int expectedTotalContent = 6;
+
+        // when
+        var places = placeReadRepository.findPlaceLocationsByName(
+            name,
+            regionParams,
+            null,
+            null
+        );
+
+        //then
+        assertThat(places.size()).isEqualTo(expectedTotalContent);
+        assertThat(places.stream().map(PlaceQueryResult.Location::placeId).toList()).isEqualTo(ids);
+    }
+
+    @Test
+    @DisplayName("이름으로 장소 위치 조회 테스트 - 도시-구 여러 개 필터링")
+    void findPlaceByName_RegionFiltering_City_District_Many() {
+        // given
+        String name = "테스트장소";
+        List<RegionParam> regionParams = List.of(
+            new RegionParam("주소1-1", "주소2-1"),
+            new RegionParam("주소1-2", "주소2-2"));
+        final List<Long> ids = List.of(1L, 2L, 3L, 4L, 5L, 7L, 8L);
+        final int expectedTotalContent = 7;
+
+        // when
+        var places = placeReadRepository.findPlaceLocationsByName(
+            name,
+            regionParams,
+            null,
+            null
+        );
+
+        //then
+        assertThat(places.size()).isEqualTo(expectedTotalContent);
+        assertThat(places.stream().map(PlaceQueryResult.Location::placeId).toList()).isEqualTo(ids);
+    }
+
+    @Test
+    @DisplayName("이름으로 장소 리스트 조회 테스트 - 필터링 없음")
+    void findPlacesByName_NoFiltering() {
+        // given
+        String name = "테스트장소";
+        Pageable pageable = PageRequest.of(0, 5);
+        final List<Long> ids = List.of(1L, 2L, 3L, 4L, 5L);
+        final int expectedTotalContent = 20;
+
+        // when
+        var places = placeReadRepository.findPlacesByNameWithPaging(
+            null,
+            name,
+            null,
+            null,
+            null,
+            pageable
+        );
+
+        //then
+        assertThat(places.getTotalElements()).isEqualTo(expectedTotalContent);
+        assertThat(places.getContent().stream()
+            .map(DetailedPlace::placeId).toList())
+            .isEqualTo(ids);
+    }
+
+    @Test
+    @DisplayName("이름으로 장소 리스트 조회 테스트 - 도시-구 필터링")
+    void findPlacesByName_RegionFiltering_City_District() {
+        // given
+        String name = "테스트장소";
+        List<RegionParam> regionParams = List.of(new RegionParam("주소1-1", "주소2-1"));
+        Pageable pageable = PageRequest.of(0, 5);
+        final List<Long> ids = List.of(1L, 2L, 3L, 4L, 5L);
+        final int expectedTotalContent = 5;
+
+        // when
+        var places = placeReadRepository.findPlacesByNameWithPaging(
+            null,
+            name,
+            regionParams,
+            null,
+            null,
+            pageable
+        );
+
+        //then
+        assertThat(places.getTotalElements()).isEqualTo(expectedTotalContent);
+        assertThat(places.getContent().stream()
+            .map(DetailedPlace::placeId).toList())
+            .isEqualTo(ids);
+    }
+
+    @Test
+    @DisplayName("이름으로 장소 리스트 조회 테스트 - 도시-전체 필터링")
+    void findPlacesByName_RegionFiltering_City_All() {
+        // given
+        String name = "테스트장소";
+        List<RegionParam> regionParams = List.of(new RegionParam("주소1", null));
+        Pageable pageable = PageRequest.of(0, 5);
+        final List<Long> ids = List.of(11L, 12L, 13L, 14L, 15L);
+        final int expectedTotalContent = 10;
+
+        // when
+        var places = placeReadRepository.findPlacesByNameWithPaging(
+            null,
+            name,
+            regionParams,
+            null,
+            null,
+            pageable
+        );
+
+        //then
+        assertThat(places.getTotalElements()).isEqualTo(expectedTotalContent);
+        assertThat(places.getContent().stream()
+            .map(DetailedPlace::placeId).toList())
+            .isEqualTo(ids);
+    }
+
+    @Test
+    @DisplayName("이름으로 장소 리스트 조회 테스트 - 도시-구 여러 개 필터링")
+    void findPlacesByName_RegionFiltering_City_District_Many() {
+        // given
+        String name = "테스트장소";
+        List<RegionParam> regionParams = List.of(
+            new RegionParam("주소1-1", "주소2-1"),
+            new RegionParam("주소1-2", "주소2-2"));
+        Pageable pageable = PageRequest.of(0, 5);
+        final List<Long> ids = List.of(1L, 2L, 3L, 4L, 5L);
+        final int expectedTotalContent = 7;
+
+        // when
+        var places = placeReadRepository.findPlacesByNameWithPaging(
+            null,
+            name,
+            regionParams,
+            null,
+            null,
+            pageable
+        );
+
+        //then
+        assertThat(places.getTotalElements()).isEqualTo(expectedTotalContent);
+        assertThat(places.getContent().stream()
+            .map(DetailedPlace::placeId).toList())
+            .isEqualTo(ids);
+    }
+
+    @Test
+    @DisplayName("이름으로 장소 조회 테스트 - 카테고리 필터링(한개)")
+    void findPlacesByName_CategoryFiltering_One() {
+        // given
+        String name = "테스트장소";
+        List<Category> categories = List.of(Category.CAFE);
+        Pageable pageable = PageRequest.of(0, 5);
+        final List<Long> ids = List.of(2L, 7L, 12L, 17L);
+        final int expectedTotalContent = 4;
+
+        // when
+        var places = placeReadRepository.findPlacesByNameWithPaging(
+            null,
+            name,
+            null,
+            categories,
+            null,
+            pageable
+        );
+
+        //then
+        assertThat(places.getTotalElements()).isEqualTo(expectedTotalContent);
+        assertThat(places.getContent().stream()
+            .map(DetailedPlace::placeId).toList())
+            .isEqualTo(ids);
+    }
+
+    @Test
+    @DisplayName("이름으로 장소 조회 테스트 - 카테고리(한개) + 도시-구 필터링")
+    void findPlacesByName_CategoryFiltering_One_RegionFiltering_City_District() {
+        // given
+        String name = "테스트장소";
+        List<Category> categories = List.of(Category.CAFE);
+        List<RegionParam> regionParams = List.of(new RegionParam("주소1-1", "주소2-1"));
+        Pageable pageable = PageRequest.of(0, 5);
+        final List<Long> ids = List.of(2L);
+        final int expectedTotalContent = 1;
+
+        // when
+        var places = placeReadRepository.findPlacesByNameWithPaging(
+            null,
+            name,
+            regionParams,
+            categories,
+            null,
+            pageable
+        );
+
+        //then
+        assertThat(places.getTotalElements()).isEqualTo(expectedTotalContent);
+        assertThat(places.getContent().stream()
+            .map(DetailedPlace::placeId).toList())
+            .isEqualTo(ids);
     }
 }
