@@ -11,7 +11,6 @@ import team7.inplace.global.properties.GoogleApiProperties;
 import team7.inplace.place.client.GooglePlaceClientResponse.Place;
 
 @Component
-@Slf4j
 @RequiredArgsConstructor
 public class GooglePlaceClient {
 
@@ -24,7 +23,6 @@ public class GooglePlaceClient {
 
     public Place requestForPlaceDetail(String placeId) {
         var url = String.format(PLACE_DETAIL_URL, placeId);
-        var time = System.currentTimeMillis();
         HttpHeaders headers = new HttpHeaders();
         headers.set(FIELD_HEADER, FIELD);
         headers.set(API_KEY_HEADER, googleApiProperties.crawlingKey());
@@ -32,7 +30,6 @@ public class GooglePlaceClient {
         HttpEntity<String> entity = new HttpEntity<>(headers);
         var response = restTemplate.exchange(url, HttpMethod.GET, entity,
             GooglePlaceClientResponse.Place.class);
-        log.info("Time : {}", (System.currentTimeMillis() - time));
         return response.getBody();
 
     }
