@@ -21,7 +21,6 @@ import team7.inplace.video.presentation.dto.VideoResponse.Simple;
 
 @RestController
 @RequestMapping("/search")
-@Slf4j
 @RequiredArgsConstructor
 public class SearchController implements SearchControllerApiSpec {
 
@@ -32,7 +31,6 @@ public class SearchController implements SearchControllerApiSpec {
     public ResponseEntity<List<AutoCompletionInfo>> searchKeywords(
         @ModelAttribute SearchRequest.AutoComplete request
     ) {
-        log.info("searchKeywords: {}", request);
         var autoCompletions = searchService.searchAutoCompletions(
             request.getType(),
             request.getValue()
