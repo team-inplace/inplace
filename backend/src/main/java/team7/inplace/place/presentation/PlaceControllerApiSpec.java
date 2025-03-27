@@ -10,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import reactor.core.publisher.Mono;
 import team7.inplace.place.presentation.dto.PlaceRequest;
 import team7.inplace.place.presentation.dto.PlacesResponse;
@@ -30,9 +31,15 @@ public interface PlaceControllerApiSpec {
         @PageableDefault(page = 0, size = 10) Pageable pageable
     );
 
-    @Operation(summary = "모든 장소 조회", description = "지도 반경 내 혹은 필터링 기준의 모든 장소 목록을 조회합니다.")
+    @Operation(summary = "모든 장소 위치 조회(필터링만)", description = "지도 반경 내 혹은 필터링 기준의 모든 장소 목록을 조회합니다.")
     ResponseEntity<List<Location>> getPlaceLocations(
         @ModelAttribute @Validated PlaceRequest.Coordinate coordinateParams,
+        @ModelAttribute PlaceRequest.Filter filterParams
+    );
+
+    @Operation(summary = "모든 장소 위치 조회(장소 이름으록 검색했을 때", description = "장소 이름으로 검색한 모든 장소 목록을 조회합니다.")
+    ResponseEntity<List<Location>> getPlaceLocationsByName(
+        @RequestParam String name,
         @ModelAttribute PlaceRequest.Filter filterParams
     );
 

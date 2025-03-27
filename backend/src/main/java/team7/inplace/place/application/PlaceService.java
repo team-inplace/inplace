@@ -28,6 +28,7 @@ import team7.inplace.place.domain.Category;
 import team7.inplace.place.persistence.PlaceJpaRepository;
 import team7.inplace.place.persistence.PlaceReadRepository;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.Location;
 import team7.inplace.video.persistence.VideoReadRepository;
 
 @Slf4j
@@ -166,5 +167,14 @@ public class PlaceService {
         return Arrays.stream(Category.values())
             .map(category -> new PlaceInfo.Category(category.name()))
             .toList();
+    }
+
+    public List<Location> getPlaceLocationsByName(String name, FilterParams command) {
+        return placeReadRepository.findPlaceLocationsByName(
+            name,
+            command.regions(),
+            command.categories(),
+            command.influencers()
+        );
     }
 }

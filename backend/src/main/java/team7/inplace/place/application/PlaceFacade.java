@@ -15,6 +15,7 @@ import team7.inplace.place.application.command.PlacesCommand.FilterParams;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.application.dto.PlaceInfo.Marker;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.Location;
 import team7.inplace.review.application.ReviewService;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.video.application.VideoService;
@@ -102,5 +103,9 @@ public class PlaceFacade {
 
     public List<PlaceInfo.Category> getCategories() {
         return placeService.getCategories();
+    }
+
+    public List<Location> getPlaceLocationsByName(String name, FilterParams command) {
+        return placeService.getPlaceLocationsByName(name, command);
     }
 }

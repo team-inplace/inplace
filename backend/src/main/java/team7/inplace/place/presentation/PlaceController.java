@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 import team7.inplace.place.application.PlaceFacade;
@@ -26,6 +27,7 @@ import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.place.presentation.dto.PlaceRequest;
 import team7.inplace.place.presentation.dto.PlaceRequest.Create;
 import team7.inplace.place.presentation.dto.PlacesResponse;
+import team7.inplace.place.presentation.dto.PlacesResponse.Location;
 import team7.inplace.place.presentation.dto.ReviewResponse;
 import team7.inplace.review.application.ReviewService;
 
@@ -76,6 +78,23 @@ public class PlaceController implements PlaceControllerApiSpec {
     ) {
         List<PlaceQueryResult.Location> placeLocationInfos = placeFacade.getPlaceLocations(
             coordinateParams.toCommand(),
+            filterParams.toCommand()
+        );
+
+        return new ResponseEntity<>(
+            PlacesResponse.Location.from(placeLocationInfos),
+            HttpStatus.OK
+        );
+    }
+
+    @Override
+    @GetMapping("/all/search")
+    public ResponseEntity<List<Location>> getPlaceLocationsByName(
+        @RequestParam(required = true) String name,
+        @ModelAttribute PlaceRequest.Filter filterParams
+    ) {
+        List<PlaceQueryResult.Location> placeLocationInfos = placeFacade.getPlaceLocationsByName(
+            name,
             filterParams.toCommand()
         );
 
