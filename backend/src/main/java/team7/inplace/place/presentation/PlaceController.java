@@ -55,8 +55,6 @@ public class PlaceController implements PlaceControllerApiSpec {
         @ModelAttribute PlaceRequest.Filter filterParams,
         @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-        log.info("Param : {}", coordinateParams);
-        log.info("Param : {}", filterParams);
         var placeSimpleInfos = placeFacade.getPlacesInMapRange(
             coordinateParams.toCommand(),
             filterParams.toCommand(),
