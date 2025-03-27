@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:testdb
+    url: jdbc:h2:mem:testdb;MODE=MySQL;
     username: sa
     password:
     driver-class-name: org.h2.Driver
@@ -10,13 +10,13 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
         format_sql: true  # SQL 포맷팅
         use_sql_comments: true  # JPQL 주석 추가
         highlight_sql: true  # SQL 하이라이팅
         type:
           descriptor:
             sql: trace  # SQL 파라미터 출력
+        dialect: org.hibernate.dialect.H2Dialect
   application:
     name: "test"
 
