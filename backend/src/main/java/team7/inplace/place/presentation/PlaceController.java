@@ -68,7 +68,8 @@ public class PlaceController implements PlaceControllerApiSpec {
                 bottomRightLongitude, bottomRightLatitude,
                 longitude, latitude
             ),
-            new PlacesCommand.FilterParams(regions, categories, influencers),            pageable
+            new PlacesCommand.FilterParams(regions, categories, influencers),
+            pageable
         );
 
         var responses = PlacesResponse.Simple.from(placeSimpleInfos.getContent());
