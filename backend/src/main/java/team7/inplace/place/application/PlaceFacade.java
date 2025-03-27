@@ -52,15 +52,14 @@ public class PlaceFacade {
         }
 
         var googlePlace = CompletableFuture.supplyAsync(
-                () -> placeService.getGooglePlaceInfo(googlePlaceId.get())
-            ).exceptionally(e -> null)
-            .join();
+            () -> placeService.getGooglePlaceInfo(googlePlaceId.get())
+        ).exceptionally(e -> null);
 
         var placeInfo = placeService.getPlaceInfo(placeId, userId);
         var videoInfos = videoService.getVideosByPlaceId(placeId);
         var reviewRates = reviewService.getReviewLikeRate(placeId);
 
-        return PlaceInfo.Detail.of(placeInfo, googlePlace, videoInfos, reviewRates);
+        return PlaceInfo.Detail.of(placeInfo, googlePlace.join(), videoInfos, reviewRates);
     }
 
     public List<PlaceQueryResult.Location> getPlaceLocations(
