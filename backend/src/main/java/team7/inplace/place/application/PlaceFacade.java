@@ -14,6 +14,7 @@ import team7.inplace.place.application.command.PlacesCommand.Coordinate;
 import team7.inplace.place.application.command.PlacesCommand.FilterParams;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.application.dto.PlaceInfo.Marker;
+import team7.inplace.place.application.dto.PlaceInfo.Simple;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.Location;
 import team7.inplace.review.application.ReviewService;
@@ -107,5 +108,19 @@ public class PlaceFacade {
 
     public List<Location> getPlaceLocationsByName(String name, FilterParams command) {
         return placeService.getPlaceLocationsByName(name, command);
+    }
+
+    public Page<Simple> getPlacesByName(String name, FilterParams command, Pageable pageable) {
+        var userId = AuthorizationUtil.getUserId();
+
+        var placeSimpleInfos = placeService.getPlacesByName(userId, name, command, pageable);
+        var placeIds = placeSimpleInfos.getContent()
+            .stream()
+            .map(PlaceQueryResult.DetailedPlace::placeId)
+            .toList();
+        var placeVideos = videoService.getVideosByPlaceId(placeIds);
+
+        return placeSimpleInfos
+            .map(place -> PlaceInfo.Simple.of(place, placeVideos.get(place.placeId())));
     }
 }

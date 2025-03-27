@@ -51,4 +51,13 @@ public interface PlaceReadRepository {
         List<Category> categoryFilters,
         List<String> influencerFilters
     );
+
+    Page<DetailedPlace> findPlacesByNameWithPaging(
+        Long userId,
+        String name,
+        List<RegionParam> regions,
+        List<Category> categories,
+        List<String> influencers,
+        Pageable pageable
+    );
 }

@@ -28,6 +28,7 @@ import team7.inplace.place.presentation.dto.PlaceRequest;
 import team7.inplace.place.presentation.dto.PlaceRequest.Create;
 import team7.inplace.place.presentation.dto.PlacesResponse;
 import team7.inplace.place.presentation.dto.PlacesResponse.Location;
+import team7.inplace.place.presentation.dto.PlacesResponse.Simple;
 import team7.inplace.place.presentation.dto.ReviewResponse;
 import team7.inplace.review.application.ReviewService;
 
@@ -63,6 +64,22 @@ public class PlaceController implements PlaceControllerApiSpec {
             pageable
         );
 
+        var responses = PlacesResponse.Simple.from(placeSimpleInfos.getContent());
+        return new ResponseEntity<>(
+            new PageImpl<>(responses, pageable, placeSimpleInfos.getTotalElements()),
+            HttpStatus.OK
+        );
+    }
+
+    @Override
+    @GetMapping("/search")
+    public ResponseEntity<Page<Simple>> getPlacesByName(
+        @RequestParam String name,
+        @ModelAttribute PlaceRequest.Filter filterParams,
+        @PageableDefault(page = 0, size = 10) Pageable pageable
+    ) {
+        var placeSimpleInfos = placeFacade.getPlacesByName(name, filterParams.toCommand(),
+            pageable);
         var responses = PlacesResponse.Simple.from(placeSimpleInfos.getContent());
         return new ResponseEntity<>(
             new PageImpl<>(responses, pageable, placeSimpleInfos.getTotalElements()),

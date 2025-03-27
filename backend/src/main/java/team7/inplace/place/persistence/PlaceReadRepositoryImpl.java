@@ -21,6 +21,7 @@ import team7.inplace.place.application.command.PlacesCommand.RegionParam;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.QPlace;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.DetailedPlace;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.Location;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.Marker;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.SimplePlace;
@@ -365,6 +366,73 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
             .from(QPlace.place)
             .where(QPlace.place.id.in(filteredPlaceId))
             .fetch();
+    }
+
+    @Override
+    public Page<DetailedPlace> findPlacesByNameWithPaging(
+        Long userId, String name,
+        List<RegionParam> regions, List<Category> categories, List<String> influencers,
+        Pageable pageable
+    ) {
+        var locationCondition = locationRegionCondition(regions, null, null, null, null);
+        var filterExpression = createFilters(categories, influencers);
+        var searchCondition = getMatchScore(name);
+
+        List<Long> filteredPlaceId = jpaQueryFactory
+            .select(QPlace.place.id).distinct()
+            .from(QPlace.place)
+            .leftJoin(QVideo.video).on(QVideo.video.placeId.eq(QPlace.place.id))
+            .leftJoin(QInfluencer.influencer)
+            .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id))
+            .where(
+                locationCondition,
+                filterExpression,
+                searchCondition.gt(0),
+                QPlace.place.deleteAt.isNull(),
+                QVideo.video.deleteAt.isNull(),
+                QInfluencer.influencer.deleteAt.isNull()
+            ).fetch();
+
+        var places = jpaQueryFactory
+            .select(new QPlaceQueryResult_DetailedPlace(
+                QPlace.place.id,
+                QPlace.place.name,
+                QPlace.place.address.address1,
+                QPlace.place.address.address2,
+                QPlace.place.address.address3,
+                QPlace.place.coordinate.longitude,
+                QPlace.place.coordinate.latitude,
+                QPlace.place.category,
+                QPlace.place.googlePlaceId,
+                QPlace.place.kakaoPlaceId,
+                QLikedPlace.likedPlace.isLiked.isNotNull()
+            )).distinct()
+            .from(QPlace.place)
+            .leftJoin(QVideo.video).on(QVideo.video.placeId.eq(QPlace.place.id))
+            .leftJoin(QInfluencer.influencer)
+            .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id))
+            .leftJoin(QLikedPlace.likedPlace).on(QLikedPlace.likedPlace.placeId.eq(QPlace.place.id)
+                .and(userId != null ?
+                    QLikedPlace.likedPlace.userId.eq(userId) :
+                    QLikedPlace.likedPlace.userId.isNull())
+                .and(QLikedPlace.likedPlace.isLiked.isTrue()))
+            .where(
+                locationCondition,
+                filterExpression,
+                searchCondition.gt(0),
+                QPlace.place.deleteAt.isNull(),
+                QVideo.video.deleteAt.isNull(),
+                QInfluencer.influencer.deleteAt.isNull(),
+                QLikedPlace.likedPlace.deleteAt.isNull()
+            )
+            .orderBy(QPlace.place.id.asc())
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+        if (places.isEmpty()) {
+            return new PageImpl<>(List.of(), pageable, 0);
+        }
+        return PageableExecutionUtils.getPage(places, pageable, filteredPlaceId::size);
     }
 
     private NumberTemplate<Double> getMatchScore(String keyword) {

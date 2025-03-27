@@ -17,6 +17,7 @@ import team7.inplace.global.exception.code.PlaceErrorCode;
 import team7.inplace.liked.likedPlace.domain.LikedPlace;
 import team7.inplace.liked.likedPlace.persistence.LikedPlaceRepository;
 import team7.inplace.place.application.command.PlaceLikeCommand;
+import team7.inplace.place.application.command.PlacesCommand;
 import team7.inplace.place.application.command.PlacesCommand.Coordinate;
 import team7.inplace.place.application.command.PlacesCommand.Create;
 import team7.inplace.place.application.command.PlacesCommand.FilterParams;
@@ -175,6 +176,19 @@ public class PlaceService {
             command.regions(),
             command.categories(),
             command.influencers()
+        );
+    }
+
+    public Page<PlaceQueryResult.DetailedPlace> getPlacesByName(
+        Long userId, String name, PlacesCommand.FilterParams command, Pageable pageable
+    ) {
+        return placeReadRepository.findPlacesByNameWithPaging(
+            userId,
+            name,
+            command.regions(),
+            command.categories(),
+            command.influencers(),
+            pageable
         );
     }
 }
