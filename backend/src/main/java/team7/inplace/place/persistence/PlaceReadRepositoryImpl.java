@@ -41,8 +41,8 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
 
     @Override
     public Optional<PlaceQueryResult.DetailedPlace> findDetailedPlaceById(
-        Long placeId,
-        Long userId
+        Long userId,
+        Long placeId
     ) {
         var detailedPlace = jpaQueryFactory
             .select(new QPlaceQueryResult_DetailedPlace(

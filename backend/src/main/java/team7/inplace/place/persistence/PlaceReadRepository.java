@@ -12,7 +12,7 @@ import team7.inplace.place.persistence.dto.PlaceQueryResult.Location;
 
 public interface PlaceReadRepository {
 
-    Optional<PlaceQueryResult.DetailedPlace> findDetailedPlaceById(Long placeId, Long userId);
+    Optional<PlaceQueryResult.DetailedPlace> findDetailedPlaceById(Long userId, Long placeId);
 
     Optional<PlaceQueryResult.SimplePlace> findSimplePlaceById(Long placeId);
 
