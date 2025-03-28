@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -18,9 +21,13 @@ import team7.inplace.global.exception.InplaceException;
 import team7.inplace.security.application.dto.CustomOAuth2User;
 import team7.inplace.security.util.JwtUtil;
 
+@Slf4j
 public class AuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+
+    @Value("${spring.application.domain}")
+    private String domain;
 
     public AuthorizationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
@@ -36,6 +43,12 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+
+        if (hasNotSameReferer(request)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String accessToken = getAccessToken(request);
         if (StringUtils.isNotEmpty(accessToken) && jwtUtil.isNotExpired(accessToken)) {
             addUserToAuthentication(accessToken);
@@ -58,6 +71,20 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                 )
                 .findAny())
             .isEmpty();
+    }
+
+    private boolean hasNotSameReferer(HttpServletRequest request) {
+        String referer = request.getHeader(HttpHeaders.REFERER);
+        if (StringUtils.isBlank(referer)) {
+            return true;
+        }
+
+        if (referer.contains(domain)) {
+            return false;
+        }
+
+        log.warn("Referer is not same domain. referer: {}", referer);
+        return true;
     }
 
     private String getAccessToken(HttpServletRequest request) throws InplaceException {
