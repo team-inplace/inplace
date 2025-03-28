@@ -55,7 +55,7 @@ public class PlaceFacade {
             () -> placeService.getGooglePlaceInfo(googlePlaceId.get())
         ).exceptionally(e -> null);
 
-        var placeInfo = placeService.getPlaceInfo(placeId, userId);
+        var placeInfo = placeService.getPlaceInfo(userId, placeId);
         var videoInfos = videoService.getVideosByPlaceId(placeId);
         var reviewRates = reviewService.getReviewLikeRate(placeId);
 
