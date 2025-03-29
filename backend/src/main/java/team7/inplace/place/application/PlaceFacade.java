@@ -2,6 +2,7 @@ package team7.inplace.place.application;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,8 @@ public class PlaceFacade {
     private final ReviewService reviewService;
     private final VideoService videoService;
 
+    private final Executor externalApiExecutor;
+
     public void createPlace(Long videoId, PlacesCommand.Create command) {
         var placeId = placeService.createPlace(command);
 
@@ -52,7 +55,7 @@ public class PlaceFacade {
         }
 
         var googlePlace = CompletableFuture.supplyAsync(
-            () -> placeService.getGooglePlaceInfo(googlePlaceId.get())
+            () -> placeService.getGooglePlaceInfo(googlePlaceId.get()), externalApiExecutor
         ).exceptionally(e -> null);
 
         var placeInfo = placeService.getPlaceInfo(userId, placeId);
