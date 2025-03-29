@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import team7.inplace.global.annotation.Client;
 import team7.inplace.global.properties.GoogleApiProperties;
 
 @Slf4j
-@Component
 @RequiredArgsConstructor
+@Client("Youtube Crawling Client")
 public class YoutubeClient {
 
     private static final String VIDEO_SEARCH_URL = "https://www.googleapis.com/youtube/v3/search";
@@ -34,8 +34,6 @@ public class YoutubeClient {
         } catch (Exception e) {
             log.error("Youtube API 호출이 실패했습니다. Video Id {}", videoId);
         }
-
-        log.info(response.toPrettyString());
 
         return response;
     }
@@ -69,7 +67,7 @@ public class YoutubeClient {
                 break;
             }
             if (Objects.isNull(response)) {
-                log.error("Youtube API Response가 NULL입니다 {}.", chanelId);
+                log.error("Youtube API Response 가 NULL입니다 {}.", chanelId);
                 break;
             }
 
