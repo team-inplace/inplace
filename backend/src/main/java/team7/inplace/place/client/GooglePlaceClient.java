@@ -1,16 +1,15 @@
 package team7.inplace.place.client;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import team7.inplace.global.annotation.Client;
 import team7.inplace.global.properties.GoogleApiProperties;
 import team7.inplace.place.client.GooglePlaceClientResponse.Place;
 
-@Component
+@Client("Google Place Client")
 @RequiredArgsConstructor
 public class GooglePlaceClient {
 
