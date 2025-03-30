@@ -103,6 +103,7 @@ jobs:
               sudo docker run -d \
                 --name inplace-test \
                 -p 8080:8080 \
+                -p ${{ secrets.EC2_MONITORING_PORT }}:${{ secrets.EC2_MONITORING_PORT }} \
                 --restart unless-stopped \
                 --env-file .env \
                 ${{ secrets.DOCKERHUB_USERNAME }}/inplace:test
