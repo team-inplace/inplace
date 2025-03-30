@@ -3,6 +3,7 @@ package team7.inplace.security.filter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tags;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -38,6 +40,7 @@ public class ApiExecutionMetricsFilter extends OncePerRequestFilter {
         } finally {
             long totalTime = System.currentTimeMillis() - requestStart;
             String path = request.getRequestURI();
+            String requestId = UUID.randomUUID().toString();
 
             var context = ThreadExecutionContext.get();
             List<Map<String, Object>> records = new ArrayList<>();
@@ -50,11 +53,10 @@ public class ApiExecutionMetricsFilter extends OncePerRequestFilter {
             }
 
             String layersJson = toJson(records);
-            meterRegistry.summary("api.layer.execution.summary",
-                "path", path,
-                "layers", layersJson
-            ).record(totalTime);
-
+            meterRegistry.gauge("api.layer.execution.time",
+                Tags.of("requestId", requestId, "path", path, "layers", layersJson),
+                totalTime
+            );
             ThreadExecutionContext.clear();
         }
     }
