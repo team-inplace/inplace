@@ -16,7 +16,7 @@ public class ThreadContextPropagatingDecorator implements TaskDecorator {
                 ThreadExecutionContext.set(context);
                 runnable.run();
             } finally {
-                context.exit();
+                ThreadExecutionContext.clear();
             }
         };
     }

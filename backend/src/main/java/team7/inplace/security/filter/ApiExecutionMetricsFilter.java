@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.filter.OncePerRequestFilter;
 import team7.inplace.global.aop.ThreadExecutionContext;
-import team7.inplace.global.aop.ThreadExecutionContext.ExecutionNode;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,30 +39,23 @@ public class ApiExecutionMetricsFilter extends OncePerRequestFilter {
             long totalTime = System.currentTimeMillis() - requestStart;
             String path = request.getRequestURI();
 
-            List<Map<String, Object>> layerRecords = new ArrayList<>();
-            for (ExecutionNode node : ThreadExecutionContext.get().getTopLevelNodes()) {
-                collectLayerRecordsAsJson(node, layerRecords);
+            var context = ThreadExecutionContext.get();
+            List<Map<String, Object>> records = new ArrayList<>();
+
+            for (Map.Entry<String, Long> entry : context.getExecutionTimeMap().entrySet()) {
+                Map<String, Object> record = new HashMap<>();
+                record.put("key", entry.getKey());
+                record.put("time", entry.getValue());
+                records.add(record);
             }
 
-            String layersJson = toJson(layerRecords);
-
+            String layersJson = toJson(records);
             meterRegistry.summary("api.layer.execution.summary",
                 "path", path,
                 "layers", layersJson
             ).record(totalTime);
-            log.info("{}", layerRecords);
-            ThreadExecutionContext.clear();
-        }
-    }
 
-    private void collectLayerRecordsAsJson(ExecutionNode node, List<Map<String, Object>> records) {
-        Map<String, Object> entry = new HashMap<>();
-        entry.put("layer", node.getLayer());
-        entry.put("method", node.getMethod());
-        entry.put("time", node.getExecutionTime());
-        records.add(entry);
-        for (ExecutionNode child : node.getChildren()) {
-            collectLayerRecordsAsJson(child, records);
+            ThreadExecutionContext.clear();
         }
     }
 

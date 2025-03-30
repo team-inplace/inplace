@@ -40,12 +40,14 @@ public class ExecutionTimeAspect {
         throws Throwable {
         String layer = joinPoint.getTarget().getClass().getSimpleName();
         String methodName = joinPoint.getSignature().getName();
-
-        ThreadExecutionContext.get().enter(layer, methodName);
+        long startTime = System.currentTimeMillis();
         try {
             return joinPoint.proceed();
         } finally {
-            ThreadExecutionContext.get().exit();
+            long endTime = System.currentTimeMillis();
+            long executionTime = endTime - startTime;
+
+            ThreadExecutionContext.get().enter(layer, methodName, executionTime);
         }
     }
 }

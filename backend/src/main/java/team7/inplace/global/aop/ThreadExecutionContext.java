@@ -1,19 +1,15 @@
 package team7.inplace.global.aop;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 public class ThreadExecutionContext {
 
-    private static final ThreadLocal<ExecutionTree> threadLocal =
-        ThreadLocal.withInitial(ExecutionTree::new);
+    private static final ThreadLocal<ExecutionTime> threadLocal =
+        ThreadLocal.withInitial(ExecutionTime::new);
 
-    public static ExecutionTree get() {
+    public static ExecutionTime get() {
         return threadLocal.get();
     }
 
@@ -21,56 +17,18 @@ public class ThreadExecutionContext {
         threadLocal.remove();
     }
 
-    public static void set(ExecutionTree context) {
+    public static void set(ExecutionTime context) {
         threadLocal.set(context);
     }
 
     @Getter
-    public static class ExecutionTree {
+    public static class ExecutionTime {
 
-        private final ExecutionNode root = new ExecutionNode("root", "root", -1);
-        private final Deque<ExecutionNode> stack = new ArrayDeque<>();
+        private final Map<String, Long> executionTimeMap = new LinkedHashMap<>();
 
-        public ExecutionTree() {
-            stack.push(root);
-        }
-
-        public void enter(String layer, String method) {
-            ExecutionNode node = new ExecutionNode(layer, method, System.currentTimeMillis());
-            stack.peek().addChild(node);
-            node.setParent(stack.peek());
-            stack.push(node);
-        }
-
-        public void exit() {
-            ExecutionNode node = stack.pop();
-            node.setEndTime(System.currentTimeMillis());
-        }
-
-        public List<ExecutionNode> getTopLevelNodes() {
-            return root.getChildren();
-        }
-    }
-
-    @Getter
-    @RequiredArgsConstructor
-    public static class ExecutionNode {
-
-        private final String layer;
-        private final String method;
-        private final long startTime;
-        private final List<ExecutionNode> children = new LinkedList<>();
-        @Setter
-        private long endTime;
-        @Setter
-        private ExecutionNode parent;
-
-        public void addChild(ExecutionNode node) {
-            children.add(node);
-        }
-
-        public long getExecutionTime() {
-            return endTime - startTime;
+        public void enter(String layer, String method, Long milliseconds) {
+            var key = layer + "." + method;
+            executionTimeMap.put(key, milliseconds);
         }
     }
 }
