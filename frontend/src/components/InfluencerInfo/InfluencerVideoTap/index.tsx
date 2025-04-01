@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import NoItem from '@/components/common/layouts/NoItem';
 import SpotItem from '@/components/Main/SpotSection/SpotItem';
@@ -9,20 +10,52 @@ import { useGetInfluencerVideo } from '@/api/hooks/useGetInfluencerVideo';
 type Props = {
   influencerId: string;
   sortOption: string;
+  onSortChange?: (sort: string) => void;
 };
 
-export default function InfluencerVideoTap({ influencerId, sortOption }: Props) {
-  const [currentPage, setCurrentPage] = useState(1);
+export default function InfluencerVideoTap({ influencerId, sortOption, onSortChange }: Props) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const PAGE_SIZE = 6;
 
-  const { data: videoData, isLoading } = useGetInfluencerVideo(influencerId, currentPage - 1, PAGE_SIZE, sortOption);
+  const searchParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
+
+  const currentPage = useMemo(() => {
+    const pageParam = searchParams.get('page');
+    return pageParam ? parseInt(pageParam, 10) : 1;
+  }, [searchParams]);
+
+  const currentSort = useMemo(() => {
+    return searchParams.get('sort') || sortOption;
+  }, [searchParams, sortOption]);
 
   useEffect(() => {
-    setCurrentPage(1);
-  }, [sortOption]);
+    if (currentSort !== sortOption && onSortChange) {
+      onSortChange(currentSort);
+    }
+  }, [currentSort, sortOption, onSortChange]);
+
+  // 부모 컴포넌트에서 전달받은 sortOption 변경되면 url 업데이트
+  useEffect(() => {
+    const urlSort = searchParams.get('sort');
+
+    if (urlSort !== sortOption) {
+      const newParams = new URLSearchParams(searchParams);
+      newParams.set('sort', sortOption);
+
+      if (!newParams.has('page')) {
+        newParams.set('page', '1');
+      }
+      navigate(`${location.pathname}?${newParams.toString()}`, { replace: true });
+    }
+  }, [sortOption, searchParams, navigate, location.pathname]);
+
+  const { data: videoData, isLoading } = useGetInfluencerVideo(influencerId, currentPage - 1, PAGE_SIZE, currentSort);
 
   const handlePageChange = (pageNum: number) => {
-    setCurrentPage(pageNum);
+    const newParams = new URLSearchParams(searchParams);
+    newParams.set('page', pageNum.toString());
+    navigate(`${location.pathname}?${newParams.toString()}`);
   };
 
   if (isLoading) {
@@ -42,23 +75,18 @@ export default function InfluencerVideoTap({ influencerId, sortOption }: Props) 
       ) : (
         <>
           <GridContainer>
-            {videoData.content.map((item, index) => {
-              const column = (index % 2) + 1;
-              return (
-                <GridItem key={item.videoId} $column={column}>
-                  <SpotItem
-                    key={item.videoId}
-                    videoId={item.videoId}
-                    videoAlias={item.videoAlias}
-                    videoUrl={item.videoUrl}
-                    place={item.place}
-                    isInfluencer
-                  />
-                </GridItem>
-              );
-            })}
+            {videoData.content.map((item, index) => (
+              <GridItem key={item.videoId} $column={(index % 2) + 1}>
+                <SpotItem
+                  videoId={item.videoId}
+                  videoAlias={item.videoAlias}
+                  videoUrl={item.videoUrl}
+                  place={item.place}
+                  isInfluencer
+                />
+              </GridItem>
+            ))}
           </GridContainer>
-
           <Pagination
             currentPage={currentPage}
             totalPages={videoData.totalPages || 0}

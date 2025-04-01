@@ -2,7 +2,7 @@ import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
 import { IoIosArrowDown } from 'react-icons/io';
 
 import styled from 'styled-components';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Suspense, useCallback, useEffect, useState } from 'react';
 import { QueryErrorResetBoundary, useQueryClient } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
@@ -21,7 +21,15 @@ import Button from '@/components/common/Button';
 export default function InfluencerInfoPage() {
   const { id } = useParams() as { id: string };
   const { data: influencerInfoData } = useGetInfluencerInfo(id);
-  const [sortOption, setSortOption] = useState('publishTime');
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const getInitialSortOption = (): string => {
+    const searchParams = new URLSearchParams(location.search);
+    return searchParams.get('sort') || 'publishTime';
+  };
+
+  const [sortOption, setSortOption] = useState(getInitialSortOption());
 
   const sortLabel: Record<string, string> = {
     publishTime: '최신순',
@@ -32,7 +40,6 @@ export default function InfluencerInfoPage() {
   const influencerId = Number(id);
 
   const { isAuthenticated } = useAuth();
-  const location = useLocation();
 
   const [activeTab, setActiveTab] = useState<'video' | 'map'>('video');
   const [isLike, setIsLike] = useState(influencerInfoData.likes);
@@ -68,9 +75,20 @@ export default function InfluencerInfoPage() {
   );
 
   const handleSortChange = (option: string) => {
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set('sort', option);
+    if (!searchParams.has('page')) {
+      searchParams.set('page', '1');
+    }
+
+    navigate(`${location.pathname}?${searchParams.toString()}`);
     setSortOption(option);
     setShowSortOptions(false);
   };
+
+  useEffect(() => {
+    setSortOption(getInitialSortOption());
+  }, [location.search]);
 
   useEffect(() => {
     setIsLike(influencerInfoData.likes);
@@ -138,7 +156,11 @@ export default function InfluencerInfoPage() {
                 </SortDropdown>
               )}
             </SortSection>
-            <InfluencerVideoTap influencerId={id} sortOption={sortOption} />
+            <InfluencerVideoTap
+              influencerId={id}
+              sortOption={sortOption}
+              onSortChange={(newSort) => setSortOption(newSort)}
+            />
           </>
         ) : (
           <QueryErrorResetBoundary>
