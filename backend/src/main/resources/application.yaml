@@ -3,7 +3,7 @@ spring:
     name: ${APP_NAME}
     domain: ${DOMAIN}
   profiles:
-    include: db, redis, s3, monitoring, security, google, kakao
+    include: db, redis, s3, monitoring, security, google, kakao, crawling
   servlet:
     multipart:
       max-file-size: 10MB

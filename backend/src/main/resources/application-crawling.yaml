@@ -1,0 +1,3 @@
+crawling:
+  updateVideoTimeCron: ${UPDATE_VIDEO_VIEW_TIME_CRON}
+  updateVideoViewTimeCron: ${UPDATE_VIDEO_VIEW_TIME_CRON}

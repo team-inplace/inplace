@@ -15,7 +15,7 @@ public class CrawlingFacade {
     private final YoutubeCrawlingService youtubeCrawlingService;
     private final VideoFacade videoFacade;
 
-    @Scheduled(cron = "0 0 2 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "${crawling.updateVideoTimeCron}", zone = "Asia/Seoul")
     public void updateVideos() {
         var crawlingInfos = youtubeCrawlingService.crawlAllVideos();
         for (var crawlingInfo : crawlingInfos) {
@@ -35,7 +35,7 @@ public class CrawlingFacade {
         }
     }
 
-    @Scheduled(cron = "0 30 2 * * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "${crawling.updateVideoViewTimeCron}", zone = "Asia/Seoul")
     public void updateVideoView() {
         var crawlingInfos = youtubeCrawlingService.crawlingVideoView();
         var videoCommands = crawlingInfos.stream()
