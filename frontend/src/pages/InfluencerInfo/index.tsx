@@ -3,7 +3,7 @@ import { IoIosArrowDown } from 'react-icons/io';
 
 import styled from 'styled-components';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Suspense, useCallback, useEffect, useState } from 'react';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { QueryErrorResetBoundary, useQueryClient } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
 import Error from '@/components/common/layouts/Error';
@@ -17,6 +17,7 @@ import Loading from '@/components/common/layouts/Loading';
 import InfluencerVideoTap from '@/components/InfluencerInfo/InfluencerVideoTap';
 import InfluencerMapTap from '@/components/InfluencerInfo/InfluencerMapTap';
 import Button from '@/components/common/Button';
+import useClickOutside from '@/hooks/useClickOutside';
 
 export default function InfluencerInfoPage() {
   const { id } = useParams() as { id: string };
@@ -45,6 +46,7 @@ export default function InfluencerInfoPage() {
   const [isLike, setIsLike] = useState(influencerInfoData.likes);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSortOptions, setShowSortOptions] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
 
   const { mutate: postLike } = usePostInfluencerLike();
@@ -93,6 +95,8 @@ export default function InfluencerInfoPage() {
   useEffect(() => {
     setIsLike(influencerInfoData.likes);
   }, [influencerInfoData.likes]);
+
+  useClickOutside([dropdownRef], () => setShowSortOptions(false));
 
   return (
     <PageContainer>
@@ -145,7 +149,7 @@ export default function InfluencerInfoPage() {
                 <IoIosArrowDown size={16} />
               </StyledButton>
               {showSortOptions && (
-                <SortDropdown>
+                <SortDropdown ref={dropdownRef}>
                   <SortItem onClick={() => handleSortChange('publishTime')}>
                     최신순 {sortOption === 'publishTime'}
                   </SortItem>
