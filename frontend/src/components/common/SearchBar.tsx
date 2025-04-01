@@ -302,7 +302,8 @@ const SearchDropDownBox = styled.ul<{ $isSearchPage: boolean }>`
   z-index: 10;
 
   @media screen and (max-width: 768px) {
-    width: ${({ $isSearchPage }) => ($isSearchPage ? '100%' : '90%')};
+    width: ${({ $isSearchPage }) => ($isSearchPage ? '100%' : 'calc(100% - 37.1px)')};
+    right: ${({ $isSearchPage }) => ($isSearchPage ? 'auto' : '38px')};
   }
 `;
 
