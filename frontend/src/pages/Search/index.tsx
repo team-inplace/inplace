@@ -1,4 +1,4 @@
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import { Text } from '@/components/common/typography/Text';
@@ -43,9 +43,23 @@ export default function SearchPage() {
           </>
         )}
       </Container>
+      <ButtonWrapper>
+        <Text weight="normal" size="s" variant="grey">
+          찾는 결과가 없다면
+        </Text>
+        <StyledLink to="/map">
+          <Text weight="bold" size="s" variant="white">
+            지도에서 검색하기
+          </Text>
+        </StyledLink>
+        <Text weight="normal" size="s" variant="grey">
+          에서 확인해보세요!
+        </Text>
+      </ButtonWrapper>
     </Wrapper>
   );
 }
+
 const Wrapper = styled.div`
   width: 100%;
   display: flex;
@@ -58,6 +72,7 @@ const Wrapper = styled.div`
     align-items: center;
   }
 `;
+
 const SplitLine = styled.div`
   width: 100%;
   border-bottom: 1px solid #595959;
@@ -80,5 +95,35 @@ const Container = styled.div`
   margin-top: 10px;
   @media screen and (max-width: 768px) {
     gap: 20px;
+  }
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 30px;
+
+  @media screen and (max-width: 768px) {
+    width: 90%;
+    gap: 6px;
+  }
+`;
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  bottom: 1px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 100%;
+    height: 1px;
+    background-color: white;
   }
 `;
