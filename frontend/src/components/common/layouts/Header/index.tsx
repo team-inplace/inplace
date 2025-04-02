@@ -78,6 +78,7 @@ const HeaderContentWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   min-height: 60px;
+  margin-top: 10px;
 
   @media (max-width: 768px) {
     padding: 0 20px;

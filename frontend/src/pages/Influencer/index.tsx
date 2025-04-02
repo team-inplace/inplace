@@ -64,7 +64,7 @@ export default function InfluencerPage() {
 }
 
 const PageContainer = styled.div`
-  padding: 6px 0;
+  padding: 16px 0;
   display: flex;
   flex-direction: column;
   gap: 30px;

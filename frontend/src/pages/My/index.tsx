@@ -130,7 +130,7 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 80px;
-  padding: 30px 0px 60px;
+  padding: 16px 0px 60px;
 
   @media screen and (max-width: 768px) {
     width: 100%;

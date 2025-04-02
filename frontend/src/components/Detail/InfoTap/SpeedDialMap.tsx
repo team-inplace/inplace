@@ -91,7 +91,7 @@ export default function SpeedDialMap({
 
 const SpeedDialContainer = styled.div`
   position: fixed;
-  top: 328px;
+  top: 340px;
   display: flex;
   justify-content: center;
   align-items: center;

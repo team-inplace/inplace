@@ -203,7 +203,7 @@ export default function MapPage() {
 }
 
 const PageContainer = styled.div`
-  padding: 6px 0;
+  padding: 16px 0;
   @media screen and (max-width: 768px) {
     position: relative;
     width: 100%;
@@ -227,11 +227,9 @@ const FilterContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 10px;
 
   @media screen and (max-width: 768px) {
     width: 90%;
-    padding-top: 12px;
     z-index: 100;
     gap: 10px;
     flex-wrap: wrap;
