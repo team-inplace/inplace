@@ -62,6 +62,7 @@ export default function MapWindow({
 
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isMapReady, setIsMapReady] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [showSearchButton, setShowSearchButton] = useState(false);
   const [showNoMarkerMessage, setShowNoMarkerMessage] = useState(false);
@@ -116,50 +117,50 @@ export default function MapWindow({
 
   // 초기 접속 시
   useEffect(() => {
-    if (!isInitialLoad) return;
-    const startTime = performance.now();
+    if (!isInitialLoad || !isMapReady) return;
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setIsLoading(false);
-        const endTime = performance.now();
-        const elapsed = (endTime - startTime).toFixed(2);
-        console.log(`✅ 위치 받아오는데 걸린 시간: ${elapsed}ms`);
+    const getUserLocation = async () => {
+      try {
+        const position: GeolocationPosition = await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject, GEOLOCATION_CONFIG);
+        });
+
         const userLoc = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
+
         setUserLocation(userLoc);
+
         if (mapRef.current) {
           mapRef.current.setCenter(new kakao.maps.LatLng(userLoc.lat, userLoc.lng));
-        }
-        setTimeout(() => {
           setCenter(userLoc);
           updateMapBounds();
-          setIsInitialLoad(false);
-        }, 1000);
-      },
-      (error) => {
-        const endTime = performance.now();
-        const elapsed = (endTime - startTime).toFixed(2);
-        console.log(`❌ 위치 탐색 실패. 소요 시간: ${elapsed}ms`);
-        console.error('Geolocation error:', error);
-        setIsLoading(false);
-        setTimeout(() => {
-          setIsInitialLoad(false);
-          updateMapBounds();
-        }, 1000);
-        if (error.code === error.PERMISSION_DENIED) {
-          alert('위치 권한이 차단되었습니다. 위치를 수동으로 설정하세요.');
-        } else if (error.code === error.POSITION_UNAVAILABLE) {
-          alert('위치 정보를 가져올 수 없습니다.');
-        } else if (error.code === error.TIMEOUT) {
-          alert('위치 정보 요청이 시간 초과되었습니다. 다시 시도해주세요.');
         }
-      },
-      GEOLOCATION_CONFIG,
-    );
-  }, []);
+
+        setIsLoading(false);
+        setIsInitialLoad(false);
+      } catch (error) {
+        console.error('Geolocation error:', error);
+
+        setIsLoading(false);
+        updateMapBounds();
+        setIsInitialLoad(false);
+
+        if (error instanceof GeolocationPositionError) {
+          if (error.code === error.PERMISSION_DENIED) {
+            alert('위치 권한이 차단되었습니다. 위치를 수동으로 설정하세요.');
+          } else if (error.code === error.POSITION_UNAVAILABLE) {
+            alert('위치 정보를 가져올 수 없습니다.');
+          } else if (error.code === error.TIMEOUT) {
+            alert('위치 정보 요청이 시간 초과되었습니다. 다시 시도해주세요.');
+          }
+        }
+      }
+    };
+
+    getUserLocation();
+  }, [isInitialLoad, isMapReady]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -224,19 +225,18 @@ export default function MapWindow({
     }
   }, [selectedPlaceId, placeNameMarkers, markers]);
 
-  // 마커 정보가 없을 경우
   useEffect(() => {
-    const isEmpty = !isInitialLoad && !isLoadingMarker && markerListToRender.length === 0;
+    const isEmpty = !isLoading && !isLoadingMarker && markerListToRender.length === 0;
     if (isEmpty) {
       setShowNoMarkerMessage(true);
       const timer = setTimeout(() => {
         setShowNoMarkerMessage(false);
-      }, 4000);
+      }, 3000);
 
       return () => clearTimeout(timer);
     }
     return undefined;
-  }, [markerListToRender, isLoadingMarker]);
+  }, [markerListToRender, isLoadingMarker, isLoading]);
 
   return (
     <MapContainer>
@@ -280,6 +280,7 @@ export default function MapWindow({
         level={DEFAULT_MAP_ZOOM_LEVEL}
         onCreate={(mapInstance) => {
           mapRef.current = mapInstance;
+          setIsMapReady(true);
         }}
         onCenterChanged={() => setShowSearchButton(true)}
         onZoomChanged={() => setShowSearchButton(true)}
