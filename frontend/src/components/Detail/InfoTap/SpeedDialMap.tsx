@@ -2,22 +2,32 @@ import { useContext, useState } from 'react';
 import styled from 'styled-components';
 import { FaMapMarkedAlt } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
-import { IoClose } from 'react-icons/io5';
+import { IoClose, IoQrCode } from 'react-icons/io5';
 import Button from '@/components/common/Button';
 import { ThemeContext } from '@/provider/Themes';
 import KakaoIcon from '@/assets/images/kakaomap-icon.webp';
 import NaverIcon from '@/assets/images/navermap-icon.webp';
+import useIsMobile from '@/hooks/useIsMobile';
 
 interface SpeedDialMapProps {
   kakaoPlaceUrl: string;
   naverPlaceUrl: string;
   googlePlaceUrl?: string;
+  visitModal: boolean;
+  setVisitModal: (visitModal: boolean) => void;
 }
 
-export default function SpeedDialMap({ kakaoPlaceUrl, googlePlaceUrl, naverPlaceUrl }: SpeedDialMapProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export default function SpeedDialMap({
+  kakaoPlaceUrl,
+  googlePlaceUrl,
+  naverPlaceUrl,
+  visitModal,
+  setVisitModal,
+}: SpeedDialMapProps) {
+  const [isOpen, setIsOpen] = useState(true);
   const { theme } = useContext(ThemeContext);
   const buttonVariant = theme === 'dark' ? 'outline' : 'blackOutline';
+  const isMobile = useIsMobile();
 
   const toggleSpeedDial = () => {
     setIsOpen(!isOpen);
@@ -60,6 +70,16 @@ export default function SpeedDialMap({ kakaoPlaceUrl, googlePlaceUrl, naverPlace
             <FcGoogle size={20} />
           </GoogleButton>
         )}
+        {!isMobile ? (
+          <SpeedDialItem
+            aria-label="mobile_qr_btn"
+            variant="white"
+            onClick={() => setVisitModal(!visitModal)}
+            data-tooltip="모바일로 연결"
+          >
+            <IoQrCode size={18} color="black" />
+          </SpeedDialItem>
+        ) : null}
       </SpeedDialItems>
 
       <MainButton aria-label="toggle_map_options" variant={buttonVariant} onClick={toggleSpeedDial}>
@@ -71,8 +91,7 @@ export default function SpeedDialMap({ kakaoPlaceUrl, googlePlaceUrl, naverPlace
 
 const SpeedDialContainer = styled.div`
   position: fixed;
-  bottom: 4%;
-  right: 17%;
+  top: 328px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -81,8 +100,8 @@ const SpeedDialContainer = styled.div`
   z-index: 2;
 
   @media screen and (max-width: 768px) {
-    bottom: 4%;
-    right: 2%;
+    top: auto;
+    bottom: 60px;
   }
 `;
 
@@ -140,6 +159,10 @@ const SpeedDialItems = styled.div<{ isOpen: boolean }>`
   & > *:nth-child(3) {
     transform: ${(props) => (props.isOpen ? 'translateY(-450%)' : 'translateY(0)')};
   }
+
+  & > *:nth-child(4) {
+    transform: ${(props) => (props.isOpen ? 'translateY(-580%)' : 'translateY(0)')};
+  }
 `;
 
 const SpeedDialItem = styled(Button)`
@@ -158,10 +181,10 @@ const SpeedDialItem = styled(Button)`
   &::after {
     content: attr(data-tooltip);
     position: absolute;
-    right: calc(100% + 8px);
+    left: calc(100% + 8px);
     top: 50%;
     transform: translateY(-50%);
-    background-color: rgba(0, 0, 0, 0.75);
+    background-color: rgba(0, 0, 0, 0.6);
     color: white;
     padding: 4px 8px;
     border-radius: 4px;
@@ -184,6 +207,13 @@ const SpeedDialItem = styled(Button)`
     svg {
       width: 14px;
       height: 14px;
+    }
+  }
+
+  @media screen and (min-width: 769px) {
+    &::after {
+      opacity: 1;
+      visibility: visible;
     }
   }
 `;

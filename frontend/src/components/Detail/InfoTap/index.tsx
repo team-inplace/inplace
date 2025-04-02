@@ -1,8 +1,7 @@
 import styled from 'styled-components';
 import { Map, MapMarker } from 'react-kakao-maps-sdk';
 import { IoMdStar } from 'react-icons/io';
-import { IoQrCode } from 'react-icons/io5';
-import { Suspense, useContext, useState } from 'react';
+import { Suspense, useState } from 'react';
 import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Paragraph } from '@/components/common/typography/Paragraph';
@@ -11,14 +10,11 @@ import { AddressInfo, FacilityInfo, GoogleReview } from '@/types';
 import OpenHour from './OpenHour';
 import { Text } from '@/components/common/typography/Text';
 import GoogleReviewList from '../GoogleReviewList';
-import Button from '@/components/common/Button';
 import NoItem from '@/components/common/layouts/NoItem';
 import VisitModal from '../VisitModal';
 import Loading from '@/components/common/layouts/Loading';
 import ErrorComponent from '@/components/common/layouts/Error';
-import { ThemeContext } from '@/provider/Themes';
 import SpeedDialMap from './SpeedDialMap';
-import useIsMobile from '@/hooks/useIsMobile';
 
 type Props = {
   address: AddressInfo;
@@ -51,20 +47,17 @@ export default function InfoTap({
   const lat = Number(latitude);
   const lng = Number(longitude);
   const [visitModal, setVisitModal] = useState(false);
-  const { theme } = useContext(ThemeContext);
-  const buttonVariant = theme === 'dark' ? 'outline' : 'blackOutline';
-  const isMobile = useIsMobile();
 
   return (
     <Wrapper>
       <ButtonWrapper>
-        {!isMobile ? (
-          <StyledButton aria-label="mobile_qr_btn" variant={buttonVariant} onClick={() => setVisitModal(!visitModal)}>
-            <IoQrCode size={16} color="fee500" />
-            모바일로 연결
-          </StyledButton>
-        ) : null}
-        <SpeedDialMap kakaoPlaceUrl={kakaoPlaceUrl} naverPlaceUrl={naverPlaceUrl} googlePlaceUrl={googlePlaceUrl} />
+        <SpeedDialMap
+          kakaoPlaceUrl={kakaoPlaceUrl}
+          naverPlaceUrl={naverPlaceUrl}
+          googlePlaceUrl={googlePlaceUrl}
+          visitModal={visitModal}
+          setVisitModal={setVisitModal}
+        />
       </ButtonWrapper>
       <Paragraph size="s" weight="bold">
         주소
@@ -214,28 +207,13 @@ const GoogleDescription = styled.div`
 
 const ButtonWrapper = styled.div`
   position: absolute;
-  right: 0;
+  right: -20px;
   display: flex;
   gap: 16px;
   align-items: start;
 
   @media screen and (max-width: 768px) {
     gap: 10px;
-  }
-`;
-const StyledButton = styled(Button)`
-  padding: 4px 16px;
-  height: 32px;
-  font-size: 14px;
-  gap: 4px;
-
-  @media screen and (max-width: 768px) {
-    svg {
-      width: 18px;
-    }
-    padding: 2px 10px;
-    height: 28px;
-    font-size: 12px;
-    gap: 4px;
+    right: 46px;
   }
 `;
