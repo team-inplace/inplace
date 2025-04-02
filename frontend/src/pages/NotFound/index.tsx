@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import Button from '@/components/common/Button';
-import Logo from '@/assets/images/Logo.svg';
+import Logo from '@/assets/images/InplaceLogo.png';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import { ThemeContext } from '@/provider/Themes';
 

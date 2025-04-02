@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import Logo from '@/assets/images/Logo.svg';
+import Logo from '@/assets/images/InplaceLogo.png';
 import { Text } from '@/components/common/typography/Text';
 
 export default function LogoSection() {
@@ -29,6 +29,6 @@ const LogoContainer = styled.div`
 
 const LogoImage = styled.img`
   height: 22px;
-  width: 22px;
+  width: auto;
   margin-right: 10px;
 `;

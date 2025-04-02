@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { AiFillDislike, AiFillLike } from 'react-icons/ai';
 import { ReviewInfo } from '@/types';
 import { Text } from '@/components/common/typography/Text';
-import Logo from '@/assets/images/Logo.svg';
+import Logo from '@/assets/images/InplaceLogo.png';
 
 interface CommentStepProps {
   isLiked: boolean | null;

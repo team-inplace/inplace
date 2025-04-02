@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import { Text } from '@/components/common/typography/Text';
-import Logo from '@/assets/images/Logo.svg';
+import Logo from '@/assets/images/InplaceLogo.png';
 import { BASE_URL } from '@/api/instance';
 
 type LoginModalProps = {

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Logo from '@/assets/images/Logo.svg';
+import Logo from '@/assets/images/InplaceLogo.png';
 import { Paragraph } from '../typography/Paragraph';
 
 interface NoItemsMessageProps {

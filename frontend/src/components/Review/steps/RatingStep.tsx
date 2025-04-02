@@ -3,7 +3,7 @@ import { AiFillLike, AiFillDislike } from 'react-icons/ai';
 import { ReviewInfo } from '@/types';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import { Text } from '@/components/common/typography/Text';
-import Logo from '@/assets/images/Logo.svg';
+import Logo from '@/assets/images/InplaceLogo.png';
 
 interface RatingStepProps {
   onSubmit: (isLiked: boolean) => void;

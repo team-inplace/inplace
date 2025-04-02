@@ -2,7 +2,7 @@ import { useContext, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { AxiosError } from 'axios';
-import Logo from '@/assets/images/Logo.svg';
+import Logo from '@/assets/images/InplaceLogo.png';
 import Button from '../Button';
 import { Paragraph } from '../typography/Paragraph';
 import { ThemeContext } from '@/provider/Themes';
