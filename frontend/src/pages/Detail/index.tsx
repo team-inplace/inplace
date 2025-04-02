@@ -259,14 +259,14 @@ const TitleWrapper = styled.div`
 const TitleContainer = styled.div`
   position: absolute;
   width: 90%;
-  bottom: 10px;
+  bottom: 14px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   justify-content: space-between;
   align-items: center;
   @media screen and (max-width: 768px) {
-    bottom: 4px;
+    bottom: 8px;
   }
 `;
 
