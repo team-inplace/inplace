@@ -12,7 +12,6 @@ import java.util.Objects;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -44,11 +43,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             return;
         }
 
-        if (hasNotSameReferer(request)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         String accessToken = getAccessToken(request);
         if (StringUtils.isNotEmpty(accessToken) && jwtUtil.isNotExpired(accessToken)) {
             addUserToAuthentication(accessToken);
@@ -71,20 +65,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                 )
                 .findAny())
             .isEmpty();
-    }
-
-    private boolean hasNotSameReferer(HttpServletRequest request) {
-        String referer = request.getHeader(HttpHeaders.REFERER);
-        if (StringUtils.isBlank(referer)) {
-            return true;
-        }
-
-        if (referer.contains(domain)) {
-            return false;
-        }
-
-        log.warn("Referer is not same domain. referer: {}", referer);
-        return true;
     }
 
     private String getAccessToken(HttpServletRequest request) throws InplaceException {
