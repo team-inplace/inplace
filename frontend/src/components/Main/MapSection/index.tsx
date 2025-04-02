@@ -80,7 +80,7 @@ const TextSection = styled.div`
 `;
 
 const HighlightText = styled.span`
-  color: #35b1c1;
+  color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#55EBFF' : '#35b1c1')};
   font-weight: bold;
 `;
 

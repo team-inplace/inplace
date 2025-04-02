@@ -9,6 +9,7 @@ import { InfluencerData, SpotData, UserPlaceData } from '@/types';
 import ChoiceList from '@/components/Choice/ChoiceList';
 import UserPlaceSection from '../My/UserPlaceSection';
 import { Paragraph } from './typography/Paragraph';
+import useTheme from '@/hooks/useTheme';
 
 type Props = {
   type: string;
@@ -43,6 +44,8 @@ export default function BaseLayout({
   selectedInfluencers,
 }: Props) {
   const navigate = useNavigate();
+  const { theme } = useTheme();
+  const isDarkMode = theme === 'dark';
 
   const renderSection = () => {
     if (type === 'influencer' && showMoreButton === false) {
@@ -70,7 +73,7 @@ export default function BaseLayout({
       <TitleContainer>
         <Paragraph size="m" weight="bold">
           {prevSubText || ''}
-          <Text size="ll" weight="bold" style={{ color: '#47c8d9' }}>
+          <Text size="ll" weight="bold" style={isDarkMode ? { color: '#55EBFF' } : { color: '#47c8d9' }}>
             {mainText || ''}
           </Text>
           {SubText}
