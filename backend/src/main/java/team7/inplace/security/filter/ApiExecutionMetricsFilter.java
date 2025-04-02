@@ -3,7 +3,6 @@ package team7.inplace.security.filter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.Tags;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -53,10 +52,13 @@ public class ApiExecutionMetricsFilter extends OncePerRequestFilter {
             }
 
             String layersJson = toJson(records);
-            meterRegistry.gauge("api.layer.execution.time",
-                Tags.of("requestId", requestId, "path", path, "layers", layersJson),
-                totalTime
-            );
+            if (totalTime > 1000) {
+                log.warn("API execution time exceeded 1 second: {}", layersJson);
+            }
+//            meterRegistry.gauge("api.layer.execution.time",
+//                Tags.of("requestId", requestId, "path", path, "layers", layersJson),
+//                totalTime
+//            );
             ThreadExecutionContext.clear();
         }
     }
