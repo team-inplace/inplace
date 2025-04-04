@@ -1,4 +1,4 @@
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import { Text } from '@/components/common/typography/Text';
@@ -6,30 +6,14 @@ import SearchBar from '@/components/common/SearchBarB';
 import BaseLayout from '@/components/common/BaseLayout';
 import { useGetSearchData } from '@/api/hooks/useGetSearchData';
 import { useABTest } from '@/provider/ABTest';
-import { sendGAEvent } from '@/utils/test/googleTestUtils';
+import MapSection from '@/components/Main/MapSection';
 
 export default function SearchPage() {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('query') || '';
   const testGroup = useABTest('map_ui_test');
-  const navigate = useNavigate();
 
   const [{ data: influencersData }, { data: VideoData }, { data: places }] = useGetSearchData(query);
-
-  // 지도 페이지로 이동 시 이벤트 추적 함수
-  const handleMapNavigation = () => {
-    // 검색 페이지에서 지도 페이지로의 이동 추적
-    sendGAEvent('map_navigation_click_search', {
-      test_name: 'map_ui_test',
-      variation: testGroup,
-      from_path: window.location.pathname,
-      to_path: '/map',
-      search_query: query, // 검색 쿼리도 함께 전송하면 분석에 유용
-    });
-
-    // 페이지 이동
-    navigate('/map');
-  };
 
   return (
     <Wrapper>
@@ -63,19 +47,7 @@ export default function SearchPage() {
         )}
       </Container>
       {testGroup === 'B' && (
-        <ButtonWrapper>
-          <Text weight="normal" size="s" variant="grey">
-            찾는 결과가 없다면
-          </Text>
-          <MapButton onClick={handleMapNavigation}>
-            <Text weight="bold" size="s" variant="white">
-              지도에서 검색하기
-            </Text>
-          </MapButton>
-          <Text weight="normal" size="s" variant="grey">
-            에서 확인해보세요!
-          </Text>
-        </ButtonWrapper>
+        <MapSection highlightText="찾으시는 결과" mainText="가 없다면 지도페이지를 확인해보세요!" />
       )}
     </Wrapper>
   );
@@ -116,39 +88,5 @@ const Container = styled.div`
   margin-top: 10px;
   @media screen and (max-width: 768px) {
     gap: 20px;
-  }
-`;
-
-const ButtonWrapper = styled.div`
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  margin-top: 30px;
-
-  @media screen and (max-width: 768px) {
-    width: 90%;
-    gap: 6px;
-  }
-`;
-
-const MapButton = styled.button`
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  position: relative;
-  display: inline-block;
-  bottom: 1px;
-  color: inherit;
-  font: inherit;
-
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -1px;
-    width: 100%;
-    height: 1px;
-    background-color: white;
   }
 `;

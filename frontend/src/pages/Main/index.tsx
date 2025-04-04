@@ -39,7 +39,7 @@ export default function MainPage() {
           SubText=" 가 방문한 장소를 찾아볼까요?"
           items={influencersData.content}
         />
-        {testGroup === 'B' && <MapSection />}
+        {testGroup === 'B' && <MapSection highlightText="내 주변" />}
         {isAuthenticated ? (
           <>
             <BaseLayout

@@ -7,10 +7,17 @@ import useIsMobile from '@/hooks/useIsMobile';
 import { useABTest } from '@/provider/ABTest';
 import { sendGAEvent } from '@/utils/test/googleTestUtils';
 
-export default function MapSection() {
+interface MapSectionProps {
+  mainText?: string;
+  highlightText?: string;
+}
+
+export default function MapSection({ highlightText, mainText }: MapSectionProps) {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const testGroup = useABTest('map_ui_test');
+  const highlight = highlightText || '';
+  const paragraph = mainText || '인플루언서가 방문한 장소는 어디일까요?';
 
   const handleConfirmClick = () => {
     sendGAEvent('map_navigation_click_main', {
@@ -34,7 +41,7 @@ export default function MapSection() {
                 width: '100%',
               }}
             >
-              <HighlightText>내 주변</HighlightText> 인플루언서가 방문한 장소는 어디일까요?
+              <HighlightText>{highlight}</HighlightText> {paragraph}
             </span>
           </Paragraph>
           <IconContainer>
