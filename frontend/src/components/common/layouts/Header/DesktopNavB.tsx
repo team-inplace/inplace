@@ -73,6 +73,7 @@ const NavLinksContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 20px;
+  white-space: nowrap;
 
   @media (max-width: 768px) {
     display: none;
