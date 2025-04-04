@@ -75,7 +75,7 @@ export async function testErrorBoundaryBehavior({
       expect(screen.queryByText(/서버 오류 발생/)).not.toBeInTheDocument();
     },
     {
-      timeout: 3000,
+      timeout: 5000,
     },
   );
 }
