@@ -4,12 +4,21 @@ import { FaChevronRight } from 'react-icons/fa6';
 import VisitPlace from '@/assets/images/visit-place.png';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import useIsMobile from '@/hooks/useIsMobile';
+import { useABTest } from '@/provider/ABTest';
+import { sendGAEvent } from '@/utils/test/googleTestUtils';
 
 export default function MapSection() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const testGroup = useABTest('map_ui_test');
 
   const handleConfirmClick = () => {
+    sendGAEvent('map_navigation_click_main', {
+      test_name: 'map_ui_test',
+      variation: testGroup,
+      from_path: window.location.pathname,
+      to_path: '/map',
+    });
     navigate('/map');
   };
 

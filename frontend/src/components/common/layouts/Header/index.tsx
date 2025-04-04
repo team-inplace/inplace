@@ -3,18 +3,23 @@ import styled from 'styled-components';
 import { RiMenuLine, RiCloseLine } from 'react-icons/ri';
 import { FiSun, FiMoon } from 'react-icons/fi';
 import useTheme from '@/hooks/useTheme';
+import { useABTest } from '@/provider/ABTest';
 
 import LogoSection from './LogoSection';
-import DesktopNav from './DesktopNav';
-import AuthButtons from './AuthButtons';
+import DesktopNavA from './DesktopNavA';
+import DesktopNavB from './DesktopNavB';
 import MobileNav from './MobileNav';
-import SearchBar from '../../SearchBar';
+import SearchBar from '../../SearchBarB';
+import AuthButtonsA from './AuthButtonsA';
+import AuthButtonsB from './AuthButtonsB';
 
 export default function Header() {
   const { theme, toggleTheme } = useTheme();
   const isDarkMode = theme === 'dark';
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
+  const testGroup = useABTest('map_ui_test');
+  console.log('testGroup', testGroup);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -26,6 +31,10 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, []);
 
+  // A/B 테스트 그룹에 따라 컴포넌트 결정
+  const DesktopNav = testGroup === 'A' ? DesktopNavA : DesktopNavB;
+  const AuthButtons = testGroup === 'A' ? AuthButtonsA : AuthButtonsB;
+
   return (
     <HeaderContainer ref={headerRef}>
       <HeaderContentWrapper>
@@ -36,16 +45,19 @@ export default function Header() {
         <DesktopNav />
 
         <RightSection>
-          <DesktopOnlySearchBar>
-            <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" />
-          </DesktopOnlySearchBar>
-
+          {testGroup === 'B' && (
+            <DesktopOnlySearchBar>
+              <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" />
+            </DesktopOnlySearchBar>
+          )}
           <MobileOnlyIcons>
             {!isMenuOpen ? (
               <>
-                <MobileSearchBar>
-                  <SearchBar placeholder="검색하기" />
-                </MobileSearchBar>
+                {testGroup === 'B' && (
+                  <MobileSearchBar>
+                    <SearchBar placeholder="검색하기" />
+                  </MobileSearchBar>
+                )}
                 <MobileMenuButton onClick={() => setIsMenuOpen(true)} aria-label="메뉴 열기">
                   <RiMenuLine size={24} color={isDarkMode ? 'white' : 'grey'} />
                 </MobileMenuButton>

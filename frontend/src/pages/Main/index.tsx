@@ -4,16 +4,19 @@ import MainBanner from '@/components/Main/MainBanner';
 import ResearchModal from '@/components/common/modals/ResearchModal';
 
 import { useGetMain } from '@/api/hooks/useGetMain';
+import SearchBar from '@/components/common/SearchBarA';
 import useAuth from '@/hooks/useAuth';
 import { useGetLogoutVideo } from '@/api/hooks/useGetLogoutVideo';
 import { useGetMyInfluencerVideo } from '@/api/hooks/useGetMyInfluencerVideo';
 import useGetLocation from '@/hooks/useGetLocation';
 import { useGetAroundVideo } from '@/api/hooks/useGetAroundVideo';
 import MapSection from '@/components/Main/MapSection';
+import { useABTest } from '@/provider/ABTest';
 
 export default function MainPage() {
   const { isAuthenticated } = useAuth();
   const location = useGetLocation();
+  const testGroup = useABTest('map_ui_test');
 
   const [{ data: bannerData }, { data: influencersData }] = useGetMain();
   const [{ data: coolVideoData }, { data: newVideoData }] = useGetLogoutVideo(!isAuthenticated);
@@ -28,6 +31,7 @@ export default function MainPage() {
     <>
       <ResearchModal />
       <Wrapper>
+        {testGroup === 'A' && <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" />}
         <MainBanner items={bannerData} />
         <BaseLayout
           type="influencer"
@@ -35,7 +39,7 @@ export default function MainPage() {
           SubText=" 가 방문한 장소를 찾아볼까요?"
           items={influencersData.content}
         />
-        <MapSection />
+        {testGroup === 'B' && <MapSection />}
         {isAuthenticated ? (
           <>
             <BaseLayout
