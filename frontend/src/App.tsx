@@ -12,6 +12,7 @@ import DetailPage from './pages/Detail';
 import InfluencerInfoPage from '@/pages/InfluencerInfo';
 import InfluencerPage from '@/pages/Influencer';
 import MapPage from './pages/Map';
+import ABTestProvider from './provider/ABTest';
 
 const MyPage = lazy(() => import('@/pages/My'));
 const ChoicePage = lazy(() => import('@/pages/Choice'));
@@ -21,47 +22,49 @@ const NotFoundPage = lazy(() => import('@/pages/NotFound'));
 
 function App() {
   return (
-    <ThemeProvider>
-      <GlobalStyle />
-      <AuthProvider>
-        <Routes>
-          <Route path="/" element={<MainLayout />}>
-            <Route index path="/" element={<MainPage />} />
-            <Route path="/influencer" element={<InfluencerPage />} />
-            <Route path="/influencer/:id" element={<InfluencerInfoPage />} />
-            <Route path="/map" element={<MapPage />} />
-            <Route path="/detail/:id" element={<DetailPage />} />
-            <Route path="/search" element={<SearchPage />} />
+    <ABTestProvider>
+      <ThemeProvider>
+        <GlobalStyle />
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<MainLayout />}>
+              <Route index path="/" element={<MainPage />} />
+              <Route path="/influencer" element={<InfluencerPage />} />
+              <Route path="/influencer/:id" element={<InfluencerInfoPage />} />
+              <Route path="/map" element={<MapPage />} />
+              <Route path="/detail/:id" element={<DetailPage />} />
+              <Route path="/search" element={<SearchPage />} />
+              <Route
+                path="/my"
+                element={
+                  <PrivatedRoute>
+                    <MyPage />
+                  </PrivatedRoute>
+                }
+              />
+              <Route
+                path="/choice"
+                element={
+                  <PrivatedRoute>
+                    <ChoicePage />
+                  </PrivatedRoute>
+                }
+              />
+              <Route path="*" element={<NotFoundPage />} />
+            </Route>
             <Route
-              path="/my"
+              path="/auth"
               element={
                 <PrivatedRoute>
-                  <MyPage />
+                  <AuthPage />
                 </PrivatedRoute>
               }
             />
-            <Route
-              path="/choice"
-              element={
-                <PrivatedRoute>
-                  <ChoicePage />
-                </PrivatedRoute>
-              }
-            />
-            <Route path="*" element={<NotFoundPage />} />
-          </Route>
-          <Route
-            path="/auth"
-            element={
-              <PrivatedRoute>
-                <AuthPage />
-              </PrivatedRoute>
-            }
-          />
-          {/* <Route path="/reviews/:uuid" element={<ReviewPage />} /> */}
-        </Routes>
-      </AuthProvider>
-    </ThemeProvider>
+            {/* <Route path="/reviews/:uuid" element={<ReviewPage />} /> */}
+          </Routes>
+        </AuthProvider>
+      </ThemeProvider>
+    </ABTestProvider>
   );
 }
 
