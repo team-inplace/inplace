@@ -6,6 +6,7 @@ import { AxiosError } from 'axios';
 import { AuthContext } from '@/provider/Auth';
 import { PlaceInfo, SpotData } from '@/types';
 import ErrorComponent from '@/components/common/layouts/Error';
+import ABTestProvider from '@/provider/ABTest';
 
 export function renderWithQueryClient(children: React.ReactNode) {
   const queryClient = new QueryClient({
@@ -25,9 +26,11 @@ export function renderWithQueryClient(children: React.ReactNode) {
       }}
     >
       <MemoryRouter future={{ v7_relativeSplatPath: true }}>
-        <ErrorBoundary FallbackComponent={ErrorComponent}>
-          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-        </ErrorBoundary>
+        <ABTestProvider>
+          <ErrorBoundary FallbackComponent={ErrorComponent}>
+            <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+          </ErrorBoundary>
+        </ABTestProvider>
       </MemoryRouter>
     </AuthContext.Provider>,
   );
