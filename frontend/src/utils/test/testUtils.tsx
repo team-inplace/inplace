@@ -7,6 +7,7 @@ import { AuthContext } from '@/provider/Auth';
 import { PlaceInfo, SpotData } from '@/types';
 import ErrorComponent from '@/components/common/layouts/Error';
 import ABTestProvider from '@/provider/ABTest';
+import { BASE_URL } from '@/api/instance';
 
 export function renderWithQueryClient(children: React.ReactNode) {
   const queryClient = new QueryClient({
@@ -54,7 +55,7 @@ export async function testErrorBoundaryBehavior({
       config: {
         headers: {},
         method: 'GET',
-        url: '/api/test',
+        url: `${BASE_URL}/videos/cool`,
       } as never,
       data: { message: 'Internal Server Error' },
     };
