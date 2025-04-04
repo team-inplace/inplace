@@ -35,7 +35,7 @@ public class SearchService {
     public List<AutoCompletionInfo> searchAutoCompletions(SearchType type, String keyword) {
         var placeSearchInfo = placeSearchRepository.searchAutoComplete(keyword).stream()
             .map(
-                info -> new AutoCompletionInfo(info.keyword(), info.score(), SearchType.INFLUENCER))
+                info -> new AutoCompletionInfo(info.keyword(), info.score(), SearchType.PLACE))
             .toList();
 
         if (type.equals(SearchType.PLACE)) {
@@ -43,7 +43,8 @@ public class SearchService {
         }
 
         var influencerSearchInfo = influencerSearchRepository.searchAutoComplete(keyword).stream()
-            .map(info -> new AutoCompletionInfo(info.keyword(), info.score(), SearchType.PLACE))
+            .map(
+                info -> new AutoCompletionInfo(info.keyword(), info.score(), SearchType.INFLUENCER))
             .toList();
 
         return Stream.concat(influencerSearchInfo.stream(), placeSearchInfo.stream())
