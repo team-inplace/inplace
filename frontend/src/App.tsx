@@ -22,10 +22,10 @@ const NotFoundPage = lazy(() => import('@/pages/NotFound'));
 
 function App() {
   return (
-    <ABTestProvider>
+    <AuthProvider>
       <ThemeProvider>
         <GlobalStyle />
-        <AuthProvider>
+        <ABTestProvider>
           <Routes>
             <Route path="/" element={<MainLayout />}>
               <Route index path="/" element={<MainPage />} />
@@ -62,9 +62,9 @@ function App() {
             />
             {/* <Route path="/reviews/:uuid" element={<ReviewPage />} /> */}
           </Routes>
-        </AuthProvider>
+        </ABTestProvider>
       </ThemeProvider>
-    </ABTestProvider>
+    </AuthProvider>
   );
 }
 
