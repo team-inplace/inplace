@@ -190,21 +190,13 @@ export default function MapWindow({
     const currentCenter = mapRef.current.getCenter();
     setCenter({ lat: currentCenter.getLat(), lng: currentCenter.getLng() });
     onPlaceSelect(null);
-    if (!isChangedLocation) {
-      updateMapBounds();
-    }
+    // 기존 if문 = changedLocation(위치 검색하면) 이미 있는 바운더리 쓰겠다
+    updateMapBounds();
     setShowSearchButton(false);
   };
 
   useEffect(() => {
-    if (!mapRef.current || (!isChangedLocation && isInitialLoad)) return;
-
-    // 값을 지운 경우
-    if (!isChangedLocation) {
-      handleNearbyClick();
-      return;
-    }
-
+    if (!mapRef.current || (!isChangedLocation || isInitialLoad)) return;
     const LocPosition = new kakao.maps.LatLng(isChangedLocation.lat, isChangedLocation.lng);
     mapRef.current.setCenter(LocPosition);
     mapRef.current.setLevel(DEFAULT_MAP_ZOOM_LEVEL);

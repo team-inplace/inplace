@@ -91,7 +91,6 @@ export default function MapSearchBar({ setIsChangedLocation, setSelectedPlaceNam
 
         if (isIndexChoice || selected.place_name === searchValue) {
           setIsChangedLocation({ lat: selected.y, lng: selected.x });
-          // setCenter({ lat: selected.y, lng: selected.x });
           setItemIndex(-1);
           setIsOpen(false);
         }
@@ -148,7 +147,6 @@ export default function MapSearchBar({ setIsChangedLocation, setSelectedPlaceNam
     e.preventDefault();
     setInputValue('');
     setSelectedPlaceName('');
-    setIsChangedLocation(null);
   };
 
   const placeholder =
