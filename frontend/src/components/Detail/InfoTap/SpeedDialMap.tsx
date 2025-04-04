@@ -35,6 +35,10 @@ export default function SpeedDialMap({
 
   return (
     <SpeedDialContainer>
+      <MainButton aria-label="toggle_map_options" variant={buttonVariant} onClick={toggleSpeedDial}>
+        {isOpen ? <IoClose size={30} /> : <FaMapMarkedAlt size={24} />}
+      </MainButton>
+
       <SpeedDialItems isOpen={isOpen}>
         <KakaoButton
           aria-label="kakao_btn"
@@ -81,17 +85,13 @@ export default function SpeedDialMap({
           </SpeedDialItem>
         ) : null}
       </SpeedDialItems>
-
-      <MainButton aria-label="toggle_map_options" variant={buttonVariant} onClick={toggleSpeedDial}>
-        {isOpen ? <IoClose size={30} /> : <FaMapMarkedAlt size={24} />}
-      </MainButton>
     </SpeedDialContainer>
   );
 }
 
 const SpeedDialContainer = styled.div`
   position: fixed;
-  top: 340px;
+  top: 86px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -149,19 +149,19 @@ const SpeedDialItems = styled.div<{ isOpen: boolean }>`
   }
 
   & > *:nth-child(1) {
-    transform: ${(props) => (props.isOpen ? 'translateY(-190%)' : 'translateY(0)')};
+    transform: ${(props) => (props.isOpen ? 'translateY(90%)' : 'translateY(0)')};
   }
 
   & > *:nth-child(2) {
-    transform: ${(props) => (props.isOpen ? 'translateY(-320%)' : 'translateY(0)')};
+    transform: ${(props) => (props.isOpen ? 'translateY(220%)' : 'translateY(0)')};
   }
 
   & > *:nth-child(3) {
-    transform: ${(props) => (props.isOpen ? 'translateY(-450%)' : 'translateY(0)')};
+    transform: ${(props) => (props.isOpen ? 'translateY(350%)' : 'translateY(0)')};
   }
 
   & > *:nth-child(4) {
-    transform: ${(props) => (props.isOpen ? 'translateY(-580%)' : 'translateY(0)')};
+    transform: ${(props) => (props.isOpen ? 'translateY(480%)' : 'translateY(0)')};
   }
 `;
 
