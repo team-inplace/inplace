@@ -19,7 +19,6 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   const testGroup = useABTest('map_ui_test');
-  console.log('testGroup', testGroup);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
