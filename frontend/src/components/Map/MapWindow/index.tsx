@@ -196,7 +196,7 @@ export default function MapWindow({
   };
 
   useEffect(() => {
-    if (!mapRef.current || (!isChangedLocation || isInitialLoad)) return;
+    if (!mapRef.current || !isChangedLocation || isInitialLoad) return;
     const LocPosition = new kakao.maps.LatLng(isChangedLocation.lat, isChangedLocation.lng);
     mapRef.current.setCenter(LocPosition);
     mapRef.current.setLevel(DEFAULT_MAP_ZOOM_LEVEL);
