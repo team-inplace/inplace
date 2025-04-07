@@ -9,10 +9,16 @@ import team7.inplace.video.domain.Video;
 public interface VideoRepository extends JpaRepository<Video, Long> {
 
     @Query(
-        value = "SELECT v FROM Video v WHERE v.placeId IS NULL",
-        countQuery = "SELECT COUNT(v) FROM Video v"
+        value = "SELECT v FROM Video v WHERE v.placeId IS NULL AND v.influencerId = :influencerId",
+        countQuery = "SELECT COUNT(v) FROM Video v where v.placeId IS NULL AND v.influencerId = :influencerId"
     )
-    Page<Video> findAllByPlaceIsNull(Pageable pageable);
+    Page<Video> findAllByPlaceIsNullAndInfluencerId(Pageable pageable, Long influencerId);
 
     Boolean existsByUuid(String uuid);
+
+    @Query(
+        value = "SELECT v FROM Video v WHERE v.placeId IS NULL",
+        countQuery = "SELECT COUNT(v) FROM Video v where v.placeId IS NULL"
+    )
+    Page<Video> findAllByPlaceIdIsNull(Pageable pageable);
 }

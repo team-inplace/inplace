@@ -1,5 +1,6 @@
 package team7.inplace.admin;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,9 +9,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import team7.inplace.admin.banner.persistence.BannerRepository;
 import team7.inplace.global.properties.GoogleApiProperties;
 import team7.inplace.global.properties.KakaoApiProperties;
+import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.place.domain.Category;
 import team7.inplace.video.domain.Video;
@@ -28,8 +31,16 @@ public class AdminPageController {
     private final InfluencerRepository influencerRepository;
 
     @GetMapping("/video")
-    public String getVideos(@PageableDefault Pageable pageable, Model model) {
-        Page<Video> videoPage = videoRepository.findAllByPlaceIsNull(pageable);
+    public String getVideos(
+        @RequestParam(required = false) Long influencerId,
+        @PageableDefault Pageable pageable, Model model
+    ) {
+        List<Influencer> influencers = influencerRepository.findAll();
+        model.addAttribute("influencers", influencers);
+        model.addAttribute("selectedInfluencerId", influencerId);
+        Page<Video> videoPage = (influencerId != null)
+            ? videoRepository.findAllByPlaceIsNullAndInfluencerId(pageable, influencerId)
+            : videoRepository.findAllByPlaceIdIsNull(pageable);
         model.addAttribute("videos", videoPage.getContent());
         model.addAttribute("currentPage", videoPage.getNumber());
         model.addAttribute("totalPages", videoPage.getTotalPages());

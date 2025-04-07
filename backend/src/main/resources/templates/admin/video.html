@@ -20,7 +20,18 @@
   <h1>Video List</h1>
   <button class="main-video-update-btn" onclick="updateMainVideo()">Main Video Update</button>
 </div>
-
+<form method="get" style="margin-bottom: 1rem;" th:action="@{/admin/video}">
+  <label for="influencer">Influencer:</label>
+  <select id="influencer" name="influencerId">
+    <option th:selected="${selectedInfluencerId == null}" value="">전체</option>
+    <option th:each="influencer : ${influencers}"
+            th:selected="${selectedInfluencerId == influencer.id}"
+            th:text="${influencer.name}"
+            th:value="${influencer.id}">
+    </option>
+  </select>
+  <button type="submit">필터 적용</button>
+</form>
 <table>
   <thead>
   <tr>
@@ -59,12 +70,16 @@
 
 <div>
   <div>
-    <!-- Previous 링크 -->
-    <a th:href="@{/admin/video(page=${currentPage - 1}, size=10)}"
+    <!-- Previous -->
+    <a th:href="@{/admin/video(page=${currentPage - 1}, size=10, influencerId=${selectedInfluencerId})}"
        th:if="${!isFirst}">Previous</a>
 
-    <!-- Next 링크 -->
-    <a th:href="@{/admin/video(page=${currentPage + 1}, size=10)}"
+    <!-- 페이지 정보 표시 -->
+    <span>페이지 <span th:text="${currentPage + 1}"></span> / <span
+        th:text="${totalPages}"></span></span>
+
+    <!-- Next -->
+    <a th:href="@{/admin/video(page=${currentPage + 1}, size=10, influencerId=${selectedInfluencerId})}"
        th:if="${!isLast}">Next</a>
   </div>
 </div>
@@ -87,7 +102,7 @@
     <div class="category-container">
       <form onsubmit="searchKakaoPlaces(); return false;">
         <label for="keyword">키워드:</label>
-        <input  id="keyword" placeholder="장소를 입력하세요" type="text"/>
+        <input id="keyword" placeholder="장소를 입력하세요" type="text"/>
         <select id="category" required>
           <option disabled selected value="">카테고리</option>
           <th:block th:each="category : ${categories}">
@@ -129,7 +144,7 @@
     <div class="category-container">
       <form onsubmit="searchGooglePlaces(); return false;">
         <label for="keyword2">키워드:</label>
-        <input  id="keyword2" placeholder="장소를 입력하세요" type="text"/>
+        <input id="keyword2" placeholder="장소를 입력하세요" type="text"/>
         <button type="submit">검색하기</button>
       </form>
     </div>
