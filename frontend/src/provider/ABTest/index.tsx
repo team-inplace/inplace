@@ -6,7 +6,7 @@ interface ABTestContextType {
   getTestGroup: (testName: string) => ABTestGroup;
 }
 
-const ABTestContext = createContext<ABTestContextType | undefined>(undefined);
+export const ABTestContext = createContext<ABTestContextType | undefined>(undefined);
 
 interface ABTestProviderProps {
   children: ReactNode;

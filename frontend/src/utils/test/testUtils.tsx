@@ -6,8 +6,9 @@ import { AxiosError } from 'axios';
 import { AuthContext } from '@/provider/Auth';
 import { PlaceInfo, SpotData } from '@/types';
 import ErrorComponent from '@/components/common/layouts/Error';
-import ABTestProvider from '@/provider/ABTest';
+import { ABTestContext } from '@/provider/ABTest';
 import { BASE_URL } from '@/api/instance';
+import { ABTestGroup } from './googleTestUtils';
 
 export function renderWithQueryClient(children: React.ReactNode) {
   const queryClient = new QueryClient({
@@ -27,11 +28,20 @@ export function renderWithQueryClient(children: React.ReactNode) {
       }}
     >
       <MemoryRouter future={{ v7_relativeSplatPath: true }}>
-        <ABTestProvider>
-          <ErrorBoundary FallbackComponent={ErrorComponent}>
-            <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-          </ErrorBoundary>
-        </ABTestProvider>
+        <ErrorBoundary FallbackComponent={ErrorComponent}>
+          <QueryClientProvider client={queryClient}>
+            <ABTestContext.Provider
+              value={{
+                testGroups: {
+                  map_ui_test: 'A' as ABTestGroup,
+                },
+                getTestGroup: () => 'A' as ABTestGroup,
+              }}
+            >
+              {children}
+            </ABTestContext.Provider>
+          </QueryClientProvider>
+        </ErrorBoundary>
       </MemoryRouter>
     </AuthContext.Provider>,
   );
@@ -70,7 +80,7 @@ export async function testErrorBoundaryBehavior({
 
   fireEvent.click(screen.getByText('다시 시도하기'));
 
-  // await waitFor(() => {
-  //   expect(screen.queryByText(/서버 오류 발생/)).not.toBeInTheDocument();
-  // });
+  await waitFor(() => {
+    expect(screen.queryByText(/서버 오류 발생/)).not.toBeInTheDocument();
+  });
 }
