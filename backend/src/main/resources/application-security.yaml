@@ -21,6 +21,7 @@ spring:
     secret: ${JWT_SECRET}
     access-token-expired-time: ${JWT_ACCESS_TOKEN_EXPIRED_TIME}
     refresh-token-expired-time: ${JWT_REFRESH_TOKEN_EXPIRED_TIME}
+    admin-access-token-expired-time: ${JWT_ADMIN_ACCESS_TOKEN_EXPIRED_TIME}
   redirect:
     front-end-url: ${FRONT_END_URL}
   oauth:

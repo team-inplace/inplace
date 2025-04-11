@@ -22,6 +22,7 @@ public class JwtUtil {
     private final Long accessTokenExpiredTime;
     @Getter
     private final Long refreshTokenExpiredTime;
+    private final Long adminAccessTokenExpiredTime;
 
     public JwtUtil(JwtProperties jwtProperties) {
         this.secretKey = new SecretKeySpec(jwtProperties.secret().getBytes(StandardCharsets.UTF_8),
@@ -29,10 +30,15 @@ public class JwtUtil {
         this.jwtParser = Jwts.parser().verifyWith(this.secretKey).build();
         this.accessTokenExpiredTime = jwtProperties.accessTokenExpiredTime();
         this.refreshTokenExpiredTime = jwtProperties.refreshTokenExpiredTime();
+        this.adminAccessTokenExpiredTime = jwtProperties.adminAccessTokenExpiredTime();
     }
 
     public String createAccessToken(String username, Long userId, String roles) {
-        return createToken(username, userId, roles, "accessToken", accessTokenExpiredTime);
+        Long expiredTime = roles.contains("ROLE_ADMIN")
+            ? adminAccessTokenExpiredTime
+            : accessTokenExpiredTime;
+
+        return createToken(username, userId, roles, "accessToken", expiredTime);
     }
 
     public String createRefreshToken(String username, Long userId, String roles) {
