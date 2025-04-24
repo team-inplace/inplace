@@ -138,7 +138,7 @@ export default function InfluencerInfoPage() {
       <InfoContainer>
         {activeTab === 'video' ? (
           <>
-            <SortSection>
+            <SortSection ref={dropdownRef}>
               <StyledButton
                 aria-label="sort_btn"
                 variant="white"
@@ -149,7 +149,7 @@ export default function InfluencerInfoPage() {
                 <IoIosArrowDown size={16} />
               </StyledButton>
               {showSortOptions && (
-                <SortDropdown ref={dropdownRef}>
+                <SortDropdown>
                   <SortItem onClick={() => handleSortChange('publishTime')}>
                     최신순 {sortOption === 'publishTime'}
                   </SortItem>
