@@ -28,11 +28,16 @@ jest.mock('@/api/hooks/useGetSearchData', () => ({
     data: [
       {
         videoId: 1,
-        videoAlias: '풍자 이(가) Video',
+        influencerName: '풍자 이(가) Video',
         videoUrl: '',
         place: {
           placeId: 1,
           placeName: '풍쟈',
+          address: {
+            address1: '대구',
+            address2: '북구',
+            address3: '대현동 119-11',
+          },
         },
       },
     ],
