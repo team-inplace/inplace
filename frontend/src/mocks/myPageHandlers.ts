@@ -399,6 +399,7 @@ export const myHandlers = [
       ctx.status(200),
       ctx.json({
         nickname: nickName,
+        imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
       }),
     );
   }),

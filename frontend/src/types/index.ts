@@ -145,6 +145,7 @@ export type RequestInfluencerLike = {
 };
 export type UserInfoData = {
   nickname: string;
+  imgUrl: string;
 };
 export type UserPlaceData = {
   placeId: number;

@@ -1,10 +1,11 @@
 import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { useGetRefreshToken } from '@/api/hooks/useGetRefreshToken';
 import { useDeleteToken } from '@/api/hooks/useDeleteToken';
+import { UserInfoData } from '@/types';
 
 type AuthInfo = {
   isAuthenticated: boolean;
-  handleLoginSuccess: (userNickname: string) => Promise<void>;
+  handleLoginSuccess: (userInfo: UserInfoData) => Promise<void>;
   handleLogout: () => void;
 };
 
@@ -47,9 +48,9 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   }, [handleLogout]);
 
   const handleLoginSuccess = useCallback(
-    async (userNickname: string) => {
+    async (userInfo: UserInfoData) => {
       if (!isAuthenticated) {
-        localStorage.setItem('nickname', userNickname);
+        localStorage.setItem('nickname', userInfo.nickname);
         localStorage.setItem('isAuthenticated', 'true');
         setIsAuthenticated(true);
       }
