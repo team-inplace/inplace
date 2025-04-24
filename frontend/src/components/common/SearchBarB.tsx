@@ -49,7 +49,7 @@ export default function SearchBar({
   useEffect(() => {
     document.addEventListener('mousedown', handleOutsideClick);
 
-    setIsOpen(inputValue !== '' && isExpanded);
+    setIsOpen(inputValue.length > 1 && isExpanded);
 
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
@@ -162,7 +162,7 @@ export default function SearchBar({
         </SearchButton>
       )}
 
-      {inputValue && isOpen && isExpanded && (
+      {inputValue.length > 1 && isOpen && isExpanded && (
         <SearchDropDownBox $isSearchPage={isSearchPage}>
           {dropDownList.length === 0 ? (
             <SearchDropDownItem>해당하는 키워드가 없습니다!</SearchDropDownItem>
