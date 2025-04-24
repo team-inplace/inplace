@@ -84,6 +84,17 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
                 로그아웃
               </Text>
             </LogoutButton>
+            {/* todo - 회원탈퇴 */}
+            <LogoutButton
+              onClick={() => {
+                handleLogout();
+                onClose();
+              }}
+            >
+              <Text size="xs" weight="normal">
+                회원탈퇴
+              </Text>
+            </LogoutButton>
           </>
         ) : (
           <LoginModal currentPath={location.pathname}>
