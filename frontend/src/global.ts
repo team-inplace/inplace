@@ -2,18 +2,18 @@ import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
 	@font-face {
-		font-family: "Noto Sans";
+		font-family: "Pretendard";
 		font-weight: 700;
-		src: url("./assets/fonts/noto-sans-v38-latin-700.woff2") format("font-woff2"),
-		url("./assets/fonts/Noto-Sans-700.woff") format("font-woff"),;
+		src: url("./assets/fonts/Pretendard-Bold.woff2") format("font-woff2"),
+		url("./assets/fonts/Pretendard-Bold.woff") format("font-woff"),;
 		font-display: swap;
 	}
 
 	@font-face {
-		font-family: "Noto Sans";
+		font-family: "Pretendard";
 		font-weight: 400;
-		src: url("./assets/fonts/noto-sans-v38-latin-regular.woff2") format("font-woff2"),
-		url("./assets/fonts/Noto-Sans-regular.woff") format("font-woff"),;
+		src: url("./assets/fonts/Pretendard-Regular.woff2") format("font-woff2"),
+		url("./assets/fonts/Pretendard-Regular.woff") format("font-woff"),;
 		font-display: swap;
 	}
 
@@ -46,7 +46,7 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
 	line-height: 1;
-	font-family: 'Noto Sans', sans-serif;
+	font-family: 'Pretendard', sans-serif;
 	color: ${(props) => props.theme.textColor} !important;
 }
 ol, ul {
