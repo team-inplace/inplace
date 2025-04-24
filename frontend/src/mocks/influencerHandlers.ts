@@ -35,65 +35,100 @@ const dummyInfluencerInfo: Record<string, InfluencerInfoData> = {
 const mockVideos = [
   {
     videoId: 1,
-    videoAlias: '정육왕 (이)가 추천하는 맛집! 다양한 메뉴를 즐길 수 있습니다.',
+    influencerName: '정육왕',
     videoUrl: 'https://youtu.be/qbqquv_8wM0?si=j7LiU5DSfTVpKa1I',
     place: {
       placeId: 1,
       placeName: '이선장네',
+      address: {
+        address1: '대구',
+        address2: '북구',
+        address3: '대현동 119-11',
+      },
     },
   },
   {
     videoId: 2,
-    videoAlias: '풍자가 기절한 바로 그곳',
+    influencerName: '풍자',
     videoUrl: 'https://youtu.be/g5P0vpGSbng?si=RB71ZAx12kDas9a6',
     place: {
       placeId: 2,
-      placeName: '풍자또가',
+      placeName: '성심당',
+      address: {
+        address1: '대구',
+        address2: '북구',
+        address3: '대현동 119-11',
+      },
     },
   },
   {
     videoId: 3,
-    videoAlias: '히밥이 다 못먹은 가성비 그곳',
+    influencerName: '히밥',
     videoUrl: 'https://youtu.be/cz1EvePzqfM?si=L5ZsKV4DXikGIuEP',
     place: {
       placeId: 3,
-      placeName: '가성비집',
+      placeName: '왕거미식당',
+      address: {
+        address1: '대구',
+        address2: '북구',
+        address3: '대현동 119-11',
+      },
     },
   },
   {
     videoId: 7,
-    videoAlias: '풍자가 기절한 바로 그곳',
+    influencerName: '풍자',
     videoUrl: 'https://youtu.be/g5P0vpGSbng?si=RB71ZAx12kDas9a6',
     place: {
-      placeId: 7,
+      placeId: 2,
       placeName: '풍자또가',
+      address: {
+        address1: '대구',
+        address2: '북구',
+        address3: '대현동 119-11',
+      },
     },
   },
   {
     videoId: 4,
-    videoAlias: '히밥이 다 못먹은 가성비 그곳',
+    influencerName: '히밥',
     videoUrl: 'https://youtu.be/cz1EvePzqfM?si=L5ZsKV4DXikGIuEP',
     place: {
-      placeId: 4,
+      placeId: 3,
       placeName: '가성비집',
+      address: {
+        address1: '대구',
+        address2: '북구',
+        address3: '대현동 119-11',
+      },
     },
   },
   {
     videoId: 5,
-    videoAlias: '풍자가 기절한 바로 그곳',
+    influencerName: '풍자',
     videoUrl: 'https://youtu.be/g5P0vpGSbng?si=RB71ZAx12kDas9a6',
     place: {
-      placeId: 5,
+      placeId: 2,
       placeName: '풍자또가',
+      address: {
+        address1: '대구',
+        address2: '북구',
+        address3: '대현동 119-11',
+      },
     },
   },
   {
     videoId: 6,
-    videoAlias: '히밥이 다 못먹은 가성비 그곳',
+    influencerName: '히밥',
     videoUrl: 'https://youtu.be/cz1EvePzqfM?si=L5ZsKV4DXikGIuEP',
     place: {
-      placeId: 6,
+      placeId: 3,
       placeName: '가성비집',
+      address: {
+        address1: '대구',
+        address2: '북구',
+        address3: '대현동 119-11',
+      },
     },
   },
 ];

@@ -15,11 +15,12 @@ export type InfluencerData = {
 
 export type SpotData = {
   videoId: number;
-  videoAlias: string;
+  influencerName: string;
   videoUrl: string;
   place: {
     placeId: number;
     placeName: string;
+    address: AddressInfo;
   };
 };
 export type PageableData<T> = {

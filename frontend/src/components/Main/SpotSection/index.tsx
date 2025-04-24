@@ -36,7 +36,7 @@ export default function SpotSection({ items = [] }: { items: SpotData[] }) {
                 <SpotItem
                   key={spot.videoId}
                   videoId={spot.videoId}
-                  videoAlias={spot.videoAlias}
+                  influencerName={spot.influencerName}
                   videoUrl={spot.videoUrl}
                   place={spot.place}
                 />

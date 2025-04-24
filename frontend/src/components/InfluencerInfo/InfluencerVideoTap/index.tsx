@@ -9,11 +9,12 @@ import { useGetInfluencerVideo } from '@/api/hooks/useGetInfluencerVideo';
 
 type Props = {
   influencerId: string;
+  influencerName: string;
   sortOption: string;
   onSortChange?: (sort: string) => void;
 };
 
-export default function InfluencerVideoTap({ influencerId, sortOption, onSortChange }: Props) {
+export default function InfluencerVideoTap({ influencerId, influencerName, sortOption, onSortChange }: Props) {
   const location = useLocation();
   const navigate = useNavigate();
   const PAGE_SIZE = 6;
@@ -79,7 +80,7 @@ export default function InfluencerVideoTap({ influencerId, sortOption, onSortCha
               <GridItem key={item.videoId} $column={(index % 2) + 1}>
                 <SpotItem
                   videoId={item.videoId}
-                  videoAlias={item.videoAlias}
+                  influencerName={influencerName}
                   videoUrl={item.videoUrl}
                   place={item.place}
                   isInfluencer

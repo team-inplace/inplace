@@ -162,6 +162,7 @@ export default function InfluencerInfoPage() {
             </SortSection>
             <InfluencerVideoTap
               influencerId={id}
+              influencerName={influencerInfoData.influencerName}
               sortOption={sortOption}
               onSortChange={(newSort) => setSortOption(newSort)}
             />
