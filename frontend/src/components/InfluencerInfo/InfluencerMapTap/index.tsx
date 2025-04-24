@@ -35,13 +35,17 @@ export default function InfluencerMapTap({
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const { data: fetchedMarkers = [] } = useGetAllMarkers(
     {
-      location: mapBounds,
+      location: {
+        topLeftLatitude: 40.96529356918684,
+        topLeftLongitude: 117.35362493334182,
+        bottomRightLatitude: 30.52810554762812,
+        bottomRightLongitude: 139.31996436541462,
+      },
       filters,
       center,
     },
     isInitialLoad,
   );
-
   useEffect(() => {
     if (isInitialLoad && fetchedMarkers.length > 0) {
       setMarkers(fetchedMarkers);
@@ -86,6 +90,7 @@ export default function InfluencerMapTap({
           shouldFetchPlaces={shouldFetchPlaces}
           onCompleteFetch={handleCompleteFetch}
           onGetPlaceData={handleGetPlaceData}
+          isInitialLoad={isInitialLoad}
           onPlaceSelect={handlePlaceSelect}
           selectedPlaceId={selectedPlaceId}
         />
@@ -108,6 +113,7 @@ export default function InfluencerMapTap({
           onGetPlaceData={handleGetPlaceData}
           onPlaceSelect={handlePlaceSelect}
           selectedPlaceId={selectedPlaceId}
+          isInitialLoad={isInitialLoad}
           isListExpanded={isListExpanded}
           onListExpand={handleListExpand}
           onSearchNearby={() => fetchLocationRef.current?.()}
