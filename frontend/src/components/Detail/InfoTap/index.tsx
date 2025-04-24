@@ -85,7 +85,7 @@ export default function InfoTap({
             </StyledText>
             <GoogleDescription>
               <Text size="xs" weight="normal" variant="grey">
-                구글 평점 3점 이상일 경우, 좋아요로 표시됩니다.
+                구글 평점 4점 이상일 경우, 좋아요로 표시됩니다.
               </Text>
               <Text size="xs" weight="normal" variant="grey">
                 Google 제공
