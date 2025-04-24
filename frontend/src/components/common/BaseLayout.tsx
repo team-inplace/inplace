@@ -9,6 +9,7 @@ import { InfluencerData, SpotData, UserPlaceData } from '@/types';
 import ChoiceList from '@/components/Choice/ChoiceList';
 import { Paragraph } from './typography/Paragraph';
 import useTheme from '@/hooks/useTheme';
+import UserPlaceSection from '../My/UserPlaceSection';
 
 type Props = {
   type: string;
@@ -62,8 +63,12 @@ export default function BaseLayout({
     if (type === 'influencer') {
       return <InfluencerSection items={items as InfluencerData[]} />;
     }
-    return <SpotSection items={items as SpotData[]} />;
+    if (type === 'spot') {
+      return <SpotSection items={items as SpotData[]} />;
+    }
+    return <UserPlaceSection items={items as UserPlaceData[]} />;
   };
+
   return (
     <Container>
       <TitleContainer>
