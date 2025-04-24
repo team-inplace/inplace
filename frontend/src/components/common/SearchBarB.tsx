@@ -27,6 +27,7 @@ export default function SearchBar({
   const debouncedInputValue = useDebounce(inputValue, DEBOUNCE_DELAY_MS);
 
   const searchBarRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const { data: searchResults } = useGetSearchComplete(debouncedInputValue, 'all', !!debouncedInputValue);
 
@@ -136,11 +137,18 @@ export default function SearchBar({
     handleSearch(inputValue);
   };
 
+  useEffect(() => {
+    if (isExpanded) {
+      inputRef.current?.focus();
+    }
+  }, [isExpanded]);
+
   return (
     <SearchBarContainer ref={searchBarRef} $width={isSearchPage ? '960px' : width} $isSearchPage={isSearchPage}>
       {(isExpanded || isSearchPage) && (
         <SearchForm $isOpen={isOpen} onSubmit={handleSubmit} $isSearchPage={isSearchPage}>
           <SearchInput
+            ref={inputRef}
             type="text"
             value={inputValue}
             onChange={handleInputChange}
@@ -271,8 +279,8 @@ const SearchButton = styled.button<{ $isSearchPage?: boolean }>`
 `;
 
 const SearchIcon = styled.span<{ $isExpanded: boolean }>`
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   background-color: ${(props) => {
     if (props.$isExpanded) return '#55ebff';
     if (props.theme.backgroundColor === '#292929') return '#ffffff';
