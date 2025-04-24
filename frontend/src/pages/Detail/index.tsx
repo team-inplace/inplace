@@ -281,7 +281,7 @@ const Tap = styled.button`
   border: none;
   border-bottom: 3px solid ${({ theme }) => (theme.textColor === '#ffffff' ? '#55ebff' : '#333333')};
   background: none;
-  cursor: pointer;
+  /* cursor: pointer; */
   transition:
     color 0.3s ease,
     border-bottom 0.3s ease;
