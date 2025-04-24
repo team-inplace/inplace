@@ -7,7 +7,6 @@ import InfluencerList from '@/components/Influencer/InfluencerList';
 import SpotSection from '@/components/Main/SpotSection';
 import { InfluencerData, SpotData, UserPlaceData } from '@/types';
 import ChoiceList from '@/components/Choice/ChoiceList';
-import UserPlaceSection from '../My/UserPlaceSection';
 import { Paragraph } from './typography/Paragraph';
 import useTheme from '@/hooks/useTheme';
 
@@ -63,10 +62,7 @@ export default function BaseLayout({
     if (type === 'influencer') {
       return <InfluencerSection items={items as InfluencerData[]} />;
     }
-    if (type === 'spot') {
-      return <SpotSection items={items as SpotData[]} />;
-    }
-    return <UserPlaceSection items={items as UserPlaceData[]} />;
+    return <SpotSection items={items as SpotData[]} />;
   };
   return (
     <Container>

@@ -62,7 +62,7 @@ export default function InfiniteScrollSection<T>({
       ) : (
         <>
           <ArrowButton aria-label="left_btn" onClick={() => scrollList('left')} className="left-arrow" direction="left">
-            <GrPrevious size={40} />
+            <GrPrevious size={30} />
           </ArrowButton>
           <ListContainer ref={listRef} $type={type}>
             {items.map((item) => renderItem(item))}
@@ -79,7 +79,7 @@ export default function InfiniteScrollSection<T>({
               className="right-arrow"
               direction="right"
             >
-              <GrNext size={40} />
+              <GrNext size={30} />
             </ArrowButton>
           )}
         </>
@@ -121,7 +121,6 @@ const ListContainer = styled.div<{ $type: string }>`
 
 const ArrowButton = styled.button<{ direction: 'left' | 'right' }>`
   position: absolute;
-  font-size: 24px;
   height: 100%;
   color: transparent;
   background: none;
@@ -137,8 +136,8 @@ const ArrowButton = styled.button<{ direction: 'left' | 'right' }>`
     color: white;
     background: ${({ direction }) =>
       direction === 'left'
-        ? 'linear-gradient(to right, rgba(0, 0, 0, 0.6), transparent 90%)'
-        : 'linear-gradient(to left, rgba(0, 0, 0, 0.6), transparent 90%)'};
+        ? 'linear-gradient(to right, rgba(0, 0, 0, 0.7), transparent 90%)'
+        : 'linear-gradient(to left, rgba(0, 0, 0, 0.7), transparent 90%)'};
   }
 
   &.left-arrow {
@@ -147,6 +146,10 @@ const ArrowButton = styled.button<{ direction: 'left' | 'right' }>`
 
   &.right-arrow {
     right: 0;
+  }
+
+  svg {
+    ${({ direction }) => (direction === 'left' ? 'padding-right: 20px' : 'padding-left: 20px')};
   }
 
   @media screen and (max-width: 768px) {
