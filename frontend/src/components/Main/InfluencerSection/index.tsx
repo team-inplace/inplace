@@ -106,8 +106,8 @@ const ArrowButton = styled.button<{ direction: 'left' | 'right' }>`
     color: white;
     background: ${({ direction, theme }) =>
       direction === 'left'
-        ? `linear-gradient(to right, ${theme.backgroundColor === '#292929' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(50, 50, 50, 0.3)'}, transparent 90%)`
-        : `linear-gradient(to left, ${theme.backgroundColor === '#292929' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(50, 50, 50, 0.3)'}, transparent 90%)`};
+        ? `linear-gradient(to right, ${theme.backgroundColor === '#292929' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(50, 50, 50, 0.5)'}, transparent 90%)`
+        : `linear-gradient(to left, ${theme.backgroundColor === '#292929' ? 'rgba(0, 0, 0, 0.7)' : 'rgba(50, 50, 50, 0.5)'}, transparent 90%)`};
   }
 
   &.left-arrow {
