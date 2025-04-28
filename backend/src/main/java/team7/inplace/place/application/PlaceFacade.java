@@ -8,15 +8,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import team7.inplace.global.annotation.Facade;
+import team7.inplace.global.exception.InplaceException;
+import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand;
 import team7.inplace.place.application.command.PlacesCommand.Coordinate;
 import team7.inplace.place.application.command.PlacesCommand.FilterParams;
 import team7.inplace.place.application.dto.PlaceInfo;
-import team7.inplace.place.application.dto.PlaceInfo.Marker;
 import team7.inplace.place.application.dto.PlaceInfo.Simple;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
-import team7.inplace.place.persistence.dto.PlaceQueryResult.Location;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.Marker;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.MarkerDetail;
 import team7.inplace.review.application.ReviewService;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.video.application.VideoService;
@@ -38,14 +40,15 @@ public class PlaceFacade {
         videoService.addPlaceInfo(videoId, placeId);
     }
 
-    public Marker getMarkerInfo(Long placeId) {
-        PlaceQueryResult.Marker marker = placeService.getMarkerInfo(placeId);
+    public PlaceInfo.Marker getMarkerInfo(Long placeId) {
+        MarkerDetail markerDetail = placeService.getMarkerInfo(placeId);
         var videos = videoService.getVideosByPlaceId(placeId);
-        return PlaceInfo.Marker.of(marker, videos);
+        return PlaceInfo.Marker.of(markerDetail, videos);
     }
 
     public PlaceInfo.Detail getDetailedPlaces(Long placeId) {
-        var userId = AuthorizationUtil.getUserId();
+        var userId = AuthorizationUtil.getUserId()
+            .orElseGet(() -> null);
         var googlePlaceId = placeService.getGooglePlaceId(placeId);
         if (googlePlaceId.isEmpty()) {
             var placeInfo = placeService.getPlaceInfo(userId, placeId);
@@ -65,7 +68,7 @@ public class PlaceFacade {
         return PlaceInfo.Detail.of(placeInfo, googlePlace.join(), videoInfos, reviewRates);
     }
 
-    public List<PlaceQueryResult.Location> getPlaceLocations(
+    public List<Marker> getPlaceLocations(
         Coordinate coordinateCommand,
         FilterParams filterParamsCommand
     ) {
@@ -77,7 +80,8 @@ public class PlaceFacade {
         FilterParams filterParamsCommand,
         Pageable pageable
     ) {
-        var userId = AuthorizationUtil.getUserId();
+        var userId = AuthorizationUtil.getUserId()
+            .orElseGet(() -> null);
 
         var placeSimpleInfos = placeService.getPlacesInMapRange(
             userId,
@@ -95,7 +99,8 @@ public class PlaceFacade {
     }
 
     public void updateLikedPlace(PlaceLikeCommand placeLikeCommand) {
-        var userId = AuthorizationUtil.getUserId();
+        var userId = AuthorizationUtil.getUserId()
+            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
         placeService.updateLikedPlace(userId, placeLikeCommand);
     }
 
@@ -103,12 +108,13 @@ public class PlaceFacade {
         return placeService.getCategories();
     }
 
-    public List<Location> getPlaceLocationsByName(String name, FilterParams command) {
+    public List<Marker> getPlaceLocationsByName(String name, FilterParams command) {
         return placeService.getPlaceLocationsByName(name, command);
     }
 
     public Page<Simple> getPlacesByName(String name, FilterParams command, Pageable pageable) {
-        var userId = AuthorizationUtil.getUserId();
+        var userId = AuthorizationUtil.getUserId()
+            .orElseGet(() -> null);
 
         var placeSimpleInfos = placeService.getPlacesByName(userId, name, command, pageable);
         var placeIds = placeSimpleInfos.getContent()

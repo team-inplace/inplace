@@ -45,7 +45,8 @@ public class InfluencerService {
         }
 
         // 로그인 된 경우
-        Long userId = AuthorizationUtil.getUserId();
+        Long userId = AuthorizationUtil.getUserId()
+            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
         Set<Long> likedInfluencerIds = likedInfluencerRepository.findLikedInfluencerIdsByUserId(
             userId);
 
@@ -103,19 +104,15 @@ public class InfluencerService {
 
     @Transactional
     public void likeToInfluencer(LikedInfluencerCommand.Single command) {
-        Long userId = AuthorizationUtil.getUserId();
-        if (userId == null) {
-            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
-        }
+        Long userId = AuthorizationUtil.getUserId()
+            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
         upsertFavoriteInfluencer(userId, command);
     }
 
     @Transactional
     public void likeToManyInfluencer(LikedInfluencerCommand.Multiple command) {
-        Long userId = AuthorizationUtil.getUserId();
-        if (userId == null) {
-            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
-        }
+        Long userId = AuthorizationUtil.getUserId()
+            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
 
         for (LikedInfluencerCommand.Single single : command.likes()) {
             upsertFavoriteInfluencer(userId, single);
@@ -171,7 +168,8 @@ public class InfluencerService {
 
     @Transactional(readOnly = true)
     public Detail getInfluencerDetail(Long influencerId) {
-        Long userId = AuthorizationUtil.getUserId();
+        Long userId = AuthorizationUtil.getUserId()
+            .orElseGet(() -> null);
 
         return influencerReadRepositoryImpl.getInfluencerDetail(influencerId, userId)
             .orElseThrow(() -> InplaceException.of(InfluencerErrorCode.NOT_FOUND));

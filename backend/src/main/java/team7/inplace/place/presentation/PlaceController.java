@@ -26,7 +26,8 @@ import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.place.presentation.dto.PlaceRequest;
 import team7.inplace.place.presentation.dto.PlaceRequest.Create;
 import team7.inplace.place.presentation.dto.PlacesResponse;
-import team7.inplace.place.presentation.dto.PlacesResponse.Location;
+import team7.inplace.place.presentation.dto.PlacesResponse.Marker;
+import team7.inplace.place.presentation.dto.PlacesResponse.MarkerDetail;
 import team7.inplace.place.presentation.dto.PlacesResponse.Simple;
 import team7.inplace.place.presentation.dto.ReviewResponse;
 import team7.inplace.review.application.ReviewService;
@@ -88,34 +89,34 @@ public class PlaceController implements PlaceControllerApiSpec {
 
     @Override
     @GetMapping("/all")
-    public ResponseEntity<List<PlacesResponse.Location>> getPlaceLocations(
+    public ResponseEntity<List<Marker>> getPlaceLocations(
         @ModelAttribute @Validated PlaceRequest.Coordinate coordinateParams,
         @ModelAttribute PlaceRequest.Filter filterParams
     ) {
-        List<PlaceQueryResult.Location> placeLocationInfos = placeFacade.getPlaceLocations(
+        List<PlaceQueryResult.Marker> placeMarkerInfos = placeFacade.getPlaceLocations(
             coordinateParams.toCommand(),
             filterParams.toCommand()
         );
 
         return new ResponseEntity<>(
-            PlacesResponse.Location.from(placeLocationInfos),
+            Marker.from(placeMarkerInfos),
             HttpStatus.OK
         );
     }
 
     @Override
     @GetMapping("/all/search")
-    public ResponseEntity<List<Location>> getPlaceLocationsByName(
+    public ResponseEntity<List<Marker>> getPlaceLocationsByName(
         @RequestParam(required = true) String placeName,
         @ModelAttribute PlaceRequest.Filter filterParams
     ) {
-        List<PlaceQueryResult.Location> placeLocationInfos = placeFacade.getPlaceLocationsByName(
+        List<PlaceQueryResult.Marker> placeMarkerInfos = placeFacade.getPlaceLocationsByName(
             placeName,
             filterParams.toCommand()
         );
 
         return new ResponseEntity<>(
-            PlacesResponse.Location.from(placeLocationInfos),
+            Marker.from(placeMarkerInfos),
             HttpStatus.OK
         );
     }
@@ -131,13 +132,14 @@ public class PlaceController implements PlaceControllerApiSpec {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Override
     @GetMapping("/{id}/marker")
-    public ResponseEntity<PlacesResponse.Marker> getPlaceForMarker(
+    public ResponseEntity<MarkerDetail> getMarkerDetail(
         @PathVariable("id") Long placeId
     ) {
         PlaceInfo.Marker marker = placeFacade.getMarkerInfo(placeId);
-        PlacesResponse.Marker markerResponse = PlacesResponse.Marker.from(marker);
-        return new ResponseEntity<>(markerResponse, HttpStatus.OK);
+        MarkerDetail markerDetailResponse = MarkerDetail.from(marker);
+        return new ResponseEntity<>(markerDetailResponse, HttpStatus.OK);
     }
 
     @Override

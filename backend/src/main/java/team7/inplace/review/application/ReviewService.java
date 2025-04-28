@@ -23,7 +23,8 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public Page<ReviewQueryResult.Simple> getPlaceReviews(Long placeId, Pageable pageable) {
-        Long userId = AuthorizationUtil.getUserId();
+        Long userId = AuthorizationUtil.getUserId()
+            .orElseGet(() -> null);
 
         Page<ReviewQueryResult.Simple> reviewResults = reviewReadRepository
             .findSimpleReviewByUserIdAndPlaceId(placeId, userId, pageable);
@@ -46,11 +47,8 @@ public class ReviewService {
 
     @Transactional
     public void deleteReview(Long reviewId) {
-        Long userId = AuthorizationUtil.getUserId();
-        if (userId == null) {
-            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
-        }
-
+        Long userId = AuthorizationUtil.getUserId()
+            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
         Review review = reviewJPARepository.findById(reviewId)
             .orElseThrow(() -> InplaceException.of(ReviewErrorCode.NOT_FOUND));
 

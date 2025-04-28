@@ -16,11 +16,10 @@ public class CurrentUserProvider {
     private final UserRepository userRepository;
 
     public User getCurrentUser() {
-        Long userId = AuthorizationUtil.getUserId();
-        if (userId == null) {
-            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
-        }
+        Long userId = AuthorizationUtil.getUserId()
+            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
+        
         return userRepository.findById(userId)
-                .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
     }
 }

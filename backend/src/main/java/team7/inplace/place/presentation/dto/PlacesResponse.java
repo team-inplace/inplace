@@ -3,7 +3,6 @@ package team7.inplace.place.presentation.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,6 +26,7 @@ public class PlacesResponse {
         String menuImgUrl,
         String longitude,
         String latitude,
+        Long likeCount,
         Boolean likes,
         List<PlacesResponse.Video> videos
     ) {
@@ -50,6 +50,7 @@ public class PlacesResponse {
                 "",
                 placeInfo.place().longitude().toString(),
                 placeInfo.place().latitude().toString(),
+                placeInfo.place().likeCount(),
                 placeInfo.place().isLiked(),
                 placeInfo.video().stream()
                     .map(PlacesResponse.Video::from)
@@ -73,7 +74,8 @@ public class PlacesResponse {
         String googlePlaceUrl,
         String naverPlaceUrl,
         List<String> openingHours,
-        PlacesResponse.PlaceLike placeLikes,
+        ReviewLike reviewLikes,
+        Long likeCount,
         Boolean likes
     ) {
 
@@ -114,7 +116,8 @@ public class PlacesResponse {
                     place.place().placeName()
                 ),
                 List.of(),
-                PlacesResponse.PlaceLike.from(place.reviewLikeRate()),
+                ReviewLike.from(place.reviewLikeRate()),
+                place.place().likeCount(),
                 place.place().isLiked()
             );
         }
@@ -148,15 +151,16 @@ public class PlacesResponse {
                 place.googlePlace().googleMapsUri(),
                 "https://map.naver.com/p/search/"
                     + convertParamsForNaverSearch(
-                        place.place().address1(),
-                        place.place().address2(),
-                        place.place().address3(),
-                        place.place().placeName()
-                    ),
+                    place.place().address1(),
+                    place.place().address2(),
+                    place.place().address3(),
+                    place.place().placeName()
+                ),
                 place.googlePlace().regularOpeningHours()
                     .map(RegularOpeningHours::weekdayDescriptions)
                     .orElse(List.of()),
-                PlacesResponse.PlaceLike.from(place.reviewLikeRate()),
+                ReviewLike.from(place.reviewLikeRate()),
+                place.place().likeCount(),
                 place.place().isLiked()
             );
         }
@@ -236,13 +240,13 @@ public class PlacesResponse {
 
     }
 
-    public record PlaceLike(
+    public record ReviewLike(
         Long like,
         Long dislike
     ) {
 
-        public static PlacesResponse.PlaceLike from(ReviewQueryResult.LikeRate placeLike) {
-            return new PlacesResponse.PlaceLike(placeLike.likes(), placeLike.dislikes());
+        public static ReviewLike from(ReviewQueryResult.LikeRate placeLike) {
+            return new ReviewLike(placeLike.likes(), placeLike.dislikes());
         }
     }
 
@@ -256,28 +260,28 @@ public class PlacesResponse {
         }
     }
 
-    public record Location(
+    public record Marker(
         Long placeId,
         Double longitude,
         Double latitude
     ) {
 
-        public static List<Location> from(List<PlaceQueryResult.Location> locations) {
-            return locations.stream()
-                .map(PlacesResponse.Location::from)
+        public static List<Marker> from(List<PlaceQueryResult.Marker> markers) {
+            return markers.stream()
+                .map(Marker::from)
                 .toList();
         }
 
-        private static Location from(PlaceQueryResult.Location location) {
-            return new Location(
-                location.placeId(),
-                location.longitude(),
-                location.latitude()
+        private static Marker from(PlaceQueryResult.Marker marker) {
+            return new Marker(
+                marker.placeId(),
+                marker.longitude(),
+                marker.latitude()
             );
         }
     }
 
-    public record Marker(
+    public record MarkerDetail(
         Long placeId,
         String placeName,
         String category,
@@ -286,8 +290,8 @@ public class PlacesResponse {
         List<Video> videos
     ) {
 
-        public static Marker from(PlaceInfo.Marker marker) {
-            return new Marker(
+        public static MarkerDetail from(PlaceInfo.Marker marker) {
+            return new MarkerDetail(
                 marker.place().placeId(),
                 marker.place().placeName(),
                 marker.place().category().getName(),

@@ -3,6 +3,7 @@ package team7.inplace.place.application.dto;
 import java.util.List;
 import team7.inplace.place.client.GooglePlaceClientResponse;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.MarkerDetail;
 import team7.inplace.review.persistence.dto.ReviewQueryResult;
 import team7.inplace.video.persistence.dto.VideoQueryResult;
 import team7.inplace.video.persistence.dto.VideoQueryResult.SimpleVideo;
@@ -43,13 +44,13 @@ public class PlaceInfo {
     }
 
     public record Marker(
-        PlaceQueryResult.Marker place,
+        MarkerDetail place,
         List<VideoQueryResult.SimpleVideo> videos
     ) {
 
         public static PlaceInfo.Marker of(
-            PlaceQueryResult.Marker marker, List<VideoQueryResult.SimpleVideo> videos) {
-            return new PlaceInfo.Marker(marker, videos);
+            MarkerDetail markerDetail, List<VideoQueryResult.SimpleVideo> videos) {
+            return new PlaceInfo.Marker(markerDetail, videos);
         }
     }
 

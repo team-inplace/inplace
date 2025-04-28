@@ -23,12 +23,12 @@ import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.QPlace;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.DetailedPlace;
-import team7.inplace.place.persistence.dto.PlaceQueryResult.Location;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.Marker;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.MarkerDetail;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.SimplePlace;
 import team7.inplace.place.persistence.dto.QPlaceQueryResult_DetailedPlace;
-import team7.inplace.place.persistence.dto.QPlaceQueryResult_Location;
 import team7.inplace.place.persistence.dto.QPlaceQueryResult_Marker;
+import team7.inplace.place.persistence.dto.QPlaceQueryResult_MarkerDetail;
 import team7.inplace.place.persistence.dto.QPlaceQueryResult_SimplePlace;
 import team7.inplace.video.domain.QVideo;
 
@@ -44,6 +44,9 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
         Long userId,
         Long placeId
     ) {
+
+        QLikedPlace likedPlace = new QLikedPlace("likedPlace");
+        QLikedPlace selfLikedPlace = new QLikedPlace("selfLikedPlace");
         var detailedPlace = jpaQueryFactory
             .select(new QPlaceQueryResult_DetailedPlace(
                 QPlace.place.id,
@@ -56,14 +59,17 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
                 QPlace.place.category,
                 QPlace.place.googlePlaceId,
                 QPlace.place.kakaoPlaceId,
-                QLikedPlace.likedPlace.isLiked.isNotNull()
+                likedPlace.id.countDistinct(),
+                selfLikedPlace.id.isNotNull()
             ))
             .from(QPlace.place)
-            .leftJoin(QLikedPlace.likedPlace).on(QLikedPlace.likedPlace.placeId.eq(QPlace.place.id)
+            .leftJoin(likedPlace).on(likedPlace.placeId.eq(QPlace.place.id)
+                .and(likedPlace.isLiked.isTrue()))
+            .leftJoin(selfLikedPlace).on(selfLikedPlace.placeId.eq(QPlace.place.id)
                 .and(userId != null ?
-                    QLikedPlace.likedPlace.userId.eq(userId) :
-                    QLikedPlace.likedPlace.userId.isNull())
-                .and(QLikedPlace.likedPlace.isLiked.isTrue()))
+                    selfLikedPlace.userId.eq(userId) :
+                    selfLikedPlace.userId.isNull())
+                .and(selfLikedPlace.isLiked.isTrue()))
             .where(
                 QPlace.place.id.eq(placeId),
                 QPlace.place.deleteAt.isNull(),
@@ -109,6 +115,9 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
                 QInfluencer.influencer.deleteAt.isNull()
             ).fetch();
         /* 필터링 된 장소 ID 목록으로 장소 상세 정보 조회 */
+
+        QLikedPlace likedPlace = new QLikedPlace("likedPlace");
+        QLikedPlace selfLikedPlace = new QLikedPlace("selfLikedPlace");
         List<PlaceQueryResult.DetailedPlace> places = jpaQueryFactory
             .select(new QPlaceQueryResult_DetailedPlace(
                 QPlace.place.id,
@@ -121,17 +130,20 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
                 QPlace.place.category,
                 QPlace.place.googlePlaceId,
                 QPlace.place.kakaoPlaceId,
-                QLikedPlace.likedPlace.isLiked.isNotNull()
+                likedPlace.id.countDistinct(),
+                selfLikedPlace.id.isNotNull()
             )).distinct()
             .from(QPlace.place)
             .leftJoin(QVideo.video).on(QVideo.video.placeId.eq(QPlace.place.id))
             .leftJoin(QInfluencer.influencer)
             .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id))
-            .leftJoin(QLikedPlace.likedPlace).on(QLikedPlace.likedPlace.placeId.eq(QPlace.place.id)
+            .leftJoin(likedPlace).on(likedPlace.placeId.eq(QPlace.place.id)
+                .and(likedPlace.isLiked.isTrue()))
+            .leftJoin(selfLikedPlace).on(selfLikedPlace.placeId.eq(QPlace.place.id)
                 .and(userId != null ?
-                    QLikedPlace.likedPlace.userId.eq(userId) :
-                    QLikedPlace.likedPlace.userId.isNull())
-                .and(QLikedPlace.likedPlace.isLiked.isTrue()))
+                    selfLikedPlace.userId.eq(userId) :
+                    selfLikedPlace.userId.isNull())
+                .and(selfLikedPlace.isLiked.isTrue()))
             .where(
                 locationCondition,
                 filterExpression,
@@ -152,7 +164,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
     }
 
     @Override
-    public List<PlaceQueryResult.Location> findPlaceLocationsInMapRange(
+    public List<Marker> findPlaceLocationsInMapRange(
         Double topLeftLongitude,
         Double topLeftLatitude,
         Double bottomRightLongitude,
@@ -184,7 +196,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
             ).fetch();
 
         return jpaQueryFactory
-            .select(new QPlaceQueryResult_Location(
+            .select(new QPlaceQueryResult_Marker(
                     QPlace.place.id,
                     QPlace.place.coordinate.longitude,
                     QPlace.place.coordinate.latitude
@@ -287,6 +299,8 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
             return new PageImpl<>(List.of(), pageable, 0);
         }
 
+        QLikedPlace likedPlace = new QLikedPlace("likedPlace");
+        QLikedPlace selfLikedPlace = new QLikedPlace("selfLikedPlace");
         var likedPlaces = jpaQueryFactory
             .select(new QPlaceQueryResult_DetailedPlace(
                 QPlace.place.id,
@@ -299,15 +313,22 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
                 QPlace.place.category,
                 QPlace.place.googlePlaceId,
                 QPlace.place.kakaoPlaceId,
-                QLikedPlace.likedPlace.isLiked.isTrue()
+                likedPlace.id.countDistinct(),
+                selfLikedPlace.id.isNotNull()
             ))
-            .from(QLikedPlace.likedPlace)
-            .leftJoin(QPlace.place).on(QLikedPlace.likedPlace.placeId.eq(QPlace.place.id))
-            .where(
-                QLikedPlace.likedPlace.userId.eq(userId),
-                QLikedPlace.likedPlace.isLiked.isTrue(),
-                QLikedPlace.likedPlace.deleteAt.isNull(),
+            .from(selfLikedPlace)
+            .leftJoin(QPlace.place).on(selfLikedPlace.placeId.eq(QPlace.place.id),
                 QPlace.place.deleteAt.isNull()
+            )
+            .leftJoin(likedPlace).on(
+                likedPlace.placeId.eq(QPlace.place.id),
+                likedPlace.isLiked.isTrue(),
+                likedPlace.deleteAt.isNull()
+            )
+            .where(
+                selfLikedPlace.userId.eq(userId),
+                selfLikedPlace.isLiked.isTrue(),
+                selfLikedPlace.deleteAt.isNull()
             )
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
@@ -317,9 +338,9 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
     }
 
     @Override
-    public Marker findPlaceMarkerById(Long placeId) {
+    public MarkerDetail findPlaceMarkerById(Long placeId) {
         return jpaQueryFactory
-            .select(new QPlaceQueryResult_Marker(
+            .select(new QPlaceQueryResult_MarkerDetail(
                 QPlace.place.id,
                 QPlace.place.name,
                 QPlace.place.category,
@@ -333,7 +354,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
     }
 
     @Override
-    public List<Location> findPlaceLocationsByName(
+    public List<Marker> findPlaceLocationsByName(
         String name,
         List<RegionParam> regionParams,
         List<Category> categoryFilters,
@@ -359,7 +380,7 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
             ).fetch();
 
         return jpaQueryFactory
-            .select(new QPlaceQueryResult_Location(
+            .select(new QPlaceQueryResult_Marker(
                     QPlace.place.id,
                     QPlace.place.coordinate.longitude,
                     QPlace.place.coordinate.latitude
@@ -395,6 +416,8 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
                 QInfluencer.influencer.deleteAt.isNull()
             ).fetch();
 
+        QLikedPlace likedPlace = new QLikedPlace("likedPlace");
+        QLikedPlace selfLikedPlace = new QLikedPlace("selfLikedPlace");
         var places = jpaQueryFactory
             .select(new QPlaceQueryResult_DetailedPlace(
                 QPlace.place.id,
@@ -407,17 +430,20 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
                 QPlace.place.category,
                 QPlace.place.googlePlaceId,
                 QPlace.place.kakaoPlaceId,
-                QLikedPlace.likedPlace.isLiked.isNotNull()
+                likedPlace.id.countDistinct(),
+                selfLikedPlace.id.isNotNull()
             )).distinct()
             .from(QPlace.place)
             .leftJoin(QVideo.video).on(QVideo.video.placeId.eq(QPlace.place.id))
             .leftJoin(QInfluencer.influencer)
             .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id))
-            .leftJoin(QLikedPlace.likedPlace).on(QLikedPlace.likedPlace.placeId.eq(QPlace.place.id)
+            .leftJoin(likedPlace).on(likedPlace.placeId.eq(QPlace.place.id)
+                .and(likedPlace.isLiked.isTrue()))
+            .leftJoin(selfLikedPlace).on(selfLikedPlace.placeId.eq(QPlace.place.id)
                 .and(userId != null ?
-                    QLikedPlace.likedPlace.userId.eq(userId) :
-                    QLikedPlace.likedPlace.userId.isNull())
-                .and(QLikedPlace.likedPlace.isLiked.isTrue()))
+                    selfLikedPlace.userId.eq(userId) :
+                    selfLikedPlace.userId.isNull())
+                .and(selfLikedPlace.isLiked.isTrue()))
             .where(
                 locationCondition,
                 filterExpression,

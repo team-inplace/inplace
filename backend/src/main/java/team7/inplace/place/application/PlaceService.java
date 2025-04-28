@@ -29,7 +29,8 @@ import team7.inplace.place.domain.Category;
 import team7.inplace.place.persistence.PlaceJpaRepository;
 import team7.inplace.place.persistence.PlaceReadRepository;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
-import team7.inplace.place.persistence.dto.PlaceQueryResult.Location;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.Marker;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.MarkerDetail;
 import team7.inplace.video.persistence.VideoReadRepository;
 
 @Slf4j
@@ -129,7 +130,7 @@ public class PlaceService {
     }
 
     @Transactional(readOnly = true)
-    public List<PlaceQueryResult.Location> getPlaceLocations(
+    public List<Marker> getPlaceLocations(
         Coordinate coordinateCommand,
         FilterParams filterParamsCommand
     ) {
@@ -149,7 +150,7 @@ public class PlaceService {
     }
 
     @Transactional(readOnly = true)
-    public PlaceQueryResult.Marker getMarkerInfo(Long placeId) {
+    public MarkerDetail getMarkerInfo(Long placeId) {
         return placeReadRepository.findPlaceMarkerById(placeId);
     }
 
@@ -174,7 +175,7 @@ public class PlaceService {
             .toList();
     }
 
-    public List<Location> getPlaceLocationsByName(String name, FilterParams command) {
+    public List<Marker> getPlaceLocationsByName(String name, FilterParams command) {
         return placeReadRepository.findPlaceLocationsByName(
             name,
             command.regions(),

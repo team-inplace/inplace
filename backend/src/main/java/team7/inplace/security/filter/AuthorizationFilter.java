@@ -72,7 +72,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             .filter(
                 cookie -> cookie.getName().equals(TokenType.ACCESS_TOKEN.getValue()))
             .findAny()
-            .orElse(null);
+            .orElseGet(() -> null);
         if (Objects.isNull(accessTokenCookie)) {
             return null;
         }
@@ -84,7 +84,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
             .filter(
                 cookie -> cookie.getName().equals(TokenType.REFRESH_TOKEN.getValue()))
             .findAny()
-            .orElse(null);
+            .orElseGet(() -> null);
         if (Objects.isNull(refreshTokenCookie)) {
             return null;
         }

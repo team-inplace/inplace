@@ -20,8 +20,8 @@ import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import team7.inplace.container.AbstractMySQLContainerTest;
 import team7.inplace.place.application.command.PlacesCommand.RegionParam;
 import team7.inplace.place.domain.Category;
-import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.DetailedPlace;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.Marker;
 
 @DataJpaTest
 @ActiveProfiles("test-mysql")
@@ -542,7 +542,7 @@ class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
 
         //then
         assertThat(places.size()).isEqualTo(expectedTotalContent);
-        assertThat(places.stream().map(PlaceQueryResult.Location::placeId).toList()).isEqualTo(ids);
+        assertThat(places.stream().map(Marker::placeId).toList()).isEqualTo(ids);
     }
 
     @Test
@@ -564,7 +564,7 @@ class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
 
         //then
         assertThat(places.size()).isEqualTo(expectedTotalContent);
-        assertThat(places.stream().map(PlaceQueryResult.Location::placeId).toList()).isEqualTo(ids);
+        assertThat(places.stream().map(Marker::placeId).toList()).isEqualTo(ids);
     }
 
     @Test
@@ -588,7 +588,7 @@ class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
 
         //then
         assertThat(places.size()).isEqualTo(expectedTotalContent);
-        assertThat(places.stream().map(PlaceQueryResult.Location::placeId).toList()).isEqualTo(ids);
+        assertThat(places.stream().map(Marker::placeId).toList()).isEqualTo(ids);
     }
 
     @Test

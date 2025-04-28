@@ -16,15 +16,12 @@ public class PlaceQueryResult {
         Category category,
         String googlePlaceId,
         Long kakaoPlaceId,
+        Long likeCount,
         Boolean isLiked
     ) {
 
         @QueryProjection
         public DetailedPlace {
-        }
-
-        public boolean haveNoGooglePlaceId() {
-            return googlePlaceId == null;
         }
     }
 
@@ -41,18 +38,18 @@ public class PlaceQueryResult {
         }
     }
 
-    public record Location(
+    public record Marker(
         Long placeId,
         Double longitude,
         Double latitude
     ) {
 
         @QueryProjection
-        public Location {
+        public Marker {
         }
     }
 
-    public record Marker(
+    public record MarkerDetail(
         Long placeId,
         String placeName,
         Category category,
@@ -62,7 +59,7 @@ public class PlaceQueryResult {
     ) {
 
         @QueryProjection
-        public Marker {
+        public MarkerDetail {
         }
     }
 }

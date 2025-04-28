@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import team7.inplace.place.presentation.dto.PlaceRequest;
 import team7.inplace.place.presentation.dto.PlacesResponse;
-import team7.inplace.place.presentation.dto.PlacesResponse.Location;
+import team7.inplace.place.presentation.dto.PlacesResponse.Marker;
 import team7.inplace.place.presentation.dto.ReviewResponse;
 
 public interface PlaceControllerApiSpec {
@@ -38,13 +38,13 @@ public interface PlaceControllerApiSpec {
     );
 
     @Operation(summary = "모든 장소 위치 조회(필터링만)", description = "지도 반경 내 혹은 필터링 기준의 모든 장소 목록을 조회합니다.")
-    ResponseEntity<List<Location>> getPlaceLocations(
+    ResponseEntity<List<Marker>> getPlaceLocations(
         @ModelAttribute @Validated PlaceRequest.Coordinate coordinateParams,
         @ModelAttribute PlaceRequest.Filter filterParams
     );
 
-    @Operation(summary = "모든 장소 위치 조회(장소 이름으로 검색했을 때", description = "장소 이름으로 검색한 모든 장소 목록을 조회합니다.")
-    ResponseEntity<List<Location>> getPlaceLocationsByName(
+    @Operation(summary = "모든 장소 위치 조회(장소 이름으로 검색했을 때)", description = "장소 이름으로 검색한 모든 장소 목록을 조회합니다.")
+    ResponseEntity<List<Marker>> getPlaceLocationsByName(
         @RequestParam String placeName,
         @ModelAttribute PlaceRequest.Filter filterParams
     );
@@ -66,5 +66,10 @@ public interface PlaceControllerApiSpec {
     ResponseEntity<Page<ReviewResponse.Simple>> getReviews(
         @PathVariable("id") Long placeId,
         @PageableDefault(page = 0, size = 10) Pageable pageable
+    );
+
+    @Operation(summary = "마커 상세 정보 조회", description = "장소 ID를 통해 특정 장소의 마커 상세 정보를 조회합니다.")
+    ResponseEntity<PlacesResponse.MarkerDetail> getMarkerDetail(
+        @PathVariable("id") Long placeId
     );
 }

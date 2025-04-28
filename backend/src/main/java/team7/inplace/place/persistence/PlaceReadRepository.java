@@ -8,7 +8,8 @@ import team7.inplace.place.application.command.PlacesCommand.RegionParam;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.DetailedPlace;
-import team7.inplace.place.persistence.dto.PlaceQueryResult.Location;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.Marker;
+import team7.inplace.place.persistence.dto.PlaceQueryResult.MarkerDetail;
 
 public interface PlaceReadRepository {
 
@@ -30,7 +31,7 @@ public interface PlaceReadRepository {
         Long userId
     );
 
-    List<PlaceQueryResult.Location> findPlaceLocationsInMapRange(
+    List<Marker> findPlaceLocationsInMapRange(
         Double topLeftLongitude,
         Double topLeftLatitude,
         Double bottomRightLongitude,
@@ -43,9 +44,9 @@ public interface PlaceReadRepository {
     Page<PlaceQueryResult.DetailedPlace> findLikedPlacesByUserIdWithPaging(
         Long userId, Pageable pageable);
 
-    PlaceQueryResult.Marker findPlaceMarkerById(Long placeId);
+    MarkerDetail findPlaceMarkerById(Long placeId);
 
-    List<Location> findPlaceLocationsByName(
+    List<Marker> findPlaceLocationsByName(
         String name,
         List<RegionParam> regionParams,
         List<Category> categoryFilters,

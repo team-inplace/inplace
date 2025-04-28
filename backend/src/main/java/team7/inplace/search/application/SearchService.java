@@ -54,14 +54,16 @@ public class SearchService {
     }
 
     public Page<InfluencerQueryResult.Simple> searchInfluencer(String keyword, Pageable pageable) {
-        var userId = AuthorizationUtil.getUserId();
+        var userId = AuthorizationUtil.getUserId()
+            .orElseGet(() -> null);
         var influencerInfos = influencerSearchRepository.search(keyword, pageable, userId);
 
         return influencerInfos;
     }
 
     public List<InfluencerQueryResult.Simple> searchInfluencer(String keyword) {
-        var userId = AuthorizationUtil.getUserId();
+        var userId = AuthorizationUtil.getUserId()
+            .orElseGet(() -> null);
         var influencerInfos = influencerSearchRepository.search(
             keyword,
             Pageable.ofSize(SEARCH_LIMIT),
@@ -72,7 +74,8 @@ public class SearchService {
     }
 
     public List<VideoQueryResult.SimpleVideo> searchVideo(String keyword) {
-        var userId = AuthorizationUtil.getUserId();
+        var userId = AuthorizationUtil.getUserId()
+            .orElseGet(() -> null);
         var videoInfos = videoSearchRepository.search(
             keyword,
             Pageable.ofSize(SEARCH_LIMIT),
@@ -83,7 +86,8 @@ public class SearchService {
     }
 
     public List<SearchQueryResult.Place> searchPlace(String keyword) {
-        var userId = AuthorizationUtil.getUserId();
+        var userId = AuthorizationUtil.getUserId()
+            .orElseGet(() -> null);
         var placeInfos = placeSearchRepository.search(
             keyword,
             Pageable.ofSize(SEARCH_LIMIT),
