@@ -53,7 +53,7 @@ public class VideoFacade {
     }
 
     @Transactional(readOnly = true)
-    public List<VideoQueryResult.SimpleVideo> getMyInfluencerVideos() {
+    public List<VideoQueryResult.DetailedVideo> getMyInfluencerVideos() {
         // User 정보를 쿠키에서 추출
         Long userId = AuthorizationUtil.getUserId();
         // 인플루언서 id를 사용하여 영상을 조회

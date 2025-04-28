@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import team7.inplace.video.persistence.dto.VideoQueryResult;
 
 public interface VideoReadRepository {
-    Page<VideoQueryResult.SimpleVideo> findSimpleVideosInSurround(
+    Page<VideoQueryResult.DetailedVideo> findSimpleVideosInSurround(
             Double topLeftLongitude,
             Double topLeftLatitude,
             Double bottomRightLongitude,
@@ -17,11 +17,11 @@ public interface VideoReadRepository {
             Pageable pageable
     );
 
-    List<VideoQueryResult.SimpleVideo> findTop10ByViewCountIncrement();
+    List<VideoQueryResult.DetailedVideo> findTop10ByViewCountIncrement();
 
-    List<VideoQueryResult.SimpleVideo> findTop10ByLatestUploadDate();
+    List<VideoQueryResult.DetailedVideo> findTop10ByLatestUploadDate();
 
-    List<VideoQueryResult.SimpleVideo> findTop10ByLikedInfluencer(Long userId);
+    List<VideoQueryResult.DetailedVideo> findTop10ByLikedInfluencer(Long userId);
 
     List<VideoQueryResult.SimpleVideo> findSimpleVideosByPlaceId(Long placeId);
 
