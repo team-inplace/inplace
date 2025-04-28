@@ -38,7 +38,11 @@ public class VideoResponse {
             var place = new VideoResponse.PlaceDetail(
                 videoInfo.placeId(),
                 videoInfo.placeName(),
-                String.join(" ", videoInfo.address1(), videoInfo.address2(), videoInfo.address3())
+                new Address(
+                    videoInfo.address1(),
+                    videoInfo.address2(),
+                    videoInfo.address3()
+                )
             );
             return new VideoResponse.Detail(
                 videoInfo.videoId(),
@@ -52,8 +56,16 @@ public class VideoResponse {
     public record PlaceDetail(
         Long placeId,
         String placeName,
-        String placeAddress
+        Address address
     ) {
+    }
+
+    public record Address(
+        String address1,
+        String address2,
+        String address3
+    ) {
+
     }
 
 }
