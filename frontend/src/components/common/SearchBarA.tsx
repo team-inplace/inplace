@@ -98,7 +98,7 @@ export default function SearchBar({ placeholder = '키워드를 입력해주세�
           onKeyDown={handleDropDownKey}
           placeholder={placeholder}
         />
-        <SearchIconWrapper role="button" aria-label="검색" onClick={() => handleSearch(inputValue)} />
+        <SearchIconWrapper role="button" aria-label="검색바 아이콘 버튼_A" onClick={() => handleSearch(inputValue)} />
       </SearchInputWrapper>
       {inputValue && isOpen && (
         <SearchDropDownBox>

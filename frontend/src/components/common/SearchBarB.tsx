@@ -160,7 +160,7 @@ export default function SearchBar({
             $isSearchPage={isSearchPage}
           />
           {isSearchPage && (
-            <SearchButton type="submit" aria-label="검색" $isSearchPage={isSearchPage}>
+            <SearchButton type="submit" aria-label="검색페이지 아이콘 버튼_B" $isSearchPage={isSearchPage}>
               <SearchIcon $isExpanded />
             </SearchButton>
           )}
@@ -169,7 +169,12 @@ export default function SearchBar({
 
       <ButtonContainer $isSearchPage={isSearchPage}>
         {!isSearchPage && (
-          <SearchButton type="button" aria-label="검색" onClick={toggleSearchBar} $isSearchPage={isSearchPage}>
+          <SearchButton
+            type="button"
+            aria-label="검색바 아이콘 버튼_B"
+            onClick={toggleSearchBar}
+            $isSearchPage={isSearchPage}
+          >
             <SearchIcon $isExpanded={isExpanded} />
           </SearchButton>
         )}

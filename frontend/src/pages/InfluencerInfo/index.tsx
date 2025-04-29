@@ -116,7 +116,7 @@ export default function InfluencerInfoPage() {
           </Text>
         </TextInfo>
         <LikeIcon
-          aria-label="like_btn"
+          aria-label="인플루언서 전용 좋아요"
           role="button"
           onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
         >
@@ -128,10 +128,10 @@ export default function InfluencerInfoPage() {
         </LikeIcon>
       </InfluencerInfoSection>
       <TapContainer>
-        <Tap aria-label="spot_tap" $active={activeTab === 'video'} onClick={() => setActiveTab('video')}>
+        <Tap aria-label="인플루언서 전용 쿨그" $active={activeTab === 'video'} onClick={() => setActiveTab('video')}>
           쿨한 그곳
         </Tap>
-        <Tap aria-label="place_tap" $active={activeTab === 'map'} onClick={() => setActiveTab('map')}>
+        <Tap aria-label="인플루언서 전용 쿨플" $active={activeTab === 'map'} onClick={() => setActiveTab('map')}>
           쿨 플레이스
         </Tap>
       </TapContainer>
@@ -140,7 +140,7 @@ export default function InfluencerInfoPage() {
           <>
             <SortSection ref={dropdownRef}>
               <StyledButton
-                aria-label="sort_btn"
+                aria-label="인플루언서 전용 정렬"
                 variant="white"
                 size="small"
                 onClick={() => setShowSortOptions(!showSortOptions)}

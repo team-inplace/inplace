@@ -46,7 +46,7 @@ export default function AuthButtons() {
 
   return (
     <Container>
-      <ThemeButton onClick={toggleTheme} aria-label="테마 변경 버튼" $isDarkMode={isDarkMode}>
+      <ThemeButton onClick={toggleTheme} aria-label="테마 변경 버튼_B" $isDarkMode={isDarkMode}>
         {isDarkMode ? <FiSun size={24} color="white" /> : <FiMoon size={22} color="black" />}
       </ThemeButton>
       {isAuthenticated ? (

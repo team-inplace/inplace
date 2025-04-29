@@ -62,7 +62,7 @@ export default function InfluencerItem({
         <ImageContainer>
           <LikeIcon
             role="button"
-            aria-label="like_btn"
+            aria-label="인플루언서 좋아요"
             onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
           >
             {isLike ? (

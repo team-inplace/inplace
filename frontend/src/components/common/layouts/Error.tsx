@@ -96,7 +96,7 @@ export default function ErrorComponent({ error, resetErrorBoundary }: FallbackPr
           {message.description}
         </Paragraph>
       </TextWrapper>
-      <StyledButton aria-label="retry-btn" variant={buttonVariant} size="large" onClick={handleRetry}>
+      <StyledButton aria-label="에러페이지 재시도" variant={buttonVariant} size="large" onClick={handleRetry}>
         {error instanceof AxiosError && error.response?.status !== 401 && error.response?.status !== 403
           ? '다시 시도하기'
           : '홈으로 가기'}

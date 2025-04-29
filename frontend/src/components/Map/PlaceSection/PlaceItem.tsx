@@ -91,7 +91,7 @@ export default function PlaceItem({
         <LikeContainer>
           <LikeIcon
             role="button"
-            aria-label="like_btn"
+            aria-label="장소 좋아요"
             onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
           >
             {isLike ? (

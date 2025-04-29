@@ -41,7 +41,7 @@ export default function ResearchModal() {
 
   return (
     <ModalContainer>
-      <CloseButton aria-label="close_btn" onClick={handleClose}>
+      <CloseButton aria-label="설문조사 닫기" onClick={handleClose}>
         X
       </CloseButton>
       <ContentWrapper>
@@ -59,7 +59,7 @@ export default function ResearchModal() {
           </IconBackground>
         </IconWrapper>
         <ButtonWrapper>
-          <SubmitButton aria-label="submit_btn" onClick={handleSurvey}>
+          <SubmitButton aria-label="의견 남기러 가기" onClick={handleSurvey}>
             의견 남기러 가기
           </SubmitButton>
         </ButtonWrapper>

@@ -68,6 +68,7 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
             to="https://docs.google.com/forms/d/e/1FAIpQLSeBJcQg0gcVv2au5oFZ1aCLF9O_qbEiJCvnLEd0d1SSLLpDUA/viewform?pli=1"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="모바일 설문조사"
             onClick={onClose}
           >
             <Text size="xs" weight="normal">
@@ -77,7 +78,7 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
         )}
 
         {commonLinks.map((link) => (
-          <NavItem key={link.to} to={link.to} onClick={onClose}>
+          <NavItem key={link.to} to={link.to} aria-label={`모바일 ${link.label}`} onClick={onClose}>
             <Text size="xs" weight="normal">
               {link.label}
             </Text>
@@ -86,7 +87,7 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
 
         {isAuthenticated ? (
           <>
-            <NavItem to="/my" onClick={onClose}>
+            <NavItem to="/my" aria-label="모바일 마이페이지" onClick={onClose}>
               <Text size="xs" weight="normal">
                 마이페이지
               </Text>

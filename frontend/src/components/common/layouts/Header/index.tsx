@@ -65,7 +65,7 @@ export default function Header() {
               <>
                 <ThemeButton
                   onClick={toggleTheme}
-                  aria-label="테마 변경 버튼"
+                  aria-label="모바일 테마 변경"
                   $isDarkMode={isDarkMode}
                   style={{ position: 'fixed', right: '60px' }}
                 >
@@ -73,7 +73,7 @@ export default function Header() {
                 </ThemeButton>
                 <MobileMenuButton
                   onClick={() => setIsMenuOpen(true)}
-                  aria-label="메뉴 열기"
+                  aria-label="모바일 메뉴 열기"
                   style={{ position: 'fixed', right: '20px' }}
                 >
                   <RiMenuLine size={24} color={isDarkMode ? 'white' : 'grey'} />
@@ -92,7 +92,7 @@ export default function Header() {
                 )}
                 <MobileMenuButton
                   onClick={() => setIsMenuOpen(false)}
-                  aria-label="메뉴 닫기"
+                  aria-label="모바일 메뉴 닫기"
                   style={{ position: 'fixed', right: '20px' }}
                 >
                   <RiCloseLine size={26} color={isDarkMode ? 'white' : 'grey'} />

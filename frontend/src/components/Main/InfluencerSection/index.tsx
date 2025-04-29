@@ -28,7 +28,12 @@ export default function InfluencerSection({ items = [] }: { items: InfluencerDat
         <NoItem message="인플루언서 정보가 없어요!" height={200} />
       ) : (
         <>
-          <ArrowButton aria-label="left_btn" onClick={() => scrollList('left')} className="left-arrow" direction="left">
+          <ArrowButton
+            aria-label="인플루언서 스크롤 왼쪽"
+            onClick={() => scrollList('left')}
+            className="left-arrow"
+            direction="left"
+          >
             <GrPrevious size={40} />
           </ArrowButton>
           <ListContainer ref={listRef}>
@@ -47,7 +52,7 @@ export default function InfluencerSection({ items = [] }: { items: InfluencerDat
           </ListContainer>
           {items.length > 5 && (
             <ArrowButton
-              aria-label="right_btn"
+              aria-label="인플루언서 스크롤 오른쪽"
               onClick={() => scrollList('right')}
               className="right-arrow"
               direction="right"

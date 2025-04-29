@@ -113,11 +113,11 @@ export default function DetailPage() {
         <GradientOverlay />
         {infoData?.videos && infoData.videos.length > 1 && (
           <>
-            <PrevBtn aria-label="prev_btn" onClick={handleBtnPrevClick} disabled={currentVideoIndex === 0}>
+            <PrevBtn aria-label="썸네일 왼쪽" onClick={handleBtnPrevClick} disabled={currentVideoIndex === 0}>
               <GrPrevious size={40} color="white" />
             </PrevBtn>
             <NextBtn
-              aria-label="next_btn"
+              aria-label="썸네일 오른쪽"
               onClick={handleBtnNextClick}
               disabled={currentVideoIndex === infoData.videos.length - 1}
             >
@@ -136,7 +136,7 @@ export default function DetailPage() {
               <LikeContainer>
                 <LikeIcon
                   role="button"
-                  aria-label="like_btn"
+                  aria-label="디테일 좋아요"
                   onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
                 >
                   {isLike ? (
@@ -157,7 +157,7 @@ export default function DetailPage() {
               방문할래요
             </StyledButton> */}
             <StyledButton
-              aria-label="youtube_btn"
+              aria-label="영상보기"
               variant="outline"
               onClick={() => {
                 window.open(currentVideoUrl, '_blank');
@@ -170,7 +170,9 @@ export default function DetailPage() {
         </TitleContainer>
       </ImageContainer>
       <TapContainer>
-        <Tap aria-label="info_tap" /* $active={activeTab === 'info'} onClick={() => setActiveTab('info')} */>정보</Tap>
+        <Tap aria-label="디테일 정보탭" /* $active={activeTab === 'info'} onClick={() => setActiveTab('info')} */>
+          정보
+        </Tap>
         {/* <Tap aria-label="review_tap" $active={activeTab === 'review'} onClick={() => setActiveTab('review')}>
           리뷰
         </Tap> */}

@@ -48,7 +48,7 @@ export default function MapSection({ highlightText, mainText }: MapSectionProps)
             <img src={VisitPlace} alt="방문 장소" width={isMobile ? '30px' : '44px'} />
           </IconContainer>
         </TextSection>
-        <ConfirmButton onClick={handleConfirmClick}>
+        <ConfirmButton aria-label="지도로 이동 섹션" onClick={handleConfirmClick}>
           {isMobile ? '보기' : '확인하러 가기'}
           <FaChevronRight size={isMobile ? 10 : 12} />
         </ConfirmButton>

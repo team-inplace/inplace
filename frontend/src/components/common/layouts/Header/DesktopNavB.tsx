@@ -35,19 +35,20 @@ export default function DesktopNavB() {
         href="https://docs.google.com/forms/d/e/1FAIpQLSeBJcQg0gcVv2au5oFZ1aCLF9O_qbEiJCvnLEd0d1SSLLpDUA/viewform?pli=1"
         target="_blank"
         rel="noopener noreferrer"
+        aria-label="헤더 설문조사_B"
       >
         <Text size="m" weight="normal">
           설문조사
         </Text>
       </NavExternalLink>
 
-      <NavButton onClick={handleMapNavigation} $isActive={isActive('/map')}>
+      <NavButton aria-label="헤더 지도_B" onClick={handleMapNavigation} $isActive={isActive('/map')}>
         <Text size="m" weight="normal">
           지도
         </Text>
       </NavButton>
 
-      <NavItem to="/influencer" $isActive={isActive('/influencer')}>
+      <NavItem to="/influencer" aria-label="헤더 인플루언서_B" $isActive={isActive('/influencer')}>
         <Text size="m" weight="normal">
           인플루언서
         </Text>
@@ -59,7 +60,7 @@ export default function DesktopNavB() {
           pointerEvents: isAuthenticated ? 'auto' : 'none',
         }}
       >
-        <NavItem to="/my" $isActive={isActive('/my')}>
+        <NavItem to="/my" aria-label="헤더 마이페이지_B" $isActive={isActive('/my')}>
           <Text size="m" weight="normal">
             마이페이지
           </Text>

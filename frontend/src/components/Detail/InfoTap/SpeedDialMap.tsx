@@ -35,13 +35,13 @@ export default function SpeedDialMap({
 
   return (
     <SpeedDialContainer>
-      <MainButton aria-label="toggle_map_options" variant={buttonVariant} onClick={toggleSpeedDial}>
+      <MainButton aria-label="스피드 다이얼" variant={buttonVariant} onClick={toggleSpeedDial}>
         {isOpen ? <IoClose size={30} /> : <FaMapMarkedAlt size={24} />}
       </MainButton>
 
       <SpeedDialItems $isOpen={isOpen}>
         <KakaoButton
-          aria-label="kakao_btn"
+          aria-label="카카오 지도"
           variant="white"
           onClick={() => {
             window.open(kakaoPlaceUrl, '_blank');
@@ -52,7 +52,7 @@ export default function SpeedDialMap({
         </KakaoButton>
 
         <SpeedDialItem
-          aria-label="naver_btn"
+          aria-label="네이버 지도"
           variant="white"
           onClick={() => {
             window.open(naverPlaceUrl, '_blank');
@@ -64,7 +64,7 @@ export default function SpeedDialMap({
 
         {googlePlaceUrl && (
           <GoogleButton
-            aria-label="google_btn"
+            aria-label="구글 지도"
             variant="white"
             onClick={() => {
               window.open(googlePlaceUrl, '_blank');
@@ -76,7 +76,7 @@ export default function SpeedDialMap({
         )}
         {!isMobile ? (
           <SpeedDialItem
-            aria-label="mobile_qr_btn"
+            aria-label="모바일로 연결"
             variant="white"
             onClick={() => setVisitModal(!visitModal)}
             data-tooltip="모바일로 연결"

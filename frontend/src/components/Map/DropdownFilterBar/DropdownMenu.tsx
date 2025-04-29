@@ -121,7 +121,7 @@ export default function DropdownMenu({
   };
   return (
     <DropdownContainer ref={dropdownRef} type={type} $width={width}>
-      <DropdownButton aria-label="dropdown_btn" $isOpen={isOpen} onClick={handleDropdownToggle}>
+      <DropdownButton aria-label={`${type}_필터링`} $isOpen={isOpen} onClick={handleDropdownToggle}>
         {displayIcon()}
         {displayValue}
       </DropdownButton>

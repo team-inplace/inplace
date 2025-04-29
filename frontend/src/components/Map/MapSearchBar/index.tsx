@@ -158,7 +158,7 @@ export default function MapSearchBar({ setIsChangedLocation, setSelectedPlaceNam
         <SearchType ref={searchTypeRef}>
           <DropdownButton
             type="button"
-            aria-label="searchType_btn"
+            aria-label="지도 검색바 타입"
             onClick={() => {
               setIsTypeOpen(!isTypeOpen);
               setIsOpen(false);
@@ -171,6 +171,7 @@ export default function MapSearchBar({ setIsChangedLocation, setSelectedPlaceNam
             <OptionsContainer>
               <TypeItem
                 className={searchType === 'location' ? 'selected' : ''}
+                aria-label="지도 위치 검색"
                 onClick={() => {
                   setSearchType('location');
                   setIsTypeOpen(false);
@@ -181,6 +182,7 @@ export default function MapSearchBar({ setIsChangedLocation, setSelectedPlaceNam
               </TypeItem>
               <TypeItem
                 className={searchType === 'place' ? 'selected' : ''}
+                aria-label="지도 장소 검색"
                 onClick={() => {
                   setSearchType('place');
                   setIsTypeOpen(false);
@@ -198,7 +200,7 @@ export default function MapSearchBar({ setIsChangedLocation, setSelectedPlaceNam
           onKeyDown={handleDropDownKey}
           placeholder={placeholder}
         />
-        <SearchRemoveButton aria-label="search-remove-btn" onClick={handleSearchRemoveClick}>
+        <SearchRemoveButton aria-label="지도 검색어 삭제" onClick={handleSearchRemoveClick}>
           {inputValue ? <IoIosClose size={26} color="#292929" /> : <IoIosSearch size={20} color="#292929" />}
         </SearchRemoveButton>
       </SearchForm>

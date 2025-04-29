@@ -8,17 +8,20 @@
     <title>인플레이스</title>
     <meta name="description" content="긴 영상은 필요 없어요 인플루언서가 다녀간 쿨플, 한눈에 쏙!" />
 
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-6NZ28NWMQH"></script>
+    <!-- Google Tag Manager -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag('js', new Date());
-
-      gtag('config', '%VITE_GOOGLE_ANALYTICS%');
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', '%VITE_GOOGLE_TAG%');
     </script>
+    <!-- End Google Tag Manager -->
 
     <meta name="google-site-verification" content="LalfUvjq4fhMfp9zXc5gIehoFod4FKOH6AlkmqZS0aA" />
     <meta name="naver-site-verification" content="5fc8108ba5c1353d68cbcf8b2c5340ea269eae56" />
@@ -39,6 +42,17 @@
     <link rel="preconnect" href="https://api.inplace.my" crossorigin="anonymous" />
   </head>
   <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=%VITE_GOOGLE_TAG%"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx" defer></script>
     <script

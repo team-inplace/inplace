@@ -43,7 +43,7 @@ export default function ToggleButton({ options, onSelect }: ToggleButtonProps) {
           <ButtonText $isActive={selectedOptions.includes(option)}>{categoryMapping[option]}</ButtonText>
           {selectedOptions.includes(option) && (
             <CheckIconWrapper>
-              <FaCheck color="#FFFFFF" size={10} />
+              <FaCheck color="red" size={10} />
             </CheckIconWrapper>
           )}
         </Button>

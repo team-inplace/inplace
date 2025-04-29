@@ -48,7 +48,7 @@ export default function InfoWindow({ data }: Props) {
       <Info>
         <ImageSection>
           {totalVideos > 1 && (
-            <NavButton $left onClick={prevImage} disabled={currentIndex === 0}>
+            <NavButton aria-label="인포윈도우 왼쪽 화살표" $left onClick={prevImage} disabled={currentIndex === 0}>
               <GrPrevious size={20} />
             </NavButton>
           )}
@@ -66,7 +66,12 @@ export default function InfoWindow({ data }: Props) {
             </ImgWrapper>
           </ImageContainer>
           {totalVideos > 1 && (
-            <NavButton $right onClick={nextImage} disabled={currentIndex === videos.length - 1}>
+            <NavButton
+              aria-label="인포윈도우 오른쪽 화살표"
+              $right
+              onClick={nextImage}
+              disabled={currentIndex === videos.length - 1}
+            >
               <GrNext size={20} />
             </NavButton>
           )}
@@ -98,7 +103,9 @@ export default function InfoWindow({ data }: Props) {
           </Text>
         </TextInfo>
       </Info>
-      <DetailBtn onClick={(e: React.MouseEvent<HTMLDivElement>) => handleInfoClick(e)}>상세보기</DetailBtn>
+      <DetailBtn aria-label="상세보기" onClick={(e: React.MouseEvent<HTMLDivElement>) => handleInfoClick(e)}>
+        상세보기
+      </DetailBtn>
     </Wrapper>
   );
 }
