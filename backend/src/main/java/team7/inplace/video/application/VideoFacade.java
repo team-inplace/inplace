@@ -55,7 +55,7 @@ public class VideoFacade {
     }
 
     @Transactional(readOnly = true)
-    public List<VideoQueryResult.SimpleVideo> getMyInfluencerVideos() {
+    public List<VideoQueryResult.DetailedVideo> getMyInfluencerVideos() {
         // User 정보를 쿠키에서 추출
         Long userId = AuthorizationUtil.getUserId()
             .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));

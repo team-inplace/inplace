@@ -74,6 +74,7 @@ describe('좋아요/취소 기능 테스트', () => {
         longitude="126.570667"
         latitude="33.450701"
         likes={false}
+        likedCount={0}
         onClick={() => {}}
       />,
     );

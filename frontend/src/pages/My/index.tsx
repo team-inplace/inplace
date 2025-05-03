@@ -75,7 +75,7 @@ export default function MyPage() {
               <Text size="xl" weight="bold" style={{ color: '#47c8d9' }}>
                 {userNickname?.nickname}
               </Text>
-              <CustomButton aria-label="rename_btn" onClick={() => setIsVisible(false)}>
+              <CustomButton aria-label="닉네임 수정" onClick={() => setIsVisible(false)}>
                 <MdOutlineDriveFileRenameOutline size={24} color="#47c8d9" />
               </CustomButton>
               님, 안녕하세요!
@@ -84,7 +84,7 @@ export default function MyPage() {
         ) : (
           <Form onSubmit={handleSubmit}>
             <Input type="text" value={nickname} onChange={(e) => setNickname(e.target.value)} />
-            <CustomButton aria-label="rename_btn" type="submit">
+            <CustomButton aria-label="닉네임 수정 완료" type="submit">
               <MdOutlineDriveFileRenameOutline size={24} color="#47c8d9" />
             </CustomButton>
           </Form>
@@ -157,7 +157,7 @@ const Input = styled.input`
   background: none;
   border: none;
   font-size: 32px;
-  color: white;
+  color: ${({ theme }) => (theme.textColor === '#ffffff' ? 'white' : '#333333')};
   height: 32px;
   max-width: 200px;
   padding: 0;

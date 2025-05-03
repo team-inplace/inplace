@@ -4,6 +4,7 @@ import { motion, Variants } from 'framer-motion';
 import { Text } from '@/components/common/typography/Text';
 import useAuth from '@/hooks/useAuth';
 import LoginModal from '@/components/common/modals/LoginModal';
+import { useDeleteUser } from '@/api/hooks/useDeleteUser';
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -30,7 +31,23 @@ const itemVariants: Variants = {
 
 export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
   const { isAuthenticated, handleLogout } = useAuth();
+  const { mutate: deleteUser } = useDeleteUser();
   const location = useLocation();
+
+  const handleDeleteUser = () => {
+    if (window.confirm('정말 회원 탈퇴를 하시겠습니까?')) {
+      deleteUser(undefined, {
+        onSuccess: () => {
+          handleLogout();
+          alert('회원 탈퇴가 완료되었습니다.');
+        },
+        onError: (error) => {
+          console.error('회원탈퇴 실패:', error);
+          alert('회원 탈퇴에 실패했습니다. 다시 시도해주세요.');
+        },
+      });
+    }
+  };
 
   const commonLinks = [
     { to: '/map', label: '지도' },
@@ -51,6 +68,7 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
             to="https://docs.google.com/forms/d/e/1FAIpQLSeBJcQg0gcVv2au5oFZ1aCLF9O_qbEiJCvnLEd0d1SSLLpDUA/viewform?pli=1"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="모바일 설문조사"
             onClick={onClose}
           >
             <Text size="xs" weight="normal">
@@ -60,7 +78,7 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
         )}
 
         {commonLinks.map((link) => (
-          <NavItem key={link.to} to={link.to} onClick={onClose}>
+          <NavItem key={link.to} to={link.to} aria-label={`모바일 ${link.label}`} onClick={onClose}>
             <Text size="xs" weight="normal">
               {link.label}
             </Text>
@@ -69,7 +87,7 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
 
         {isAuthenticated ? (
           <>
-            <NavItem to="/my" onClick={onClose}>
+            <NavItem to="/my" aria-label="모바일 마이페이지" onClick={onClose}>
               <Text size="xs" weight="normal">
                 마이페이지
               </Text>
@@ -84,10 +102,9 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
                 로그아웃
               </Text>
             </LogoutButton>
-            {/* todo - 회원탈퇴 */}
             <LogoutButton
               onClick={() => {
-                handleLogout();
+                handleDeleteUser();
                 onClose();
               }}
             >
@@ -123,7 +140,7 @@ const Container = styled(motion.nav)<{ $isOpen: boolean }>`
   @media screen and (max-width: 768px) {
     display: flex;
     position: absolute;
-    top: 52px;
+    top: 66px;
     left: 0;
     width: 100%;
     flex-direction: column;
@@ -131,7 +148,7 @@ const Container = styled(motion.nav)<{ $isOpen: boolean }>`
       theme.backgroundColor === '#292929' ? 'rgba(41, 41, 41, 0.9)' : 'rgba(236, 251, 251, 0.9)'};
     padding: 20px 0;
     gap: 20px;
-    z-index: 101;
+    z-index: 102;
     pointer-events: ${({ $isOpen }) => ($isOpen ? 'auto' : 'none')};
   }
 `;

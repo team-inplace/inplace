@@ -31,7 +31,7 @@ export default function AuthButtons() {
           )}
         </LoginModal>
       )}
-      <ThemeButton onClick={toggleTheme} aria-label="테마 변경 버튼">
+      <ThemeButton onClick={toggleTheme} aria-label="테마 변경 버튼_A" $isDarkMode={isDarkMode}>
         {isDarkMode ? <FiSun size={20} color="white" /> : <FiMoon size={20} color="black" />}
       </ThemeButton>
     </Container>
@@ -53,7 +53,7 @@ const IconButton = styled.div`
   cursor: pointer;
 `;
 
-const ThemeButton = styled.button`
+const ThemeButton = styled.button<{ $isDarkMode: boolean }>`
   background: none;
   border: none;
   cursor: pointer;
@@ -64,6 +64,6 @@ const ThemeButton = styled.button`
   transition: transform 0.3s ease;
 
   &:hover {
-    transform: rotate(30deg);
+    transform: rotate(${(props) => (props.$isDarkMode ? '30deg' : '36deg')});
   }
 `;

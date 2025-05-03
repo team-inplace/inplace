@@ -18,6 +18,7 @@ import team7.inplace.video.persistence.RecentVideoRepository;
 import team7.inplace.video.persistence.VideoReadRepository;
 import team7.inplace.video.persistence.VideoRepository;
 import team7.inplace.video.persistence.dto.VideoQueryResult;
+import team7.inplace.video.persistence.dto.VideoQueryResult.DetailedVideo;
 import team7.inplace.video.persistence.dto.VideoQueryResult.SimpleVideo;
 import team7.inplace.video.presentation.dto.VideoSearchParams;
 
@@ -32,7 +33,7 @@ public class VideoService {
 
     //TODO: Facade에서 호출로 변경해야함.
     @Transactional(readOnly = true)
-    public List<VideoQueryResult.SimpleVideo> getVideosBySurround(
+    public List<VideoQueryResult.DetailedVideo> getVideosBySurround(
         VideoSearchParams videoSearchParams,
         Pageable pageable
     ) {
@@ -53,21 +54,21 @@ public class VideoService {
     }
 
     @Transactional(readOnly = true)
-    public List<VideoQueryResult.SimpleVideo> getAllVideosDesc() {
+    public List<VideoQueryResult.DetailedVideo> getRecentVideos() {
         var top10Videos = recentVideoRepository.findAll();
 
-        return top10Videos.stream().map(SimpleVideo::from).toList();
+        return top10Videos.stream().map(DetailedVideo::from).toList();
     }
 
     @Transactional(readOnly = true)
-    public List<VideoQueryResult.SimpleVideo> getCoolVideo() {
+    public List<VideoQueryResult.DetailedVideo> getCoolVideo() {
         var top10Videos = coolVideoRepository.findAll();
 
-        return top10Videos.stream().map(SimpleVideo::from).toList();
+        return top10Videos.stream().map(DetailedVideo::from).toList();
     }
 
     @Transactional(readOnly = true)
-    public List<VideoQueryResult.SimpleVideo> getMyInfluencerVideos(Long userId) {
+    public List<VideoQueryResult.DetailedVideo> getMyInfluencerVideos(Long userId) {
         var top10Videos = videoReadRepository.findTop10ByLikedInfluencer(userId);
 
         return top10Videos.stream().toList();
@@ -131,28 +132,28 @@ public class VideoService {
     @Transactional
     public void updateCoolVideos() {
         // 인기순 top 10 video 가져오기
-        List<SimpleVideo> coolVideos = videoReadRepository.findTop10ByViewCountIncrement();
+        List<DetailedVideo> coolVideos = videoReadRepository.findTop10ByViewCountIncrement();
 
         // coolVideo table 업데이트하기
         coolVideoRepository.deleteAll();
         coolVideoRepository.flush(); // delete 후 save 하려면 flush를 해야함.
         coolVideoRepository.saveAll(
             coolVideos.stream()
-                .map(SimpleVideo::toCoolVideo).toList()
+                .map(DetailedVideo::toCoolVideo).toList()
         );
     }
 
     @Transactional
     public void updateRecentVideos() {
         //최신순 top 10 video 가져오기
-        List<SimpleVideo> recentVideos = videoReadRepository.findTop10ByLatestUploadDate();
+        List<DetailedVideo> recentVideos = videoReadRepository.findTop10ByLatestUploadDate();
 
         // recentVideo table 업데이트하기
         recentVideoRepository.deleteAll();
         recentVideoRepository.flush();
         recentVideoRepository.saveAll(
             recentVideos.stream()
-                .map(SimpleVideo::toRecentVideo).toList()
+                .map(DetailedVideo::toRecentVideo).toList()
         );
     }
 }

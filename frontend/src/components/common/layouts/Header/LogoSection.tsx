@@ -5,7 +5,7 @@ import { Text } from '@/components/common/typography/Text';
 
 export default function LogoSection() {
   return (
-    <LogoLink to="/">
+    <LogoLink aria-label="홈 로고" to="/">
       <LogoContainer>
         <LogoImage src={Logo} alt="인플레이스 로고" />
         <Text size="l" weight="bold" variant="mint">

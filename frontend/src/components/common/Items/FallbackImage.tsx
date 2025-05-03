@@ -30,6 +30,8 @@ const StyledImage = styled.img`
   height: 100%;
   object-fit: cover;
   border-radius: inherit;
-  transition: opacity 0.3s ease-in-out;
+  transition:
+    opacity 0.3s ease-in-out,
+    transform 0.3s ease;
   opacity: ${(props) => (props.loading ? '0' : '1')};
 `;

@@ -76,10 +76,10 @@ export default function CommentStep({ isLiked, onBack, onSubmit, placeInfo }: Co
       <CharCount>{content.length} / 200</CharCount>
 
       <ButtonSection>
-        <CancelButton aria-label="cancel_btn" onClick={onBack}>
+        <CancelButton aria-label="리뷰 취소" onClick={onBack}>
           취소
         </CancelButton>
-        <SubmitButton aria-label="submit_btn" onClick={() => onSubmit(content)}>
+        <SubmitButton aria-label="리뷰 등록" onClick={() => onSubmit(content)}>
           등록
         </SubmitButton>
       </ButtonSection>

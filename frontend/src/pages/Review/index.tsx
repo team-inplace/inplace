@@ -56,7 +56,7 @@ export default function ReviewPage() {
             <p>리뷰가 성공적으로 등록되었습니다.</p>
           </CompletionMessage>
           <Link to="/">
-            <StyledButton variant="outline" size="small">
+            <StyledButton aria-label="리뷰완료 홈으로" variant="outline" size="small">
               홈으로 이동하기
             </StyledButton>
           </Link>

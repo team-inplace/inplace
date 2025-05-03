@@ -68,6 +68,10 @@ const ImageWrapper = styled.div<{ $isInfluencer?: boolean }>`
   border-radius: 6px;
   overflow: hidden;
 
+  &:hover img {
+    transform: scale(1.06);
+  }
+
   @media screen and (max-width: 768px) {
     width: ${({ $isInfluencer }) => ($isInfluencer ? '100%' : '300px')};
   }

@@ -17,7 +17,7 @@ export default function Footer() {
               주소 : 대구광역시 북구 대학로 80
             </Text>
             <Text size="xxs" weight="normal" variant="#979797">
-              이메일 : inplace.kakao@gmail.com
+              이메일 : inplace.my.official@gmail.com
             </Text>
           </CompanyInfo>
         </FooterInfo>

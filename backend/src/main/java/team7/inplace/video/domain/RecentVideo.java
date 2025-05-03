@@ -42,18 +42,59 @@ public class RecentVideo {
     @Enumerated(value = EnumType.STRING)
     private Category placeCategory;
 
-    private RecentVideo(Long videoId, String videoUUID, String influencerName, Long placeId, String placeName,
-        Category placeCategory) {
+    @Column(name = "address1")
+    private String address1;
+
+    @Column(name = "address2")
+    private String address2;
+
+    @Column(name = "address3")
+    private String address3;
+
+    private RecentVideo(
+        Long videoId,
+        String videoUUID,
+        String influencerName,
+        Long placeId,
+        String placeName,
+        Category placeCategory,
+        String address1,
+        String address2,
+        String address3
+    ) {
         this.videoId = videoId;
         this.videoUUID = videoUUID;
         this.influencerName = influencerName;
         this.placeId = placeId;
         this.placeName = placeName;
         this.placeCategory = placeCategory;
+        this.address1 = address1;
+        this.address2 = address2;
+        this.address3 = address3;
     }
 
-    public static RecentVideo from(Long videoId, String videoUUID, String influencerName, Long placeId, String placeName, Category placeCategory) {
-        return new RecentVideo(videoId, videoUUID, influencerName, placeId, placeName, placeCategory);
+    public static RecentVideo from(
+        Long videoId,
+        String videoUUID,
+        String influencerName,
+        Long placeId,
+        String placeName,
+        Category placeCategory,
+        String address1,
+        String address2,
+        String address3
+    ) {
+        return new RecentVideo(
+            videoId,
+            videoUUID,
+            influencerName,
+            placeId,
+            placeName,
+            placeCategory,
+            address1,
+            address2,
+            address3
+        );
     }
 
 }

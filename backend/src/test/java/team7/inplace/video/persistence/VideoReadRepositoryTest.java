@@ -53,7 +53,7 @@ public class VideoReadRepositoryTest {
         final int expectedContentSize = 5;
 
         // when
-        Page<VideoQueryResult.SimpleVideo> videos = videoReadRepository.findSimpleVideosInSurround(
+        Page<VideoQueryResult.DetailedVideo> videos = videoReadRepository.findSimpleVideosInSurround(
                 topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude, longitude, latitude, pageable
         );
 
@@ -70,11 +70,11 @@ public class VideoReadRepositoryTest {
         final List<Long> expectedVideoIds = List.of(20L, 19L, 18L, 17L, 16L, 15L, 14L, 13L, 12L, 11L);
 
         // when
-        List<VideoQueryResult.SimpleVideo> videos = videoReadRepository.findTop10ByViewCountIncrement();
+        List<VideoQueryResult.DetailedVideo> videos = videoReadRepository.findTop10ByViewCountIncrement();
 
         // then
         assertThat(videos.size()).isEqualTo(expectedTotalContent);
-        assertThat(videos.stream().map(VideoQueryResult.SimpleVideo::videoId).toList())
+        assertThat(videos.stream().map(VideoQueryResult.DetailedVideo::videoId).toList())
                 .isEqualTo(expectedVideoIds);
     }
 
@@ -86,11 +86,11 @@ public class VideoReadRepositoryTest {
         final List<Long> expectedVideoIds = List.of(20L, 19L, 18L, 17L, 16L, 15L, 14L, 13L, 12L, 11L);
 
         // when
-        List<VideoQueryResult.SimpleVideo> videos = videoReadRepository.findTop10ByLatestUploadDate();
+        List<VideoQueryResult.DetailedVideo> videos = videoReadRepository.findTop10ByLatestUploadDate();
 
         // then
         assertThat(videos.size()).isEqualTo(expectedTotalContent);
-        assertThat(videos.stream().map(VideoQueryResult.SimpleVideo::videoId).toList())
+        assertThat(videos.stream().map(VideoQueryResult.DetailedVideo::videoId).toList())
                 .isEqualTo(expectedVideoIds);
     }
 
@@ -102,11 +102,11 @@ public class VideoReadRepositoryTest {
         final List<Long> expectedVideoIds = List.of(20L, 19L, 18L, 17L, 8L, 7L, 6L, 5L, 4L, 3L);
 
         // when
-        List<VideoQueryResult.SimpleVideo> videos = videoReadRepository.findTop10ByLikedInfluencer(1L);
+        List<VideoQueryResult.DetailedVideo> videos = videoReadRepository.findTop10ByLikedInfluencer(1L);
 
         // then
         assertThat(videos.size()).isEqualTo(expectedTotalContent);
-        assertThat(videos.stream().map(VideoQueryResult.SimpleVideo::videoId).toList())
+        assertThat(videos.stream().map(VideoQueryResult.DetailedVideo::videoId).toList())
                 .isEqualTo(expectedVideoIds);
     }
 

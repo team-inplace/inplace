@@ -12,12 +12,18 @@ import { UserPlaceData } from '@/types';
 import { usePostPlaceLike } from '@/api/hooks/usePostPlaceLike';
 import useAuth from '@/hooks/useAuth';
 import LoginModal from '@/components/common/modals/LoginModal';
+import useExtractYoutubeVideoId from '@/libs/youtube/useExtractYoutube';
+import FallbackImage from '@/components/common/Items/FallbackImage';
+import BasicImage from '@/assets/images/basic-image.webp';
 
 const getFullAddress = (addr: UserPlaceData['address']) => {
   return [addr.address1, addr.address2, addr.address3].filter(Boolean).join(' ');
 };
 
-export default function UserPlaceItem({ placeId, placeName, influencerName, likes, address }: UserPlaceData) {
+export default function UserPlaceItem({ placeId, placeName, videoUrl, influencerName, likes, address }: UserPlaceData) {
+  const extractedVideoId = useExtractYoutubeVideoId(videoUrl || '');
+  const thumbnailUrl = videoUrl ? `https://img.youtube.com/vi/${extractedVideoId}/hqdefault.jpg` : BasicImage;
+
   const { isAuthenticated } = useAuth();
   const location = useLocation();
   const [isLike, setIsLike] = useState(likes);
@@ -53,6 +59,23 @@ export default function UserPlaceItem({ placeId, placeName, influencerName, like
   return (
     <>
       <Wrapper to={`/detail/${placeId}`}>
+        <ImageContainer>
+          <ImageWrapper>
+            <FallbackImage src={thumbnailUrl} alt={String(placeId)} />
+          </ImageWrapper>
+          <LikeIcon onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}>
+            {isLike ? (
+              <PiHeartFill color="#fe7373" size={32} />
+            ) : (
+              <PiHeartLight
+                color="white"
+                size={32}
+                data-testid="PiHeartLight"
+                style={{ filter: 'drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.3))' }}
+              />
+            )}
+          </LikeIcon>
+        </ImageContainer>
         <TextWrapper>
           <Text className="overflow" size="m" weight="bold">
             {placeName}
@@ -64,9 +87,6 @@ export default function UserPlaceItem({ placeId, placeName, influencerName, like
             {influencerName}
           </Paragraph>
         </TextWrapper>
-        <LikeIcon onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}>
-          {isLike ? <PiHeartFill color="#fe7373" size={26} /> : <PiHeartLight size={30} />}
-        </LikeIcon>
       </Wrapper>
       {showLoginModal && (
         <LoginModal immediateOpen currentPath={location.pathname} onClose={() => setShowLoginModal(false)} />
@@ -76,38 +96,56 @@ export default function UserPlaceItem({ placeId, placeName, influencerName, like
 }
 const Wrapper = styled(Link)`
   display: flex;
-  align-items: start;
+  flex-direction: column;
   text-decoration: none;
   gap: 4px;
-  width: 180px;
+  width: 340px;
   border-radius: 4px;
-  padding: 10px;
+  padding: 10px 0px;
   justify-content: space-between;
   color: inherit;
 
-  &:hover {
-    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#1b1a1a' : '#d5ecec')};
+  @media screen and (max-width: 768px) {
+    width: 240px;
   }
+`;
+
+const ImageContainer = styled.div`
+  position: relative;
+  width: 100%;
 `;
 
 const LikeIcon = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
   z-index: 100;
   cursor: pointer;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   @media screen and (max-width: 768px) {
+    width: 30px;
+    height: 30px;
+
     svg {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
     }
   }
 `;
+
 const TextWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   line-height: 130%;
   padding: 8px 0px;
-  width: 85%;
+  width: 100%;
   .overflow {
     white-space: nowrap;
     overflow: hidden;
@@ -123,5 +161,21 @@ const TextWrapper = styled.div`
     > *:nth-child(3) {
       margin-top: 4px;
     }
+  }
+`;
+
+const ImageWrapper = styled.div`
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  overflow: hidden;
+
+  &:hover img {
+    transform: scale(1.06);
+  }
+
+  @media screen and (max-width: 768px) {
+    width: 240px;
   }
 `;

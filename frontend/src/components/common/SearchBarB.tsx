@@ -9,12 +9,14 @@ interface SearchBarProps {
   placeholder?: string;
   isSearchPage?: boolean;
   width?: string;
+  onClose: () => void;
 }
 
 export default function SearchBar({
   placeholder = '키워드를 입력해주세요!',
   isSearchPage = false,
   width = '260px',
+  onClose,
 }: SearchBarProps) {
   const DEBOUNCE_DELAY_MS = 300;
 
@@ -112,6 +114,7 @@ export default function SearchBar({
           setInputValue('');
           if (!isSearchPage) {
             setIsExpanded(false);
+            onClose();
           }
         }, 0);
         navigate(`/search?query=${query}`);
@@ -146,7 +149,7 @@ export default function SearchBar({
   return (
     <SearchBarContainer ref={searchBarRef} $width={isSearchPage ? '960px' : width} $isSearchPage={isSearchPage}>
       {(isExpanded || isSearchPage) && (
-        <SearchForm $isOpen={isOpen} onSubmit={handleSubmit} $isSearchPage={isSearchPage}>
+        <SearchForm $isOpen={isOpen} onSubmit={handleSubmit} $isSearchPage={isSearchPage} $isExpanded={isExpanded}>
           <SearchInput
             ref={inputRef}
             type="text"
@@ -157,18 +160,25 @@ export default function SearchBar({
             $isSearchPage={isSearchPage}
           />
           {isSearchPage && (
-            <SearchButton type="submit" aria-label="검색" $isSearchPage={isSearchPage}>
+            <SearchButton type="submit" aria-label="검색페이지 아이콘 버튼_B" $isSearchPage={isSearchPage}>
               <SearchIcon $isExpanded />
             </SearchButton>
           )}
         </SearchForm>
       )}
 
-      {!isSearchPage && (
-        <SearchButton type="button" aria-label="검색" onClick={toggleSearchBar} $isSearchPage={isSearchPage}>
-          <SearchIcon $isExpanded={isExpanded} />
-        </SearchButton>
-      )}
+      <ButtonContainer $isSearchPage={isSearchPage}>
+        {!isSearchPage && (
+          <SearchButton
+            type="button"
+            aria-label="검색바 아이콘 버튼_B"
+            onClick={toggleSearchBar}
+            $isSearchPage={isSearchPage}
+          >
+            <SearchIcon $isExpanded={isExpanded} />
+          </SearchButton>
+        )}
+      </ButtonContainer>
 
       {inputValue.length > 1 && isOpen && isExpanded && (
         <SearchDropDownBox $isSearchPage={isSearchPage}>
@@ -223,11 +233,22 @@ const SearchBarContainer = styled.div<{ $width: string; $isSearchPage: boolean }
   width: ${({ $width }) => $width};
 
   @media screen and (max-width: 768px) {
-    width: 90%;
+    width: 100%;
+    justify-content: ${({ $isSearchPage }) => ($isSearchPage ? 'center' : 'flex-start')};
+    max-width: 100%;
   }
 `;
 
-const SearchForm = styled.form<{ $isOpen: boolean; $isSearchPage: boolean }>`
+const ButtonContainer = styled.div<{ $isSearchPage: boolean }>`
+  position: absolute;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+`;
+
+const SearchForm = styled.form<{ $isOpen: boolean; $isSearchPage: boolean; $isExpanded: boolean }>`
   height: ${({ $isSearchPage }) => ($isSearchPage ? '44px' : '34px')};
   display: flex;
   align-items: center;
@@ -241,6 +262,7 @@ const SearchForm = styled.form<{ $isOpen: boolean; $isSearchPage: boolean }>`
   width: ${({ $isSearchPage }) => ($isSearchPage ? '100%' : 'calc(100% - 40px)')};
   animation: ${({ $isSearchPage }) => ($isSearchPage ? 'none' : 'slideFromRight 0.5s forwards')};
   z-index: 3;
+  box-sizing: border-box;
 
   @keyframes slideFromRight {
     from {
@@ -250,6 +272,28 @@ const SearchForm = styled.form<{ $isOpen: boolean; $isSearchPage: boolean }>`
     to {
       width: calc(100% - 40px);
       opacity: 1;
+    }
+  }
+  @media screen and (max-width: 768px) {
+    width: ${({ $isSearchPage }) => ($isSearchPage ? '90%' : 'calc(100% - 40px)')};
+    ${({ $isSearchPage }) =>
+      !$isSearchPage &&
+      `
+      position: absolute;
+      left: auto;
+      right: 30px;
+      transform-origin: right center;
+    `}
+
+    @keyframes slideFromRight {
+      from {
+        width: 0;
+        opacity: 0;
+      }
+      to {
+        width: calc(100% - 40px);
+        opacity: 1;
+      }
     }
   }
 `;
@@ -276,6 +320,12 @@ const SearchButton = styled.button<{ $isSearchPage?: boolean }>`
   cursor: pointer;
   z-index: 2;
   padding: ${({ $isSearchPage }) => ($isSearchPage ? '0 16px' : '0')};
+
+  @media screen and (max-width: 768px) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 `;
 
 const SearchIcon = styled.span<{ $isExpanded: boolean }>`
@@ -295,9 +345,9 @@ const SearchDropDownBox = styled.ul<{ $isSearchPage: boolean }>`
   font-size: 14px;
   display: inline-block;
   position: absolute;
-  width: ${({ $isSearchPage }) => ($isSearchPage ? '100%' : 'calc(100% - 37px)')};
+  width: ${({ $isSearchPage }) => ($isSearchPage ? '100%' : 'calc(100% - 40px)')};
   right: ${({ $isSearchPage }) => ($isSearchPage ? 'auto' : '40px')};
-  top: ${({ $isSearchPage }) => ($isSearchPage ? '44px' : '24px')};
+  top: ${({ $isSearchPage }) => ($isSearchPage ? '42px' : '10px')};
   padding: 8px 0px;
   background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#414141' : '#ffffff')};
   border: 1.5px solid #a5a5a5;
@@ -307,11 +357,11 @@ const SearchDropDownBox = styled.ul<{ $isSearchPage: boolean }>`
   list-style-type: none;
   color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#ffffff' : '#333333')};
   box-sizing: border-box;
-  z-index: 10;
+  z-index: 40;
 
   @media screen and (max-width: 768px) {
-    width: ${({ $isSearchPage }) => ($isSearchPage ? '100%' : 'calc(100% - 37.1px)')};
-    right: ${({ $isSearchPage }) => ($isSearchPage ? 'auto' : '38px')};
+    width: ${({ $isSearchPage }) => ($isSearchPage ? '90%' : 'calc(100% - 40px)')};
+    right: ${({ $isSearchPage }) => ($isSearchPage ? 'auto' : '30px')};
   }
 `;
 

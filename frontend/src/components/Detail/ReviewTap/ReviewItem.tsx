@@ -44,7 +44,7 @@ export default function ReviewItem({ reviewId, likes, comment, userNickname, cre
           {comment}
         </Paragraph>
         {mine ? (
-          <DeleteBtn aria-label="delete_btn" onClick={handleReviewDelete}>
+          <DeleteBtn aria-label="리뷰 삭제" onClick={handleReviewDelete}>
             삭제
           </DeleteBtn>
         ) : null}

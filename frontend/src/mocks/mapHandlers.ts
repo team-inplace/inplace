@@ -77,6 +77,7 @@ const dummyPlaces: PlaceData[] = [
     longitude: '128.59691803894955',
     latitude: '35.879135694467514',
     likes: true,
+    likedCount: 10,
     menuImgUrl: null,
   },
   {
@@ -97,6 +98,7 @@ const dummyPlaces: PlaceData[] = [
     longitude: '126.9314925',
     latitude: '37.5666478',
     likes: true,
+    likedCount: 9,
     menuImgUrl: null,
   },
   {
@@ -117,6 +119,7 @@ const dummyPlaces: PlaceData[] = [
     longitude: '128.6101069',
     latitude: '35.812447',
     likes: false,
+    likedCount: 8,
     menuImgUrl: null,
   },
   {
@@ -137,6 +140,7 @@ const dummyPlaces: PlaceData[] = [
     longitude: '128.65037738548736',
     latitude: '35.855300594743575',
     likes: false,
+    likedCount: 7,
     menuImgUrl: null,
   },
   {
@@ -157,6 +161,7 @@ const dummyPlaces: PlaceData[] = [
     longitude: '127.33301043369335',
     latitude: '36.351477682663756',
     likes: false,
+    likedCount: 6,
     menuImgUrl: null,
   },
   {
@@ -177,6 +182,7 @@ const dummyPlaces: PlaceData[] = [
     longitude: '126.931851791899',
     latitude: '35.1256604935401',
     likes: false,
+    likedCount: 5,
     menuImgUrl: null,
   },
   {
@@ -197,6 +203,7 @@ const dummyPlaces: PlaceData[] = [
     longitude: '128.61999608',
     latitude: '35.8857457',
     likes: false,
+    likedCount: 4,
     menuImgUrl: null,
   },
   {
@@ -217,6 +224,7 @@ const dummyPlaces: PlaceData[] = [
     longitude: '127.753131738285',
     latitude: '37.8763535115171',
     likes: false,
+    likedCount: 3,
     menuImgUrl: null,
   },
   {
@@ -237,6 +245,7 @@ const dummyPlaces: PlaceData[] = [
     longitude: '127.1436094525637',
     latitude: '37.275820090934495',
     likes: false,
+    likedCount: 2,
     menuImgUrl: null,
   },
   {
@@ -257,6 +266,7 @@ const dummyPlaces: PlaceData[] = [
     longitude: '129.11483195198562',
     latitude: '35.158494192685914',
     likes: false,
+    likedCount: 1,
     menuImgUrl: null,
   },
   {
@@ -277,6 +287,7 @@ const dummyPlaces: PlaceData[] = [
     longitude: '128.848643',
     latitude: '35.783343',
     likes: false,
+    likedCount: 0,
     menuImgUrl: null,
   },
   {
@@ -297,6 +308,7 @@ const dummyPlaces: PlaceData[] = [
     longitude: '128.848642',
     latitude: '35.7834',
     likes: false,
+    likedCount: 11,
     menuImgUrl: null,
   },
   {
@@ -317,6 +329,7 @@ const dummyPlaces: PlaceData[] = [
     longitude: '128.8483',
     latitude: '35.789',
     likes: false,
+    likedCount: 12,
     menuImgUrl: null,
   },
   {
@@ -337,6 +350,7 @@ const dummyPlaces: PlaceData[] = [
     longitude: '128.74873',
     latitude: '35.689',
     likes: false,
+    likedCount: 13,
     menuImgUrl: null,
   },
   {
@@ -357,6 +371,7 @@ const dummyPlaces: PlaceData[] = [
     longitude: '128.8499',
     latitude: '35.71',
     likes: false,
+    likedCount: 14,
     menuImgUrl: null,
   },
   {
@@ -377,6 +392,7 @@ const dummyPlaces: PlaceData[] = [
     longitude: '128.9',
     latitude: '35.78',
     likes: false,
+    likedCount: 15,
     menuImgUrl: null,
   },
 ];

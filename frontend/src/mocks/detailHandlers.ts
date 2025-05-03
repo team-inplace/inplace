@@ -132,7 +132,6 @@ export const detailHandlers = [
           address2: '경주시',
           address3: '첨성로99번길 24 료코',
         },
-        likes: true,
         videos: [
           {
             influencerName: '성시경',
@@ -201,10 +200,12 @@ export const detailHandlers = [
           },
         ],
         openingHours: ['월~수 10:00 - 12:00', '월~목 10:00 - 12:00', '월~화 10:00 - 12:00'],
-        placeLikes: {
+        reviewLikes: {
           like: 240,
           dislike: 100,
         },
+        likedCount: 100,
+        likes: true,
       }),
     );
   }),

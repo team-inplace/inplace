@@ -26,6 +26,7 @@ export default function PlaceItem({
   address,
   videos,
   likes,
+  likedCount,
   onClick,
   isSelected = false,
 }: PlaceItemProps) {
@@ -87,17 +88,24 @@ export default function PlaceItem({
             </InfluencerName>
           </TextContainer>
         </CardContent>
-        <LikeIcon
-          role="button"
-          aria-label="like_btn"
-          onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
-        >
-          {isLike ? (
-            <PiHeartFill color="#fe7373" size={30} data-testid="PiHeartFill" />
-          ) : (
-            <PiHeartLight size={30} data-testid="PiHeartLight" />
-          )}
-        </LikeIcon>
+        <LikeContainer>
+          <LikeIcon
+            role="button"
+            aria-label="장소 좋아요"
+            onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
+          >
+            {isLike ? (
+              <PiHeartFill color="#fe7373" size={30} data-testid="PiHeartFill" />
+            ) : (
+              <PiHeartLight size={30} data-testid="PiHeartLight" />
+            )}
+          </LikeIcon>
+          <LikeCount>
+            <Text size="xxs" weight="normal">
+              {likedCount}
+            </Text>
+          </LikeCount>
+        </LikeContainer>
       </PlaceCard>
       {showLoginModal && (
         <LoginModal immediateOpen currentPath={location.pathname} onClose={() => setShowLoginModal(false)} />
@@ -180,24 +188,37 @@ const InfluencerName = styled.div`
   }
 `;
 
-const LikeIcon = styled.div`
+const LikeContainer = styled.div`
   position: absolute;
-  width: 30px;
-  height: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   right: 10px;
   top: 10px;
   z-index: 100;
+`;
+
+const LikeIcon = styled.div`
+  width: 30px;
+  height: 30px;
   cursor: pointer;
 
   @media screen and (max-width: 768px) {
     width: 24px;
     height: 24px;
-    right: 10px;
-    top: 8px;
 
     svg {
       width: 24px;
       height: 24px;
     }
+  }
+`;
+
+const LikeCount = styled.div`
+  margin-top: 4px;
+  color: ${({ theme }) => (theme.textColor === '#ffffff' ? 'white' : '#333333')};
+
+  @media screen and (max-width: 768px) {
+    margin-top: 2px;
   }
 `;

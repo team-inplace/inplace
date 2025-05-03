@@ -249,7 +249,7 @@ export default function MapWindow({
       {showSearchButton && (
         <ButtonContainer>
           <Button
-            aria-label="around_btn"
+            aria-label="지도 리프레시"
             onClick={handleNearbyClick}
             variant="white"
             size="small"
@@ -324,7 +324,7 @@ export default function MapWindow({
       </Map>
       <ResetButtonContainer>
         <StyledBtn
-          aria-label="reset_btn"
+          aria-label="지도 내위치"
           onClick={() => userLocation && handleCenterReset(userLocation)}
           variant="white"
           size="small"
@@ -333,7 +333,7 @@ export default function MapWindow({
         </StyledBtn>
       </ResetButtonContainer>
       {!isListExpanded && (
-        <ListViewButton onClick={onListExpand}>
+        <ListViewButton aria-label="지도 목록보기" onClick={onListExpand}>
           <Text size="xs" weight="normal" variant="white">
             목록 보기
           </Text>
@@ -480,7 +480,7 @@ const fadeOut = keyframes`
 
 const NoItemMarker = styled.div`
   position: absolute;
-  top: 5%;
+  top: 13%;
   width: 30%;
   display: flex;
   align-items: center;

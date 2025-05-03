@@ -11,10 +11,12 @@ import LoginModal from '@/components/common/modals/LoginModal';
 import { useGetUserInfo } from '@/api/hooks/useGetUserInfo';
 import FallbackImage from '../../Items/FallbackImage';
 import useClickOutside from '@/hooks/useClickOutside';
+import { useDeleteUser } from '@/api/hooks/useDeleteUser';
 
 export default function AuthButtons() {
   const { isAuthenticated, handleLogout } = useAuth();
   const { data: imgSrc } = useGetUserInfo();
+  const { mutate: deleteUser } = useDeleteUser();
   const { theme, toggleTheme } = useTheme();
   const isDarkMode = theme === 'dark';
   const location = useLocation();
@@ -25,11 +27,26 @@ export default function AuthButtons() {
     setIsOpen(!isOpen);
   };
 
+  const handleDeleteUser = () => {
+    if (window.confirm('정말 회원 탈퇴를 하시겠습니까?')) {
+      deleteUser(undefined, {
+        onSuccess: () => {
+          handleLogout();
+          alert('회원탈퇴가 완료되었습니다.');
+        },
+        onError: (error) => {
+          console.error('회원탈퇴 실패:', error);
+          alert('회원탈퇴에 실패했습니다. 다시 시도해주세요.');
+        },
+      });
+    }
+  };
+
   useClickOutside([dropdownRef], () => setIsOpen(false));
 
   return (
     <Container>
-      <ThemeButton onClick={toggleTheme} aria-label="테마 변경 버튼">
+      <ThemeButton onClick={toggleTheme} aria-label="테마 변경 버튼_B" $isDarkMode={isDarkMode}>
         {isDarkMode ? <FiSun size={24} color="white" /> : <FiMoon size={22} color="black" />}
       </ThemeButton>
       {isAuthenticated ? (
@@ -43,11 +60,10 @@ export default function AuthButtons() {
                 <MdOutlineLogout size={16} />
                 로그아웃
               </DropdownItem>
-              <DropdownItem onClick={handleLogout}>
+              <DropdownItem onClick={handleDeleteUser}>
                 <RiUserUnfollowLine size={16} />
                 회원탈퇴
               </DropdownItem>
-              {/* todo - 회원탈퇴 */}
             </UserDropdown>
           )}
         </UserProfile>
@@ -78,7 +94,7 @@ const IconButton = styled.div`
   cursor: pointer;
 `;
 
-const ThemeButton = styled.button`
+const ThemeButton = styled.button<{ $isDarkMode: boolean }>`
   background: none;
   border: none;
   cursor: pointer;
@@ -89,7 +105,7 @@ const ThemeButton = styled.button`
   transition: transform 0.3s ease;
 
   &:hover {
-    transform: rotate(30deg);
+    transform: rotate(${(props) => (props.$isDarkMode ? '30deg' : '36deg')});
   }
 `;
 

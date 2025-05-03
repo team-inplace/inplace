@@ -122,7 +122,7 @@ export default function MapPage() {
       <Wrapper>
         <FilterContainer>
           <MobileFilterContainer>
-            <FilterButtonContainer aria-label="filterbar_btn" onClick={() => setIsFilterBarOpened((prev) => !prev)}>
+            <FilterButtonContainer aria-label="모바일 지도 필터" onClick={() => setIsFilterBarOpened((prev) => !prev)}>
               필터
             </FilterButtonContainer>
             <MapSearchBar setIsChangedLocation={setIsChangedLocation} setSelectedPlaceName={setSelectedPlaceName} />

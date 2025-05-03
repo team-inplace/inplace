@@ -178,7 +178,7 @@ export default function InfluencerMapWindow({
         </Map>
         <ResetButtonContainer>
           <StyledBtn
-            aria-label="reset_btn"
+            aria-label="인플루언서 내위치"
             onClick={() => userLocation && handleCenterReset(userLocation)}
             variant="white"
             size="small"
@@ -187,14 +187,14 @@ export default function InfluencerMapWindow({
           </StyledBtn>
         </ResetButtonContainer>
         {!isListExpanded && (
-          <ListViewButton onClick={() => onListExpand && onListExpand(true)}>
+          <ListViewButton aria-label="인플루언서 지도 목록보기" onClick={() => onListExpand && onListExpand(true)}>
             <Text size="xs" variant="white" weight="normal">
               목록 보기
             </Text>
           </ListViewButton>
         )}
       </MapContainer>
-      <Btn onClick={handleNearbySearch}>
+      <Btn aria-label="인플루언서 지도 리프레시" onClick={handleNearbySearch}>
         <GrPowerCycle />
         현재 위치에서 장소정보 보기
       </Btn>

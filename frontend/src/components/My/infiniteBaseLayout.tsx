@@ -52,6 +52,7 @@ export default function InfiniteBaseLayout({
         placeId={place.placeId}
         placeName={place.placeName}
         imageUrl={place.imageUrl}
+        videoUrl={place.videoUrl}
         influencerName={place.influencerName}
         likes={place.likes}
         address={place.address}

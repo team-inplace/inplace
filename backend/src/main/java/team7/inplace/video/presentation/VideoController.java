@@ -30,39 +30,39 @@ public class VideoController implements VideoControllerApiSpec {
     @Override
     @GetMapping()
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<VideoResponse.Simple>> readVideos(
+    public ResponseEntity<List<VideoResponse.Detail>> readVideos(
         @RequestParam(value = "longitude", defaultValue = "128.6") String longitude,
         @RequestParam(value = "latitude", defaultValue = "35.9") String latitude,
         @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
         VideoSearchParams searchParams = VideoSearchParams.from(longitude, latitude);
         var videoResponses = videoService.getVideosBySurround(searchParams, pageable)
-            .stream().map(VideoResponse.Simple::from).toList();
+            .stream().map(VideoResponse.Detail::from).toList();
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }
 
     @Override
     @GetMapping("/new")
-    public ResponseEntity<List<VideoResponse.Simple>> readByNew() {
-        var videoResponses = videoService.getAllVideosDesc()
-            .stream().map(VideoResponse.Simple::from).toList();
+    public ResponseEntity<List<VideoResponse.Detail>> readByNew() {
+        var videoResponses = videoService.getRecentVideos()
+            .stream().map(VideoResponse.Detail::from).toList();
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }
 
     @Override
     @GetMapping("/cool")
-    public ResponseEntity<List<VideoResponse.Simple>> readByCool() {
+    public ResponseEntity<List<VideoResponse.Detail>> readByCool() {
         var videoResponses = videoService.getCoolVideo()
-            .stream().map(VideoResponse.Simple::from).toList();
+            .stream().map(VideoResponse.Detail::from).toList();
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }
 
     @Override
     @GetMapping("/my")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<List<VideoResponse.Simple>> readByMyInfluencer() {
+    public ResponseEntity<List<VideoResponse.Detail>> readByMyInfluencer() {
         var myVideos = videoFacade.getMyInfluencerVideos()
-            .stream().map(VideoResponse.Simple::from).toList();
+            .stream().map(VideoResponse.Detail::from).toList();
         return new ResponseEntity<>(myVideos, HttpStatus.OK);
     }
 

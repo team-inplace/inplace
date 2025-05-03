@@ -30,49 +30,76 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, []);
 
-  // A/B 테스트 그룹에 따라 컴포넌트 결정
   const DesktopNav = testGroup === 'A' ? DesktopNavA : DesktopNavB;
   const AuthButtons = testGroup === 'A' ? AuthButtonsA : AuthButtonsB;
 
   return (
     <HeaderContainer ref={headerRef}>
       <HeaderContentWrapper>
-        <LeftSection>
-          <LogoSection />
-        </LeftSection>
+        {!isMenuOpen && (
+          <LeftSection>
+            <LogoSection />
+          </LeftSection>
+        )}
 
-        <DesktopNav />
+        {testGroup === 'A' && (
+          <NavItemsWrapper>
+            <DesktopNav />
+            <AuthButtons />
+          </NavItemsWrapper>
+        )}
 
-        <RightSection>
+        {testGroup === 'B' && <DesktopNav />}
+
+        <RightSection $testGroup={testGroup}>
           {testGroup === 'B' && (
-            <DesktopOnlySearchBar>
-              <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" />
-            </DesktopOnlySearchBar>
+            <>
+              <DesktopOnlySearchBar>
+                <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" onClose={() => setIsMenuOpen(false)} />
+              </DesktopOnlySearchBar>
+              <AuthButtons />
+            </>
           )}
           <MobileOnlyIcons>
             {!isMenuOpen ? (
               <>
-                {testGroup === 'B' && (
-                  <MobileSearchBar>
-                    <SearchBar placeholder="검색하기" />
-                  </MobileSearchBar>
-                )}
-                <MobileMenuButton onClick={() => setIsMenuOpen(true)} aria-label="메뉴 열기">
+                <ThemeButton
+                  onClick={toggleTheme}
+                  aria-label="모바일 테마 변경"
+                  $isDarkMode={isDarkMode}
+                  style={{ position: 'fixed', right: '60px' }}
+                >
+                  {isDarkMode ? <FiSun size={20} color="white" /> : <FiMoon size={20} color="black" />}
+                </ThemeButton>
+                <MobileMenuButton
+                  onClick={() => setIsMenuOpen(true)}
+                  aria-label="모바일 메뉴 열기"
+                  style={{ position: 'fixed', right: '20px' }}
+                >
                   <RiMenuLine size={24} color={isDarkMode ? 'white' : 'grey'} />
                 </MobileMenuButton>
               </>
             ) : (
               <>
-                <ThemeButton onClick={toggleTheme} aria-label="테마 변경 버튼">
-                  {isDarkMode ? <FiSun size={20} color="white" /> : <FiMoon size={20} color="black" />}
-                </ThemeButton>
-                <MobileMenuButton onClick={() => setIsMenuOpen(false)} aria-label="메뉴 닫기">
-                  <RiCloseLine size={24} color={isDarkMode ? 'white' : 'grey'} />
+                {testGroup === 'B' && (
+                  <FixedMarginSearchBar>
+                    <SearchBar
+                      placeholder="인플루언서, 장소를 검색해주세요!"
+                      width="100%"
+                      onClose={() => setIsMenuOpen(false)}
+                    />
+                  </FixedMarginSearchBar>
+                )}
+                <MobileMenuButton
+                  onClick={() => setIsMenuOpen(false)}
+                  aria-label="모바일 메뉴 닫기"
+                  style={{ position: 'fixed', right: '20px' }}
+                >
+                  <RiCloseLine size={26} color={isDarkMode ? 'white' : 'grey'} />
                 </MobileMenuButton>
               </>
             )}
           </MobileOnlyIcons>
-          <AuthButtons />
         </RightSection>
       </HeaderContentWrapper>
 
@@ -97,26 +124,38 @@ const HeaderContentWrapper = styled.div`
 `;
 
 const LeftSection = styled.div`
+  margin-right: 24px;
   display: flex;
   align-items: center;
 `;
 
-const RightSection = styled.div`
+const NavItemsWrapper = styled.div`
   display: flex;
   align-items: center;
+  margin-left: auto;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const RightSection = styled.div<{ $testGroup: string }>`
+  display: flex;
+  align-items: center;
+  margin-left: ${({ $testGroup }) => ($testGroup === 'A' ? '0' : 'auto')};
   gap: 26px;
 `;
+
 const DesktopOnlySearchBar = styled.div`
   @media screen and (max-width: 768px) {
     display: none;
   }
 `;
 
-const MobileSearchBar = styled.div`
-  width: 140px;
-  & form {
-    right: 30%;
-  }
+const FixedMarginSearchBar = styled.div`
+  position: absolute;
+  left: 20px;
+  width: calc(100% - 80px);
 `;
 const MobileOnlyIcons = styled.div`
   display: none;
@@ -124,7 +163,6 @@ const MobileOnlyIcons = styled.div`
   @media screen and (max-width: 768px) {
     display: flex;
     align-items: center;
-    gap: 4px;
   }
 `;
 
@@ -135,7 +173,7 @@ const MobileMenuButton = styled.button`
   padding: 0;
 `;
 
-const ThemeButton = styled.button`
+const ThemeButton = styled.button<{ $isDarkMode: boolean }>`
   background: none;
   border: none;
   cursor: pointer;
@@ -146,10 +184,9 @@ const ThemeButton = styled.button`
   transition: transform 0.3s ease;
 
   &:hover {
-    transform: rotate(30deg);
+    transform: rotate(${(props) => (props.$isDarkMode ? '30deg' : '36deg')});
   }
-
   @media screen and (max-width: 768px) {
-    margin-right: 20px;
+    margin-right: 4px;
   }
 `;

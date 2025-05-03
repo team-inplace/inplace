@@ -112,6 +112,11 @@ export const searchHandlers = [
         place: {
           placeId: 1,
           placeName: '이선장네',
+          address: {
+            address1: '대구',
+            address2: '북구',
+            address3: '대현동 119-11',
+          },
         },
       },
       {
@@ -121,6 +126,11 @@ export const searchHandlers = [
         place: {
           placeId: 2,
           placeName: '풍자또가',
+          address: {
+            address1: '대구',
+            address2: '북구',
+            address3: '대현동 119-11',
+          },
         },
       },
       {
@@ -130,6 +140,11 @@ export const searchHandlers = [
         place: {
           placeId: 3,
           placeName: '풍',
+          address: {
+            address1: '대구',
+            address2: '북구',
+            address3: '대현동 119-11',
+          },
         },
       },
     ];

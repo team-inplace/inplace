@@ -32,6 +32,7 @@ export default function DesktopNavA() {
   return (
     <NavLinksContainer>
       <NavExternalLink
+        aria-label="헤더 설문조사_A"
         href="https://docs.google.com/forms/d/e/1FAIpQLSeBJcQg0gcVv2au5oFZ1aCLF9O_qbEiJCvnLEd0d1SSLLpDUA/viewform?pli=1"
         target="_blank"
         rel="noopener noreferrer"
@@ -41,20 +42,20 @@ export default function DesktopNavA() {
         </Text>
       </NavExternalLink>
 
-      <NavButton onClick={handleMapNavigation} $isActive={isActive('/map')}>
+      <NavButton aria-label="헤더 지도_A" onClick={handleMapNavigation} $isActive={isActive('/map')}>
         <Text size="xs" weight="normal">
           지도
         </Text>
       </NavButton>
 
-      <NavItem to="/influencer" $isActive={isActive('/influencer')}>
+      <NavItem aria-label="헤더 인플루언서_A" to="/influencer" $isActive={isActive('/influencer')}>
         <Text size="xs" weight="normal">
           인플루언서
         </Text>
       </NavItem>
 
       {isAuthenticated && (
-        <NavItem to="/my" $isActive={isActive('/my')}>
+        <NavItem to="/my" aria-label="헤더 마이페이지_A" $isActive={isActive('/my')}>
           <Text size="xs" weight="normal">
             마이페이지
           </Text>

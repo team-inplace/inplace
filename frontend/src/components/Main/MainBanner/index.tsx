@@ -145,13 +145,17 @@ export default function MainBanner({ items = [] }: { items: BannerData[] }) {
         <NoItem message="배너 정보가 없어요!" height={400} />
       ) : (
         <>
-          <PrevBtn aria-label="prev_btn" onClick={handleBtnPrevClick} disabled={currentIndex === 0 || isReturning}>
+          <PrevBtn
+            aria-label="배너 스크롤 왼쪽"
+            onClick={handleBtnPrevClick}
+            disabled={currentIndex === 0 || isReturning}
+          >
             <PrevIconWrapper>
               <GrPrevious size={40} />
             </PrevIconWrapper>
           </PrevBtn>
           <NextBtn
-            aria-label="next_btn"
+            aria-label="배너 스크롤 오른쪽"
             onClick={handleBtnNextClick}
             disabled={currentIndex === (isMobile ? sortedItems.length - 1 : sortedItems.length - 2) || isReturning}
           >
@@ -201,11 +205,11 @@ const Container = styled.div`
 `;
 
 const PrevIconWrapper = styled.div`
-  filter: drop-shadow(-2px 0 2px rgba(0, 0, 0, 0.4));
+  filter: drop-shadow(-1px 0 1px rgba(0, 0, 0, 0.4));
 `;
 
 const NextIconWrapper = styled.div`
-  filter: drop-shadow(2px 0 2px rgba(0, 0, 0, 0.4));
+  filter: drop-shadow(1px 0 1px rgba(0, 0, 0, 0.4));
 `;
 
 const PrevBtn = styled.button`

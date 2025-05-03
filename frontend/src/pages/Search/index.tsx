@@ -17,7 +17,7 @@ export default function SearchPage() {
 
   return (
     <Wrapper>
-      <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" isSearchPage width="960px" />
+      <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" isSearchPage width="960px" onClose={() => {}} />
       <Title>
         <Paragraph weight="normal" size="m">
           <Text weight="bold" size="m" variant="mint">

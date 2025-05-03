@@ -61,7 +61,7 @@ export default function VisitModal({ id, onClose }: { id: number; onClose: () =>
             {qrSrc && <Image src={qrSrc} alt="QR CODE" />}
           </ImageFrame>
           <BtnContainer>
-            <Button aria-label="complete_btn" variant="mint" size="small" onClick={() => onClose()}>
+            <Button aria-label="큐알코드 닫기" variant="mint" size="small" onClick={() => onClose()}>
               닫기
             </Button>
           </BtnContainer>

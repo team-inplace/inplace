@@ -271,6 +271,7 @@ const mockPlaces = [
     placeId: 1,
     placeName: '료코존나길면어떻게될까용가리',
     imageUrl: null,
+    videoUrl: 'https://www.youtube.com/watch?v=LrVqJn008-I',
     likes: true,
     influencerName: '성시경',
     address: {
@@ -284,6 +285,7 @@ const mockPlaces = [
     placeName: '이선장네',
     likes: true,
     imageUrl: null,
+    videoUrl: '',
     influencerName: '임영웅',
     address: {
       address1: '대구광역시',
@@ -295,6 +297,7 @@ const mockPlaces = [
     placeId: 3,
     placeName: '풍자또가',
     imageUrl: null,
+    videoUrl: '',
     likes: true,
     influencerName: '풍자',
     address: {
@@ -307,6 +310,7 @@ const mockPlaces = [
     placeId: 4,
     placeName: '풍자또가',
     imageUrl: null,
+    videoUrl: '',
     influencerName: '풍자',
     address: {
       address1: '대구광역시',
@@ -318,6 +322,7 @@ const mockPlaces = [
     placeId: 5,
     placeName: '풍자또가',
     imageUrl: null,
+    videoUrl: '',
     influencerName: '풍자',
     address: {
       address1: '대구광역시',
@@ -329,6 +334,7 @@ const mockPlaces = [
     placeId: 6,
     placeName: '풍자또가',
     imageUrl: null,
+    videoUrl: '',
     influencerName: '풍자',
     address: {
       address1: '대구광역시',
@@ -340,6 +346,7 @@ const mockPlaces = [
     placeId: 7,
     placeName: '풍자또가',
     imageUrl: null,
+    videoUrl: '',
     influencerName: '풍자',
     address: {
       address1: '대구광역시',
@@ -351,6 +358,7 @@ const mockPlaces = [
     placeId: 8,
     placeName: '풍자또가',
     imageUrl: null,
+    videoUrl: '',
     influencerName: '풍자',
     address: {
       address1: '대구광역시',
@@ -362,6 +370,7 @@ const mockPlaces = [
     placeId: 9,
     placeName: '풍자또가',
     imageUrl: null,
+    videoUrl: '',
     influencerName: '풍자',
     address: {
       address1: '대구광역시',
@@ -373,6 +382,7 @@ const mockPlaces = [
     placeId: 10,
     placeName: '풍자또가',
     imageUrl: null,
+    videoUrl: '',
     influencerName: '풍자',
     address: {
       address1: '대구광역시',
@@ -384,6 +394,7 @@ const mockPlaces = [
     placeId: 11,
     placeName: '풍자또가',
     imageUrl: null,
+    videoUrl: '',
     influencerName: '풍자',
     address: {
       address1: '대구광역시',

@@ -221,7 +221,7 @@ public class PlacesResponse {
 
         public static PlacesResponse.GoogleReview from(GooglePlaceClientResponse.Review review) {
             return new PlacesResponse.GoogleReview(
-                review.rating() >= 3,
+                review.rating() >= 4,
                 review.text().isEmpty() ? "" : review.text().get().text().orElse(""),
                 review.authorAttribution().displayName(),
                 review.publishTime().toString()

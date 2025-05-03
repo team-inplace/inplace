@@ -71,6 +71,7 @@ export type PlaceData = {
   longitude: string;
   latitude: string;
   likes: boolean;
+  likedCount: number;
 };
 
 export type LocationData = {
@@ -108,7 +109,8 @@ export type PlaceInfo = {
   longitude: string;
   latitude: string;
   facility: FacilityInfo;
-  placeLikes: PlaceLikes;
+  reviewLikes: PlaceLikes;
+  likedCount: number;
   likes: boolean;
 };
 export type GoogleReview = {
@@ -151,6 +153,7 @@ export type UserPlaceData = {
   placeId: number;
   placeName: string;
   imageUrl?: string | null;
+  videoUrl: string;
   influencerName: string;
   address: AddressInfo;
   likes: boolean;
