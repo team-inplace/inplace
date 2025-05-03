@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.global.exception.code.InfluencerErrorCode;
 import team7.inplace.influencer.application.dto.InfluencerCommand;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
@@ -45,8 +44,7 @@ public class InfluencerService {
         }
 
         // 로그인 된 경우
-        Long userId = AuthorizationUtil.getUserId()
-            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
         Set<Long> likedInfluencerIds = likedInfluencerRepository.findLikedInfluencerIdsByUserId(
             userId);
 
@@ -104,15 +102,13 @@ public class InfluencerService {
 
     @Transactional
     public void likeToInfluencer(LikedInfluencerCommand.Single command) {
-        Long userId = AuthorizationUtil.getUserId()
-            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
         upsertFavoriteInfluencer(userId, command);
     }
 
     @Transactional
     public void likeToManyInfluencer(LikedInfluencerCommand.Multiple command) {
-        Long userId = AuthorizationUtil.getUserId()
-            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
 
         for (LikedInfluencerCommand.Single single : command.likes()) {
             upsertFavoriteInfluencer(userId, single);
@@ -168,8 +164,7 @@ public class InfluencerService {
 
     @Transactional(readOnly = true)
     public Detail getInfluencerDetail(Long influencerId) {
-        Long userId = AuthorizationUtil.getUserId()
-            .orElseGet(() -> null);
+        Long userId = AuthorizationUtil.getUserIdOrNull();
 
         return influencerReadRepositoryImpl.getInfluencerDetail(influencerId, userId)
             .orElseThrow(() -> InplaceException.of(InfluencerErrorCode.NOT_FOUND));

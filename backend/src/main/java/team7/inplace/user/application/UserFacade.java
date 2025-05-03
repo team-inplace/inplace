@@ -4,8 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import team7.inplace.global.annotation.Facade;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.influencer.application.InfluencerService;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.place.application.PlaceService;
@@ -31,15 +29,13 @@ public class UserFacade {
 
     //TODO: Return 클래스 변경 필요
     public Page<InfluencerInfo> getMyFavoriteInfluencers(Pageable pageable) {
-        Long userId = AuthorizationUtil.getUserId()
-            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
         return influencerService.getFavoriteInfluencers(userId, pageable);
     }
 
     //TODO: Return 클래스 변경 필요
     public Page<PlaceInfo.Simple> getMyFavoritePlaces(Pageable pageable) {
-        Long userId = AuthorizationUtil.getUserId()
-            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
 
         var likedPlaces = placeService.getLikedPlaceInfo(userId, pageable);
         var placeIds = likedPlaces.getContent()
@@ -54,26 +50,22 @@ public class UserFacade {
     }
 
     public Page<ReviewQueryResult.Detail> getMyReviews(Pageable pageable) {
-        Long userId = AuthorizationUtil.getUserId()
-            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
         return reviewService.getUserReviews(userId, pageable);
     }
 
     public void updateNickname(String nickname) {
-        Long userId = AuthorizationUtil.getUserId()
-            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
         userService.updateNickname(userId, nickname);
     }
 
     public UserInfo getUserInfo() {
-        Long userId = AuthorizationUtil.getUserId()
-            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
         return userService.getUserInfo(userId);
     }
 
     public void deleteUser() {
-        Long userId = AuthorizationUtil.getUserId()
-            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
         oauthTokenService.unlinkOauthToken(userId);
         userService.deleteUser(userId);
     }
