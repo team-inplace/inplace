@@ -60,8 +60,8 @@ public class InfluencerServiceTest {
 
         given(influencerRepository.findAll(pageable))
             .willReturn(influencersPage);
-        given(AuthorizationUtil.getUserId())
-            .willReturn(null);
+        given(AuthorizationUtil.isNotLoginUser())
+            .willReturn(true);
 
         // when
         Page<InfluencerInfo> influencerInfoPage = influencerService.getAllInfluencers(pageable);
@@ -99,7 +99,7 @@ public class InfluencerServiceTest {
         idField.set(influencer3, 3L);
 
         given(influencerRepository.findAll(pageable)).willReturn(influencersPage);
-        given(AuthorizationUtil.getUserId()).willReturn(Optional.of(userId));
+        given(AuthorizationUtil.getUserIdOrThrow()).willReturn(userId);
         // 2, 3번째 인플루언서 좋아요로 설정
         given(likedInfluencerRepository.findLikedInfluencerIdsByUserId(userId))
             .willReturn(Set.of(2L, 3L));
@@ -167,7 +167,7 @@ public class InfluencerServiceTest {
         Long influencerId = 1L;
         var commandSingle = new LikedInfluencerCommand.Single(influencerId, true);
 
-        given(AuthorizationUtil.getUserId()).willReturn(Optional.of(userId));
+        given(AuthorizationUtil.getUserIdOrThrow()).willReturn(userId);
         given(likedInfluencerRepository.findByUserIdAndInfluencerId(anyLong(), anyLong()))
             .willReturn(Optional.empty());  // 새 객체 생성되도록
 
@@ -202,7 +202,7 @@ public class InfluencerServiceTest {
         var commandSingle = new LikedInfluencerCommand.Single(influencerId, false);
         var existinglikedInfluencer = new LikedInfluencer(userId, influencerId, true);
 
-        given(AuthorizationUtil.getUserId()).willReturn(Optional.of(userId));
+        given(AuthorizationUtil.getUserIdOrThrow()).willReturn(userId);
         given(likedInfluencerRepository.findByUserIdAndInfluencerId(anyLong(), anyLong()))
             .willReturn(Optional.of(existinglikedInfluencer));
 
@@ -229,7 +229,7 @@ public class InfluencerServiceTest {
         var commandMultiple = new LikedInfluencerCommand.Multiple(
             List.of(commandSingle1, commandSingle2));
 
-        given(AuthorizationUtil.getUserId()).willReturn(Optional.of(userId));
+        given(AuthorizationUtil.getUserIdOrThrow()).willReturn(userId);
         given(likedInfluencerRepository.findByUserIdAndInfluencerId(anyLong(), anyLong()))
             .willReturn(Optional.empty()); // 새 객체 생성되도록
 
