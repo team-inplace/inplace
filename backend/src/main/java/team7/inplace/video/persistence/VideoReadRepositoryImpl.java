@@ -102,7 +102,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
     @Override
     public List<SimpleVideo> findSimpleVideosByPlaceId(Long placeId) {
         return buildSimpleVideoQuery()
-            .where(QVideo.video.placeId.eq(placeId),
+            .where(QPlaceVideo.placeVideo.placeId.eq(placeId),
                 commonWhere().and(QPlaceVideo.placeVideo.isNotNull()))
             .fetch();
     }
@@ -114,7 +114,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
         }
 
         return buildSimpleVideoQuery()
-            .where(QVideo.video.placeId.in(placeIds),
+            .where(QPlaceVideo.placeVideo.placeId.in(placeIds),
                 commonWhere().and(QPlaceVideo.placeVideo.isNotNull()))
             .fetch()
             .stream()
