@@ -45,6 +45,7 @@ jobs:
         run: npm test
 
       - name: Create and Upload Sentry Release
+        if: github.ref == 'refs/heads/main'
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.VITE_SENTRY_AUTH_TOKEN }}
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
