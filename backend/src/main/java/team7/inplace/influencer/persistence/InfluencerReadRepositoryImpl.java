@@ -14,6 +14,7 @@ import team7.inplace.influencer.domain.QInfluencer;
 import team7.inplace.influencer.persistence.dto.InfluencerQueryResult;
 import team7.inplace.influencer.persistence.dto.QInfluencerQueryResult_Detail;
 import team7.inplace.liked.likedInfluencer.domain.QLikedInfluencer;
+import team7.inplace.place.domain.QPlaceVideo;
 import team7.inplace.video.domain.QVideo;
 
 @Repository
@@ -61,8 +62,10 @@ public class InfluencerReadRepositoryImpl implements InfluencerReadRepository {
                                 .and(QLikedInfluencer.likedInfluencer.isLiked.isTrue())),
                         select(count(QVideo.video.id)) // 비디오 수
                             .from(QVideo.video)
+                            .leftJoin(QPlaceVideo.placeVideo)
+                            .on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
                             .where(QVideo.video.influencerId.eq(QInfluencer.influencer.id)
-                                .and(QVideo.video.placeId.isNotNull())
+                                .and(QPlaceVideo.placeVideo.isNotNull())
                                 .and(QVideo.video.deleteAt.isNull()))
                     )
                 )
@@ -78,7 +81,10 @@ public class InfluencerReadRepositoryImpl implements InfluencerReadRepository {
             .select(QInfluencer.influencer.name)
             .from(QInfluencer.influencer)
             .leftJoin(QVideo.video).on(QInfluencer.influencer.id.eq(QVideo.video.influencerId))
-            .where(QVideo.video.placeId.eq(placeId))
+            .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
+            .where(QPlaceVideo.placeVideo.placeId.eq(placeId)
+                .and(QPlaceVideo.placeVideo.isNotNull())
+                .and(QVideo.video.deleteAt.isNull()))
             .fetch();
     }
 
