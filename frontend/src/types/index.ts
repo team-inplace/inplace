@@ -206,6 +206,7 @@ export type MarkerData = {
   placeId: number;
   longitude: number;
   latitude: number;
+  type: string;
 };
 export type MarkerInfo = {
   placeId: number;
@@ -226,12 +227,3 @@ export interface ReviewInfo {
   influencerName: string;
   userNickname: string;
 }
-
-export type AllMarkerWithCenter = {
-  marker: MarkerData[];
-  map: {
-    longitude: number;
-    latitude: number;
-    level: number;
-  };
-};
