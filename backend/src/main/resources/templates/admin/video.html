@@ -9,6 +9,10 @@
         th:src="'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + ${kakaoApiKey} + '&libraries=services'"
         type="text/javascript"></script>
     <script src="/js/fragment/modal.js"></script>
+    <script th:inline="javascript">
+      let mapProviderKakao = [[#{video.search.mapProvider.kakao}]];
+      let mapProviderGoogle = [[#{video.search.mapProvider.google}]];
+    </script>
     <script src="/js/video.js"></script>
   </th:block>
 </head>
@@ -46,13 +50,13 @@
     <td th:text="${video.id}">Video ID</td>
     <td>
       <img alt="Video Thumbnail"
-           onclick="openPlaceSearchModal('kakao',this)" style="cursor:pointer;width:100px;"
+           onclick="openPlaceSearchModal(this)" style="cursor:pointer;width:100px;"
            th:attr="data-video-url=${video.uuid}, data-video-id=${video.id}"
            th:src="|https://img.youtube.com/vi/${video.uuid}/0.jpg|"/>
     </td>
     <td>
       <button
-          onclick="openPlaceSearchModal('kakao',this)"
+          onclick="openPlaceSearchModal(this)"
           th:attr="data-video-url=${video.uuid}, data-video-id=${video.id}">
         장소 등록
       </button>
@@ -84,83 +88,89 @@
   </div>
 </div>
 
-<div th:with="mapProvider=#{video.search.mapProvider.kakao},
- modalId=|placeSearchModal-${mapProvider}|,
- modalTitle=|장소 검색 (${mapProvider})|">
-  <div th:replace="fragment/modal :: modal(${modalId}, ${modalTitle}, ~{::contents-kakao})">
-    <th:block th:fragment="contents-kakao">
+<div th:replace="fragment/modal :: modal('placeSearchModal', '장소 추가', ~{::contents})">
+  <th:block th:fragment="contents"
+            th:with="kakao=#{video.search.mapProvider.kakao},
+                     google=#{video.search.mapProvider.google}">
+    <div class="place-search-modal-header">
       <iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
               allowfullscreen height="315"
-              th:id="|videoIFrame-${mapProvider}|" src=""
+              th:id="videoIFrame" src=""
               width="560">
       </iframe>
-
-      <div class="search-container">
-        <form onsubmit="searchKakaoPlaces(); return false;">
-          <label th:for="|keyword-${mapProvider}|">키워드:
-            <input th:id="|keyword-${mapProvider}|" placeholder="장소를 입력하세요" type="text"/>
-          </label>
-
-          <label for="category">
-            <select id="category" required>
-              <option disabled selected value="">카테고리</option>
-              <th:block th:each="category : ${categories}">
-                <option th:text="${category.name}" th:value="${category}"/>
-              </th:block>
-            </select>
-          </label>
-
-          <button type="submit">검색하기</button>
-        </form>
-      </div>
-
-      <table th:id="|search-results-${mapProvider}|">
+      <table>
         <thead>
-        <tr>
-          <th>장소명</th>
-          <th>주소</th>
-          <th>등록</th>
-        </tr>
+        <th>비디오 ID</th>
+        <th>장소 이름</th>
+        <th>카테고리</th>
+        <th>주소 정보</th>
+        <th>x 좌표 (longitude)</th>
+        <th>y 좌표 (latitude)</th>
+        <th th:text="|장소 ID (${kakao})|">장소 ID ([[${kakao}]])</th>
+        <th th:text="|장소 ID (${google})|">장소 ID ([[${google}]])</th>
+        <th>등록</th>
         </thead>
-        <tbody th:id="|search-tbody-${mapProvider}|"></tbody>
+        <tbody>
+        <tr>
+          <form onsubmit="registerPlace(); return false;">
+            <td><input id="videoId" name="videoId" disabled></td>
+            <td><input id="placeName" name="placeName"></td>
+            <td>
+              <label for="category">
+                            <select id="category" required>
+                              <option disabled selected value="">카테고리</option>
+                              <th:block th:each="category : ${categories}">
+                                <option th:text="${category.name}" th:value="${category}"/>
+                              </th:block>
+                            </select>
+                          </label>
+            </td>
+            <td><input id="address" name="address"></td>
+            <td><input id="x" name="x"></td>
+            <td><input id="y" name="y"></td>
+            <td><input th:id="|place-id-${kakao}|" name="kakaoPlaceId"></td>
+            <td><input th:id="|place-id-${google}|" name="googlePlaceId"></td>
+            <td><button type="submit">등록</button></td>
+          </form>
+        </tr>
+        </tbody>
       </table>
-    </th:block>
-  </div>
-</div>
-
-<div th:with="mapProvider=#{video.search.mapProvider.google},
- modalId=|placeSearchModal-${mapProvider}|,
- modalTitle=|장소 검색 (${mapProvider})|">
-  <div th:replace="fragment/modal :: modal(${modalId}, ${modalTitle}, ~{::contents-google})">
-    <th:block th:fragment="contents-google">
-      <iframe allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen height="315"
-              th:id="|videoIFrame-${mapProvider}|" src=""
-              width="560">
-      </iframe>
-
-      <div class="search-container">
-        <form onsubmit="searchGooglePlaces(); return false;">
-          <label th:for="|keyword-${mapProvider}|">키워드:
-            <input th:id="|keyword-${mapProvider}|" placeholder="장소를 입력하세요" type="text"/>
-          </label>
-          <button type="submit">검색하기</button>
-        </form>
+    </div>
+    <div class="place-search-modal-body">
+      <div class="tab-menu">
+        <button th:class="tab" th:value="${kakao}" th:onclick="showTabPane([[${kakao}]])">Kakao</button>
+        <button th:class="tab" th:value="${google}" th:onclick="showTabPane([[${google}]])">Google</button>
       </div>
-
-      <table th:id="|search-results-${mapProvider}|">
-        <thead>
-        <tr>
-          <th>장소명</th>
-          <th>주소</th>
-          <th>등록</th>
-        </tr>
-        </thead>
-        <tbody th:id="|search-tbody-${mapProvider}|"></tbody>
-      </table>
-    </th:block>
-  </div>
+      <div class="tab-content">
+        <div th:replace="this :: place-search-tab-pane(${kakao})"></div>
+        <div th:replace="this :: place-search-tab-pane(${google})"></div>
+      </div>
+    </div>
+  </th:block>
 </div>
-
 </body>
+
+<div th:class="tab-pane" th:id="|tab-pane-${mapProvider}|" th:fragment="place-search-tab-pane(mapProvider)" style="display: none">
+  <div class="search-container">
+    <h3>장소 검색 ([[${mapProvider}]])</h3>
+    <form th:onsubmit="searchPlaces([[${mapProvider}]]); return false;">
+      <label th:for="|keyword-${mapProvider}|">키워드:
+        <input th:id="|keyword-${mapProvider}|" placeholder="장소를 입력하세요" type="text"/>
+      </label>
+      <button type="submit">검색하기</button>
+    </form>
+  </div>
+
+  <table th:id="|search-results-${mapProvider}|">
+    <thead>
+    <tr>
+      <th>장소명</th>
+      <th>주소</th>
+      <th>등록</th>
+    </tr>
+    </thead>
+    <tbody th:id="|search-tbody-${mapProvider}|"></tbody>
+  </table>
+</div>
+
 </html>

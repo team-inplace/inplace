@@ -1,32 +1,47 @@
-function openPlaceSearchModal(mapProvider, element=null) {
-  console.log(mapProvider + " open");
+function openPlaceSearchModal(element) {
+  let videoUrl = null;
   if (element) {
     window.selectedVideoId = element.getAttribute("data-video-id");
-    window.selectedVideoUrl = element.getAttribute("data-video-url");
+    videoUrl = element.getAttribute("data-video-url");
   }
 
-  const modalId = `placeSearchModal-${mapProvider}`;
-  document.getElementById(modalId).style.display = "block";
-  const videoIFrame = `videoIFrame-${mapProvider}`;
-  document.getElementById(videoIFrame).src = `https://www.youtube.com/embed/${window.selectedVideoUrl}`;
+  document.getElementById('placeSearchModal').style.display = "block";
+  document.getElementById('videoIFrame').src = `https://www.youtube.com/embed/${videoUrl}`;
+  document.getElementById('videoId').value = selectedVideoId;
 
-  currentOpenModalId = modalId;
+  currentOpenModalId = 'placeSearchModal';
+}
+
+let currentTabPaneId = 'tab-pane-Kakao'
+function showTabPane(mapProvider) {
+  if (currentTabPaneId) {
+    document.getElementById(currentTabPaneId).style.display = 'none';
+  }
+  currentTabPaneId = `tab-pane-${mapProvider}`;
+  document.getElementById(currentTabPaneId).style.display = 'block';
 }
 
 let placeInfo = null;
 
-function searchKakaoPlaces() {
-  console.log("searchKakaoPlaces");
-  const keyword = document.getElementById('keyword-kakao').value;
+function searchPlaces(mapProvider) {
+  const keyword = document.getElementById(`keyword-${mapProvider}`).value;
   if (!keyword.trim()) {
     alert("검색어를 입력하세요.");
     return;
   }
 
+  if (mapProvider === mapProviderKakao) {
+    searchKakaoPlaces(keyword);
+  }
+  else if (mapProvider === mapProviderGoogle) {
+    searchGooglePlaces(keyword);
+  }
+}
+
+function searchKakaoPlaces(keyword) {
   const ps = new kakao.maps.services.Places();
-  // Kakao Maps API를 통해 장소 검색
   ps.keywordSearch(keyword, function (data, status) {
-    const tbody = $('#search-tbody-kakao');
+    const tbody = $('#search-tbody-Kakao');
     tbody.empty();
 
     if (status === kakao.maps.services.Status.OK) {
@@ -35,63 +50,37 @@ function searchKakaoPlaces() {
                     <tr>
                         <td>${place.place_name}</td>
                         <td>${place.address_name}</td>
-                        <td><button onclick='setPlaceInfo(${JSON.stringify(
-            place).replace(/'/g, "&#39;")})'>등록</button></td>
+                        <td><button class="set-place-info-${mapProviderKakao}" data-place='${JSON.stringify(
+            place)}'>등록</button></td>
                     </tr>`;
         tbody.append(row);
       });
+      $(`.set-place-info-${mapProviderKakao}`).off("click").on("click",
+          function () {
+            setPlaceForm(
+                JSON.stringify($(this).data("place")).replace(/'/g, "&#39;"));
+          });
     } else {
       alert("장소 검색에 실패했습니다.");
     }
   });
 }
 
-function setPlaceInfo(place) {
-  console.log("setPlaceInfo");
-  const videoId = window.selectedVideoId;
-  const category = document.getElementById('category').value;
-  if (!category) {
-    alert("카테고리를 선택해주세요.")
-    return;
-  }
-
-  // 카카오 map 기준 검색 결과 ( googlePlaceId x )
-  placeInfo = {
-    videoId: videoId,
-    placeName: place.place_name,
-    category: category,
-    address: place.address_name,
-    x: place.x,
-    y: place.y,
-    googlePlaceId: null,
-    kakaoPlaceId: place.id
-  };
-
-  closeModal('placeSearchModal-kakao');
-  openPlaceSearchModal('google');
-}
-
-function searchGooglePlaces() {
-  console.log("searchGooglePlaces");
-  const keyword = document.getElementById('keyword-google').value;
-  if (!keyword.trim()) {
-    alert("검색어를 입력하세요.");
-    return;
-  }
-
+function searchGooglePlaces(keyword) {
   $.ajax({
     url: 'https://places.googleapis.com/v1/places:searchText',
     method: 'POST',
     contentType: 'application/json',
     headers: {
-      "X-Goog-Api-Key": document.getElementById("google-api-key").getAttribute("data-api-key"),
+      "X-Goog-Api-Key": document.getElementById(
+          "google-api-key").getAttribute("data-api-key"),
       "X-Goog-FieldMask": "*"
     },
     data: JSON.stringify({
       textQuery: keyword
     }),
     success: function (res) {
-      const tbody = $('#search-tbody-google');
+      const tbody = $('#search-tbody-Google');
       tbody.empty();
 
       res.places.forEach(place => {
@@ -99,16 +88,17 @@ function searchGooglePlaces() {
                 <tr>
                     <td>${place.displayName.text}</td>
                     <td>${place.formattedAddress}</td>
-                    <td><button class="register-btn" data-place-id="${place.id}">등록</button></td>
+                    <td><button class="set-place-info-${mapProviderGoogle}" data-place-id="${place.id}">등록</button></td>
                 </tr>`;
         tbody.append(row);
       });
 
       // 이벤트 리스너 등록
-      $(".register-btn").off("click").on("click", function () {
-        placeInfo.googlePlaceId = $(this).data("place-id");  // 버튼의 data-place-id 값 가져오기
-        registerPlace();
-      });
+      $(`.set-place-info-${mapProviderGoogle}`).off("click").on("click",
+          function () {
+            document.getElementById('place-id-Google').value = $(this).data(
+                "place-id");
+          });
     },
     error: function () {
       alert("검색 실패");
@@ -116,8 +106,49 @@ function searchGooglePlaces() {
   });
 }
 
+function setPlaceForm(place) {
+  place = JSON.parse(place);
+  document.getElementById('placeName').value = place.place_name;
+  document.getElementById('address').value = place.address_name;
+  document.getElementById('x').value = place.x;
+  document.getElementById('y').value = place.y;
+  document.getElementById('place-id-Kakao').value = place.id;
+}
+
+function setPlaceInfo() {
+  const placeName = document.getElementById('placeName').value;
+  const category = document.getElementById('category').value;
+  const address = document.getElementById('address').value;
+  const x = document.getElementById('x').value;
+  const y = document.getElementById('y').value;
+  let googlePlaceId = document.getElementById('place-id-Google').value;
+  const kakaoPlaceId = document.getElementById('place-id-Kakao').value;
+
+  if (!placeName || !address || !category || !x || !y || !kakaoPlaceId) {
+    alert("googlePlaceId를 제외한 input을 채워주세요.");
+    return;
+  }
+
+  if (!googlePlaceId && confirm("구글 Place Id가 없는 것이 맞습니까?")) {
+    googlePlaceId = null;
+  }
+
+  placeInfo = {
+    videoId: document.getElementById('videoId').value,
+    placeName: placeName,
+    category: category,
+    address: address,
+    x: x,
+    y: y,
+    googlePlaceId: googlePlaceId,
+    kakaoPlaceId: kakaoPlaceId
+  };
+}
+
 function registerPlace() {
-  console.log("registerPlace");
+  setPlaceInfo();
+  console.log(placeInfo);
+  debugger;
   $.ajax({
     url: `/places`,
     method: 'POST',
@@ -125,6 +156,7 @@ function registerPlace() {
     data: JSON.stringify(placeInfo),
     success: function () {
       alert("장소가 등록되었습니다.");
+      debugger;
       closeModal();
       location.reload();
     },
