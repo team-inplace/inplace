@@ -12,13 +12,21 @@ function openPlaceSearchModal(element) {
   currentOpenModalId = 'placeSearchModal';
 }
 
-let currentTabPaneId = 'tab-pane-Kakao'
+let currentMapProvider = null;
 function showTabPane(mapProvider) {
-  if (currentTabPaneId) {
+  let currentTabPaneId;
+  let currentTabId;
+  if (currentMapProvider) {
+    currentTabPaneId = `tab-pane-${currentMapProvider}`;
+    currentTabId = `tab-${currentMapProvider}`;
     document.getElementById(currentTabPaneId).style.display = 'none';
+    document.getElementById(currentTabId).classList.remove("active");
   }
+  currentMapProvider = mapProvider;
   currentTabPaneId = `tab-pane-${mapProvider}`;
+  currentTabId = `tab-${mapProvider}`;
   document.getElementById(currentTabPaneId).style.display = 'block';
+  document.getElementById(currentTabId).classList.add("active");
 }
 
 let placeInfo = null;
