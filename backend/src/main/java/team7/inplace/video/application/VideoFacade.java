@@ -48,12 +48,6 @@ public class VideoFacade {
         videoService.updateVideoViews(videoCommands);
     }
 
-    @Transactional
-    public void addPlaceInfo(Long videoId, PlacesCommand.Create placeCommand) {
-        var placeId = placeService.createPlace(placeCommand);
-        videoService.addPlaceInfo(videoId, placeId);
-    }
-
     @Transactional(readOnly = true)
     public List<VideoQueryResult.DetailedVideo> getMyInfluencerVideos() {
         // User 정보를 쿠키에서 추출
