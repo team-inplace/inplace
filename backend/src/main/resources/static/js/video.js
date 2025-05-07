@@ -155,8 +155,6 @@ function setPlaceInfo() {
 
 function registerPlace() {
   setPlaceInfo();
-  console.log(placeInfo);
-  debugger;
   $.ajax({
     url: `/places`,
     method: 'POST',
@@ -164,7 +162,6 @@ function registerPlace() {
     data: JSON.stringify(placeInfo),
     success: function () {
       alert("장소가 등록되었습니다.");
-      debugger;
       closeModal();
       location.reload();
     },
