@@ -4,7 +4,7 @@ import MapWindow from '@/components/Map/MapWindow';
 import PlaceSection from '@/components/Map/PlaceSection';
 import Chip from '@/components/common/Chip';
 import useGetDropdownCategory from '@/api/hooks/useGetDropdownCategory';
-import useGetDropdownName from '@/api/hooks/useGetDropdownName';
+import useGetDropdownInfluencer from '@/api/hooks/useGetDropdownName';
 import useTouchDrag from '@/hooks/Map/useTouchDrag';
 import useMapState from '@/hooks/Map/useMapState';
 import DropdownFilterBar, { FilterBarItem } from '@/components/Map/DropdownFilterBar';
@@ -12,7 +12,7 @@ import MapSearchBar from '@/components/Map/MapSearchBar';
 import useClickOutside from '@/hooks/useClickOutside';
 
 export default function MapPage() {
-  const { data: influencerOptions } = useGetDropdownName();
+  const { data: influencerOptions } = useGetDropdownInfluencer();
   const { data: categoryOptions = [] } = useGetDropdownCategory();
   const [selectedInfluencers, setSelectedInfluencers] = useState<string[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<{ id: number; label: string }[]>([]);
