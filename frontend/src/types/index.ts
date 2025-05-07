@@ -227,3 +227,26 @@ export interface ReviewInfo {
   influencerName: string;
   userNickname: string;
 }
+
+export type SubCategory = {
+  id: number;
+  name: string;
+  mainId?: number;
+};
+
+export type Category = {
+  id: number;
+  name: string;
+  subCategories: SubCategory[];
+};
+
+export type CategoryData = {
+  categories: Category[];
+};
+
+export type CategoryOption = {
+  label: string;
+  id: number;
+  isMain: boolean;
+  mainId?: number;
+};
