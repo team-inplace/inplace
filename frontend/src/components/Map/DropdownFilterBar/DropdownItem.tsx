@@ -7,6 +7,7 @@ interface DropdownItemProps {
   isSelected?: boolean;
   isFiltered?: boolean;
   isMain?: boolean;
+  icon?: React.ReactNode;
   children?: React.ReactNode;
 }
 
@@ -18,9 +19,11 @@ export default function DropdownItem({
   isSelected,
   isFiltered,
   isMain,
+  icon,
 }: DropdownItemProps) {
   return (
     <DropdownItems onClick={onClick} type={type} $isSelected={isSelected} $isFiltered={isFiltered} $isMain={isMain}>
+      {icon && <IconContainer>{icon}</IconContainer>}
       {label}
       {children}
     </DropdownItems>
@@ -63,4 +66,10 @@ const DropdownItems = styled.div<{
       }};
     }
   }
+`;
+
+const IconContainer = styled.span`
+  display: inline-flex;
+  margin-right: 8px;
+  align-items: center;
 `;

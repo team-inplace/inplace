@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { FaUser, FaSearch } from 'react-icons/fa';
 import { ImSpoonKnife } from 'react-icons/im';
+import { FaRankingStar } from 'react-icons/fa6';
+import { RiMenu3Fill } from 'react-icons/ri';
 import styled from 'styled-components';
 import DropdownItem from './DropdownItem';
 import useClickOutside from '@/hooks/useClickOutside';
@@ -206,6 +208,14 @@ export default function DropdownMenu({
           ? (selectedOptions as number[]).includes(option.id)
           : (selectedOptions as string[]).includes(option.label));
 
+      let icon = null;
+      if (type === 'category') {
+        if (option.label === '맛집' || option.id === 1) {
+          icon = <ImSpoonKnife color="#ec7450" size={16} />;
+        } else if (option.label === '놀곳' || option.id === 4) {
+          icon = <FaRankingStar color="#3778ef" size={16} />;
+        }
+      }
       return (
         <DropdownItem
           key={option.label}
@@ -215,6 +225,7 @@ export default function DropdownMenu({
           isSelected={selectedMainOption?.label === option.label}
           isFiltered={isFiltered}
           isMain
+          icon={icon}
         />
       );
     });
@@ -246,7 +257,7 @@ export default function DropdownMenu({
   const displayValue = placeholder;
   const displayIcon = () => {
     if (type === 'category') {
-      return <ImSpoonKnife color="#5ae3fb" />;
+      return <RiMenu3Fill color="#5ae3fb" />;
     }
     return <FaUser color="#5ae3fb" />;
   };
