@@ -6,12 +6,21 @@ interface DropdownItemProps {
   type: 'location' | 'influencer' | 'category';
   isSelected?: boolean;
   isFiltered?: boolean;
+  isMain?: boolean;
   children?: React.ReactNode;
 }
 
-export default function DropdownItem({ label, onClick, children, type, isSelected, isFiltered }: DropdownItemProps) {
+export default function DropdownItem({
+  label,
+  onClick,
+  children,
+  type,
+  isSelected,
+  isFiltered,
+  isMain,
+}: DropdownItemProps) {
   return (
-    <DropdownItems onClick={onClick} type={type} $isSelected={isSelected} $isFiltered={isFiltered}>
+    <DropdownItems onClick={onClick} type={type} $isSelected={isSelected} $isFiltered={isFiltered} $isMain={isMain}>
       {label}
       {children}
     </DropdownItems>
@@ -22,6 +31,7 @@ const DropdownItems = styled.div<{
   type: 'location' | 'influencer' | 'category';
   $isSelected?: boolean;
   $isFiltered?: boolean;
+  $isMain?: boolean;
 }>`
   padding: 10px 16px;
   cursor: pointer;

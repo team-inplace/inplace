@@ -16,6 +16,30 @@ const dummyInfluencers = [
   { influencerName: '안성재' },
   { influencerName: '카페랩 모디 Cafe Lab. Maudie' },
 ];
+
+const dummyCategoryData = {
+  categories: [
+    {
+      id: 1,
+      name: '맛집',
+      subCategories: [
+        { id: 1, name: '전체' },
+        { id: 2, name: '중국집' },
+        { id: 3, name: '일식' },
+      ],
+    },
+    {
+      id: 4,
+      name: '놀곳',
+      subCategories: [
+        { id: 4, name: '전체' },
+        { id: 5, name: '오락실' },
+        { id: 6, name: '영화관' },
+      ],
+    },
+  ],
+};
+
 const dummyAllMarkers = [
   { placeId: 1, longitude: '128.59691803894955', latitude: '35.879135694467514', type: 'Eats' },
   { placeId: 2, longitude: '126.9314925', latitude: '37.5666478', type: 'plays' },
@@ -491,6 +515,9 @@ export const mapHandlers = [
         likes,
       }),
     );
+  }),
+  rest.get(`${BASE_URL}/category/names`, (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json(dummyCategoryData));
   }),
   rest.get(`${BASE_URL}/influencers/names`, (_, res, ctx) => {
     return res(ctx.status(200), ctx.json(dummyInfluencers));

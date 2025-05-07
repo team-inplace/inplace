@@ -8,6 +8,9 @@ import useIsMobile from '@/hooks/useIsMobile';
 
 interface Option {
   label: string;
+  id?: number;
+  isMain?: boolean;
+  mainId?: number;
 }
 
 export interface DropdownMenuProps {
@@ -37,6 +40,7 @@ export default function DropdownMenu({
   const [selectedMainOption, setSelectedMainOption] = useState<Option | null>();
   const [searchTerm, setSearchTerm] = useState('');
   const isInitialized = useRef(false);
+  const [selectedMainId, setSelectedMainId] = useState<number | null>(null);
 
   useClickOutside([dropdownRef], () => {
     setIsOpen(false);
@@ -59,44 +63,139 @@ export default function DropdownMenu({
     isInitialized.current = true;
   }, [defaultValue, options, onChange]);
 
+  const processedOptions = useMemo(() => {
+    return options.map((option) => {
+      if (type === 'influencer' || option.isMain !== undefined) {
+        return option;
+      }
+      return {
+        ...option,
+        isMain: option.mainId === undefined,
+      };
+    });
+  }, [options, type]);
+
+  const mainOptions = useMemo(() => {
+    if (type === 'influencer') {
+      return processedOptions;
+    }
+    return processedOptions.filter((option) => option.isMain === true);
+  }, [processedOptions, type]);
+
+  useEffect(() => {
+    if (!searchTerm || type !== 'category') return;
+
+    const matchingSubOptions = processedOptions.filter(
+      (option) => !option.isMain && option.label.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+
+    // 검색 시 서브 옵션에서 일치할 때, 첫 번째로 매칭된 서브옵션의 메인 ID 설정
+    if (matchingSubOptions.length > 0 && matchingSubOptions[0].mainId) {
+      setSelectedMainId(matchingSubOptions[0].mainId);
+
+      const matchingMainOption = mainOptions.find((option) => option.id === matchingSubOptions[0].mainId);
+      if (matchingMainOption) {
+        setSelectedMainOption(matchingMainOption);
+      }
+    }
+  }, [searchTerm, processedOptions, type, mainOptions]);
+
   const filteredOptions = useMemo(() => {
     try {
       return (
-        options?.filter((option) => {
-          const mainMatch = option?.label?.toLowerCase().includes(searchTerm.toLowerCase());
-          return mainMatch;
+        processedOptions?.filter((option) => {
+          if (!searchTerm) return true;
+          return option?.label?.toLowerCase().includes(searchTerm.toLowerCase());
         }) || []
       );
     } catch {
       return [];
     }
-  }, [options, searchTerm]);
+  }, [processedOptions, searchTerm]);
+
+  const filteredMainOptions = useMemo(() => {
+    if (type === 'influencer') {
+      return filteredOptions;
+    }
+    return filteredOptions.filter((option) => option.isMain === true);
+  }, [filteredOptions, type]);
+
+  const filteredSubOptions = useMemo(() => {
+    if (!selectedMainId || type !== 'category') return [];
+
+    return filteredOptions.filter((option) => option.isMain === false && option.mainId === selectedMainId);
+  }, [filteredOptions, selectedMainId, type]);
 
   const handleMainOptionClick = (option: Option) => {
-    setSelectedMainOption(option);
-    onChange({
-      main: option.label,
-    });
+    if (type === 'category' && option.isMain && option.id) {
+      setSelectedMainId(option.id);
+      setSelectedMainOption(option);
+    } else {
+      setSelectedMainOption(option);
+      onChange({
+        main: option.label,
+      });
+      setIsOpen(false);
+      setSelectedMainOption(null);
+      setSelectedMainId(null);
+    }
+  };
+
+  const handleSubOptionClick = (option: Option) => {
+    if (option.mainId && option.label === '전체') {
+      const mainOption = mainOptions.find((main) => main.id === option.mainId);
+      if (mainOption) {
+        // 전체를 선택한 경우만 메인 카테고리 이름으로 표시
+        onChange({
+          main: mainOption.label,
+          sub: option.label,
+        });
+      } else {
+        onChange({
+          main: option.label,
+        });
+      }
+    } else {
+      // 다른 서브 카테고리는 그대로
+      onChange({
+        main: option.label,
+      });
+    }
     setIsOpen(false);
     setSelectedMainOption(null);
+    setSelectedMainId(null);
   };
 
   const handleSearchInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
+    if (event.target.value === '') {
+      setSelectedMainId(null);
+    }
   };
 
   const handleDropdownToggle = () => {
     if (isOpen) {
       setIsOpen(false);
       setSelectedMainOption(null);
+      setSelectedMainId(null);
       setSearchTerm('');
     } else {
       setIsOpen(true);
+      setSearchTerm('');
     }
   };
 
   const renderMainOptions = () => {
-    return filteredOptions.map((option) => {
+    const displayOptions = [...filteredMainOptions];
+
+    if (searchTerm && selectedMainId && type === 'category') {
+      const selectedMain = mainOptions.find((option) => option.id === selectedMainId);
+      if (selectedMain && !displayOptions.some((opt) => opt.id === selectedMain.id)) {
+        displayOptions.push(selectedMain);
+      }
+    }
+
+    return displayOptions.map((option) => {
       const isFiltered = selectedOptions && selectedOptions.includes(option.label);
 
       return (
@@ -107,6 +206,27 @@ export default function DropdownMenu({
           type={type}
           isSelected={selectedMainOption?.label === option.label}
           isFiltered={isFiltered}
+          isMain
+        />
+      );
+    });
+  };
+
+  const renderSubOptions = () => {
+    if (!selectedMainId || type !== 'category') return null;
+
+    return filteredSubOptions.map((option) => {
+      const isFiltered = selectedOptions && selectedOptions.includes(option.label);
+
+      return (
+        <DropdownItem
+          key={option.label}
+          label={option.label}
+          onClick={() => handleSubOptionClick(option)}
+          type={type}
+          isSelected={false}
+          isFiltered={isFiltered}
+          isMain={false}
         />
       );
     });
@@ -119,6 +239,7 @@ export default function DropdownMenu({
     }
     return <FaUser color="#5ae3fb" />;
   };
+
   return (
     <DropdownContainer ref={dropdownRef} type={type} $width={width}>
       <DropdownButton aria-label={`${type}_필터링`} $isOpen={isOpen} onClick={handleDropdownToggle}>
@@ -126,13 +247,20 @@ export default function DropdownMenu({
         {displayValue}
       </DropdownButton>
       {isOpen && (
-        <DropdownMenuContainer $type={type}>
+        <DropdownMenuContainer
+          $type={type}
+          $isCategory={type === 'category'}
+          $hasSubOptions={!!selectedMainId && type === 'category'}
+        >
           <SearchInputContainer>
             <SearchInput placeholder="검색" value={searchTerm} onChange={handleSearchInputChange} />
             <SearchIcon />
           </SearchInputContainer>
           <OptionsContainer>
-            <MainOptions>{renderMainOptions()}</MainOptions>
+            <MainOptionsColumn $fullWidth={!selectedMainId || type !== 'category'}>
+              {renderMainOptions()}
+            </MainOptionsColumn>
+            {type === 'category' && selectedMainId && <SubOptionsColumn>{renderSubOptions()}</SubOptionsColumn>}
           </OptionsContainer>
         </DropdownMenuContainer>
       )}
@@ -193,6 +321,8 @@ const DropdownButton = styled.button<{ $isOpen: boolean }>`
 
 const DropdownMenuContainer = styled.div<{
   $type: 'influencer' | 'category';
+  $isCategory: boolean;
+  $hasSubOptions: boolean;
 }>`
   position: absolute;
   top: 100%;
@@ -206,7 +336,12 @@ const DropdownMenuContainer = styled.div<{
         left: 0;
       `;
   }}
-  width: 150%;
+  width: ${(props) => {
+    if (props.$isCategory && props.$hasSubOptions) {
+      return '300%';
+    }
+    return '150%';
+  }};
   background: #ffffff;
   color: #333333;
   box-shadow: 0 3px 12px 0 rgb(0 0 0/0.15);
@@ -282,8 +417,24 @@ const OptionsContainer = styled.div`
   }
 `;
 
-const MainOptions = styled.div`
-  flex: 1;
+const MainOptionsColumn = styled.div<{ $fullWidth?: boolean }>`
+  width: ${(props) => (props.$fullWidth ? '100%' : '50%')};
+  max-height: 250px;
+  overflow-y: auto;
+  border-right: ${(props) => (props.$fullWidth ? 'none' : '1px solid #eee')};
+
+  @media screen and (max-width: 768px) {
+    max-height: 100%;
+    border-right: ${({ theme, $fullWidth }) => {
+      if ($fullWidth) return 'none';
+      if (theme.backgroundColor === '#292929') return '1px solid #444';
+      return '1px solid #eee';
+    }};
+  }
+`;
+
+const SubOptionsColumn = styled.div`
+  width: 50%;
   max-height: 250px;
   overflow-y: auto;
 
