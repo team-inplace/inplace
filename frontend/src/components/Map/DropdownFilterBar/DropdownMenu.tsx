@@ -124,9 +124,15 @@ export default function DropdownMenu({
 
   const filteredSubOptions = useMemo(() => {
     if (!selectedMainId || type !== 'category') return [];
+    const isMainOptionSelected = mainOptions.some(
+      (option) => option.id === selectedMainId && option.label.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
 
+    if (isMainOptionSelected || !searchTerm) {
+      return processedOptions.filter((option) => option.isMain === false && option.mainId === selectedMainId);
+    }
     return filteredOptions.filter((option) => option.isMain === false && option.mainId === selectedMainId);
-  }, [filteredOptions, selectedMainId, type]);
+  }, [filteredOptions, processedOptions, selectedMainId, type, searchTerm, mainOptions]);
 
   const handleMainOptionClick = (option: Option) => {
     if (type === 'category' && option.isMain && option.id) {
