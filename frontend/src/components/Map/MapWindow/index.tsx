@@ -26,7 +26,7 @@ interface MapWindowProps {
   isInitialLoad: boolean;
   setIsInitialLoad: React.Dispatch<React.SetStateAction<boolean>>;
   filters: {
-    categories: string[];
+    categories: number[];
     influencers: string[];
   };
   filtersWithPlaceName: FilterParams;

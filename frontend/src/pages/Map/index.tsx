@@ -15,7 +15,7 @@ export default function MapPage() {
   const { data: influencerOptions } = useGetDropdownName();
   const { data: categoryOptions = [] } = useGetDropdownCategory();
   const [selectedInfluencers, setSelectedInfluencers] = useState<string[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<{ id: number; label: string }[]>([]);
   const [selectedPlaceName, setSelectedPlaceName] = useState<string>('');
   const [isFilterBarOpened, setIsFilterBarOpened] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
@@ -42,7 +42,7 @@ export default function MapPage() {
 
   const filters = useMemo(
     () => ({
-      categories: selectedCategories,
+      categories: selectedCategories.map((cat) => cat.id),
       influencers: selectedInfluencers,
     }),
     [selectedCategories, selectedInfluencers],
@@ -50,7 +50,7 @@ export default function MapPage() {
 
   const filtersWithPlaceName = useMemo(
     () => ({
-      categories: selectedCategories,
+      categories: selectedCategories.map((cat) => cat.id),
       influencers: selectedInfluencers,
       placeName: selectedPlaceName,
     }),
@@ -65,19 +65,21 @@ export default function MapPage() {
     });
   }, []);
 
-  const handleCategoryChange = useCallback((value: { main: string }) => {
-    setSelectedCategories((prev) => {
-      if (prev.includes(value.main)) return prev;
-      return [...prev, value.main];
-    });
+  const handleCategoryChange = useCallback((value: { main: string; id?: number }) => {
+    if (typeof value.id === 'number') {
+      setSelectedCategories((prev) => {
+        if (prev.some((category) => category.id === value.id)) return prev;
+        return [...prev, { id: value.id!, label: value.main }];
+      });
+    }
   }, []);
 
   const handleInfluencerClear = useCallback((influencerToRemove: string) => {
     setSelectedInfluencers((prev) => prev.filter((influencer) => influencer !== influencerToRemove));
   }, []);
 
-  const handleCategoryClear = useCallback((categoryToRemove: string) => {
-    setSelectedCategories((prev) => prev.filter((category) => category !== categoryToRemove));
+  const handleCategoryClear = useCallback((categoryToRemove: number) => {
+    setSelectedCategories((prev) => prev.filter((category) => category.id !== categoryToRemove));
   }, []);
 
   const handleListExpand = useCallback(() => {
@@ -113,7 +115,7 @@ export default function MapPage() {
         placeholder: '카테고리',
         type: 'category',
         width: 120,
-        selectedOptions: selectedCategories,
+        selectedOptions: selectedCategories.map((cat) => cat.id),
       },
     },
   ];

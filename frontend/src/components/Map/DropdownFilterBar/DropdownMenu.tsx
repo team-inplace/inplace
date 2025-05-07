@@ -15,13 +15,13 @@ interface Option {
 
 export interface DropdownMenuProps {
   options: Option[];
-  onChange: (value: { main: string; sub?: string; lat?: number; lng?: number }) => void;
+  onChange: (value: { main: string; sub?: string; lat?: number; lng?: number; id?: number }) => void;
   isMobileOpen: boolean;
   placeholder?: string;
   type: 'influencer' | 'category';
   width: number;
   defaultValue?: string;
-  selectedOptions?: string[];
+  selectedOptions?: string[] | number[];
 }
 
 export default function DropdownMenu({
@@ -134,6 +134,7 @@ export default function DropdownMenu({
       setSelectedMainOption(option);
       onChange({
         main: option.label,
+        id: type === 'category' ? option.id : undefined,
       });
       setIsOpen(false);
       setSelectedMainOption(null);
@@ -149,16 +150,19 @@ export default function DropdownMenu({
         onChange({
           main: mainOption.label,
           sub: option.label,
+          id: type === 'category' ? mainOption.id : undefined,
         });
       } else {
         onChange({
           main: option.label,
+          id: type === 'category' ? option.id : undefined,
         });
       }
     } else {
       // 다른 서브 카테고리는 그대로
       onChange({
         main: option.label,
+        id: type === 'category' ? option.id : undefined,
       });
     }
     setIsOpen(false);
@@ -196,7 +200,11 @@ export default function DropdownMenu({
     }
 
     return displayOptions.map((option) => {
-      const isFiltered = selectedOptions && selectedOptions.includes(option.label);
+      const isFiltered =
+        selectedOptions &&
+        (type === 'category' && option.id
+          ? (selectedOptions as number[]).includes(option.id)
+          : (selectedOptions as string[]).includes(option.label));
 
       return (
         <DropdownItem
@@ -216,8 +224,11 @@ export default function DropdownMenu({
     if (!selectedMainId || type !== 'category') return null;
 
     return filteredSubOptions.map((option) => {
-      const isFiltered = selectedOptions && selectedOptions.includes(option.label);
-
+      const isFiltered =
+        selectedOptions &&
+        (type === 'category' && option.id
+          ? (selectedOptions as number[]).includes(option.id)
+          : (selectedOptions as string[]).includes(option.label));
       return (
         <DropdownItem
           key={option.label}

@@ -82,7 +82,7 @@ export type LocationData = {
 };
 
 export type FilterParams = {
-  categories: string[];
+  categories: number[];
   influencers: string[];
   placeName?: string;
 };
