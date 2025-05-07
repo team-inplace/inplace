@@ -30,7 +30,7 @@ const dummyCategoryData = {
     },
     {
       id: 4,
-      name: '놀곳',
+      name: '놀거리',
       subCategories: [
         { id: 4, name: '전체' },
         { id: 5, name: '오락실' },

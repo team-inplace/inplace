@@ -93,6 +93,20 @@ export default function MapPage() {
   const dropdownItems: FilterBarItem[] = [
     {
       type: 'dropdown',
+      id: 'category',
+      props: {
+        options: categoryOptions,
+        onChange: handleCategoryChange,
+        isMobileOpen: false,
+        placeholder: '카테고리',
+        type: 'category',
+        width: 140,
+        selectedOptions: selectedCategories.map((cat) => cat.id),
+      },
+    },
+    { type: 'separator', id: 'sep2' },
+    {
+      type: 'dropdown',
       id: 'influencer',
       props: {
         options: influencerOptions,
@@ -102,20 +116,6 @@ export default function MapPage() {
         type: 'influencer',
         width: 140,
         selectedOptions: selectedInfluencers,
-      },
-    },
-    { type: 'separator', id: 'sep2' },
-    {
-      type: 'dropdown',
-      id: 'category',
-      props: {
-        options: categoryOptions,
-        onChange: handleCategoryChange,
-        isMobileOpen: false,
-        placeholder: '카테고리',
-        type: 'category',
-        width: 120,
-        selectedOptions: selectedCategories.map((cat) => cat.id),
       },
     },
   ];

@@ -212,7 +212,7 @@ export default function DropdownMenu({
       if (type === 'category') {
         if (option.label === '맛집' || option.id === 1) {
           icon = <ImSpoonKnife color="#ec7450" size={16} />;
-        } else if (option.label === '놀곳' || option.id === 4) {
+        } else if (option.label === '놀거리' || option.id === 4) {
           icon = <FaRankingStar color="#3778ef" size={16} />;
         }
       }
@@ -349,7 +349,7 @@ const DropdownMenuContainer = styled.div<{
   position: absolute;
   top: 100%;
   ${({ $type }) => {
-    if ($type === 'category') {
+    if ($type === 'influencer') {
       return `
         right: 0;
       `;
@@ -360,7 +360,7 @@ const DropdownMenuContainer = styled.div<{
   }}
   width: ${(props) => {
     if (props.$isCategory && props.$hasSubOptions) {
-      return '300%';
+      return '200%';
     }
     return '150%';
   }};
