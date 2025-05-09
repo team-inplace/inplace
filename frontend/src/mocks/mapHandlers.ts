@@ -23,7 +23,6 @@ const dummyCategoryData = {
       id: 1,
       name: '맛집',
       subCategories: [
-        { id: 1, name: '전체' },
         { id: 2, name: '중국집' },
         { id: 3, name: '일식' },
       ],
@@ -32,7 +31,6 @@ const dummyCategoryData = {
       id: 4,
       name: '놀거리',
       subCategories: [
-        { id: 4, name: '전체' },
         { id: 5, name: '오락실' },
         { id: 6, name: '영화관' },
       ],

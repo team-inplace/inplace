@@ -13,13 +13,22 @@ const useGetDropdownCategory = () => {
           id: category.id,
           isMain: true,
         };
+
+        const allOption: CategoryOption = {
+          label: '전체',
+          id: category.id,
+          isMain: false,
+          mainId: category.id,
+        };
+
         const subOptions: CategoryOption[] = category.subCategories.map((subCategory) => ({
           label: subCategory.name,
           id: subCategory.id,
           isMain: false,
           mainId: category.id,
         }));
-        return [mainOption, ...subOptions];
+
+        return [mainOption, allOption, ...subOptions];
       });
       return options;
     },
