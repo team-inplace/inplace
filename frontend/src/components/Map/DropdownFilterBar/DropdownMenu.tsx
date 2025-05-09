@@ -46,6 +46,8 @@ export default function DropdownMenu({
 
   useClickOutside([dropdownRef], () => {
     setIsOpen(false);
+    setSelectedMainOption(null);
+    setSelectedMainId(null);
   });
 
   useEffect(() => {

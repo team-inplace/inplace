@@ -41,7 +41,7 @@ const DropdownItems = styled.div<{
   overflow: hidden;
   text-overflow: ellipsis;
   background-color: ${(props) => {
-    if (props.$isFiltered) return '#e8f9ff';
+    if (props.$isFiltered && !props.$isMain) return '#e8f9ff';
     if (props.$isSelected) return '#e6f0ff';
     return 'transparent';
   }};
