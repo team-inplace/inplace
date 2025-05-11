@@ -69,9 +69,12 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
     }
 
     @Override
-    public List<DetailedVideo> findTop10ByViewCountIncrement() {
+    public List<DetailedVideo> findTop10ByViewCountIncrement(Long parentCategoryId) {
         return buildDetailedVideoQuery()
-            .where(commonWhere().and(QPlaceVideo.placeVideo.isNotNull()))
+            .where(commonWhere()
+                .and(QPlaceVideo.placeVideo.isNotNull())
+                .and(QCategory.category.parentId.eq(parentCategoryId)) // 상위 카테고리 ID로 필터링
+            )
             .orderBy(QVideo.video.view.viewCountIncrease.desc())
             .limit(10)
             .fetch();
@@ -201,6 +204,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
                 QPlace.place.id,
                 QPlace.place.name,
                 QCategory.category.name,
+                QCategory.category.parentId,
                 QPlace.place.address.address1,
                 QPlace.place.address.address2,
                 QPlace.place.address.address3

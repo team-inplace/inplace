@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.global.annotation.Facade;
 import team7.inplace.influencer.application.InfluencerService;
+import team7.inplace.place.application.CategoryService;
 import team7.inplace.place.application.PlaceService;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.video.application.command.VideoCommand;
@@ -21,6 +22,7 @@ public class VideoFacade {
     private final VideoService videoService;
     private final InfluencerService influencerService;
     private final PlaceService placeService;
+    private final CategoryService categoryService;
 
     @Transactional
     public void createMediumVideos(
@@ -57,4 +59,11 @@ public class VideoFacade {
     public Page<VideoQueryResult.SimpleVideo> getVideoWithNoPlace(Pageable pageable) {
         return videoService.getVideoWithNoPlace(pageable);
     }
+
+    @Transactional
+    public void updateCoolVideos() {
+        List<Long> parentCategoryIds = categoryService.getParentCategoryIds();
+        videoService.updateCoolVideos(parentCategoryIds);
+    }
+
 }

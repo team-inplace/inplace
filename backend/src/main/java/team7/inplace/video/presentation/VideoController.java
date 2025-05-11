@@ -89,7 +89,7 @@ public class VideoController implements VideoControllerApiSpec {
     @GetMapping("/update")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> updateMainVideos() {
-        videoService.updateCoolVideos();
+        videoFacade.updateCoolVideos();
         videoService.updateRecentVideos();
         return new ResponseEntity<>(HttpStatus.OK);
     }

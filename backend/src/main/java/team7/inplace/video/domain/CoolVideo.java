@@ -35,6 +35,9 @@ public class CoolVideo {
     @Column(name = "place_category")
     private String placeCategory;
 
+    @Column(name = "place_category_parent_id")
+    private Long placeCategoryParentId;
+
     @Column(name = "place_name")
     private String placeName;
 
@@ -54,6 +57,7 @@ public class CoolVideo {
         Long placeId,
         String placeName,
         String placeCategory,
+        Long placeCategoryParentId,
         String address1,
         String address2,
         String address3
@@ -64,6 +68,7 @@ public class CoolVideo {
         this.placeId = placeId;
         this.placeName = placeName;
         this.placeCategory = placeCategory;
+        this.placeCategoryParentId = placeCategoryParentId;
         this.address1 = address1;
         this.address2 = address2;
         this.address3 = address3;
@@ -76,6 +81,7 @@ public class CoolVideo {
         Long placeId,
         String placeName,
         String placeCategory,
+        Long placeCategoryParentId,
         String address1,
         String address2,
         String address3
@@ -87,6 +93,7 @@ public class CoolVideo {
             placeId,
             placeName,
             placeCategory,
+            placeCategoryParentId,
             address1,
             address2,
             address3

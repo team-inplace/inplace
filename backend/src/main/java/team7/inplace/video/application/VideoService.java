@@ -1,5 +1,6 @@
 package team7.inplace.video.application;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -122,9 +123,14 @@ public class VideoService {
     }
 
     @Transactional
-    public void updateCoolVideos() {
-        // 인기순 top 10 video 가져오기
-        List<DetailedVideo> coolVideos = videoReadRepository.findTop10ByViewCountIncrement();
+    public void updateCoolVideos(List<Long> parentCategoryIds) {
+        List<DetailedVideo> coolVideos = new ArrayList<>();
+
+        // 상위 카테고리별 인기순 top 10 video 가져오기
+        for (Long parentCategoryId : parentCategoryIds) {
+            List<DetailedVideo> top10 = videoReadRepository.findTop10ByViewCountIncrement(parentCategoryId);
+            coolVideos.addAll(top10);
+        }
 
         // coolVideo table 업데이트하기
         coolVideoRepository.deleteAll();

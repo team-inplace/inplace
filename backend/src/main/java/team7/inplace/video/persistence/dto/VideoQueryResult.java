@@ -1,6 +1,7 @@
 package team7.inplace.video.persistence.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
+import org.springframework.lang.Nullable;
 import team7.inplace.video.domain.CoolVideo;
 import team7.inplace.video.domain.RecentVideo;
 
@@ -31,6 +32,7 @@ public class VideoQueryResult {
         Long placeId,
         String placeName,
         String placeCategory,
+        @Nullable Long placeCategoryParentId,
         String address1,
         String address2,
         String address3
@@ -48,6 +50,7 @@ public class VideoQueryResult {
                 coolVideo.getPlaceId(),
                 coolVideo.getPlaceName(),
                 coolVideo.getPlaceCategory(),
+                coolVideo.getPlaceCategoryParentId(),
                 coolVideo.getAddress1(),
                 coolVideo.getAddress2(),
                 coolVideo.getAddress3()
@@ -62,6 +65,7 @@ public class VideoQueryResult {
                 recentVideo.getPlaceId(),
                 recentVideo.getPlaceName(),
                 recentVideo.getPlaceCategory(),
+                null,
                 recentVideo.getAddress1(),
                 recentVideo.getAddress2(),
                 recentVideo.getAddress3()
@@ -74,7 +78,7 @@ public class VideoQueryResult {
 
         public CoolVideo toCoolVideo() {
             return CoolVideo.from(videoId, videoUUID, influencerName, placeId, placeName,
-                placeCategory, address1, address2, address3);
+                placeCategory, placeCategoryParentId, address1, address2, address3);
         }
 
         public RecentVideo toRecentVideo() {
