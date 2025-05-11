@@ -33,7 +33,7 @@ public interface VideoControllerApiSpec {
         summary = "쿨한 그 곳",
         description = "조회수 증가량을 기준으로 내림차순 정렬한 Video 정보를 조회합니다."
     )
-    ResponseEntity<List<VideoResponse.Detail>> readByCool();
+    ResponseEntity<List<VideoResponse.Detail>> readByCool(@PathVariable String category);
 
     @Operation(
         summary = "내 인플루언서의 비디오 반환",

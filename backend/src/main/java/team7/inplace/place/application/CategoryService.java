@@ -12,6 +12,11 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     @Transactional(readOnly = true)
+    public Long getCategoryId(String categoryName) {
+        return categoryRepository.findCategoryIdByName(categoryName);
+    }
+
+    @Transactional(readOnly = true)
     public List<Long> getParentCategoryIds() {
         return categoryRepository.findParentCategoryIds();
     }

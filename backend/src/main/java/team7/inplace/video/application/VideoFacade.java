@@ -60,6 +60,11 @@ public class VideoFacade {
         return videoService.getVideoWithNoPlace(pageable);
     }
 
+    @Transactional(readOnly = true)
+    public Long getCategoryId(String categoryName) {
+        return categoryService.getCategoryId(categoryName);
+    }
+
     @Transactional
     public void updateCoolVideos() {
         List<Long> parentCategoryIds = categoryService.getParentCategoryIds();
