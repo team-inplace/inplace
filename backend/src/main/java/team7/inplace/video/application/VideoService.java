@@ -75,9 +75,9 @@ public class VideoService {
     }
 
     @Transactional(readOnly = true)
-    public Page<VideoQueryResult.SimpleVideo> getOneInfluencerVideos(
+    public Page<VideoQueryResult.DetailedVideo> getOneInfluencerVideos(
         Long influencerId, Pageable pageable) {
-        var videos = videoReadRepository.findSimpleVideosWithOneInfluencerId(influencerId,
+        var videos = videoReadRepository.findDetailedVideosWithOneInfluencerId(influencerId,
             pageable);
         return videos;
     }
@@ -114,14 +114,6 @@ public class VideoService {
                 .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
             video.updateViewCount(videoCommand.viewCount());
         }
-    }
-
-    @Transactional
-    public void addPlaceInfo(Long videoId, Long placeId) {
-        var video = videoRepository.findById(videoId)
-            .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
-
-        video.addPlace(placeId);
     }
 
     @Transactional

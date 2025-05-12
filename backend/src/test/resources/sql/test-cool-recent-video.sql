@@ -1,37 +1,43 @@
 INSERT INTO cool_videos (id, video_id, uuid, influencer_name, place_id, place_name, place_category)
-VALUES
-    (1, 1, 'CoolVideo1', 'CoolInfluencer1', 101, 'CoolPlace1', 'RESTAURANT'),
-    (2, 2, 'CoolVideo2', 'CoolInfluencer2', 102, 'CoolPlace2', 'CAFE'),
-    (3, 3, 'CoolVideo3', 'CoolInfluencer3', 103, 'CoolPlace3', 'JAPANESE'),
-    (4, 4, 'CoolVideo4', 'CoolInfluencer4', 104, 'CoolPlace4', 'KOREAN'),
-    (5, 5, 'CoolVideo5', 'CoolInfluencer5', 105, 'CoolPlace5', 'NONE'),
-    (6, 6, 'CoolVideo6', 'CoolInfluencer6', 106, 'CoolPlace6', 'WESTERN'),
-    (7, 7, 'CoolVideo7', 'CoolInfluencer7', 107, 'CoolPlace7', 'RESTAURANT'),
-    (8, 8, 'CoolVideo8', 'CoolInfluencer8', 108, 'CoolPlace8', 'CAFE'),
-    (9, 9, 'CoolVideo9', 'CoolInfluencer9', 109, 'CoolPlace9', 'JAPANESE'),
-    (10, 10, 'CoolVideo10', 'CoolInfluencer10', 110, 'CoolPlace10', 'KOREAN');
+VALUES (1, 1, 'CoolVideo1', 'CoolInfluencer1', 101, 'CoolPlace1', 'RESTAURANT'),
+       (2, 2, 'CoolVideo2', 'CoolInfluencer2', 102, 'CoolPlace2', 'CAFE'),
+       (3, 3, 'CoolVideo3', 'CoolInfluencer3', 103, 'CoolPlace3', 'JAPANESE'),
+       (4, 4, 'CoolVideo4', 'CoolInfluencer4', 104, 'CoolPlace4', 'KOREAN'),
+       (5, 5, 'CoolVideo5', 'CoolInfluencer5', 105, 'CoolPlace5', 'NONE'),
+       (6, 6, 'CoolVideo6', 'CoolInfluencer6', 106, 'CoolPlace6', 'WESTERN'),
+       (7, 7, 'CoolVideo7', 'CoolInfluencer7', 107, 'CoolPlace7', 'RESTAURANT'),
+       (8, 8, 'CoolVideo8', 'CoolInfluencer8', 108, 'CoolPlace8', 'CAFE'),
+       (9, 9, 'CoolVideo9', 'CoolInfluencer9', 109, 'CoolPlace9', 'JAPANESE'),
+       (10, 10, 'CoolVideo10', 'CoolInfluencer10', 110, 'CoolPlace10', 'KOREAN');
 
-INSERT INTO places (id, name, latitude, longitude, address1, address2, address3, category)
-VALUES (1, 'testPlace1', 36.90, 126.90, 'add1', 'add2', 'add3', 'RESTAURANT'),
-       (2, 'testPlace2', 36.91, 126.91, 'add1', 'add2', 'add3', 'CAFE'),
-       (3, 'testPlace3', 36.92, 126.92, 'add1', 'add2', 'add3', 'WESTERN'),
-       (4, 'testPlace4', 36.93, 126.93, 'add1', 'add2', 'add3', 'JAPANESE'),
-       (5, 'testPlace5', 36.94, 126.94, 'add1', 'add2', 'add3', 'KOREAN'),
-       (6, 'testPlace6', 36.95, 126.95, 'add1', 'add2', 'add3', 'RESTAURANT'),
-       (7, 'testPlace7', 36.96, 126.96, 'add1', 'add2', 'add3', 'CAFE'),
-       (8, 'testPlace8', 36.97, 126.97, 'add1', 'add2', 'add3', 'WESTERN'),
-       (9, 'testPlace9', 36.98, 126.98, 'add1', 'add2', 'add3', 'JAPANESE'),
-       (10, 'testPlace10', 36.99, 126.99, 'add1', 'add2', 'add3', 'KOREAN'),
-       (11, 'testPlace11', 37.00, 127.00, 'add1', 'add2', 'add3', 'RESTAURANT'),
-       (12, 'testPlace12', 37.01, 127.01, 'add1', 'add2', 'add3', 'CAFE'),
-       (13, 'testPlace13', 37.02, 127.02, 'add1', 'add2', 'add3', 'WESTERN'),
-       (14, 'testPlace14', 37.03, 127.03, 'add1', 'add2', 'add3', 'JAPANESE'),
-       (15, 'testPlace15', 37.04, 127.04, 'add1', 'add2', 'add3', 'KOREAN'),
-       (16, 'testPlace16', 37.05, 127.05, 'add1', 'add2', 'add3', 'RESTAURANT'),
-       (17, 'testPlace17', 37.06, 127.06, 'add1', 'add2', 'add3', 'CAFE'),
-       (18, 'testPlace18', 37.07, 127.07, 'add1', 'add2', 'add3', 'WESTERN'),
-       (19, 'testPlace19', 37.08, 127.08, 'add1', 'add2', 'add3', 'JAPANESE'),
-       (20, 'testPlace20', 37.09, 127.09, 'add1', 'add2', 'add3', 'KOREAN');
+INSERT INTO categories(id, name, parent_id)
+VALUES (1, '맛집', null),
+       (2, '카페', 1),
+       (3, '양식', 1),
+       (4, '일식', 1),
+       (5, '한식', 1);
+
+INSERT INTO places (id, name, latitude, longitude, address1, address2, address3, category_id)
+VALUES (1, 'testPlace1', 36.90, 126.90, 'add1', 'add2', 'add3', 1),
+       (2, 'testPlace2', 36.91, 126.91, 'add1', 'add2', 'add3', 2),
+       (3, 'testPlace3', 36.92, 126.92, 'add1', 'add2', 'add3', 3),
+       (4, 'testPlace4', 36.93, 126.93, 'add1', 'add2', 'add3', 4),
+       (5, 'testPlace5', 36.94, 126.94, 'add1', 'add2', 'add3', 5),
+       (6, 'testPlace6', 36.95, 126.95, 'add1', 'add2', 'add3', 1),
+       (7, 'testPlace7', 36.96, 126.96, 'add1', 'add2', 'add3', 2),
+       (8, 'testPlace8', 36.97, 126.97, 'add1', 'add2', 'add3', 3),
+       (9, 'testPlace9', 36.98, 126.98, 'add1', 'add2', 'add3', 4),
+       (10, 'testPlace10', 36.99, 126.99, 'add1', 'add2', 'add3', 5),
+       (11, 'testPlace11', 37.00, 127.00, 'add1', 'add2', 'add3', 1),
+       (12, 'testPlace12', 37.01, 127.01, 'add1', 'add2', 'add3', 2),
+       (13, 'testPlace13', 37.02, 127.02, 'add1', 'add2', 'add3', 3),
+       (14, 'testPlace14', 37.03, 127.03, 'add1', 'add2', 'add3', 4),
+       (15, 'testPlace15', 37.04, 127.04, 'add1', 'add2', 'add3', 5),
+       (16, 'testPlace16', 37.05, 127.05, 'add1', 'add2', 'add3', 1),
+       (17, 'testPlace17', 37.06, 127.06, 'add1', 'add2', 'add3', 2),
+       (18, 'testPlace18', 37.07, 127.07, 'add1', 'add2', 'add3', 3),
+       (19, 'testPlace19', 37.08, 127.08, 'add1', 'add2', 'add3', 4),
+       (20, 'testPlace20', 37.09, 127.09, 'add1', 'add2', 'add3', 5);
 
 INSERT INTO influencers (id, name, job, channel_id, img_url)
 VALUES (1, 'influencer1', 'job1', 'channel1', 'img1'),
@@ -67,15 +73,15 @@ VALUES (1, 1, 1, 'Video1', 1, '2025-02-06 12:00:01.000000'),
        (24, 5, null, 'Video24', 19, '2025-02-06 12:23:01.000000'),
        (25, 5, null, 'Video25', 20, '2025-02-06 12:24:01.000000');
 
-INSERT INTO recent_videos (id, video_id, uuid, influencer_name, place_id, place_name, place_category)
-VALUES
-    (1, 1, 'RecentVideo1', 'RecentInfluencer1', 101, 'RecentPlace1', 'RESTAURANT'),
-    (2, 2, 'RecentVideo2', 'RecentInfluencer2', 102, 'RecentPlace2', 'CAFE'),
-    (3, 3, 'RecentVideo3', 'RecentInfluencer3', 103, 'RecentPlace3', 'JAPANESE'),
-    (4, 4, 'RecentVideo4', 'RecentInfluencer4', 104, 'RecentPlace4', 'KOREAN'),
-    (5, 5, 'RecentVideo5', 'RecentInfluencer5', 105, 'RecentPlace5', 'NONE'),
-    (6, 6, 'RecentVideo6', 'RecentInfluencer6', 106, 'RecentPlace6', 'WESTERN'),
-    (7, 7, 'RecentVideo7', 'RecentInfluencer7', 107, 'RecentPlace7', 'RESTAURANT'),
-    (8, 8, 'RecentVideo8', 'RecentInfluencer8', 108, 'RecentPlace8', 'CAFE'),
-    (9, 9, 'RecentVideo9', 'RecentInfluencer9', 109, 'RecentPlace9', 'JAPANESE'),
-    (10, 10, 'RecentVideo10', 'RecentInfluencer10', 110, 'RecentPlace10', 'KOREAN');
+INSERT INTO recent_videos (id, video_id, uuid, influencer_name, place_id, place_name,
+                           place_category)
+VALUES (1, 1, 'RecentVideo1', 'RecentInfluencer1', 101, 'RecentPlace1', 'RESTAURANT'),
+       (2, 2, 'RecentVideo2', 'RecentInfluencer2', 102, 'RecentPlace2', 'CAFE'),
+       (3, 3, 'RecentVideo3', 'RecentInfluencer3', 103, 'RecentPlace3', 'JAPANESE'),
+       (4, 4, 'RecentVideo4', 'RecentInfluencer4', 104, 'RecentPlace4', 'KOREAN'),
+       (5, 5, 'RecentVideo5', 'RecentInfluencer5', 105, 'RecentPlace5', 'NONE'),
+       (6, 6, 'RecentVideo6', 'RecentInfluencer6', 106, 'RecentPlace6', 'WESTERN'),
+       (7, 7, 'RecentVideo7', 'RecentInfluencer7', 107, 'RecentPlace7', 'RESTAURANT'),
+       (8, 8, 'RecentVideo8', 'RecentInfluencer8', 108, 'RecentPlace8', 'CAFE'),
+       (9, 9, 'RecentVideo9', 'RecentInfluencer9', 109, 'RecentPlace9', 'JAPANESE'),
+       (10, 10, 'RecentVideo10', 'RecentInfluencer10', 110, 'RecentPlace10', 'KOREAN');

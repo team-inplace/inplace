@@ -16,23 +16,45 @@ const dummyInfluencers = [
   { influencerName: '안성재' },
   { influencerName: '카페랩 모디 Cafe Lab. Maudie' },
 ];
+
+const dummyCategoryData = {
+  categories: [
+    {
+      id: 1,
+      name: '맛집',
+      subCategories: [
+        { id: 2, name: '중국집' },
+        { id: 3, name: '일식' },
+      ],
+    },
+    {
+      id: 4,
+      name: '놀거리',
+      subCategories: [
+        { id: 5, name: '오락실' },
+        { id: 6, name: '영화관' },
+      ],
+    },
+  ],
+};
+
 const dummyAllMarkers = [
-  { placeId: 1, longitude: '128.59691803894955', latitude: '35.879135694467514' },
-  { placeId: 2, longitude: '126.9314925', latitude: '37.5666478' },
-  { placeId: 3, longitude: '128.6101069', latitude: '35.812447' },
-  { placeId: 4, longitude: '128.65037738548736', latitude: '35.855300594743575' },
-  { placeId: 5, longitude: '127.33301043369335', latitude: '36.351477682663756' },
-  { placeId: 6, longitude: '126.931851791899', latitude: '35.1256604935401' },
-  { placeId: 7, longitude: '128.6101608', latitude: '35.8857457' },
-  { placeId: 8, longitude: '127.753131738285', latitude: '37.8763535115171' },
-  { placeId: 9, longitude: '127.1436094525637', latitude: '37.275820090934495' },
-  { placeId: 10, longitude: '129.11483195198562', latitude: '35.158494192685914' },
-  { placeId: 11, longitude: '128.848643', latitude: '35.783343' },
-  { placeId: 12, longitude: '128.848642', latitude: '35.7834' },
-  { placeId: 13, longitude: '128.8483', latitude: '35.789' },
-  { placeId: 14, longitude: '128.74873', latitude: '35.689' },
-  { placeId: 15, longitude: '128.8499', latitude: '35.71' },
-  { placeId: 16, longitude: '128.9', latitude: '35.78' },
+  { placeId: 1, longitude: '128.59691803894955', latitude: '35.879135694467514', type: 'Eats' },
+  { placeId: 2, longitude: '126.9314925', latitude: '37.5666478', type: 'plays' },
+  { placeId: 3, longitude: '128.6101069', latitude: '35.812447', type: 'Eats' },
+  { placeId: 4, longitude: '128.65037738548736', latitude: '35.855300594743575', type: 'plays' },
+  { placeId: 5, longitude: '127.33301043369335', latitude: '36.351477682663756', type: 'Eats' },
+  { placeId: 6, longitude: '126.931851791899', latitude: '35.1256604935401', type: 'plays' },
+  { placeId: 7, longitude: '128.6101608', latitude: '35.8857457', type: 'Eats' },
+  { placeId: 8, longitude: '127.753131738285', latitude: '37.8763535115171', type: 'plays' },
+  { placeId: 9, longitude: '127.1436094525637', latitude: '37.275820090934495', type: 'plays' },
+  { placeId: 10, longitude: '129.11483195198562', latitude: '35.158494192685914', type: 'Eats' },
+  { placeId: 11, longitude: '128.848643', latitude: '35.783343', type: 'plays' },
+  { placeId: 12, longitude: '128.848642', latitude: '35.7834', type: 'Eats' },
+  { placeId: 13, longitude: '128.8483', latitude: '35.789', type: 'plays' },
+  { placeId: 14, longitude: '128.74873', latitude: '35.689', type: 'plays' },
+  { placeId: 15, longitude: '128.8499', latitude: '35.71', type: 'plays' },
+  { placeId: 16, longitude: '128.9', latitude: '35.78', type: 'Eats' },
 ];
 const dummyMarkerInfos: Record<string, MarkerInfo> = {
   '16': {
@@ -491,6 +513,9 @@ export const mapHandlers = [
         likes,
       }),
     );
+  }),
+  rest.get(`${BASE_URL}/places/categories`, (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json(dummyCategoryData));
   }),
   rest.get(`${BASE_URL}/influencers/names`, (_, res, ctx) => {
     return res(ctx.status(200), ctx.json(dummyInfluencers));

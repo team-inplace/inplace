@@ -1,6 +1,5 @@
 package team7.inplace.admin;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,9 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import team7.inplace.admin.banner.persistence.BannerRepository;
 import team7.inplace.global.properties.GoogleApiProperties;
 import team7.inplace.global.properties.KakaoApiProperties;
-import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerRepository;
-import team7.inplace.place.domain.Category;
+import team7.inplace.place.persistence.CategoryRepository;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
 
@@ -29,14 +27,14 @@ public class AdminPageController {
     private final VideoRepository videoRepository;
     private final BannerRepository bannerRepository;
     private final InfluencerRepository influencerRepository;
+    private final CategoryRepository categoryRepository;
 
     @GetMapping("/video")
     public String getVideos(
         @RequestParam(required = false) Long influencerId,
         @PageableDefault Pageable pageable, Model model
     ) {
-        List<Influencer> influencers = influencerRepository.findAll();
-        model.addAttribute("influencers", influencers);
+        model.addAttribute("influencers", influencerRepository.findAll());
         model.addAttribute("selectedInfluencerId", influencerId);
         Page<Video> videoPage = (influencerId != null)
             ? videoRepository.findAllByPlaceIsNullAndInfluencerId(pageable, influencerId)
@@ -45,8 +43,7 @@ public class AdminPageController {
         model.addAttribute("kakaoApiKey", kakaoApiProperties.jsKey());
         model.addAttribute("googleApiKey", googleApiProperties.placeKey1());
 
-        var categories = Category.values();
-        model.addAttribute("categories", categories);
+        model.addAttribute("categories", categoryRepository.findAll());
         return "admin/video.html";
     }
 

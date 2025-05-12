@@ -2,8 +2,6 @@ package team7.inplace.video.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -11,7 +9,6 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import team7.inplace.place.domain.Category;
 
 @Getter
 @Entity
@@ -35,12 +32,11 @@ public class CoolVideo {
     @Column(name = "place_id")
     private Long placeId;
 
+    @Column(name = "place_category")
+    private String placeCategory;
+
     @Column(name = "place_name")
     private String placeName;
-
-    @Column(name = "place_category")
-    @Enumerated(value = EnumType.STRING)
-    private Category placeCategory;
 
     @Column(name = "address1")
     private String address1;
@@ -57,7 +53,7 @@ public class CoolVideo {
         String influencerName,
         Long placeId,
         String placeName,
-        Category placeCategory,
+        String placeCategory,
         String address1,
         String address2,
         String address3
@@ -79,7 +75,7 @@ public class CoolVideo {
         String influencerName,
         Long placeId,
         String placeName,
-        Category placeCategory,
+        String placeCategory,
         String address1,
         String address2,
         String address3

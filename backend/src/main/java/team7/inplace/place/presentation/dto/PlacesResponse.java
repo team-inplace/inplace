@@ -3,7 +3,10 @@ package team7.inplace.place.presentation.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import team7.inplace.place.application.dto.PlaceInfo;
@@ -46,7 +49,7 @@ public class PlacesResponse {
                     placeInfo.place().address2(),
                     placeInfo.place().address3()
                 ),
-                placeInfo.place().category().getName(),
+                placeInfo.place().category(),
                 "",
                 placeInfo.place().longitude().toString(),
                 placeInfo.place().latitude().toString(),
@@ -97,7 +100,7 @@ public class PlacesResponse {
                     place.place().address2(),
                     place.place().address3()
                 ),
-                place.place().category().getName(),
+                place.place().category(),
                 place.place().longitude(),
                 place.place().latitude(),
                 null,
@@ -131,7 +134,7 @@ public class PlacesResponse {
                     place.place().address2(),
                     place.place().address3()
                 ),
-                place.place().category().getName(),
+                place.place().category(),
                 place.place().longitude(),
                 place.place().latitude(),
                 PlacesResponse.Facility.of(
@@ -294,7 +297,7 @@ public class PlacesResponse {
             return new MarkerDetail(
                 marker.place().placeId(),
                 marker.place().placeName(),
-                marker.place().category().getName(),
+                marker.place().category(),
                 new Address(
                     marker.place().address1(),
                     marker.place().address2(),
@@ -308,14 +311,38 @@ public class PlacesResponse {
         }
     }
 
-    public record Category(
-        List<String> categories
+    public record Categories(
+        List<Category> categories
     ) {
 
-        public static Category from(List<PlaceInfo.Category> categories) {
-            return new Category(categories.stream()
-                .map(PlaceInfo.Category::name)
-                .toList());
+        public static Categories from(List<PlaceInfo.Category> categories) {
+            Map<Long, Category> categoryMap = new HashMap<>();
+            categories.stream()
+                .filter(category -> category.parentId() == null)
+                .forEach(category -> {
+                    Category categoryResponse = Category.from(category);
+                    categoryMap.put(category.id(), categoryResponse);
+                });
+            categories.stream()
+                .filter(category -> category.parentId() != null)
+                .forEach(category -> {
+                    Category parentCategory = categoryMap.get(category.parentId());
+                    if (parentCategory != null) {
+                        parentCategory.subCategories().add(Category.from(category));
+                    }
+                });
+            return new Categories(new ArrayList<>(categoryMap.values()));
+        }
+    }
+
+    public record Category(
+        Long id,
+        String name,
+        @JsonInclude(Include.NON_EMPTY) List<Category> subCategories
+    ) {
+
+        public static Category from(PlaceInfo.Category category) {
+            return new Category(category.id(), category.name(), new ArrayList<>());
         }
     }
 }

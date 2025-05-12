@@ -14,7 +14,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,78 +46,6 @@ public class InfluencerServiceTest {
     @InjectMocks
     private InfluencerService influencerService;
 
-    @Test
-    @DisplayName("로그인 안한 사용자가 인플루언서 조회")
-    void getAllInfluencersTest_NotLoggedIn() {
-        // given
-        Pageable pageable = PageRequest.of(0, 10);
-        MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
-
-        var influencer1 = new Influencer("influencer1", "imgUrl1", "job1", "title1", "channelId1");
-        var influencer2 = new Influencer("influencer2", "imgUrl2", "job2", "title2", "channelId2");
-        Page<Influencer> influencersPage = new PageImpl<>(List.of(influencer1, influencer2));
-
-        given(influencerRepository.findAll(pageable))
-            .willReturn(influencersPage);
-        given(AuthorizationUtil.getUserId())
-            .willReturn(null);
-
-        // when
-        Page<InfluencerInfo> influencerInfoPage = influencerService.getAllInfluencers(pageable);
-
-        // then
-        assertThat(influencerInfoPage).hasSize(2);
-        assertThat(influencerInfoPage.getContent().get(0))
-            .extracting("influencerName", "likes")
-            .containsExactly(influencer1.getName(), false);
-        assertThat(influencerInfoPage.getContent().get(1))
-            .extracting("influencerName", "likes")
-            .containsExactly(influencer2.getName(), false);
-
-        authorizationUtil.close();
-    }
-
-    @Test
-    @DisplayName("로그인 한 사용자가 인플루언서 목록 조회 테스트")
-    void getAllInfluencersTest_LoggedIn() throws NoSuchFieldException, IllegalAccessException {
-        // given
-        Long userId = 1L;
-        Pageable pageable = PageRequest.of(0, 10);
-        MockedStatic<AuthorizationUtil> authorizationUtil = mockStatic(AuthorizationUtil.class);
-
-        var influencer1 = new Influencer("influencer1", "imgUrl1", "job1", "title1", "channelId1");
-        var influencer2 = new Influencer("influencer2", "imgUrl2", "job2", "title2", "channelId2");
-        var influencer3 = new Influencer("influencer3", "imgUrl3", "job3", "title2", "channelId3");
-        Page<Influencer> influencersPage = new PageImpl<>(
-            List.of(influencer1, influencer2, influencer3));
-
-        Field idField = BaseEntity.class.getDeclaredField("id");
-        idField.setAccessible(true);
-        idField.set(influencer1, 1L);
-        idField.set(influencer2, 2L);
-        idField.set(influencer3, 3L);
-
-        given(influencerRepository.findAll(pageable)).willReturn(influencersPage);
-        given(AuthorizationUtil.getUserId()).willReturn(userId);
-        // 2, 3번째 인플루언서 좋아요로 설정
-        given(likedInfluencerRepository.findLikedInfluencerIdsByUserId(userId))
-            .willReturn(Set.of(2L, 3L));
-
-        // when
-        Page<InfluencerInfo> influencerInfoPage = influencerService.getAllInfluencers(pageable);
-
-        // then
-        assertThat(influencerInfoPage.getContent())
-            .hasSize(3)
-            .extracting("influencerId", "likes")
-            .containsExactly(
-                tuple(2L, true),
-                tuple(3L, true),
-                tuple(1L, false)
-            );
-
-        authorizationUtil.close();
-    }
 
     @Test
     @DisplayName("좋아요한 인플루언서 페이징 조회")
@@ -167,7 +94,7 @@ public class InfluencerServiceTest {
         Long influencerId = 1L;
         var commandSingle = new LikedInfluencerCommand.Single(influencerId, true);
 
-        given(AuthorizationUtil.getUserId()).willReturn(userId);
+        given(AuthorizationUtil.getUserIdOrThrow()).willReturn(userId);
         given(likedInfluencerRepository.findByUserIdAndInfluencerId(anyLong(), anyLong()))
             .willReturn(Optional.empty());  // 새 객체 생성되도록
 
@@ -202,7 +129,7 @@ public class InfluencerServiceTest {
         var commandSingle = new LikedInfluencerCommand.Single(influencerId, false);
         var existinglikedInfluencer = new LikedInfluencer(userId, influencerId, true);
 
-        given(AuthorizationUtil.getUserId()).willReturn(userId);
+        given(AuthorizationUtil.getUserIdOrThrow()).willReturn(userId);
         given(likedInfluencerRepository.findByUserIdAndInfluencerId(anyLong(), anyLong()))
             .willReturn(Optional.of(existinglikedInfluencer));
 
@@ -229,7 +156,7 @@ public class InfluencerServiceTest {
         var commandMultiple = new LikedInfluencerCommand.Multiple(
             List.of(commandSingle1, commandSingle2));
 
-        given(AuthorizationUtil.getUserId()).willReturn(userId);
+        given(AuthorizationUtil.getUserIdOrThrow()).willReturn(userId);
         given(likedInfluencerRepository.findByUserIdAndInfluencerId(anyLong(), anyLong()))
             .willReturn(Optional.empty()); // 새 객체 생성되도록
 

@@ -6,12 +6,24 @@ interface DropdownItemProps {
   type: 'location' | 'influencer' | 'category';
   isSelected?: boolean;
   isFiltered?: boolean;
+  isMain?: boolean;
+  icon?: React.ReactNode;
   children?: React.ReactNode;
 }
 
-export default function DropdownItem({ label, onClick, children, type, isSelected, isFiltered }: DropdownItemProps) {
+export default function DropdownItem({
+  label,
+  onClick,
+  children,
+  type,
+  isSelected,
+  isFiltered,
+  isMain,
+  icon,
+}: DropdownItemProps) {
   return (
-    <DropdownItems onClick={onClick} type={type} $isSelected={isSelected} $isFiltered={isFiltered}>
+    <DropdownItems onClick={onClick} type={type} $isSelected={isSelected} $isFiltered={isFiltered} $isMain={isMain}>
+      {icon && <IconContainer>{icon}</IconContainer>}
       {label}
       {children}
     </DropdownItems>
@@ -22,13 +34,14 @@ const DropdownItems = styled.div<{
   type: 'location' | 'influencer' | 'category';
   $isSelected?: boolean;
   $isFiltered?: boolean;
+  $isMain?: boolean;
 }>`
   padding: 10px 16px;
   cursor: pointer;
   overflow: hidden;
   text-overflow: ellipsis;
   background-color: ${(props) => {
-    if (props.$isFiltered) return '#e8f9ff';
+    if (props.$isFiltered && !props.$isMain) return '#e8f9ff';
     if (props.$isSelected) return '#e6f0ff';
     return 'transparent';
   }};
@@ -53,4 +66,10 @@ const DropdownItems = styled.div<{
       }};
     }
   }
+`;
+
+const IconContainer = styled.span`
+  display: inline-flex;
+  margin-right: 8px;
+  align-items: center;
 `;

@@ -21,22 +21,16 @@ const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
     (response) => response,
     async (error) => {
       if (!error.response) {
-        if (import.meta.env.PROD) {
-          const requestUrl = error.config?.url || 'URL 정보 없음';
-          await captureErrorWithRetry(`[Network Error] ${requestUrl} \n${error.message ?? '네트워크 오류'}`, {
-            tags: { 'error type': 'Network Error' },
-            level: 'error',
-          });
-        }
+        const requestUrl = error.config?.url || 'URL 정보 없음';
+        await captureErrorWithRetry(`[Network Error] ${requestUrl} \n${error.message ?? '네트워크 오류'}`, {
+          tags: { 'error type': 'Network Error' },
+          level: 'error',
+        });
         return Promise.reject(error);
       }
 
       // 예기치 못한 4~500번대 오류 로깅
-      if (
-        import.meta.env.PROD &&
-        error.response.status >= 400 &&
-        !NON_REPORTING_STATUS_CODES.includes(error.response.status)
-      ) {
+      if (error.response.status >= 400 && !NON_REPORTING_STATUS_CODES.includes(error.response.status)) {
         const isServerError = error.response.status >= 500;
         const errorType = isServerError ? 'Server Error' : 'Api Error';
         await captureErrorWithRetry(`[${errorType}] ${error.config.url} \n${error.message}`, {

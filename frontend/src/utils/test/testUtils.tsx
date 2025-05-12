@@ -65,7 +65,7 @@ export async function testErrorBoundaryBehavior({
       config: {
         headers: {},
         method: 'GET',
-        url: `${BASE_URL}/videos/cool`,
+        url: `${BASE_URL}/videos/cool/eats`,
       } as never,
       data: { message: 'Internal Server Error' },
     };

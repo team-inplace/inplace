@@ -178,13 +178,13 @@ public class VideoReadRepositoryTest {
         final List<Long> expectedVideoIds = List.of(4L, 3L, 2L, 1L);
 
         // when
-        Page<VideoQueryResult.SimpleVideo> videos = videoReadRepository.findSimpleVideosWithOneInfluencerId(
+        Page<VideoQueryResult.DetailedVideo> videos = videoReadRepository.findDetailedVideosWithOneInfluencerId(
                 1L, pageable);
 
         // then
         assertThat(videos.getTotalElements()).isEqualTo(expectedTotalContent);
         assertThat(videos.getContent().size()).isEqualTo(expectedContentSize);
-        assertThat(videos.getContent().stream().map(VideoQueryResult.SimpleVideo::videoId).toList())
+        assertThat(videos.getContent().stream().map(VideoQueryResult.DetailedVideo::videoId).toList())
                 .isEqualTo(expectedVideoIds);
     }
 
@@ -199,13 +199,13 @@ public class VideoReadRepositoryTest {
         final List<Long> expectedVideoIds = List.of(4L, 3L, 2L, 1L);
 
         // when
-        Page<VideoQueryResult.SimpleVideo> videos = videoReadRepository.findSimpleVideosWithOneInfluencerId(
-            1L, pageable);
+        Page<VideoQueryResult.DetailedVideo> videos = videoReadRepository.findDetailedVideosWithOneInfluencerId(
+                1L, pageable);
 
         // then
         assertThat(videos.getTotalElements()).isEqualTo(expectedTotalContent);
         assertThat(videos.getContent().size()).isEqualTo(expectedContentSize);
-        assertThat(videos.getContent().stream().map(VideoQueryResult.SimpleVideo::videoId).toList())
+        assertThat(videos.getContent().stream().map(VideoQueryResult.DetailedVideo::videoId).toList())
             .isEqualTo(expectedVideoIds);
     }
 
@@ -220,13 +220,13 @@ public class VideoReadRepositoryTest {
         final List<Long> expectedVideoIds = List.of(3L, 2L, 1L, 4L);
 
         // when
-        Page<VideoQueryResult.SimpleVideo> videos = videoReadRepository.findSimpleVideosWithOneInfluencerId(
-            1L, pageable);
+        Page<VideoQueryResult.DetailedVideo> videos = videoReadRepository.findDetailedVideosWithOneInfluencerId(
+                1L, pageable);
 
         // then
         assertThat(videos.getTotalElements()).isEqualTo(expectedTotalContent);
         assertThat(videos.getContent().size()).isEqualTo(expectedContentSize);
-        assertThat(videos.getContent().stream().map(VideoQueryResult.SimpleVideo::videoId).toList())
+        assertThat(videos.getContent().stream().map(VideoQueryResult.DetailedVideo::videoId).toList())
             .isEqualTo(expectedVideoIds);
     }
 }

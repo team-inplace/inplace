@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import team7.inplace.place.presentation.dto.PlaceRequest;
 import team7.inplace.place.presentation.dto.PlacesResponse;
+import team7.inplace.place.presentation.dto.PlacesResponse.Categories;
 import team7.inplace.place.presentation.dto.PlacesResponse.Marker;
 import team7.inplace.place.presentation.dto.ReviewResponse;
 
@@ -50,7 +51,7 @@ public interface PlaceControllerApiSpec {
     );
 
     @Operation(summary = "카테고리 조회", description = "장소의 카테고리 목록을 조회합니다.")
-    ResponseEntity<PlacesResponse.Category> getCategories();
+    ResponseEntity<Categories> getCategories();
 
     @Operation(summary = "장소 상세 조회", description = "장소 ID를 통해 특정 장소의 상세 정보를 조회합니다.")
     ResponseEntity<PlacesResponse.Detail> getPlaceDetail(

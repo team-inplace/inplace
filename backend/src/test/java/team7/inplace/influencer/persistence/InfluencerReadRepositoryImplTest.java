@@ -3,12 +3,14 @@ package team7.inplace.influencer.persistence;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import team7.inplace.influencer.persistence.dto.InfluencerQueryResult;
@@ -130,5 +132,48 @@ class InfluencerReadRepositoryImplTest {
 
         //then
         assertThat(actual).isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("인플루언서 전체 조회 테스트 - 로그인 하지 않았을 경우")
+    void findInfluencer_All_NoLogin() {
+        //given
+        final Long userId = null;
+        final Pageable pageable = Pageable.ofSize(5);
+        final boolean expectedLike = false;
+
+        //when
+        var result = influencerReadRepository.getInfluencerSortedByLikes(userId, pageable);
+
+        //then
+        assertThat(result.getTotalElements()).isEqualTo(4L);
+        assertThat(result.getContent().size()).isEqualTo(4);
+        result.getContent()
+            .forEach(influencer -> {
+                assertThat(influencer.isLiked()).isFalse();
+            });
+    }
+
+    @Test
+    @DisplayName("인플루언서 전체 조회 테스트 - 로그인 했을 경우(2, 3번 인플루언서 좋아요 / 페이지네이션 2개씩")
+    void findAllInfluencer_liked_Test_Pagination() {
+        //given
+        final Long userId = 1L;
+        final List<Long> expectedIds = List.of(2L, 3L);
+        final Pageable pageable = Pageable.ofSize(2);
+        final boolean expectedLike = true;
+
+        //when
+        var result = influencerReadRepository.getInfluencerSortedByLikes(userId, pageable);
+
+        //then
+        assertThat(result.getTotalElements()).isEqualTo(4L);
+        assertThat(result.getContent().size()).isEqualTo(2);
+        assertThat(result.getContent().stream().map(InfluencerQueryResult.Simple::id).toList())
+            .isEqualTo(expectedIds);
+        result.getContent()
+            .forEach(influencer -> {
+                assertThat(influencer.isLiked()).isTrue();
+            });
     }
 }

@@ -3,8 +3,6 @@ package team7.inplace.place.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,9 +16,7 @@ public class Place extends BaseEntity {
     @Column(nullable = false, length = 50)
     private String name;
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Category category;
+    private Long categoryId;
 
     @Embedded
     private Address address;
@@ -32,11 +28,11 @@ public class Place extends BaseEntity {
     private Long kakaoPlaceId;
 
     public Place(
-        String name, String category,
+        String name, Long categoryId,
         String address, String x, String y, String googlePlaceId, Long kakaoPlaceId
     ) {
         this.name = name;
-        this.category = Category.of(category);
+        this.categoryId = categoryId;
         this.address = Address.of(address);
         this.coordinate = Coordinate.of(x, y);
         this.googlePlaceId = googlePlaceId;

@@ -27,6 +27,7 @@ public record Content(
                 DEFAULT_IMAGE_WIDTH,
                 DEFAULT_IMAGE_HEIGHT,
                 description,
-                link);
+                link
+        );
     }
 }

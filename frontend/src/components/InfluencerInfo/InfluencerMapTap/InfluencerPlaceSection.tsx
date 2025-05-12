@@ -12,7 +12,7 @@ import usePlaceList from '@/hooks/Map/usePlaceList';
 export interface PlaceSectionProps {
   mapBounds: LocationData;
   filters: {
-    categories: string[];
+    categories: number[];
     influencers: string[];
     placeName?: string;
   };

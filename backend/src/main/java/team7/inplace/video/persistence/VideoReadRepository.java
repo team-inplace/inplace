@@ -29,5 +29,5 @@ public interface VideoReadRepository {
 
     Page<VideoQueryResult.SimpleVideo> findVideoWithNoPlace(Pageable pageable);
 
-    Page<VideoQueryResult.SimpleVideo> findSimpleVideosWithOneInfluencerId(Long influencerId, Pageable pageable);
+    Page<VideoQueryResult.DetailedVideo> findDetailedVideosWithOneInfluencerId(Long influencerId, Pageable pageable);
 }

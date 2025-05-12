@@ -1,19 +1,20 @@
 package team7.inplace.video.persistence.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
-import team7.inplace.place.domain.Category;
 import team7.inplace.video.domain.CoolVideo;
 import team7.inplace.video.domain.RecentVideo;
 
 public class VideoQueryResult {
+
     public record SimpleVideo(
-            Long videoId,
-            String videoUUID,
-            String influencerName,
-            Long placeId,
-            String placeName,
-            Category placeCategory
+        Long videoId,
+        String videoUUID,
+        String influencerName,
+        Long placeId,
+        String placeName,
+        String placeCategory
     ) {
+
         @QueryProjection
         public SimpleVideo {
         }
@@ -29,21 +30,14 @@ public class VideoQueryResult {
         String influencerName,
         Long placeId,
         String placeName,
-        Category placeCategory,
+        String placeCategory,
         String address1,
         String address2,
         String address3
     ) {
+
         @QueryProjection
         public DetailedVideo {
-        }
-
-        public String videoUrl() {
-            return "https://www.youtube.com/watch?v=" + videoUUID;
-        }
-
-        public CoolVideo toCoolVideo() {
-            return CoolVideo.from(videoId, videoUUID, influencerName, placeId, placeName, placeCategory, address1, address2, address3);
         }
 
         public static DetailedVideo from(CoolVideo coolVideo) {
@@ -60,10 +54,6 @@ public class VideoQueryResult {
             );
         }
 
-        public RecentVideo toRecentVideo() {
-            return RecentVideo.from(videoId, videoUUID, influencerName, placeId, placeName, placeCategory, address1, address2, address3);
-        }
-
         public static DetailedVideo from(RecentVideo recentVideo) {
             return new DetailedVideo(
                 recentVideo.getVideoId(),
@@ -76,6 +66,20 @@ public class VideoQueryResult {
                 recentVideo.getAddress2(),
                 recentVideo.getAddress3()
             );
+        }
+
+        public String videoUrl() {
+            return "https://www.youtube.com/watch?v=" + videoUUID;
+        }
+
+        public CoolVideo toCoolVideo() {
+            return CoolVideo.from(videoId, videoUUID, influencerName, placeId, placeName,
+                placeCategory, address1, address2, address3);
+        }
+
+        public RecentVideo toRecentVideo() {
+            return RecentVideo.from(videoId, videoUUID, influencerName, placeId, placeName,
+                placeCategory, address1, address2, address3);
         }
     }
 }

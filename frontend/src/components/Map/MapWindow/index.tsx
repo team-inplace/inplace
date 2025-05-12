@@ -8,8 +8,8 @@ import Button from '@/components/common/Button';
 import { FilterParams, LocationData, PlaceData } from '@/types';
 import { useGetAllMarkers } from '@/api/hooks/useGetAllMarkers';
 import InfoWindow from '@/components/InfluencerInfo/InfluencerMapTap/InfoWindow';
-import OriginMarker from '@/assets/images/OriginMarker.png';
-import SelectedMarker from '@/assets/images/InplaceMarker.png';
+import PlaysMarker from '@/assets/images/PlaysMarker.webp';
+import EatsMarker from '@/assets/images/EatsMarker.webp';
 import { Text } from '@/components/common/typography/Text';
 import nowLocation from '@/assets/images/now_location.webp';
 import Loading from '@/components/common/layouts/Loading';
@@ -26,7 +26,7 @@ interface MapWindowProps {
   isInitialLoad: boolean;
   setIsInitialLoad: React.Dispatch<React.SetStateAction<boolean>>;
   filters: {
-    categories: string[];
+    categories: number[];
     influencers: string[];
   };
   filtersWithPlaceName: FilterParams;
@@ -300,7 +300,7 @@ export default function MapWindow({
                 lng: place.longitude,
               }}
               image={{
-                src: selectedPlaceId === place.placeId ? SelectedMarker : OriginMarker,
+                src: place.type === 'Eats' ? EatsMarker : PlaysMarker,
                 size: {
                   width: selectedPlaceId === place.placeId ? originSize + 14 : originSize,
                   height: selectedPlaceId === place.placeId ? originSize + 14 : originSize,

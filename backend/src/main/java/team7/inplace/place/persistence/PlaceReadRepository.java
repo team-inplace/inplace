@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import team7.inplace.place.application.command.PlacesCommand.RegionParam;
-import team7.inplace.place.domain.Category;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.DetailedPlace;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.Marker;
@@ -25,7 +24,7 @@ public interface PlaceReadRepository {
         Double longitude,
         Double latitude,
         List<RegionParam> regionFilters,
-        List<Category> categoryFilters,
+        List<Long> categoryFilters,
         List<String> influencerFilters,
         Pageable pageable,
         Long userId
@@ -37,7 +36,7 @@ public interface PlaceReadRepository {
         Double bottomRightLongitude,
         Double bottomRightLatitude,
         List<RegionParam> regionParams,
-        List<Category> categoryFilters,
+        List<Long> categoryFilters,
         List<String> influencerFilters
     );
 
@@ -49,7 +48,7 @@ public interface PlaceReadRepository {
     List<Marker> findPlaceLocationsByName(
         String name,
         List<RegionParam> regionParams,
-        List<Category> categoryFilters,
+        List<Long> categoryFilters,
         List<String> influencerFilters
     );
 
@@ -57,7 +56,7 @@ public interface PlaceReadRepository {
         Long userId,
         String name,
         List<RegionParam> regions,
-        List<Category> categories,
+        List<Long> categories,
         List<String> influencers,
         Pageable pageable
     );

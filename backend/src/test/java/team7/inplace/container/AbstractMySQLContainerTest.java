@@ -22,6 +22,7 @@ public abstract class AbstractMySQLContainerTest {
         registry.add("spring.datasource.username", MYSQL_CONTAINER::getUsername);
         registry.add("spring.datasource.password", MYSQL_CONTAINER::getPassword);
         registry.add("spring.datasource.driver-class-name", MYSQL_CONTAINER::getDriverClassName);
+        registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
         registry.add("spring.jpa.database-platform", () -> "org.hibernate.dialect.MySQL8Dialect");
     }
 

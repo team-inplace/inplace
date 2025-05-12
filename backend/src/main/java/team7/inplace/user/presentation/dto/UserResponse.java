@@ -11,11 +11,12 @@ import team7.inplace.video.persistence.dto.VideoQueryResult;
 public class UserResponse {
 
     public record Info(
-        String nickname
+        String nickname,
+        String imgUrl
     ) {
 
         public static Info from(UserInfo userInfo) {
-            return new Info(userInfo.nickname());
+            return new Info(userInfo.nickname(), userInfo.profileImageUrl());
         }
     }
 

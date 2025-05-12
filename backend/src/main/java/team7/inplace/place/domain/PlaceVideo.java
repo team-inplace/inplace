@@ -1,29 +1,29 @@
 package team7.inplace.place.domain;
 
+
 import static lombok.AccessLevel.PROTECTED;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.Getter;
+import jakarta.persistence.Table;
 import lombok.NoArgsConstructor;
 
-@Getter
-@Entity(name = "categories")
+@Entity
+@Table(name = "place_videos")
 @NoArgsConstructor(access = PROTECTED)
-public class Category {
+public class PlaceVideo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
-    private Long parentId;
+    private Long placeId;
+    private Long videoId;
 
-    public Category(String name, Long parentId) {
-        this.name = name;
-        this.parentId = parentId;
+    public PlaceVideo(Long placeId, Long videoId) {
+        this.placeId = placeId;
+        this.videoId = videoId;
     }
-
 }

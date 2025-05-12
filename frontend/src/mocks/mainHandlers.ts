@@ -3,12 +3,112 @@ import { getBannerPath, getInfluencerPath } from '@/api/hooks/useGetMain';
 import { BASE_URL } from '@/api/instance';
 import { getMyInfluencerVideoPath } from '@/api/hooks/useGetMyInfluencerVideo';
 import { getAroundVideoPath } from '@/api/hooks/useGetAroundVideo';
-import { getCoolVideoPath, getNewVideoPath } from '@/api/hooks/useGetLogoutVideo';
+import { getCoolEatsVideoPath, getCoolPlaysVideoPath, getNewVideoPath } from '@/api/hooks/useGetLogoutVideo';
 import BannerImg from '@/assets/images/bannerImg.webp';
 import Back from '@/assets/images/back-card.webp';
 import Basic from '@/assets/images/basic-image.webp';
 import BannerMob from '@/assets/images/mobile_banner.webp';
 
+const dummy = [
+  {
+    videoId: 1,
+    influencerName: '정육왕',
+    videoUrl: 'https://youtu.be/qbqquv_8wM0?si=j7LiU5DSfTVpKa1I',
+    place: {
+      placeId: 1,
+      placeName: '이선장네',
+      address: {
+        address1: '대구',
+        address2: '북구',
+        address3: '대현동 119-11',
+      },
+    },
+  },
+  {
+    videoId: 2,
+    influencerName: '풍자',
+    videoUrl: 'https://youtu.be/g5P0vpGSbng?si=RB71ZAx12kDas9a6',
+    place: {
+      placeId: 2,
+      placeName: '성심당',
+      address: {
+        address1: '대구',
+        address2: '북구',
+        address3: '대현동 119-11',
+      },
+    },
+  },
+  {
+    videoId: 3,
+    influencerName: '히밥',
+    videoUrl: 'https://youtu.be/cz1EvePzqfM?si=L5ZsKV4DXikGIuEP',
+    place: {
+      placeId: 3,
+      placeName: '왕거미식당',
+      address: {
+        address1: '대구',
+        address2: '북구',
+        address3: '대현동 119-11',
+      },
+    },
+  },
+  {
+    videoId: 7,
+    influencerName: '풍자',
+    videoUrl: 'https://youtu.be/g5P0vpGSbng?si=RB71ZAx12kDas9a6',
+    place: {
+      placeId: 2,
+      placeName: '풍자또가',
+      address: {
+        address1: '대구',
+        address2: '북구',
+        address3: '대현동 119-11',
+      },
+    },
+  },
+  {
+    videoId: 4,
+    influencerName: '히밥',
+    videoUrl: 'https://youtu.be/cz1EvePzqfM?si=L5ZsKV4DXikGIuEP',
+    place: {
+      placeId: 3,
+      placeName: '가성비집',
+      address: {
+        address1: '대구',
+        address2: '북구',
+        address3: '대현동 119-11',
+      },
+    },
+  },
+  {
+    videoId: 5,
+    influencerName: '풍자',
+    videoUrl: 'https://youtu.be/g5P0vpGSbng?si=RB71ZAx12kDas9a6',
+    place: {
+      placeId: 2,
+      placeName: '풍자또가',
+      address: {
+        address1: '대구',
+        address2: '북구',
+        address3: '대현동 119-11',
+      },
+    },
+  },
+  {
+    videoId: 6,
+    influencerName: '히밥',
+    videoUrl: 'https://youtu.be/cz1EvePzqfM?si=L5ZsKV4DXikGIuEP',
+    place: {
+      placeId: 3,
+      placeName: '가성비집',
+      address: {
+        address1: '대구',
+        address2: '북구',
+        address3: '대현동 119-11',
+      },
+    },
+  },
+];
 export const mainHandlers = [
   rest.get(`${BASE_URL}${getBannerPath()}`, (_, res, ctx) => {
     return res(
@@ -52,210 +152,20 @@ export const mainHandlers = [
       ]),
     );
   }),
-  rest.get(`${BASE_URL}${getCoolVideoPath()}`, (_, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.json([
-        {
-          videoId: 1,
-          influencerName: '정육왕',
-          videoUrl: 'https://youtu.be/qbqquv_8wM0?si=j7LiU5DSfTVpKa1I',
-          place: {
-            placeId: 1,
-            placeName: '이선장네',
-            address: {
-              address1: '대구',
-              address2: '북구',
-              address3: '대현동 119-11',
-            },
-          },
-        },
-        {
-          videoId: 2,
-          influencerName: '풍자',
-          videoUrl: 'https://youtu.be/g5P0vpGSbng?si=RB71ZAx12kDas9a6',
-          place: {
-            placeId: 2,
-            placeName: '성심당',
-            address: {
-              address1: '대구',
-              address2: '북구',
-              address3: '대현동 119-11',
-            },
-          },
-        },
-        {
-          videoId: 3,
-          influencerName: '히밥',
-          videoUrl: 'https://youtu.be/cz1EvePzqfM?si=L5ZsKV4DXikGIuEP',
-          place: {
-            placeId: 3,
-            placeName: '왕거미식당',
-            address: {
-              address1: '대구',
-              address2: '북구',
-              address3: '대현동 119-11',
-            },
-          },
-        },
-        {
-          videoId: 7,
-          influencerName: '풍자',
-          videoUrl: 'https://youtu.be/g5P0vpGSbng?si=RB71ZAx12kDas9a6',
-          place: {
-            placeId: 2,
-            placeName: '풍자또가',
-            address: {
-              address1: '대구',
-              address2: '북구',
-              address3: '대현동 119-11',
-            },
-          },
-        },
-        {
-          videoId: 4,
-          influencerName: '히밥',
-          videoUrl: 'https://youtu.be/cz1EvePzqfM?si=L5ZsKV4DXikGIuEP',
-          place: {
-            placeId: 3,
-            placeName: '가성비집',
-            address: {
-              address1: '대구',
-              address2: '북구',
-              address3: '대현동 119-11',
-            },
-          },
-        },
-        {
-          videoId: 5,
-          influencerName: '풍자',
-          videoUrl: 'https://youtu.be/g5P0vpGSbng?si=RB71ZAx12kDas9a6',
-          place: {
-            placeId: 2,
-            placeName: '풍자또가',
-            address: {
-              address1: '대구',
-              address2: '북구',
-              address3: '대현동 119-11',
-            },
-          },
-        },
-        {
-          videoId: 6,
-          influencerName: '히밥',
-          videoUrl: 'https://youtu.be/cz1EvePzqfM?si=L5ZsKV4DXikGIuEP',
-          place: {
-            placeId: 3,
-            placeName: '가성비집',
-            address: {
-              address1: '대구',
-              address2: '북구',
-              address3: '대현동 119-11',
-            },
-          },
-        },
-      ]),
-    );
+  rest.get(`${BASE_URL}${getCoolEatsVideoPath()}`, (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json(dummy));
+  }),
+  rest.get(`${BASE_URL}${getCoolPlaysVideoPath()}`, (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json(dummy));
   }),
   rest.get(`${BASE_URL}${getNewVideoPath()}`, (_, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.json([
-        {
-          videoId: 1,
-          influencerName: '성시경',
-          videoUrl: 'https://youtu.be/qbqquv_8wM0?si=j7LiU5DSfTVpKa1I',
-          place: {
-            placeId: 1,
-            placeName: '이선장네',
-            address: {
-              address1: '대구',
-              address2: '북구',
-              address3: '대현동 119-11',
-            },
-          },
-        },
-        {
-          videoId: 2,
-          influencerName: '풍자',
-          videoUrl: 'https://youtu.be/g5P0vpGSbng?si=RB71ZAx12kDas9a6',
-          place: {
-            placeId: 2,
-            placeName: '풍자또가',
-            address: {
-              address1: '대구',
-              address2: '북구',
-              address3: '대현동 119-11',
-            },
-          },
-        },
-      ]),
-    );
+    return res(ctx.status(200), ctx.json(dummy));
   }),
   rest.get(`${BASE_URL}${getMyInfluencerVideoPath()}`, (_, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.json([
-        {
-          videoId: 1,
-          influencerName: '성시경',
-          videoUrl: 'https://youtu.be/qbqquv_8wM0?si=j7LiU5DSfTVpKa1I',
-          place: {
-            placeId: 1,
-            placeName: '이선장네',
-            address: {
-              address1: '대구',
-              address2: '북구',
-              address3: '대현동 119-11',
-            },
-          },
-        },
-        {
-          videoId: 2,
-          influencerName: '풍자',
-          videoUrl: 'https://youtu.be/g5P0vpGSbng?si=RB71ZAx12kDas9a6',
-          place: {
-            placeId: 2,
-            placeName: '풍자또가',
-            address: {
-              address1: '대구',
-              address2: '북구',
-              address3: '대현동 119-11',
-            },
-          },
-        },
-      ]),
-    );
+    return res(ctx.status(200), ctx.json(dummy));
   }),
   rest.get(`${BASE_URL}${getAroundVideoPath()}`, (_, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.json([
-        {
-          videoId: 1,
-          influencerName: '성시경',
-          videoUrl: 'https://youtu.be/qbqquv_8wM0?si=j7LiU5DSfTVpKa1I',
-          place: {
-            placeId: 1,
-            placeName: '이선장네',
-            address: {
-              address1: '대구',
-              address2: '북구',
-              address3: '대현동 119-11',
-            },
-          },
-        },
-        {
-          videoId: 2,
-          influencerName: '풍자',
-          videoUrl: 'https://youtu.be/g5P0vpGSbng?si=RB71ZAx12kDas9a6',
-          place: {
-            placeId: 2,
-            placeName: '풍자또가',
-          },
-        },
-      ]),
-    );
+    return res(ctx.status(200), ctx.json(dummy));
   }),
   rest.get(`${BASE_URL}${getInfluencerPath()}`, (_, res, ctx) => {
     return res(
