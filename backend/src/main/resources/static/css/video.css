@@ -8,6 +8,21 @@
   max-width: 1600px;
 }
 
+.place-register-controller {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+}
+
+.place-register-controller button {
+  padding: 4px 6px;
+  border: 1px solid #ccc;
+  background-color: white;
+  border-radius: 4px;
+}
+
 .place-register-table {
   width: 100%;
 }
