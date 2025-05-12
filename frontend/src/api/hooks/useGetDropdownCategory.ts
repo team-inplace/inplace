@@ -6,7 +6,7 @@ const useGetDropdownCategory = () => {
   return useSuspenseQuery({
     queryKey: ['categoryName'],
     queryFn: async () => {
-      const { data } = await fetchInstance.get<CategoryData>('/category/names');
+      const { data } = await fetchInstance.get<CategoryData>('/places/categories');
       const options: CategoryOption[] = data.categories.flatMap((category) => {
         const mainOption: CategoryOption = {
           label: category.name,

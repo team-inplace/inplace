@@ -514,7 +514,7 @@ export const mapHandlers = [
       }),
     );
   }),
-  rest.get(`${BASE_URL}/category/names`, (_, res, ctx) => {
+  rest.get(`${BASE_URL}/places/categories`, (_, res, ctx) => {
     return res(ctx.status(200), ctx.json(dummyCategoryData));
   }),
   rest.get(`${BASE_URL}/influencers/names`, (_, res, ctx) => {
