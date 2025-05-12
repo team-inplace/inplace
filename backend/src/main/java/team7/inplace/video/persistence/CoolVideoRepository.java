@@ -6,5 +6,5 @@ import team7.inplace.video.domain.CoolVideo;
 
 public interface CoolVideoRepository extends JpaRepository<CoolVideo, Long> {
 
-    List<CoolVideo> findByPlaceCategoryParentId(Long parentCategoryId);
+    List<CoolVideo> findByPlaceCategoryParentName(String parentCategoryName);
 }

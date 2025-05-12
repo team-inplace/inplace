@@ -54,9 +54,7 @@ public class VideoController implements VideoControllerApiSpec {
     @GetMapping("/cool/{category}")
     public ResponseEntity<List<VideoResponse.Detail>> readByCool(@PathVariable String category) {
         var parentCategory = ParentCategory.from(category);
-        var parentCategoryId = videoFacade.getCategoryId(parentCategory.getParentCategory());
-
-        var videoResponses = videoService.getCoolVideo(parentCategoryId)
+        var videoResponses = videoService.getCoolVideo(parentCategory.getParentCategory())
             .stream().map(VideoResponse.Detail::from).toList();
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }

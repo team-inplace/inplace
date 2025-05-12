@@ -62,8 +62,8 @@ public class VideoService {
     }
 
     @Transactional(readOnly = true)
-    public List<VideoQueryResult.DetailedVideo> getCoolVideo(Long parentCategoryId) {
-        var top10Videos = coolVideoRepository.findByPlaceCategoryParentId(parentCategoryId);
+    public List<VideoQueryResult.DetailedVideo> getCoolVideo(String parentCategoryName) {
+        var top10Videos = coolVideoRepository.findByPlaceCategoryParentName(parentCategoryName);
 
         return top10Videos.stream().map(DetailedVideo::from).toList();
     }

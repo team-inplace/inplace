@@ -31,7 +31,7 @@ public class VideoQueryResult {
         String influencerName,
         Long placeId,
         String placeName,
-        String placeCategory,
+        String placeCategoryParentName,
         @Nullable Long placeCategoryParentId,
         String address1,
         String address2,
@@ -49,7 +49,7 @@ public class VideoQueryResult {
                 coolVideo.getInfluencerName(),
                 coolVideo.getPlaceId(),
                 coolVideo.getPlaceName(),
-                coolVideo.getPlaceCategory(),
+                coolVideo.getPlaceCategoryParentName(),
                 coolVideo.getPlaceCategoryParentId(),
                 coolVideo.getAddress1(),
                 coolVideo.getAddress2(),
@@ -64,7 +64,7 @@ public class VideoQueryResult {
                 recentVideo.getInfluencerName(),
                 recentVideo.getPlaceId(),
                 recentVideo.getPlaceName(),
-                recentVideo.getPlaceCategory(),
+                recentVideo.getPlaceCategoryParentName(),
                 null,
                 recentVideo.getAddress1(),
                 recentVideo.getAddress2(),
@@ -78,12 +78,12 @@ public class VideoQueryResult {
 
         public CoolVideo toCoolVideo() {
             return CoolVideo.from(videoId, videoUUID, influencerName, placeId, placeName,
-                placeCategory, placeCategoryParentId, address1, address2, address3);
+                placeCategoryParentName, placeCategoryParentId, address1, address2, address3);
         }
 
         public RecentVideo toRecentVideo() {
             return RecentVideo.from(videoId, videoUUID, influencerName, placeId, placeName,
-                placeCategory, address1, address2, address3);
+                placeCategoryParentName, address1, address2, address3);
         }
     }
 }
