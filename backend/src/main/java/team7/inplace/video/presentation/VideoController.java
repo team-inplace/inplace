@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.video.application.VideoFacade;
 import team7.inplace.video.application.VideoService;
-import team7.inplace.video.domain.ParentCategory;
 import team7.inplace.video.presentation.dto.VideoResponse;
 import team7.inplace.video.presentation.dto.VideoSearchParams;
 
@@ -53,8 +52,7 @@ public class VideoController implements VideoControllerApiSpec {
     @Override
     @GetMapping("/cool/{category}")
     public ResponseEntity<List<VideoResponse.Detail>> readByCool(@PathVariable String category) {
-        var parentCategory = ParentCategory.from(category);
-        var videoResponses = videoService.getCoolVideo(parentCategory.getParentCategory())
+        var videoResponses = videoFacade.getCoolVideosByParentCategory(category)
             .stream().map(VideoResponse.Detail::from).toList();
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }

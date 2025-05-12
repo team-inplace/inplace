@@ -11,6 +11,7 @@ import team7.inplace.influencer.application.InfluencerService;
 import team7.inplace.place.application.PlaceService;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.video.application.command.VideoCommand;
+import team7.inplace.video.domain.ParentCategory;
 import team7.inplace.video.persistence.dto.VideoQueryResult;
 
 @Facade
@@ -56,6 +57,12 @@ public class VideoFacade {
     @Transactional(readOnly = true)
     public Page<VideoQueryResult.SimpleVideo> getVideoWithNoPlace(Pageable pageable) {
         return videoService.getVideoWithNoPlace(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<VideoQueryResult.DetailedVideo> getCoolVideosByParentCategory(String category) {
+        var parentCategory = ParentCategory.from(category);
+        return videoService.getCoolVideo(parentCategory.getParentCategory());
     }
 
     @Transactional
