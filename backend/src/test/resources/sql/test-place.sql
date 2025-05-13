@@ -1,11 +1,11 @@
 CREATE FULLTEXT INDEX full_text_idx_place_name ON places (name) with parser ngram;
 
-INSERT INTO categories(id, name, parent_id)
-VALUES (1, '맛집', null),
-       (2, '카페', 1),
-       (3, '양식', 1),
-       (4, '일식', 1),
-       (5, '한식', 1);
+INSERT INTO categories(id, name, eng_name, parent_id)
+VALUES (1, '맛집', 'eats', null),
+       (2, '카페', 'cafe', 1),
+       (3, '양식', 'western', 1),
+       (4, '일식', 'japanese',1),
+       (5, '한식', 'korean', 1);
 
 INSERT INTO places (id, name, latitude, longitude, address1, address2, address3, category_id)
 VALUES (1, '테스트장소1', 36.0, 126.0, '주소1-1', '주소2-1', '주소3', 1),

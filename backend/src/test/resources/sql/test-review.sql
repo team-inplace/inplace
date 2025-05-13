@@ -1,6 +1,6 @@
-INSERT INTO categories(id, name, parent_id)
-VALUES (1, '맛집', null),
-       (2, '카페', 1);
+INSERT INTO categories(id, name, eng_name, parent_id)
+VALUES (1, '맛집', 'eats', null),
+       (2, '카페', 'cafe', 1);
 
 INSERT INTO places (id, name, latitude, longitude, address1, address2, address3, category_id)
 VALUES (1, '테스트장소1', 36.0, 126.0, '주소1', '주소2', '주소3', 1),
