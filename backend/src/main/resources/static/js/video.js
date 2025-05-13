@@ -1,3 +1,5 @@
+let placeRowIdx = 0
+
 function openPlaceSearchModal(element) {
   let videoUrl = null;
   if (element) {
@@ -7,9 +9,48 @@ function openPlaceSearchModal(element) {
 
   document.getElementById('placeSearchModal').style.display = "block";
   document.getElementById('videoIFrame').src = `https://www.youtube.com/embed/${videoUrl}`;
-  document.getElementById('videoId').value = selectedVideoId;
+  const row = document.getElementById(`place-row-${placeRowIdx}`);
+  const videoInput = row.querySelector('input[name="videoId"]');
+  videoInput.value = window.selectedVideoId;
 
   currentOpenModalId = 'placeSearchModal';
+  placeRowIdx++;
+}
+
+function addPlaceRow() {
+  const rowIdx = placeRowIdx++;
+  const rowHtml = `
+        <tr id="place-row-${rowIdx}">
+            <td><input name="videoId" value="${selectedVideoId}" disabled></td>
+            <td><input name="placeName"></td>
+            <td>
+                <select name="category" required>
+                    <option disabled selected value="">카테고리</option>
+                </select>
+            </td>
+            <td><input name="address"></td>
+            <td><input name="x"></td>
+            <td><input name="y"></td>
+            <td><input name="kakaoPlaceId"></td>
+            <td><input name="googlePlaceId"></td>
+        </tr>
+    `;
+
+  $('#place-register-tbody').append(rowHtml);
+
+  populateCategoryOptions(rowIdx);
+}
+
+function populateCategoryOptions(rowIdx) {
+  const row = document.getElementById(`place-row-${rowIdx}`);
+  const select = row.querySelector('select[name="category"]');
+
+  categories.forEach(category => {
+    select.insertAdjacentHTML(
+        'beforeend',
+        `<option value="${category.name}">${category.name}</option>`
+    );
+  });
 }
 
 let currentMapProvider = null;

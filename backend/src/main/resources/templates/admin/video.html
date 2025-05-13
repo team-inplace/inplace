@@ -13,6 +13,7 @@
     <script th:inline="javascript">
       let mapProviderKakao = [[#{video.search.mapProvider.kakao}]];
       let mapProviderGoogle = [[#{video.search.mapProvider.google}]];
+      let categories = [[${categories}]];
     </script>
     <script src="/js/video.js"></script>
   </th:block>
@@ -101,7 +102,7 @@
       </iframe>
       <div class="table-wrapper">
         <div class="place-register-controller">
-          <button><i class="fa-solid fa-plus" style="font-size: 1em; color: #dc3545;"></i></button>
+          <button onclick="addPlaceRow()"><i class="fa-solid fa-plus" style="font-size: 1em; color: #dc3545;"></i></button>
           <button><i class="fa-solid fa-minus" style="font-size: 1em; color: #1976d2"></i></button>
           <button>등록</button>
           <button>전체 등록</button>
@@ -116,30 +117,26 @@
           <th>y 좌표 (latitude)</th>
           <th th:text="|장소 ID (${kakao})|">장소 ID ([[${kakao}]])</th>
           <th th:text="|장소 ID (${google})|">장소 ID ([[${google}]])</th>
-          <th>등록</th>
           </thead>
-          <tbody>
-          <tr>
-            <form onsubmit="registerPlace(); return false;">
-              <td><input id="videoId" name="videoId" disabled></td>
-              <td><input id="placeName" name="placeName"></td>
-              <td>
-                <label for="category">
-                              <select id="category" required>
-                                <option disabled selected value="">카테고리</option>
-                                <th:block th:each="category : ${categories}">
-                                  <option th:text="${category.name}" th:value="${category}"/>
-                                </th:block>
-                              </select>
-                            </label>
-              </td>
-              <td><input id="address" name="address"></td>
-              <td><input id="x" name="x"></td>
-              <td><input id="y" name="y"></td>
-              <td><input th:id="|place-id-${kakao}|" name="kakaoPlaceId"></td>
-              <td><input th:id="|place-id-${google}|" name="googlePlaceId"></td>
-              <td><button type="submit">등록</button></td>
-            </form>
+          <tbody id="place-register-tbody">
+          <tr id="place-row-0">
+            <td><input name="videoId" disabled></td>
+            <td><input name="placeName"></td>
+            <td>
+              <label for="category-0">
+                            <select id="category-0" required>
+                              <option disabled selected value="">카테고리</option>
+                              <th:block th:each="category : ${categories}">
+                                <option th:text="${category.name}" th:value="${category}"/>
+                              </th:block>
+                            </select>
+                          </label>
+            </td>
+            <td><input id="address-0" name="address"></td>
+            <td><input id="x-0" name="x"></td>
+            <td><input id="y-0" name="y"></td>
+            <td><input th:id="|place-id-${kakao}-0|" name="kakaoPlaceId"></td>
+            <td><input th:id="|place-id-${google}-0|" name="googlePlaceId"></td>
           </tr>
           </tbody>
         </table>
