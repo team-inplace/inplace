@@ -205,7 +205,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
                 QInfluencer.influencer.name,
                 QPlace.place.id,
                 QPlace.place.name,
-                selfCategory.name, // 상위 카테고리 이름
+                selfCategory.engName, // 상위 카테고리 영어 이름
                 QCategory.category.parentId,
                 QPlace.place.address.address1,
                 QPlace.place.address.address2,
