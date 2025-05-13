@@ -19,6 +19,9 @@ public class Category {
     private Long id;
 
     private String name;
+
+    private String engName;
+
     private Long parentId;
 
     public Category(String name, Long parentId) {
