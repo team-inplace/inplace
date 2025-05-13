@@ -12,6 +12,7 @@ function closeModal() {
         }
 
         currentOpenModalId = null;
+        location.reload()
     }
 }
 

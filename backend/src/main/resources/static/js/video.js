@@ -64,12 +64,17 @@ function populateCategoryOptions(rowIdx) {
   categories.forEach(category => {
     select.insertAdjacentHTML(
         'beforeend',
-        `<option value="${category.name}">${category.name}</option>`
+        `<option value="${category.id}">${category.name}</option>`
     );
   });
 }
 
-function deletePlaceRow() {
+function deletePlaceRow(row=null) {
+  if (row) {
+    row.remove();
+    return;
+  }
+
   const selectedRow = $('#place-register-tbody tr.selected');
   if (selectedRow.length === 0) {
     alert('삭제할 행을 먼저 선택하세요.');
@@ -94,8 +99,6 @@ function showTabPane(mapProvider) {
   document.getElementById(currentTabPaneId).style.display = 'block';
   document.getElementById(currentTabId).classList.add("active");
 }
-
-let placeInfo = null;
 
 function searchPlaces(mapProvider) {
   const keyword = document.getElementById(`keyword-${mapProvider}`).value;
@@ -130,10 +133,17 @@ function searchKakaoPlaces(keyword) {
         tbody.append(row);
       });
       $(`.set-place-info-${mapProviderKakao}`).off("click").on("click",
-          function () {
-            setPlaceForm(
-                JSON.stringify($(this).data("place")).replace(/'/g, "&#39;"));
-          });
+        function () {
+          const selectedRow = $('#place-register-tbody tr.selected');
+          if (selectedRow.length === 0) {
+            alert('정보를 추가할 행을 먼저 선택하세요.');
+            return;
+          }
+          setPlaceForm(
+              JSON.stringify($(this).data("place")).replace(/'/g, "&#39;"),
+              selectedRow
+          );
+        });
     } else {
       alert("장소 검색에 실패했습니다.");
     }
@@ -170,7 +180,12 @@ function searchGooglePlaces(keyword) {
       // 이벤트 리스너 등록
       $(`.set-place-info-${mapProviderGoogle}`).off("click").on("click",
           function () {
-            document.getElementById('place-id-Google').value = $(this).data(
+            const selectedRow = $('#place-register-tbody tr.selected');
+            if (selectedRow.length === 0) {
+              alert('정보를 추가할 행을 먼저 선택하세요.');
+              return;
+            }
+            selectedRow[0].querySelector('input[name="googlePlaceId"]').value = $(this).data(
                 "place-id");
           });
     },
@@ -180,47 +195,52 @@ function searchGooglePlaces(keyword) {
   });
 }
 
-function setPlaceForm(place) {
+function setPlaceForm(place, row) {
   place = JSON.parse(place);
-  document.getElementById('placeName').value = place.place_name;
-  document.getElementById('address').value = place.address_name;
-  document.getElementById('x').value = place.x;
-  document.getElementById('y').value = place.y;
-  document.getElementById('place-id-Kakao').value = place.id;
+
+  const domRow = row[0];
+  domRow.querySelector('input[name="placeName"]').value = place.place_name;
+  domRow.querySelector('input[name="address"]').value = place.address_name;
+  domRow.querySelector('input[name="x"]').value = place.x;
+  domRow.querySelector('input[name="y"]').value = place.y;
+  domRow.querySelector('input[name="kakaoPlaceId"]').value = place.id;
 }
 
-function setPlaceInfo() {
-  const placeName = document.getElementById('placeName').value;
-  const category = document.getElementById('category').value;
-  const address = document.getElementById('address').value;
-  const x = document.getElementById('x').value;
-  const y = document.getElementById('y').value;
-  let googlePlaceId = document.getElementById('place-id-Google').value;
-  const kakaoPlaceId = document.getElementById('place-id-Kakao').value;
+function setPlaceRegisterInfo(row) {
+  const placeName = row.querySelector('input[name="placeName"]').value;
+  const category = row.querySelector('select[name="category"]').value;
+  const address = row.querySelector('input[name="address"]').value;
+  const x = row.querySelector('input[name="x"]').value;
+  const y = row.querySelector('input[name="y"]').value;
+  let googlePlaceId = row.querySelector('input[name="googlePlaceId"]').value;
+  const kakaoPlaceId = row.querySelector('input[name="kakaoPlaceId"]').value;
 
   if (!placeName || !address || !category || !x || !y || !kakaoPlaceId) {
     alert("googlePlaceId를 제외한 input을 채워주세요.");
-    return;
+    return null;
   }
 
   if (!googlePlaceId && confirm("구글 Place Id가 없는 것이 맞습니까?")) {
     googlePlaceId = null;
   }
 
-  placeInfo = {
-    videoId: document.getElementById('videoId').value,
+  const placeInfo = {
+    videoId: window.selectedVideoId,
     placeName: placeName,
-    category: category,
+    categoryId: category,
     address: address,
     x: x,
     y: y,
     googlePlaceId: googlePlaceId,
     kakaoPlaceId: kakaoPlaceId
   };
+  return placeInfo;
 }
 
-function registerPlace() {
-  setPlaceInfo();
+// 등록 함수: 하나의 row만 처리
+function registerPlace(row) {
+  const placeInfo= setPlaceRegisterInfo(row);
+  if (!placeInfo) return;
   $.ajax({
     url: `/places`,
     method: 'POST',
@@ -228,14 +248,32 @@ function registerPlace() {
     data: JSON.stringify(placeInfo),
     success: function () {
       alert("장소가 등록되었습니다.");
-      closeModal();
-      location.reload();
+      deletePlaceRow(row);
     },
     error: function () {
       alert("장소 등록에 실패했습니다.");
     }
   });
 }
+
+function registerSelectedPlace() {
+  const selectedRow = document.querySelector('#place-register-tbody tr.selected');
+  if (!selectedRow) {
+    alert('등록할 행을 선택하세요.');
+    return;
+  }
+  registerPlace(selectedRow);
+}
+
+function registerAllPlaces() {
+  const rows = document.querySelectorAll('#place-register-tbody tr');
+  if (rows.length === 0) {
+    alert('등록할 행이 없습니다.');
+    return;
+  }
+  rows.forEach(row => registerPlace(row));
+}
+
 
 function deleteVideo(element) {
   if (!confirm("정말로 이 영상을 삭제하시겠습니까?")) {
