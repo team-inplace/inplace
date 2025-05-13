@@ -69,6 +69,15 @@ function populateCategoryOptions(rowIdx) {
   });
 }
 
+function deletePlaceRow() {
+  const selectedRow = $('#place-register-tbody tr.selected');
+  if (selectedRow.length === 0) {
+    alert('삭제할 행을 먼저 선택하세요.');
+    return;
+  }
+  selectedRow.remove();
+}
+
 let currentMapProvider = null;
 function showTabPane(mapProvider) {
   let currentTabPaneId;
