@@ -7,14 +7,30 @@ function openPlaceSearchModal(element) {
     videoUrl = element.getAttribute("data-video-url");
   }
 
-  document.getElementById('placeSearchModal').style.display = "block";
-  document.getElementById('videoIFrame').src = `https://www.youtube.com/embed/${videoUrl}`;
-  const row = document.getElementById(`place-row-${placeRowIdx}`);
-  const videoInput = row.querySelector('input[name="videoId"]');
-  videoInput.value = window.selectedVideoId;
+  addModalContent(videoUrl);
+  setRowClickSelect();
 
   currentOpenModalId = 'placeSearchModal';
   placeRowIdx++;
+}
+
+function addModalContent(videoUrl) {
+  document.getElementById('placeSearchModal').style.display = "block";
+  document.getElementById(
+      'videoIFrame').src = `https://www.youtube.com/embed/${videoUrl}`;
+  const row = document.getElementById(`place-row-${placeRowIdx}`);
+  const videoInput = row.querySelector('input[name="videoId"]');
+  videoInput.value = window.selectedVideoId;
+}
+
+function setRowClickSelect() {
+  $('#place-register-tbody').on('click', 'tr', function () {
+    // 기존 선택 해제
+    $('#place-register-tbody tr').removeClass('selected');
+
+    // 현재 클릭한 row에 selected 클래스 추가
+    $(this).addClass('selected');
+  });
 }
 
 function addPlaceRow() {

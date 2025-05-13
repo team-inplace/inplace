@@ -43,9 +43,7 @@ th {
     background-color: #3cb371; /* Medium sea green */
     color: white;
 }
-tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
+
 img {
     width: 100px;
     height: 100px;

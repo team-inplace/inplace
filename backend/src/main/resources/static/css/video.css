@@ -38,6 +38,10 @@
   box-sizing:border-box;
 }
 
+.selected {
+  background-color: #f0f0f0;
+}
+
 .tab {
   border: none;
   border-bottom: 2px solid transparent;
