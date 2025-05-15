@@ -35,16 +35,16 @@ public class AdminPageController {
         @RequestParam(required = false) String videoType,
         @PageableDefault Pageable pageable, Model model
     ) {
-        model.addAttribute("influencers", influencerRepository.findAll());
-        model.addAttribute("selectedInfluencerId", influencerId);
-        model.addAttribute("videoType", videoType);
         Page<Video> videoPage = (influencerId != null)
             ? videoRepository.findAllByPlaceIsNullAndInfluencerId(pageable, influencerId)
             : videoRepository.findAllByPlaceIdIsNull(pageable);
+
         model.addAttribute("videoPage", videoPage);
+        model.addAttribute("influencers", influencerRepository.findAll());
+        model.addAttribute("selectedInfluencerId", influencerId);
+        model.addAttribute("videoType", videoType);
         model.addAttribute("kakaoApiKey", kakaoApiProperties.jsKey());
         model.addAttribute("googleApiKey", googleApiProperties.placeKey1());
-
         model.addAttribute("categories", categoryRepository.findAll());
         return "admin/video.html";
     }
