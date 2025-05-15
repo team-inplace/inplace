@@ -32,10 +32,12 @@ public class AdminPageController {
     @GetMapping("/video")
     public String getVideos(
         @RequestParam(required = false) Long influencerId,
+        @RequestParam(required = false) String videoType,
         @PageableDefault Pageable pageable, Model model
     ) {
         model.addAttribute("influencers", influencerRepository.findAll());
         model.addAttribute("selectedInfluencerId", influencerId);
+        model.addAttribute("videoType", videoType);
         Page<Video> videoPage = (influencerId != null)
             ? videoRepository.findAllByPlaceIsNullAndInfluencerId(pageable, influencerId)
             : videoRepository.findAllByPlaceIdIsNull(pageable);

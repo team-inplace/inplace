@@ -36,6 +36,12 @@
             th:value="${influencer.id}">
     </option>
   </select>
+  <label for="videoType">videoType:</label>
+  <select id="videoType" name="videoType">
+    <option th:selected="${videoType == '전체'}" value="전체">전체</option>
+    <option th:selected="${videoType == '등록'}" value="등록">등록</option>
+    <option th:selected="${videoType == '미등록'}" value="미등록">미등록</option>
+  </select>
   <button type="submit">필터 적용</button>
 </form>
 <table>
