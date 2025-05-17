@@ -68,4 +68,15 @@ public class VideoResponse {
 
     }
 
+    public record Admin(
+        Long id,
+        String uuid
+    ) {
+        public static Admin from(VideoQueryResult.AdminVideo videoInfo) {
+            return new Admin(
+                videoInfo.videoId(),
+                videoInfo.videoUUID()
+            );
+        }
+    }
 }

@@ -14,8 +14,11 @@ import team7.inplace.global.properties.GoogleApiProperties;
 import team7.inplace.global.properties.KakaoApiProperties;
 import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.place.persistence.CategoryRepository;
+import team7.inplace.video.application.VideoService;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
+import team7.inplace.video.persistence.dto.VideoFilterCondition;
+import team7.inplace.video.presentation.dto.VideoResponse;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,21 +31,26 @@ public class AdminPageController {
     private final BannerRepository bannerRepository;
     private final InfluencerRepository influencerRepository;
     private final CategoryRepository categoryRepository;
+    private final VideoService videoService;
 
     @GetMapping("/video")
     public String getVideos(
         @RequestParam(required = false) Long influencerId,
-        @RequestParam(required = false) String videoType,
+        @RequestParam(required = false, defaultValue = "false") Boolean videoRegistration,
         @PageableDefault Pageable pageable, Model model
     ) {
-        Page<Video> videoPage = (influencerId != null)
-            ? videoRepository.findAllByPlaceIsNullAndInfluencerId(pageable, influencerId)
-            : videoRepository.findAllByPlaceIdIsNull(pageable);
+//        Page<Video> videoPage = (influencerId != null)
+//            ? videoRepository.findAllByPlaceIsNullAndInfluencerId(pageable, influencerId)
+//            : videoRepository.findAllByPlaceIdIsNull(pageable);
+
+        Page<VideoResponse.Admin> videoPage = videoService
+            .getAdminVideosByCondition(VideoFilterCondition.of(videoRegistration, influencerId), pageable)
+            .map(VideoResponse.Admin::from);
 
         model.addAttribute("videoPage", videoPage);
         model.addAttribute("influencers", influencerRepository.findAll());
         model.addAttribute("selectedInfluencerId", influencerId);
-        model.addAttribute("videoType", videoType);
+        model.addAttribute("videoRegistration", videoRegistration);
         model.addAttribute("kakaoApiKey", kakaoApiProperties.jsKey());
         model.addAttribute("googleApiKey", googleApiProperties.placeKey1());
         model.addAttribute("categories", categoryRepository.findAll());

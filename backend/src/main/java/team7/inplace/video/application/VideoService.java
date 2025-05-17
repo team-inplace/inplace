@@ -17,7 +17,9 @@ import team7.inplace.video.persistence.CoolVideoRepository;
 import team7.inplace.video.persistence.RecentVideoRepository;
 import team7.inplace.video.persistence.VideoReadRepository;
 import team7.inplace.video.persistence.VideoRepository;
+import team7.inplace.video.persistence.dto.VideoFilterCondition;
 import team7.inplace.video.persistence.dto.VideoQueryResult;
+import team7.inplace.video.persistence.dto.VideoQueryResult.AdminVideo;
 import team7.inplace.video.persistence.dto.VideoQueryResult.DetailedVideo;
 import team7.inplace.video.persistence.dto.VideoQueryResult.SimpleVideo;
 import team7.inplace.video.presentation.dto.VideoSearchParams;
@@ -90,6 +92,11 @@ public class VideoService {
     @Transactional(readOnly = true)
     public List<SimpleVideo> getVideosByPlaceId(Long placeId) {
         return videoReadRepository.findSimpleVideosByPlaceId(placeId);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AdminVideo> getAdminVideosByCondition(VideoFilterCondition videoFilterCondition, Pageable pageable) {
+        return videoReadRepository.findAdminVideoByCondition(videoFilterCondition, pageable);
     }
 
     @Transactional

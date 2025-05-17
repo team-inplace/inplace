@@ -9,6 +9,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,8 +23,11 @@ import team7.inplace.place.domain.QCategory;
 import team7.inplace.place.domain.QPlace;
 import team7.inplace.place.domain.QPlaceVideo;
 import team7.inplace.video.domain.QVideo;
+import team7.inplace.video.persistence.dto.QVideoQueryResult_AdminVideo;
 import team7.inplace.video.persistence.dto.QVideoQueryResult_DetailedVideo;
 import team7.inplace.video.persistence.dto.QVideoQueryResult_SimpleVideo;
+import team7.inplace.video.persistence.dto.VideoFilterCondition;
+import team7.inplace.video.persistence.dto.VideoQueryResult.AdminVideo;
 import team7.inplace.video.persistence.dto.VideoQueryResult.DetailedVideo;
 import team7.inplace.video.persistence.dto.VideoQueryResult.SimpleVideo;
 
@@ -173,6 +177,54 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
             .fetch();
 
         return new PageImpl<>(videos, pageable, total);
+    }
+
+    @Override
+    public Page<AdminVideo> findAdminVideoByCondition(VideoFilterCondition condition, Pageable pageable) {
+        Long total = queryFactory
+            .select(QVideo.video.countDistinct())
+            .from(QVideo.video)
+            .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
+            .where(
+                eqInfluencerId(condition.influencerId()),
+                registrationCondition(condition.registered()),
+                QVideo.video.deleteAt.isNull()
+            )
+            .fetchOne();
+
+        if (total == 0) {
+            return new PageImpl<>(Collections.emptyList(), pageable, total);
+        }
+
+        List<AdminVideo> videos = queryFactory
+            .select(new QVideoQueryResult_AdminVideo(
+                QVideo.video.id,
+                QVideo.video.uuid
+                ))
+            .distinct()
+            .from(QVideo.video)
+            .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
+            .where(
+                eqInfluencerId(condition.influencerId()),
+                registrationCondition(condition.registered()),
+                QVideo.video.deleteAt.isNull()
+            )
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
+        return new PageImpl<>(videos, pageable, total);
+    }
+
+    private static BooleanExpression registrationCondition(Boolean registered) {
+        if (Objects.isNull(registered) || !registered) {
+            return QPlaceVideo.placeVideo.isNull();
+        }
+        return QPlaceVideo.placeVideo.isNotNull();
+    }
+
+    private BooleanExpression eqInfluencerId(Long influencerId) {
+        return influencerId == null ? null : QVideo.video.influencerId.eq(influencerId);
     }
 
     private JPAQuery<SimpleVideo> buildSimpleVideoQuery() {
