@@ -11,16 +11,12 @@ function openPlaceSearchModal(element) {
   setRowClickSelect();
 
   currentOpenModalId = 'placeSearchModal';
-  placeRowIdx++;
 }
 
 function addModalContent(videoUrl) {
   document.getElementById('placeSearchModal').style.display = "block";
   document.getElementById(
       'videoIFrame').src = `https://www.youtube.com/embed/${videoUrl}`;
-  const row = document.getElementById(`place-row-${placeRowIdx}`);
-  const videoInput = row.querySelector('input[name="videoId"]');
-  videoInput.value = window.selectedVideoId;
 }
 
 function setRowClickSelect() {

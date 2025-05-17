@@ -124,23 +124,6 @@
           <th th:text="|장소 ID (${google})|">장소 ID ([[${google}]])</th>
           </thead>
           <tbody id="place-register-tbody">
-          <tr id="place-row-0">
-            <td><input name="videoId" disabled></td>
-            <td><input name="placeName"></td>
-            <td>
-              <select name="category"required>
-                <option disabled selected value="">카테고리</option>
-                <th:block th:each="category : ${categories}">
-                  <option th:text="${category.name}" th:value="${category.id}"/>
-                </th:block>
-              </select>
-            </td>
-            <td><input id="address" name="address"></td>
-            <td><input id="x" name="x"></td>
-            <td><input id="y" name="y"></td>
-            <td><input th:id="|place-id-${kakao}|" name="kakaoPlaceId"></td>
-            <td><input th:id="|place-id-${google}|" name="googlePlaceId"></td>
-          </tr>
           </tbody>
         </table>
       </div>

@@ -39,10 +39,6 @@ public class AdminPageController {
         @RequestParam(required = false, defaultValue = "false") Boolean videoRegistration,
         @PageableDefault Pageable pageable, Model model
     ) {
-//        Page<Video> videoPage = (influencerId != null)
-//            ? videoRepository.findAllByPlaceIsNullAndInfluencerId(pageable, influencerId)
-//            : videoRepository.findAllByPlaceIdIsNull(pageable);
-
         Page<VideoResponse.Admin> videoPage = videoService
             .getAdminVideosByCondition(VideoFilterCondition.of(videoRegistration, influencerId), pageable)
             .map(VideoResponse.Admin::from);
