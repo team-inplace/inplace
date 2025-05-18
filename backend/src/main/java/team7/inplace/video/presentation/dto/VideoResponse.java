@@ -70,12 +70,14 @@ public class VideoResponse {
 
     public record Admin(
         Long id,
-        String uuid
+        String uuid,
+        Boolean registered
     ) {
         public static Admin from(VideoQueryResult.AdminVideo videoInfo) {
             return new Admin(
                 videoInfo.videoId(),
-                videoInfo.videoUUID()
+                videoInfo.videoUUID(),
+                videoInfo.registered()
             );
         }
     }

@@ -199,7 +199,8 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
         List<AdminVideo> videos = queryFactory
             .select(new QVideoQueryResult_AdminVideo(
                 QVideo.video.id,
-                QVideo.video.uuid
+                QVideo.video.uuid,
+                Expressions.constant(Boolean.TRUE.equals(condition.registered()))
                 ))
             .distinct()
             .from(QVideo.video)
@@ -216,7 +217,7 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
         return new PageImpl<>(videos, pageable, total);
     }
 
-    private static BooleanExpression registrationCondition(Boolean registered) {
+    private BooleanExpression registrationCondition(Boolean registered) {
         if (Objects.isNull(registered) || !registered) {
             return QPlaceVideo.placeVideo.isNull();
         }

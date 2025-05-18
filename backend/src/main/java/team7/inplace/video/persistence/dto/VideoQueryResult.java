@@ -85,7 +85,8 @@ public class VideoQueryResult {
 
     public record AdminVideo(
         Long videoId,
-        String videoUUID
+        String videoUUID,
+        Boolean registered
     ) {
 
         @QueryProjection
