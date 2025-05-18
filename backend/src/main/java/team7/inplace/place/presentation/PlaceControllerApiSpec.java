@@ -6,7 +6,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -76,8 +78,11 @@ public interface PlaceControllerApiSpec {
         @PathVariable("id") Long placeId
     );
 
-    @Operation(summary = "비디오에 대한 장소 조회", description = "비디오 ID를 통해 특정 비디의 장소 살세 정보를 조회합니다.")
+    @Operation(summary = "비디오에 대한 장소 조회", description = "비디오 ID를 통해 특정 비디의 장소 상세 정보를 조회합니다.")
     ResponseEntity<List<Admin>> getAdminPlacesByVideoId(
         @PathVariable Long videoId
     );
+
+    @Operation(summary = "장소 정보 삭제", description = "장소 ID를 통해 장소 정보를 삭제합니다.")
+    ResponseEntity<Void> deletePlaceById(@PathVariable Long placeId);
 }

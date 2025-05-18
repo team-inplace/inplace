@@ -93,6 +93,20 @@ function populateCategoryOptions(rowIdx, selectedCategory = '') {
   });
 }
 
+function deletePlace(placeId) {
+  $.ajax({
+    url: `/places/${placeId}`,
+    method: 'DELETE',
+    contentType: 'application/json',
+    success: function() {
+      alert("장소 삭제에 성공하였습니다.");
+    },
+    error: function () {
+      alert("장소 삭제에 실패하였습니다.");
+    }
+  });
+}
+
 function deletePlaceRow(row=null) {
   if (row) {
     row.remove();
@@ -104,6 +118,13 @@ function deletePlaceRow(row=null) {
     alert('삭제할 행을 먼저 선택하세요.');
     return;
   }
+
+  // 존재하던 장소 삭제
+  const placeId = selectedRow[0].querySelector('input[name="placeId"]').value;
+  if (placeId && confirm("장소를 삭제하시겠습니까?")) {
+    deletePlace(placeId);
+  }
+
   selectedRow.remove();
 }
 

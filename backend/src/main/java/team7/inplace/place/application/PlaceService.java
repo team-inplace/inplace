@@ -213,4 +213,9 @@ public class PlaceService {
     public List<PlaceQueryResult.DetailedPlace> getSimplePlacesByVideoId(Long videoId) {
         return placeReadRepository.getDetailedPlacesByVideoId(videoId);
     }
+
+    @Transactional
+    public void deletePlaceById(Long placeId) {
+        placeJpaRepository.deleteById(placeId);
+    }
 }

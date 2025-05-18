@@ -125,4 +125,8 @@ public class PlaceFacade {
             .map((place) -> Simple.of(place, null))
             .toList();
     }
+
+    public void deletePlaceById(Long placeId) {
+        placeService.deletePlaceById(placeId);
+    }
 }
