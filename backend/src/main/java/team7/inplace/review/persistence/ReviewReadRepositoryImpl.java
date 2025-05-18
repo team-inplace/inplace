@@ -5,6 +5,8 @@ import static com.querydsl.core.types.ExpressionUtils.count;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Collections;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -17,6 +19,7 @@ import team7.inplace.review.persistence.dto.QReviewQueryResult_LikeRate;
 import team7.inplace.review.persistence.dto.QReviewQueryResult_Simple;
 import team7.inplace.review.persistence.dto.ReviewQueryResult;
 import team7.inplace.user.domain.QUser;
+import team7.inplace.video.domain.QVideo;
 
 @Repository
 @RequiredArgsConstructor
@@ -51,15 +54,18 @@ public class ReviewReadRepositoryImpl implements ReviewReadRepository {
                 QPlace.place.name,
                 QPlace.place.address.address1,
                 QPlace.place.address.address2,
-                QPlace.place.address.address3
-            ))
+                QPlace.place.address.address3))
             .from(QReview.review)
             .innerJoin(QPlace.place).on(QReview.review.placeId.eq(QPlace.place.id))
             .where(
                 QReview.review.userId.eq(userId),
                 QReview.review.deleteAt.isNull(),
                 QPlace.place.deleteAt.isNull()
-            ).fetch();
+            )
+            .offset(pageable.getOffset())
+            .limit(pageable.getPageSize())
+            .fetch();
+
         return new PageImpl<>(contents, pageable, total);
     }
 

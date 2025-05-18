@@ -50,9 +50,9 @@ public class VideoController implements VideoControllerApiSpec {
     }
 
     @Override
-    @GetMapping("/cool")
-    public ResponseEntity<List<VideoResponse.Detail>> readByCool() {
-        var videoResponses = videoService.getCoolVideo()
+    @GetMapping("/cool/{category}")
+    public ResponseEntity<List<VideoResponse.Detail>> readByCool(@PathVariable String category) {
+        var videoResponses = videoService.getCoolVideo(category)
             .stream().map(VideoResponse.Detail::from).toList();
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }
@@ -89,7 +89,7 @@ public class VideoController implements VideoControllerApiSpec {
     @GetMapping("/update")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> updateMainVideos() {
-        videoService.updateCoolVideos();
+        videoFacade.updateCoolVideos();
         videoService.updateRecentVideos();
         return new ResponseEntity<>(HttpStatus.OK);
     }

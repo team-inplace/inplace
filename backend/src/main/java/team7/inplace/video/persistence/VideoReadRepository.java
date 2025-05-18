@@ -18,7 +18,7 @@ public interface VideoReadRepository {
             Pageable pageable
     );
 
-    List<VideoQueryResult.DetailedVideo> findTop10ByViewCountIncrement();
+    List<VideoQueryResult.DetailedVideo> findTop10ByViewCountIncrement(Long parentCategoryId);
 
     List<VideoQueryResult.DetailedVideo> findTop10ByLatestUploadDate();
 

@@ -46,10 +46,10 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserInfo getUserInfo(Long userId) {
+    public UserInfo.Profile getUserInfo(Long userId) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
-        return UserInfo.from(user);
+        return UserInfo.Profile.from(user);
     }
 
     @Transactional()

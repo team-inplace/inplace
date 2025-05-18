@@ -65,14 +65,15 @@ public class VideoReadRepositoryTest {
     }
 
     @Test
-    @DisplayName("비디오 조회 테스트 - 조회수 증가량 순으로 비디오 10개 조회")
+    @DisplayName("비디오 조회 테스트 - 조회수 증가량 순으로 비디오 10개 조회 (상위 카테고리 적용)")
     void findVideo_ViewCountDesc() {
         // given
         final int expectedTotalContent = 10;
-        final List<Long> expectedVideoIds = List.of(20L, 19L, 18L, 17L, 16L, 15L, 14L, 13L, 12L, 11L);
+        final List<Long> expectedVideoIds = List.of(20L, 19L, 18L, 17L, 15L, 14L, 13L, 12L, 10L, 9L);
+        Long parentCategoryId = 1L;
 
         // when
-        List<VideoQueryResult.DetailedVideo> videos = videoReadRepository.findTop10ByViewCountIncrement();
+        List<VideoQueryResult.DetailedVideo> videos = videoReadRepository.findTop10ByViewCountIncrement(parentCategoryId);
 
         // then
         assertThat(videos.size()).isEqualTo(expectedTotalContent);

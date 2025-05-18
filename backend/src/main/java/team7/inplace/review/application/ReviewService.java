@@ -24,18 +24,14 @@ public class ReviewService {
     public Page<ReviewQueryResult.Simple> getPlaceReviews(Long placeId, Pageable pageable) {
         Long userId = AuthorizationUtil.getUserIdOrNull();
 
-        Page<ReviewQueryResult.Simple> reviewResults = reviewReadRepository
+        return reviewReadRepository
             .findSimpleReviewByUserIdAndPlaceId(placeId, userId, pageable);
-        return reviewResults;
     }
 
 
     @Transactional(readOnly = true)
     public Page<ReviewQueryResult.Detail> getUserReviews(Long userId, Pageable pageable) {
-        Page<ReviewQueryResult.Detail> reviewPage =
-            reviewReadRepository.findDetailedReviewByUserId(userId, pageable);
-
-        return reviewPage;
+        return reviewReadRepository.findDetailedReviewByUserId(userId, pageable);
     }
 
     @Transactional(readOnly = true)

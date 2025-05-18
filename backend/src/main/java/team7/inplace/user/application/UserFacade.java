@@ -14,7 +14,11 @@ import team7.inplace.review.persistence.dto.ReviewQueryResult;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.token.application.OauthTokenService;
 import team7.inplace.user.application.dto.UserInfo;
+import team7.inplace.user.presentation.dto.UserResponse;
 import team7.inplace.video.application.VideoService;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Facade
 @RequiredArgsConstructor
@@ -49,9 +53,19 @@ public class UserFacade {
             place -> PlaceInfo.Simple.of(place, videoInfos.get(place.placeId())));
     }
 
-    public Page<ReviewQueryResult.Detail> getMyReviews(Pageable pageable) {
+    public Page<UserInfo.Review> getMyReviews(Pageable pageable) {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
-        return reviewService.getUserReviews(userId, pageable);
+        var details = reviewService.getUserReviews(userId, pageable);
+        var placeIds = details.stream().map(ReviewQueryResult.Detail::placeId).toList();
+        var videoUrls = videoService.getVideosByPlaceId(placeIds).entrySet()
+            .stream()
+            .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                entry -> entry.getValue().get(0).videoUrl())
+            );
+
+        return details
+                .map((detail) -> UserInfo.Review.from(detail, videoUrls.get(detail.placeId())));
     }
 
     public void updateNickname(String nickname) {
@@ -59,7 +73,7 @@ public class UserFacade {
         userService.updateNickname(userId, nickname);
     }
 
-    public UserInfo getUserInfo() {
+    public UserInfo.Profile getUserInfo() {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
         return userService.getUserInfo(userId);
     }

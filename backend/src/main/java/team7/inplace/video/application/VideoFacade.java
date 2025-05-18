@@ -57,4 +57,17 @@ public class VideoFacade {
     public Page<VideoQueryResult.SimpleVideo> getVideoWithNoPlace(Pageable pageable) {
         return videoService.getVideoWithNoPlace(pageable);
     }
+
+//    @Transactional(readOnly = true)
+//    public List<VideoQueryResult.DetailedVideo> getCoolVideosByParentCategory(String category) {
+//        var parentCategory = ParentCategory.from(category);
+//        return videoService.getCoolVideo(parentCategory.getParentCategory());
+//    }
+
+    @Transactional
+    public void updateCoolVideos() {
+        List<Long> parentCategoryIds = placeService.getParentCategoryIds();
+        videoService.updateCoolVideos(parentCategoryIds);
+    }
+
 }

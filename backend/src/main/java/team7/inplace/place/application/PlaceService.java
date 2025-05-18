@@ -183,6 +183,11 @@ public class PlaceService {
             .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<Long> getParentCategoryIds() {
+        return categoryRepository.findParentCategoryIds();
+    }
+
     public List<Marker> getPlaceLocationsByName(String name, FilterParams command) {
         return placeReadRepository.findPlaceLocationsByName(
             name,

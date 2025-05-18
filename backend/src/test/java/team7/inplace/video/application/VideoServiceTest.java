@@ -59,11 +59,12 @@ class VideoServiceTest {
                 tuple("CoolVideo9", "CoolInfluencer9", "CoolPlace9"),
                 tuple("CoolVideo10", "CoolInfluencer10", "CoolPlace10")
             );
+        var parentCategoryIds = List.of(1L);
+
         //when
+        videoService.updateCoolVideos(parentCategoryIds);
 
-        videoService.updateCoolVideos();
         //then
-
         List<CoolVideo> updatedCoolVideos = coolVideoRepository.findAll();
         assertThat(updatedCoolVideos)
             .hasSize(10)
@@ -73,13 +74,13 @@ class VideoServiceTest {
                 tuple("Video19", "influencer5", "testPlace19"),
                 tuple("Video18", "influencer5", "testPlace18"),
                 tuple("Video17", "influencer5", "testPlace17"),
-                tuple("Video16", "influencer4", "testPlace16"),
                 tuple("Video15", "influencer4", "testPlace15"),
                 tuple("Video14", "influencer4", "testPlace14"),
                 tuple("Video13", "influencer4", "testPlace13"),
                 tuple("Video12", "influencer3", "testPlace12"),
-                tuple("Video11", "influencer3", "testPlace11")
-            );
+                tuple("Video10", "influencer3", "testPlace10"),
+                tuple("Video9", "influencer3", "testPlace9")
+                );
     }
 
     @Test
@@ -102,11 +103,11 @@ class VideoServiceTest {
                 tuple("RecentVideo9", "RecentInfluencer9", "RecentPlace9"),
                 tuple("RecentVideo10", "RecentInfluencer10", "RecentPlace10")
             );
+
         //when
-
         videoService.updateRecentVideos();
-        //then
 
+        //then
         List<RecentVideo> updatedRecentVideos = recentVideoRepository.findAll();
         assertThat(updatedRecentVideos)
             .hasSize(10)

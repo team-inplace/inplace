@@ -249,10 +249,11 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
         return jpaQueryFactory
             .select(QPlace.place.id)
             .from(QPlace.place)
-            .leftJoin(QCategory.category).on(QPlace.place.categoryId.eq(QCategory.category.id))
-            .leftJoin(QPlaceVideo.placeVideo).on(QPlaceVideo.placeVideo.placeId.eq(QPlace.place.id))
-            .leftJoin(QVideo.video).on(QPlaceVideo.placeVideo.videoId.eq(QVideo.video.id))
-            .leftJoin(QInfluencer.influencer)
+            .innerJoin(QCategory.category).on(QPlace.place.categoryId.eq(QCategory.category.id))
+            .innerJoin(QPlaceVideo.placeVideo)
+            .on(QPlaceVideo.placeVideo.placeId.eq(QPlace.place.id))
+            .innerJoin(QVideo.video).on(QPlaceVideo.placeVideo.videoId.eq(QVideo.video.id))
+            .innerJoin(QInfluencer.influencer)
             .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id))
             .where(
                 buildLocationCondition(regions, topLeftLng, topLeftLat, bottomRightLng,
@@ -270,10 +271,11 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
         return jpaQueryFactory
             .select(QPlace.place.id)
             .from(QPlace.place)
-            .leftJoin(QCategory.category).on(QPlace.place.categoryId.eq(QCategory.category.id))
-            .leftJoin(QPlaceVideo.placeVideo).on(QPlaceVideo.placeVideo.placeId.eq(QPlace.place.id))
-            .leftJoin(QVideo.video).on(QPlaceVideo.placeVideo.videoId.eq(QVideo.video.id))
-            .leftJoin(QInfluencer.influencer)
+            .innerJoin(QCategory.category).on(QPlace.place.categoryId.eq(QCategory.category.id))
+            .innerJoin(QPlaceVideo.placeVideo)
+            .on(QPlaceVideo.placeVideo.placeId.eq(QPlace.place.id))
+            .innerJoin(QVideo.video).on(QPlaceVideo.placeVideo.videoId.eq(QVideo.video.id))
+            .innerJoin(QInfluencer.influencer)
             .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id))
             .where(
                 buildLocationCondition(regions, null, null, null, null),
