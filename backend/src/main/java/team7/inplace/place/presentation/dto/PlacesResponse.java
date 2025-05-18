@@ -364,7 +364,7 @@ public class PlacesResponse {
                 simple.place().placeId(),
                 simple.place().placeName(),
                 simple.place().category().toString(),
-                simple.place().address1() + simple.place().address2() + simple.place().address3(),
+                simple.place().address1() + " " + simple.place().address2()+ " " + simple.place().address3(),
                 simple.place().longitude(),
                 simple.place().latitude(),
                 simple.place().kakaoPlaceId(),

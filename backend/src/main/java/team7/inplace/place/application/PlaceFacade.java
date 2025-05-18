@@ -9,8 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import team7.inplace.global.annotation.Facade;
 import team7.inplace.place.application.command.PlaceLikeCommand;
-import team7.inplace.place.application.command.PlacesCommand;
 import team7.inplace.place.application.command.PlacesCommand.Coordinate;
+import team7.inplace.place.application.command.PlacesCommand.Upsert;
 import team7.inplace.place.application.command.PlacesCommand.FilterParams;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.application.dto.PlaceInfo.Simple;
@@ -32,7 +32,7 @@ public class PlaceFacade {
 
     private final Executor externalApiExecutor;
 
-    public void createPlace(PlacesCommand.Create command) {
+    public void createPlace(Upsert command) {
         placeService.createPlace(command);
     }
 
@@ -128,5 +128,9 @@ public class PlaceFacade {
 
     public void deletePlaceById(Long placeId) {
         placeService.deletePlaceById(placeId);
+    }
+
+    public Long updatePlaceInfo(Long placeId, Upsert command) {
+        return placeService.updatePlaceInfo(placeId, command);
     }
 }

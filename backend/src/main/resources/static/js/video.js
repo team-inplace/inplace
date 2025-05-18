@@ -252,6 +252,7 @@ function setPlaceForm(place, row) {
 }
 
 function setPlaceRegisterInfo(row) {
+  const placeId = row.querySelector('input[name="placeId"]').value;
   const placeName = row.querySelector('input[name="placeName"]').value;
   const category = row.querySelector('select[name="category"]').value;
   const address = row.querySelector('input[name="address"]').value;
@@ -279,13 +280,30 @@ function setPlaceRegisterInfo(row) {
     googlePlaceId: googlePlaceId,
     kakaoPlaceId: kakaoPlaceId
   };
-  return placeInfo;
+  return [placeId, placeInfo];
 }
 
 // 등록 함수: 하나의 row만 처리
 function registerPlace(row) {
-  const placeInfo= setPlaceRegisterInfo(row);
+  let placeId = null;
+  let placeInfo = null;
+  [placeId, placeInfo] = setPlaceRegisterInfo(row);
   if (!placeInfo) return;
+  if (placeId) {
+    $.ajax({
+      url: `/places/${placeId}`,
+      method: 'PUT',
+      contentType: 'application/json',
+      data: JSON.stringify(placeInfo),
+      success: function () {
+        alert("장소가 수정되었습니다.");
+      },
+      error: function () {
+        alert("장소 수정에 실패했습니다.");
+      }
+    });
+    return;
+  }
   $.ajax({
     url: `/places`,
     method: 'POST',
@@ -293,7 +311,9 @@ function registerPlace(row) {
     data: JSON.stringify(placeInfo),
     success: function () {
       alert("장소가 등록되었습니다.");
-      deletePlaceRow(row);
+      if (document.getElementById("modalTitle").innerText !== "장소 수정") {
+        deletePlaceRow(row);
+      }
     },
     error: function () {
       alert("장소 등록에 실패했습니다.");

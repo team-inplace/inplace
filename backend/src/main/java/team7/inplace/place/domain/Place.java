@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team7.inplace.global.baseEntity.BaseEntity;
+import team7.inplace.place.application.command.PlacesCommand.Upsert;
 
 @Getter
 @Entity(name = "places")
@@ -37,5 +38,14 @@ public class Place extends BaseEntity {
         this.coordinate = Coordinate.of(x, y);
         this.googlePlaceId = googlePlaceId;
         this.kakaoPlaceId = kakaoPlaceId;
+    }
+
+    public void updateInfo(Upsert command) {
+        this.name = command.placeName();
+        this.categoryId = command.category();
+        this.address = Address.of(command.address());
+        this.coordinate = Coordinate.of(command.x(), command.y());
+        this.googlePlaceId = command.googlePlaceId();
+        this.kakaoPlaceId = command.kakaoPlaceId();
     }
 }

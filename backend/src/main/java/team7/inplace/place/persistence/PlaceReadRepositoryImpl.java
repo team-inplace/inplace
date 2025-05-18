@@ -176,7 +176,6 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
             .from(QVideo.video)
             .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
             .where(QVideo.video.id.eq(videoId))
-            .where(QPlace.place.deleteAt.isNull())
             .fetch();
 
         return jpaQueryFactory

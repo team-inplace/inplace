@@ -46,7 +46,7 @@ public class PlacesCommand {
 
     }
 
-    public record Create(
+    public record Upsert(
         Long videoId,
         String placeName,
         Long category,

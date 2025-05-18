@@ -18,7 +18,7 @@ import team7.inplace.liked.likedPlace.persistence.LikedPlaceRepository;
 import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand;
 import team7.inplace.place.application.command.PlacesCommand.Coordinate;
-import team7.inplace.place.application.command.PlacesCommand.Create;
+import team7.inplace.place.application.command.PlacesCommand.Upsert;
 import team7.inplace.place.application.command.PlacesCommand.FilterParams;
 import team7.inplace.place.application.command.PlacesCommand.RegionParam;
 import team7.inplace.place.application.dto.PlaceInfo;
@@ -49,7 +49,7 @@ public class PlaceService {
     private final GooglePlaceClient googlePlaceClient;
 
     @Transactional
-    public void createPlace(Create placeCommand) {
+    public void createPlace(Upsert placeCommand) {
         var place = placeJpaRepository.findPlaceByKakaoPlaceId(placeCommand.kakaoPlaceId())
             .orElseGet(() -> {
                 var newPlace = placeCommand.toEntity();
@@ -217,5 +217,15 @@ public class PlaceService {
     @Transactional
     public void deletePlaceById(Long placeId) {
         placeJpaRepository.deleteById(placeId);
+    }
+
+    @Transactional
+    public Long updatePlaceInfo(Long placeId, Upsert command) {
+        team7.inplace.place.domain.Place place = placeJpaRepository.findById(placeId)
+            .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
+
+        place.updateInfo(command);
+
+        return place.getId();
     }
 }

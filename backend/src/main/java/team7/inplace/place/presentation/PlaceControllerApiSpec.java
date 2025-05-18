@@ -8,13 +8,13 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import team7.inplace.place.presentation.dto.PlaceRequest;
+import team7.inplace.place.presentation.dto.PlaceRequest.Upsert;
 import team7.inplace.place.presentation.dto.PlacesResponse;
 import team7.inplace.place.presentation.dto.PlacesResponse.Admin;
 import team7.inplace.place.presentation.dto.PlacesResponse.Categories;
@@ -25,7 +25,7 @@ public interface PlaceControllerApiSpec {
 
     @Operation(summary = "장소 저장", description = "장소 정보를 저장합니다.")
     ResponseEntity<Void> savePlace(
-        @RequestBody PlaceRequest.Create request
+        @RequestBody Upsert request
     );
 
     @Operation(summary = "장소 조회", description = "지도 반경 내 혹은 필터링 기준의 장소 페이지네이션 목록을 조회합니다.")
@@ -84,5 +84,13 @@ public interface PlaceControllerApiSpec {
     );
 
     @Operation(summary = "장소 정보 삭제", description = "장소 ID를 통해 장소 정보를 삭제합니다.")
-    ResponseEntity<Void> deletePlaceById(@PathVariable Long placeId);
+    ResponseEntity<Void> deletePlaceById(
+        @PathVariable Long placeId
+    );
+
+    @Operation(summary = "장소 정보 수정", description = "장소 ID를 통해 장소 정보를 수정합니다.")
+    ResponseEntity<Long> updatePlaceInfo(
+        @PathVariable Long placeId,
+        @RequestBody Upsert update
+    );
 }

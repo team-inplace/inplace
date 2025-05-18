@@ -17,7 +17,7 @@ public class PlaceRequest {
 
     }
 
-    public record Create(
+    public record Upsert(
         Long videoId,
         String placeName,
         Long categoryId,
@@ -28,8 +28,8 @@ public class PlaceRequest {
         String googlePlaceId
     ) {
 
-        public PlacesCommand.Create toCommand() {
-            return new PlacesCommand.Create(
+        public PlacesCommand.Upsert toCommand() {
+            return new PlacesCommand.Upsert(
                 videoId, placeName, categoryId, address, x, y, googlePlaceId, kakaoPlaceId
             );
         }
