@@ -169,6 +169,36 @@ public class PlaceReadRepositoryImpl implements PlaceReadRepository {
         return PageableExecutionUtils.getPage(places, pageable, () -> (long) ids.size());
     }
 
+    @Override
+    public List<DetailedPlace> getDetailedPlacesByVideoId(Long videoId) {
+        List<Long> placeIds = jpaQueryFactory
+            .select(QPlaceVideo.placeVideo.placeId)
+            .from(QVideo.video)
+            .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
+            .where(QVideo.video.id.eq(videoId))
+            .fetch();
+
+        return jpaQueryFactory
+            .select(new QPlaceQueryResult_DetailedPlace(
+                QPlace.place.id,
+                QPlace.place.name,
+                QPlace.place.address.address1,
+                QPlace.place.address.address2,
+                QPlace.place.address.address3,
+                QPlace.place.coordinate.longitude,
+                QPlace.place.coordinate.latitude,
+                QCategory.category.name,
+                QPlace.place.googlePlaceId,
+                QPlace.place.kakaoPlaceId,
+                Expressions.nullExpression(),
+                Expressions.nullExpression()
+            ))
+            .from(QPlace.place)
+            .where(QPlace.place.id.in(placeIds))
+            .leftJoin(QCategory.category).on(QPlace.place.categoryId.eq(QCategory.category.id))
+            .fetch();
+    }
+
     // ====================== 공통 빌더 =========================
 
     private JPAQuery<DetailedPlace> buildDetailedPlaceQuery(Long userId) {

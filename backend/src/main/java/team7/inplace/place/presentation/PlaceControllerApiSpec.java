@@ -7,12 +7,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import team7.inplace.place.presentation.dto.PlaceRequest;
 import team7.inplace.place.presentation.dto.PlacesResponse;
+import team7.inplace.place.presentation.dto.PlacesResponse.Admin;
 import team7.inplace.place.presentation.dto.PlacesResponse.Categories;
 import team7.inplace.place.presentation.dto.PlacesResponse.Marker;
 import team7.inplace.place.presentation.dto.ReviewResponse;
@@ -72,5 +74,10 @@ public interface PlaceControllerApiSpec {
     @Operation(summary = "마커 상세 정보 조회", description = "장소 ID를 통해 특정 장소의 마커 상세 정보를 조회합니다.")
     ResponseEntity<PlacesResponse.MarkerDetail> getMarkerDetail(
         @PathVariable("id") Long placeId
+    );
+
+    @Operation(summary = "비디오에 대한 장소 조회", description = "비디오 ID를 통해 특정 비디의 장소 살세 정보를 조회합니다.")
+    ResponseEntity<List<Admin>> getAdminPlacesByVideoId(
+        @PathVariable Long videoId
     );
 }

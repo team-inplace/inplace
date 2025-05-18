@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import team7.inplace.place.application.dto.PlaceInfo;
+import team7.inplace.place.application.dto.PlaceInfo.Category;
+import team7.inplace.place.application.dto.PlaceInfo.Simple;
 import team7.inplace.place.client.GooglePlaceClientResponse;
 import team7.inplace.place.client.GooglePlaceClientResponse.AccessibilityOptions;
 import team7.inplace.place.client.GooglePlaceClientResponse.ParkingOptions;
@@ -343,6 +345,31 @@ public class PlacesResponse {
 
         public static Category from(PlaceInfo.Category category) {
             return new Category(category.id(), category.name(), new ArrayList<>());
+        }
+    }
+
+    public record Admin(
+        Long placeId,
+        String placeName,
+        String category,
+        String address,
+        Double x,
+        Double y,
+        Long kakaoPlaceId,
+        String googlePlaceId
+    ) {
+
+        public static Admin of(PlaceInfo.Simple simple) {
+            return new PlacesResponse.Admin(
+                simple.place().placeId(),
+                simple.place().placeName(),
+                simple.place().category().toString(),
+                simple.place().address1() + simple.place().address2() + simple.place().address3(),
+                simple.place().longitude(),
+                simple.place().latitude(),
+                simple.place().kakaoPlaceId(),
+                simple.place().googlePlaceId()
+            );
         }
     }
 }

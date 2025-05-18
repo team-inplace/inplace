@@ -204,4 +204,8 @@ public class PlaceService {
             pageable
         );
     }
+
+    public List<PlaceQueryResult.DetailedPlace> getSimplePlacesByVideoId(Long videoId) {
+        return placeReadRepository.getDetailedPlacesByVideoId(videoId);
+    }
 }

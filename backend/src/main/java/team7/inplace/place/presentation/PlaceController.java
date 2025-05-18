@@ -26,6 +26,7 @@ import team7.inplace.place.persistence.dto.PlaceQueryResult;
 import team7.inplace.place.presentation.dto.PlaceRequest;
 import team7.inplace.place.presentation.dto.PlaceRequest.Create;
 import team7.inplace.place.presentation.dto.PlacesResponse;
+import team7.inplace.place.presentation.dto.PlacesResponse.Admin;
 import team7.inplace.place.presentation.dto.PlacesResponse.Categories;
 import team7.inplace.place.presentation.dto.PlacesResponse.Marker;
 import team7.inplace.place.presentation.dto.PlacesResponse.MarkerDetail;
@@ -168,6 +169,20 @@ public class PlaceController implements PlaceControllerApiSpec {
     ) {
         var responses = reviewService.getPlaceReviews(placeId, pageable)
             .map(ReviewResponse.Simple::from);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
+    @Override
+    @GetMapping("/videos/{videoId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<Admin>> getAdminPlacesByVideoId(
+        @PathVariable Long videoId
+    ) {
+        List<Admin> responses =  placeFacade.getAdminPlacesByVideoId(videoId)
+            .stream()
+            .map(Admin::of)
+            .toList();
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }

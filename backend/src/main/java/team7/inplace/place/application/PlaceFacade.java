@@ -118,4 +118,11 @@ public class PlaceFacade {
         return placeSimpleInfos
             .map(place -> PlaceInfo.Simple.of(place, placeVideos.get(place.placeId())));
     }
+
+    public List<PlaceInfo.Simple> getAdminPlacesByVideoId(Long videoId) {
+        return placeService.getSimplePlacesByVideoId(videoId)
+            .stream()
+            .map((place) -> Simple.of(place, null))
+            .toList();
+    }
 }

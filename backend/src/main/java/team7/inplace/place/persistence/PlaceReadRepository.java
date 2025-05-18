@@ -60,4 +60,6 @@ public interface PlaceReadRepository {
         List<String> influencers,
         Pageable pageable
     );
+
+    List<DetailedPlace> getDetailedPlacesByVideoId(Long videoId);
 }

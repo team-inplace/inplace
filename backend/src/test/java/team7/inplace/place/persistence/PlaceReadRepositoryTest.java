@@ -753,4 +753,16 @@ class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
             .map(DetailedPlace::placeId).toList())
             .isEqualTo(ids);
     }
+
+    @Test
+    @DisplayName("videoId로 장소 조회 테스트")
+    void PlaceReadRepositoryTest() {
+        // given
+        Long videoId = 1L;
+        List<Long> expectedPlaceIds = List.of(1L, 20L);
+        // when
+        List<DetailedPlace> places = placeReadRepository.getDetailedPlacesByVideoId(videoId);
+        // then
+        assertThat(places.stream().map(DetailedPlace::placeId).toList()).isEqualTo(expectedPlaceIds);
+    }
 }
