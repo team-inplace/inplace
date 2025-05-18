@@ -58,13 +58,13 @@
     <td>
       <img alt="Video Thumbnail"
            onclick="openPlaceSearchModal(this)" style="cursor:pointer;width:100px;"
-           th:attr="data-video-url=${video.uuid}, data-video-id=${video.id}"
+           th:attr="data-video-url=${video.uuid}, data-video-id=${video.id}, data-video-registered=${video.registered}"
            th:src="|https://img.youtube.com/vi/${video.uuid}/0.jpg|"/>
     </td>
     <td>
       <button
           onclick="openPlaceSearchModal(this)"
-          th:attr="data-video-url=${video.uuid}, data-video-id=${video.id}">
+          th:attr="data-video-url=${video.uuid}, data-video-id=${video.id}, data-video-registered=${video.registered}">
         장소 등록
       </button>
     </td>
@@ -115,6 +115,7 @@
         <table class="place-register-table">
           <thead>
           <th>비디오 ID</th>
+          <th>장소 ID</th>
           <th>장소 이름</th>
           <th>카테고리</th>
           <th>주소 정보</th>

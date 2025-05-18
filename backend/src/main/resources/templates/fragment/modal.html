@@ -3,7 +3,7 @@
     <div class="modal" th:id="${id}" th:fragment="modal(id, name, contents)">
         <div class="modal-content">
             <span class="close" th:attr="onclick=|closeModal()|">&times;</span>
-            <h2 th:text="${name}"></h2>
+            <h2 th:id="modalTitle" th:text="${name}"></h2>
             <th:block th:replace="${contents}"/>
         </div>
     </div>

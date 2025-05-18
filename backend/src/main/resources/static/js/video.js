@@ -2,15 +2,21 @@ let placeRowIdx = 0
 
 function openPlaceSearchModal(element) {
   let videoUrl = null;
+  let registered = null;
   if (element) {
     window.selectedVideoId = element.getAttribute("data-video-id");
     videoUrl = element.getAttribute("data-video-url");
+    registered = element.getAttribute("data-video-registered") === "true";
   }
 
   addModalContent(videoUrl);
   setRowClickSelect();
-
   currentOpenModalId = 'placeSearchModal';
+
+  if (registered === true) {
+    document.getElementById("modalTitle").innerText = "장소 수정";
+    addPlacesByVideoId(selectedVideoId);
+  }
 }
 
 function addModalContent(videoUrl) {
@@ -29,39 +35,61 @@ function setRowClickSelect() {
   });
 }
 
-function addPlaceRow() {
+function addPlacesByVideoId(selectedVideoId) {
+  $.ajax({
+    url: `/places/videos/${selectedVideoId}`,
+    method: 'GET',
+    contentType: 'application/json',
+    success: function(places) {
+      places.forEach(place => {
+        addPlaceRow(place);
+      })
+    },
+    error: function () {
+      alert("장소 정보를 불러오는 데 실패하였습니다.");
+      closeModal();
+    }
+  });
+}
+
+function addPlaceRow(place = null) {
   const rowIdx = placeRowIdx++;
   const rowHtml = `
         <tr id="place-row-${rowIdx}">
             <td><input name="videoId" value="${selectedVideoId}" disabled></td>
-            <td><input name="placeName"></td>
+            <td><input name="placeId" value="${place?.placeId ?? ''}" disabled></td>
+            <td><input name="placeName" value="${place?.placeName ?? ''}"></td>
             <td>
                 <select name="category" required>
-                    <option disabled selected value="">카테고리</option>
+                    <option disabled ${!place ? 'selected' : ''} value="">카테고리</option>
                 </select>
             </td>
-            <td><input name="address"></td>
-            <td><input name="x"></td>
-            <td><input name="y"></td>
-            <td><input name="kakaoPlaceId"></td>
-            <td><input name="googlePlaceId"></td>
+            <td><input name="address" value="${place?.address ?? ''}"></td>
+            <td><input name="x" value="${place?.x ?? ''}"></td>
+            <td><input name="y" value="${place?.y ?? ''}"></td>
+            <td><input name="kakaoPlaceId" value="${place?.kakaoPlaceId ?? ''}"></td>
+            <td><input name="googlePlaceId" value="${place?.googlePlaceId ?? ''}"></td>
         </tr>
     `;
 
   $('#place-register-tbody').append(rowHtml);
 
-  populateCategoryOptions(rowIdx);
+  populateCategoryOptions(rowIdx, place?.category.name);
 }
 
-function populateCategoryOptions(rowIdx) {
-  const row = document.getElementById(`place-row-${rowIdx}`);
-  const select = row.querySelector('select[name="category"]');
+function populateCategoryOptions(rowIdx, selectedCategory = '') {
+  const select = $(`#place-row-${rowIdx} select[name="category"]`);
 
   categories.forEach(category => {
-    select.insertAdjacentHTML(
-        'beforeend',
-        `<option value="${category.id}">${category.name}</option>`
-    );
+    const option = $('<option>')
+    .val(category.id)
+    .text(category.name);
+
+    if (category.name === selectedCategory) {
+      option.prop('selected', true);
+    }
+
+    select.append(option);
   });
 }
 
