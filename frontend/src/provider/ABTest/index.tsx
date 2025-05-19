@@ -50,14 +50,19 @@ export default function ABTestProvider({
     if (!initialized || Object.keys(testGroups).length === 0) {
       return;
     }
-    if (typeof window !== 'undefined' && window.gtag) {
+    if (typeof window !== 'undefined') {
+      window.dataLayer = window.dataLayer || [];
+
       // GA4에 사용자 속성 설정
       const userProperties: Record<string, string> = {};
       Object.entries(testGroups).forEach(([testName, group]) => {
         userProperties[`ab_test_${testName}`] = group;
       });
+      window.dataLayer.push({
+        event: 'set_user_properties',
+        user_properties: userProperties,
+      });
 
-      window.gtag('set', 'user_properties', userProperties);
       // GA4에 이벤트 전송
       Object.entries(testGroups).forEach(([testName, group]) => {
         sendGAEvent('ab_test_count', {
