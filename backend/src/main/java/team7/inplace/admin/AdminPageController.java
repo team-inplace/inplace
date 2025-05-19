@@ -7,12 +7,21 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import team7.inplace.admin.banner.persistence.BannerRepository;
+import team7.inplace.admin.dto.CategoryForm;
+import team7.inplace.global.exception.InplaceException;
+import team7.inplace.global.exception.code.CategoryErrorCode;
+import team7.inplace.global.exception.code.PlaceErrorCode;
 import team7.inplace.global.properties.GoogleApiProperties;
 import team7.inplace.global.properties.KakaoApiProperties;
 import team7.inplace.influencer.persistence.InfluencerRepository;
+import team7.inplace.place.application.PlaceService;
+import team7.inplace.place.domain.Category;
 import team7.inplace.place.persistence.CategoryRepository;
 import team7.inplace.video.application.VideoService;
 import team7.inplace.video.domain.Video;
@@ -32,6 +41,7 @@ public class AdminPageController {
     private final InfluencerRepository influencerRepository;
     private final CategoryRepository categoryRepository;
     private final VideoService videoService;
+    private final PlaceService placeService;
 
     @GetMapping("/video")
     public String getVideos(
@@ -86,6 +96,21 @@ public class AdminPageController {
     @GetMapping("/category")
     public String getCategoryPage(Model model) {
         model.addAttribute("parentCategories", categoryRepository.findParentCategories());
-        return "admin/category.html";
+        return "admin/category/list.html";
+    }
+
+    @GetMapping("/category/{categoryId}/edit")
+    public String getCategoryEditForm(@PathVariable Long categoryId, Model model) {
+        Category category = categoryRepository.findById(categoryId)
+            .orElseThrow(() -> InplaceException.of(CategoryErrorCode.NOT_FOUND));
+        CategoryForm categoryForm = CategoryForm.of(category);
+        model.addAttribute("categoryForm", categoryForm);
+        return "admin/category/edit.html";
+    }
+
+    @PostMapping("/category/{categoryId}/edit")
+    public String editCategory(@PathVariable Long categoryId, @ModelAttribute CategoryForm categoryForm) {
+        placeService.updateCategory(categoryId, categoryForm);
+        return "redirect:/admin/category";
     }
 }

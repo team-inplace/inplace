@@ -10,20 +10,25 @@
 <body>
 <header th:replace="fragment/header :: navigation_bar"></header>
 
+<h1>Category List</h1>
 <table>
     <thead>
         <th>Category ID</th>
         <th>이름</th>
+        <th>Parent ID</th>
         <th>수정</th>
     </thead>
     <tbody>
-    <tr th:each="parentCategory : ${parentCategories}">
+    <tr class="parent-category-row" th:each="parentCategory : ${parentCategories}">
         <td th:text="${parentCategory.id}"></td>
         <td th:text="${parentCategory.name}"></td>
+        <td th:text="${parentCategory.parentId}"></td>
         <td>
-            <button onclick="">
-                수정
-            </button>
+            <a th:href="@{/admin/category/{categoryId}/edit(categoryId=${parentCategory.id})}">
+                <button type="button" style="all: unset; cursor: pointer;">
+                    수정
+                </button>
+            </a>
         </td>
     </tr>
     </tbody>

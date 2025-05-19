@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/base :: common_header(~{::title}, ~{::link}, ~{::scripts})">
+    <title>Edit Category</title>
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="/css/category/edit.css" rel="stylesheet">
+    <th:block th:fragment="scripts">
+    </th:block>
+</head>
+
+<body>
+<header th:replace="fragment/header :: navigation_bar"></header>
+
+<h1>Category 수정</h1>
+
+<div>
+    <form method="post"
+          th:action="@{/admin/category/{categoryId}/edit(categoryId=${categoryForm.id})}"
+          class="form-container">
+
+        <div class="form-group">
+            <div class="form-label">Category Id</div>
+            <input th:field="${categoryForm.id}" class="form-input" disabled>
+        </div>
+
+        <div class="form-group">
+            <div class="form-label">Category Name</div>
+            <input th:field="${categoryForm.name}" class="form-input">
+        </div>
+
+        <div class="form-group">
+            <div class="form-label">Category engName</div>
+            <input th:field="${categoryForm.engName}" class="form-input">
+        </div>
+
+        <div class="form-group">
+            <div class="form-label">Category parentId</div>
+            <input th:field="${categoryForm.parentId}" class="form-input">
+        </div>
+
+        <div class="form-buttons">
+            <button type="submit">수정</button>
+            <button type="button" onclick="location.href='/admin/category'">취소</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

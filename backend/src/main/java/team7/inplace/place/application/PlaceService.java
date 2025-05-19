@@ -10,8 +10,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import team7.inplace.admin.dto.CategoryForm;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
+import team7.inplace.global.exception.code.CategoryErrorCode;
 import team7.inplace.global.exception.code.PlaceErrorCode;
 import team7.inplace.liked.likedPlace.domain.LikedPlace;
 import team7.inplace.liked.likedPlace.persistence.LikedPlaceRepository;
@@ -227,5 +229,17 @@ public class PlaceService {
         place.updateInfo(command);
 
         return place.getId();
+    }
+
+    @Transactional
+    public void updateCategory(Long categoryId, CategoryForm categoryForm) {
+        team7.inplace.place.domain.Category category = categoryRepository.findById(categoryId)
+            .orElseThrow(() -> InplaceException.of(CategoryErrorCode.NOT_FOUND));
+
+        category.updateInfo(
+            categoryForm.getName(),
+            categoryForm.getEngName(),
+            categoryForm.getParentId()
+        );
     }
 }
