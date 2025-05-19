@@ -26,7 +26,7 @@ public interface SearchControllerApiSpec {
 
     @Operation(summary = "비디오를 검색합니다.")
     @ApiResponse(responseCode = "200", description = "비디오 검색 성공")
-    ResponseEntity<List<VideoResponse.Simple>> searchVideo(String keyword);
+    ResponseEntity<List<VideoResponse.Detail>> searchVideo(String keyword);
 
     @Operation(summary = "인플루언서를 검색합니다.")
     @ApiResponse(responseCode = "200", description = "인플루언서 검색 성공")

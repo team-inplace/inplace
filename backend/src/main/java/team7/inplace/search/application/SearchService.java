@@ -71,7 +71,7 @@ public class SearchService {
         return influencerInfos.getContent();
     }
 
-    public List<VideoQueryResult.SimpleVideo> searchVideo(String keyword) {
+    public List<VideoQueryResult.DetailedVideo> searchVideo(String keyword) {
         var userId = AuthorizationUtil.getUserIdOrNull();
         var videoInfos = videoSearchRepository.search(
             keyword,

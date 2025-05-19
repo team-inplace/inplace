@@ -2,7 +2,6 @@ package team7.inplace.search.presentation;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -17,7 +16,7 @@ import team7.inplace.search.application.SearchService;
 import team7.inplace.search.application.dto.AutoCompletionInfo;
 import team7.inplace.search.presentation.dto.SearchRequest;
 import team7.inplace.search.presentation.dto.SearchResponse;
-import team7.inplace.video.presentation.dto.VideoResponse.Simple;
+import team7.inplace.video.presentation.dto.VideoResponse.Detail;
 
 @RestController
 @RequestMapping("/search")
@@ -41,11 +40,11 @@ public class SearchController implements SearchControllerApiSpec {
 
     @Override
     @GetMapping("/video")
-    public ResponseEntity<List<Simple>> searchVideo(@RequestParam(name = "value") String keyword) {
+    public ResponseEntity<List<Detail>> searchVideo(@RequestParam(name = "value") String keyword) {
         var videos = searchService.searchVideo(keyword);
 
         var response = videos.stream()
-            .map(Simple::from)
+            .map(Detail::from)
             .toList();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
