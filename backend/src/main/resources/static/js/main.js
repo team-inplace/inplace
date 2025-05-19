@@ -42,3 +42,16 @@ function forceViewUpdate() {
         });
     }
 }
+
+function updateCoolNewVideo() {
+    $.ajax({
+        url: '/videos/update',
+        method: 'GET',
+        success: function() {
+            alert("Cool/New Video 업데이트 성공하였습니다.");
+        },
+        error: function () {
+            alert("Cool/New Video 업데이트에 실패하였습니다.");
+        }
+    });
+}

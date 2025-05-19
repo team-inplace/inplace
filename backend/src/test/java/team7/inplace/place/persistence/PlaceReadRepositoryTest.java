@@ -19,7 +19,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import team7.inplace.container.AbstractMySQLContainerTest;
 import team7.inplace.place.application.command.PlacesCommand.RegionParam;
-import team7.inplace.place.domain.Category;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.DetailedPlace;
 import team7.inplace.place.persistence.dto.PlaceQueryResult.Marker;
 
@@ -156,13 +155,13 @@ class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
         Double latitude = 37.0;
         List<RegionParam> regionParams = List.of(new RegionParam("주소1-1", null));
         List<String> influencerFilters = List.of("인플루언서1");
-        List<Category> category = List.of(Category.RESTAURANT, Category.CAFE);
+        List<Long> category = List.of(2L, 3L);
         Pageable pageable = PageRequest.of(0, 5);
         Long userId = null;
 
         final int expectedTotalContent = 2;
         final int expectedContentSize = 2;
-        final List<Long> expectedPlaceIds = List.of(1L, 2L);
+        final List<Long> expectedPlaceIds = List.of(2L, 3L);
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
@@ -221,7 +220,7 @@ class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
         Double latitude = 37.0;
         Pageable pageable = PageRequest.of(0, 5);
         Long userId = null;
-        List<Category> category = List.of(Category.CAFE);
+        List<Long> category = List.of(2L);
 
         final int expectedTotalContent = 4;
         final int expectedContentSize = 4;
@@ -253,11 +252,11 @@ class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
         Double latitude = 37.0;
         Pageable pageable = PageRequest.of(0, 5);
         Long userId = null;
-        List<Category> category = List.of(Category.CAFE, Category.RESTAURANT);
+        List<Long> category = List.of(2L, 3L);
 
         final int expectedTotalContent = 8;
         final int expectedContentSize = 5;
-        final List<Long> expectedPlaceIds = List.of(1L, 2L, 6L, 7L, 11L);
+        final List<Long> expectedPlaceIds = List.of(2L, 3L, 7L, 8L, 12L);
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
@@ -349,7 +348,7 @@ class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
         Double latitude = 37.0;
         Pageable pageable = PageRequest.of(0, 5);
         Long userId = null;
-        List<Category> category = List.of(Category.CAFE);
+        List<Long> category = List.of(2L);
 
         final int expectedTotalContent = 2;
         final int expectedContentSize = 2;
@@ -381,11 +380,11 @@ class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
         Double latitude = 37.0;
         Pageable pageable = PageRequest.of(0, 5);
         Long userId = null;
-        List<Category> category = List.of(Category.CAFE, Category.RESTAURANT);
+        List<Long> category = List.of(2L, 3L);
 
-        final int expectedTotalContent = 5;
-        final int expectedContentSize = 5;
-        final List<Long> expectedPlaceIds = List.of(6L, 7L, 11L, 12L, 16L);
+        final int expectedTotalContent = 4;
+        final int expectedContentSize = 4;
+        final List<Long> expectedPlaceIds = List.of(7L, 8L, 12L, 13L);
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
@@ -477,7 +476,7 @@ class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
         Double latitude = 37.0;
         Pageable pageable = PageRequest.of(0, 5);
         Long userId = null;
-        List<Category> category = List.of(Category.CAFE);
+        List<Long> category = List.of(2L);
         List<String> influencerName = List.of("인플루언서2");
 
         final int expectedTotalContent = 1;
@@ -705,7 +704,7 @@ class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
     void findPlacesByName_CategoryFiltering_One() {
         // given
         String name = "테스트장소";
-        List<Category> categories = List.of(Category.CAFE);
+        List<Long> categories = List.of(2L);
         Pageable pageable = PageRequest.of(0, 5);
         final List<Long> ids = List.of(2L, 7L, 12L, 17L);
         final int expectedTotalContent = 4;
@@ -732,7 +731,7 @@ class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
     void findPlacesByName_CategoryFiltering_One_RegionFiltering_City_District() {
         // given
         String name = "테스트장소";
-        List<Category> categories = List.of(Category.CAFE);
+        List<Long> categories = List.of(2L);
         List<RegionParam> regionParams = List.of(new RegionParam("주소1-1", "주소2-1"));
         Pageable pageable = PageRequest.of(0, 5);
         final List<Long> ids = List.of(2L);
@@ -753,5 +752,17 @@ class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
         assertThat(places.getContent().stream()
             .map(DetailedPlace::placeId).toList())
             .isEqualTo(ids);
+    }
+
+    @Test
+    @DisplayName("videoId로 장소 조회 테스트")
+    void PlaceReadRepositoryTest() {
+        // given
+        Long videoId = 1L;
+        List<Long> expectedPlaceIds = List.of(1L, 20L);
+        // when
+        List<DetailedPlace> places = placeReadRepository.getDetailedPlacesByVideoId(videoId);
+        // then
+        assertThat(places.stream().map(DetailedPlace::placeId).toList()).isEqualTo(expectedPlaceIds);
     }
 }

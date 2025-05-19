@@ -206,4 +206,5 @@ gradle-app.setting
 /src/test/resources/application-test.yaml
 **/generated/*
 
+!messages.properties
 # End of https://www.toptal.com/developers/gitignore/api/macos,java,intellij,gradle

@@ -11,24 +11,10 @@ function previewImage(input) {
     }
 }
 
-// 이미지 미리보기 모달
-function openPreviewModal(src) {
-    const modal = document.getElementById('previewModal');
-    const modalImg = document.getElementById('modalImage');
-    modal.style.display = "block";
-    modalImg.src = src;
-}
-
-function closePreviewModal() {
-    document.getElementById('previewModal').style.display = "none";
-}
-
-// 모달 외부 클릭시 닫기
-window.onclick = function (event) {
-    const modal = document.getElementById('previewModal');
-    if (event.target === modal) {
-        closePreviewModal();
-    }
+function openBannerPreviewModal(src) {
+    document.getElementById('previewModal').style.display = "block";
+    document.getElementById('modalImage').src = src;
+    currentOpenModalId = 'previewModal';
 }
 
 // form submit 이벤트 처리

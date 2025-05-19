@@ -8,6 +8,7 @@ import { queryClient } from './api/instance/index.js';
 import App from './App';
 import { setSentryInitialized } from './libs/Sentry/sentry.js';
 import initSentryWithRetry from './libs/Sentry/initSentryWithRetry.js';
+import getCurrentConfig from './api/config/index.js';
 
 async function startApp() {
   if (import.meta.env.DEV) {
@@ -15,7 +16,8 @@ async function startApp() {
     await worker.start({ onUnhandledRequest: 'bypass' });
   }
 
-  if (import.meta.env.PROD) {
+  const currentConfig = getCurrentConfig();
+  if (currentConfig.environment === 'production') {
     const initialized = await initSentryWithRetry();
     setSentryInitialized(initialized);
   }

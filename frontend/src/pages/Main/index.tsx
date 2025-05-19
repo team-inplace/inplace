@@ -19,7 +19,8 @@ export default function MainPage() {
   const testGroup = useABTest('map_ui_test');
 
   const [{ data: bannerData }, { data: influencersData }] = useGetMain();
-  const [{ data: coolVideoData }, { data: newVideoData }] = useGetLogoutVideo(!isAuthenticated);
+  const [{ data: coolEatsVideoData }, { data: coolPlaysVideoData }, { data: newVideoData }] =
+    useGetLogoutVideo(!isAuthenticated);
   const { data: myInfluencerVideoData } = useGetMyInfluencerVideo(!!isAuthenticated);
   const { data: aroundVideoData } = useGetAroundVideo(
     location?.lat ?? 37.5665,
@@ -61,7 +62,20 @@ export default function MainPage() {
           </>
         ) : (
           <>
-            <BaseLayout type="spot" prevSubText="지금 " mainText="쿨" SubText=" 한 그곳!" items={coolVideoData || []} />
+            <BaseLayout
+              type="spot"
+              prevSubText="지금 "
+              mainText="쿨 "
+              SubText="한 맛집!"
+              items={coolEatsVideoData || []}
+            />
+            <BaseLayout
+              type="spot"
+              prevSubText="지금 "
+              mainText="쿨 "
+              SubText="한 놀거리!"
+              items={coolPlaysVideoData || []}
+            />
             <BaseLayout type="spot" mainText="새로" SubText=" 등록된 그곳!" items={newVideoData || []} />
           </>
         )}

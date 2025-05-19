@@ -5,7 +5,7 @@ interface Influencer {
   influencerName: string;
 }
 
-const useGetDropdownName = () => {
+const useGetDropdownInfluencer = () => {
   return useSuspenseQuery({
     queryKey: ['influencersName'],
     queryFn: async () => {
@@ -18,4 +18,4 @@ const useGetDropdownName = () => {
   });
 };
 
-export default useGetDropdownName;
+export default useGetDropdownInfluencer;

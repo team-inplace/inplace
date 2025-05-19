@@ -29,7 +29,26 @@ describe('메인페이지 ErrorBoundary 테스트', () => {
           data: [
             {
               videoId: 1,
-              influencerName: 'Cool Video',
+              influencerName: 'Cool Eats Video',
+              videoUrl: 'https://youtu.be/qbqquv_8wM0?si=j7LiU5DSfTVpKa1I',
+              place: {
+                placeId: 1,
+                placeName: '이선장네',
+                address: {
+                  address1: '대구',
+                  address2: '북구',
+                  address3: '대현동 119-11',
+                },
+              },
+            },
+          ],
+          error: null,
+        },
+        {
+          data: [
+            {
+              videoId: 1,
+              influencerName: 'Cool Plays Video',
               videoUrl: 'https://youtu.be/qbqquv_8wM0?si=j7LiU5DSfTVpKa1I',
               place: {
                 placeId: 1,

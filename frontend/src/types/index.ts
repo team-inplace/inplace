@@ -82,7 +82,7 @@ export type LocationData = {
 };
 
 export type FilterParams = {
-  categories: string[];
+  categories: number[];
   influencers: string[];
   placeName?: string;
 };
@@ -206,6 +206,7 @@ export type MarkerData = {
   placeId: number;
   longitude: number;
   latitude: number;
+  type: string;
 };
 export type MarkerInfo = {
   placeId: number;
@@ -227,11 +228,25 @@ export interface ReviewInfo {
   userNickname: string;
 }
 
-export type AllMarkerWithCenter = {
-  marker: MarkerData[];
-  map: {
-    longitude: number;
-    latitude: number;
-    level: number;
-  };
+export type SubCategory = {
+  id: number;
+  name: string;
+  mainId?: number;
+};
+
+export type Category = {
+  id: number;
+  name: string;
+  subCategories: SubCategory[];
+};
+
+export type CategoryData = {
+  categories: Category[];
+};
+
+export type CategoryOption = {
+  label: string;
+  id: number;
+  isMain: boolean;
+  mainId?: number;
 };

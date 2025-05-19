@@ -4,11 +4,9 @@ import io.micrometer.common.util.StringUtils;
 import jakarta.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import team7.inplace.place.application.command.PlacesCommand;
 import team7.inplace.place.application.command.PlacesCommand.FilterParams;
 import team7.inplace.place.application.command.PlacesCommand.RegionParam;
-import team7.inplace.place.domain.Category;
 
 public class PlaceRequest {
 
@@ -19,10 +17,10 @@ public class PlaceRequest {
 
     }
 
-    public record Create(
+    public record Upsert(
         Long videoId,
         String placeName,
-        String category,
+        Long categoryId,
         String address,
         String x,
         String y,
@@ -30,9 +28,9 @@ public class PlaceRequest {
         String googlePlaceId
     ) {
 
-        public PlacesCommand.Create toCommand() {
-            return new PlacesCommand.Create(
-                placeName, category, address, x, y, googlePlaceId, kakaoPlaceId
+        public PlacesCommand.Upsert toCommand() {
+            return new PlacesCommand.Upsert(
+                videoId, placeName, categoryId, address, x, y, googlePlaceId, kakaoPlaceId
             );
         }
     }
@@ -84,9 +82,10 @@ public class PlaceRequest {
                     );
                 })).toList();
 
-            List<Category> categoryList = Arrays.stream(categories.split(","))
-                .map(Category::of)
-                .filter(Objects::nonNull)
+            List<Long> categoryList = Arrays.stream(categories.split(","))
+                .map(String::trim)
+                .filter(StringUtils::isNotEmpty)
+                .map(Long::valueOf)
                 .toList();
             List<String> influencerList = Arrays.stream(influencers.split(","))
                 .filter(StringUtils::isNotEmpty)

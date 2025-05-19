@@ -11,17 +11,18 @@ public class UserCommand {
     public record Create(
             String username,
             String nickname,
+            String profileImageUrl,
             UserType userType,
             Role role
     ) {
 
         public static UserCommand.Create of(KakaoOAuthResponse kakaoOAuthResponse) {
             return new UserCommand.Create(kakaoOAuthResponse.getEmail(),
-                    kakaoOAuthResponse.getNickname(), UserType.KAKAO, Role.USER);
+                    kakaoOAuthResponse.getNickname(), kakaoOAuthResponse.getProfileImageUrl(), UserType.KAKAO, Role.USER);
         }
 
         public User toEntity() {
-            return new User(this.username, null, this.nickname, this.userType, this.role);
+            return new User(this.username, null, this.nickname, this.profileImageUrl, this.userType, this.role);
         }
     }
 

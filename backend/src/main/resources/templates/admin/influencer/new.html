@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8">
-	<title>인플루언서 등록</title>
-	<link href="/css/style.css" rel="stylesheet">
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/base :: common_header(~{::title}, ~{::link}, ~{::scripts})">
+	<title>Influencer 등록</title>
 	<link href="/css/influencer/new.css" rel="stylesheet">
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<th:block th:fragment="scripts">
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script src="/js/fragment/modal.js"></script>
+	</th:block>
 </head>
+
+
 <body>
-<div class="header">
-	<a class="header-link" href="/admin/main">홈</a>
-</div>
+<header th:replace="fragment/header :: navigation_bar"></header>
 
 <h1>인플루언서 검색</h1>
 
 <div class="container">
 	<div class="search-container">
 		<input id="searchInput" placeholder="채널명을 입력하세요" type="text">
-		<button id="searchBtn" type="button">검색</button>
+		<button id="searchBtn" type="button" onclick="searchChannels()">검색</button>
 	</div>
 
 	<div class="search-results">
@@ -36,10 +37,8 @@
 </div>
 
 <!-- 인플루언서 정보 입력 모달 -->
-<div class="modal" id="registerModal">
-	<div class="modal-content">
-		<span class="close">&times;</span>
-		<h2>인플루언서 정보 입력</h2>
+<div th:replace="fragment/modal :: modal('registerModal', '인플루언서 등록', ~{::contents})">
+	<th:block th:fragment="contents">
 		<form class="form-inline" id="influencerForm">
 			<div class="form-group">
 				<label for="name">이름</label>
@@ -52,9 +51,9 @@
 			<input id="channelId" type="hidden">
 			<input id="channelTitle" type="hidden">
 			<input id="thumbnailUrl" type="hidden">
-			<button type="submit">등록하기</button>
+			<button type="submit" onclick="selectChannel()">등록하기</button>
 		</form>
-	</div>
+	</th:block>
 </div>
 
 <input id="youtubeApiKey" th:value="${youtubeApiKey}" type="hidden">

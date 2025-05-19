@@ -15,8 +15,7 @@ public class QRCodeFacade {
     private final PlaceService placeService;
 
     public byte[] getQRCode(Long placeId, Integer width, Integer height) {
-        var userId = AuthorizationUtil.getUserId()
-            .orElseGet(() -> null);
+        var userId = AuthorizationUtil.getUserIdOrNull();
         var place = placeService.getPlaceInfo(userId, placeId);
 
         return qrCodeService.generateQRCode(place.kakaoPlaceId(), width, height);

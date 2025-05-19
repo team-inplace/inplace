@@ -5,8 +5,6 @@ import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 import team7.inplace.global.annotation.Facade;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.kakao.application.command.PlaceMessageCommand;
 import team7.inplace.place.application.PlaceService;
 import team7.inplace.review.application.ReviewInvitationService;
@@ -25,8 +23,7 @@ public class PlaceMessageFacade {
     private final KakaoMessageService kakaoMessageService;
 
     public Mono<Void> sendPlaceMessage(Long placeId) {
-        var userId = AuthorizationUtil.getUserId()
-            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
+        var userId = AuthorizationUtil.getUserIdOrThrow();
 
         String oauthToken = oauthTokenService.findOAuthTokenByUserId(userId);
 

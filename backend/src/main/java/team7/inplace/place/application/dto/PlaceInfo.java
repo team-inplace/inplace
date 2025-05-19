@@ -55,8 +55,17 @@ public class PlaceInfo {
     }
 
     public record Category(
+        Long id,
+        Long parentId,
         String name
     ) {
 
+        public static Category from(team7.inplace.place.domain.Category category) {
+            return new Category(
+                category.getId(),
+                category.getParentId(),
+                category.getName()
+            );
+        }
     }
 }

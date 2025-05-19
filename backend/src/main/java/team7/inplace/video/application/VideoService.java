@@ -1,5 +1,6 @@
 package team7.inplace.video.application;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,9 @@ import team7.inplace.video.persistence.CoolVideoRepository;
 import team7.inplace.video.persistence.RecentVideoRepository;
 import team7.inplace.video.persistence.VideoReadRepository;
 import team7.inplace.video.persistence.VideoRepository;
+import team7.inplace.video.persistence.dto.VideoFilterCondition;
 import team7.inplace.video.persistence.dto.VideoQueryResult;
+import team7.inplace.video.persistence.dto.VideoQueryResult.AdminVideo;
 import team7.inplace.video.persistence.dto.VideoQueryResult.DetailedVideo;
 import team7.inplace.video.persistence.dto.VideoQueryResult.SimpleVideo;
 import team7.inplace.video.presentation.dto.VideoSearchParams;
@@ -61,8 +64,8 @@ public class VideoService {
     }
 
     @Transactional(readOnly = true)
-    public List<VideoQueryResult.DetailedVideo> getCoolVideo() {
-        var top10Videos = coolVideoRepository.findAll();
+    public List<VideoQueryResult.DetailedVideo> getCoolVideo(String parentCategoryName) {
+        var top10Videos = coolVideoRepository.findByPlaceCategoryParentName(parentCategoryName);
 
         return top10Videos.stream().map(DetailedVideo::from).toList();
     }
@@ -75,9 +78,9 @@ public class VideoService {
     }
 
     @Transactional(readOnly = true)
-    public Page<VideoQueryResult.SimpleVideo> getOneInfluencerVideos(
+    public Page<VideoQueryResult.DetailedVideo> getOneInfluencerVideos(
         Long influencerId, Pageable pageable) {
-        var videos = videoReadRepository.findSimpleVideosWithOneInfluencerId(influencerId,
+        var videos = videoReadRepository.findDetailedVideosWithOneInfluencerId(influencerId,
             pageable);
         return videos;
     }
@@ -90,6 +93,11 @@ public class VideoService {
     @Transactional(readOnly = true)
     public List<SimpleVideo> getVideosByPlaceId(Long placeId) {
         return videoReadRepository.findSimpleVideosByPlaceId(placeId);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AdminVideo> getAdminVideosByCondition(VideoFilterCondition videoFilterCondition, Pageable pageable) {
+        return videoReadRepository.findAdminVideoByCondition(videoFilterCondition, pageable);
     }
 
     @Transactional
@@ -117,22 +125,19 @@ public class VideoService {
     }
 
     @Transactional
-    public void addPlaceInfo(Long videoId, Long placeId) {
-        var video = videoRepository.findById(videoId)
-            .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
-
-        video.addPlace(placeId);
-    }
-
-    @Transactional
     public void deleteVideo(Long videoId) {
         videoRepository.deleteById(videoId);
     }
 
     @Transactional
-    public void updateCoolVideos() {
-        // 인기순 top 10 video 가져오기
-        List<DetailedVideo> coolVideos = videoReadRepository.findTop10ByViewCountIncrement();
+    public void updateCoolVideos(List<Long> parentCategoryIds) {
+        List<DetailedVideo> coolVideos = new ArrayList<>();
+
+        // 상위 카테고리별 인기순 top 10 video 가져오기
+        for (Long parentCategoryId : parentCategoryIds) {
+            List<DetailedVideo> top10 = videoReadRepository.findTop10ByViewCountIncrement(parentCategoryId);
+            coolVideos.addAll(top10);
+        }
 
         // coolVideo table 업데이트하기
         coolVideoRepository.deleteAll();

@@ -34,6 +34,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 kakaoOAuthResponse.getEmail());
         if (userInfo.isPresent()) {
             updateOauthToken(oAuth2AccessToken, userInfo.get());
+            userService.updateProfileImageUrl(userInfo.get().id(), kakaoOAuthResponse.getProfileImageUrl());
             return CustomOAuth2User.makeExistUser(userInfo.get());
         }
         UserCommand.Info newUser = userService.registerUser(

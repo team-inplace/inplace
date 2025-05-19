@@ -1,0 +1,12 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<header class="header" th:fragment="navigation_bar">
+    <nav>
+        <ul>
+            <li><a th:class="header-link" th:href="@{/admin/main}">홈</a></li>
+            <li><a th:class="header-link" th:href="@{/admin/influencer/list}">인플루언서</a></li>
+            <li><a th:class="header-link" th:href="@{/admin/video}">비디오</a></li>
+            <li><a th:class="header-link" th:href="@{/admin/banner}">배너</a></li>
+        </ul>
+    </nav>
+</header>
+</html>

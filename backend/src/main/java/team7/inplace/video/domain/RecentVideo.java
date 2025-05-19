@@ -2,8 +2,6 @@ package team7.inplace.video.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -11,7 +9,6 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import team7.inplace.place.domain.Category;
 
 @Getter
 @Entity
@@ -38,9 +35,8 @@ public class RecentVideo {
     @Column(name = "place_name")
     private String placeName;
 
-    @Column(name = "place_category")
-    @Enumerated(value = EnumType.STRING)
-    private Category placeCategory;
+    @Column(name = "place_category_parent_name")
+    private String placeCategoryParentName;
 
     @Column(name = "address1")
     private String address1;
@@ -57,7 +53,7 @@ public class RecentVideo {
         String influencerName,
         Long placeId,
         String placeName,
-        Category placeCategory,
+        String placeCategoryParentName,
         String address1,
         String address2,
         String address3
@@ -67,7 +63,7 @@ public class RecentVideo {
         this.influencerName = influencerName;
         this.placeId = placeId;
         this.placeName = placeName;
-        this.placeCategory = placeCategory;
+        this.placeCategoryParentName = placeCategoryParentName;
         this.address1 = address1;
         this.address2 = address2;
         this.address3 = address3;
@@ -79,7 +75,7 @@ public class RecentVideo {
         String influencerName,
         Long placeId,
         String placeName,
-        Category placeCategory,
+        String placeCategoryParentName,
         String address1,
         String address2,
         String address3
@@ -90,7 +86,7 @@ public class RecentVideo {
             influencerName,
             placeId,
             placeName,
-            placeCategory,
+            placeCategoryParentName,
             address1,
             address2,
             address3

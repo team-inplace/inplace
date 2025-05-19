@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.global.exception.code.ReviewErrorCode;
 import team7.inplace.review.domain.Review;
 import team7.inplace.review.persistence.ReviewJPARepository;
@@ -23,21 +22,16 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public Page<ReviewQueryResult.Simple> getPlaceReviews(Long placeId, Pageable pageable) {
-        Long userId = AuthorizationUtil.getUserId()
-            .orElseGet(() -> null);
+        Long userId = AuthorizationUtil.getUserIdOrNull();
 
-        Page<ReviewQueryResult.Simple> reviewResults = reviewReadRepository
+        return reviewReadRepository
             .findSimpleReviewByUserIdAndPlaceId(placeId, userId, pageable);
-        return reviewResults;
     }
 
 
     @Transactional(readOnly = true)
     public Page<ReviewQueryResult.Detail> getUserReviews(Long userId, Pageable pageable) {
-        Page<ReviewQueryResult.Detail> reviewPage =
-            reviewReadRepository.findDetailedReviewByUserId(userId, pageable);
-
-        return reviewPage;
+        return reviewReadRepository.findDetailedReviewByUserId(userId, pageable);
     }
 
     @Transactional(readOnly = true)
@@ -47,8 +41,7 @@ public class ReviewService {
 
     @Transactional
     public void deleteReview(Long reviewId) {
-        Long userId = AuthorizationUtil.getUserId()
-            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
         Review review = reviewJPARepository.findById(reviewId)
             .orElseThrow(() -> InplaceException.of(ReviewErrorCode.NOT_FOUND));
 

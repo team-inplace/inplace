@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
-<head>
-    <title>Please Log In</title>
+<head th:replace="layout/base :: common_header(~{::title}, ~{::link}, ~{::scripts})">
+    <title>Login</title>
     <link href="/css/login.css" rel="stylesheet">
+    <th:block th:fragment="scripts">
+    </th:block>
 </head>
+
+
 <body>
 <div class="login-container">
     <h1>Please Log In</h1>

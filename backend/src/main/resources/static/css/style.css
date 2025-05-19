@@ -43,9 +43,7 @@ th {
     background-color: #3cb371; /* Medium sea green */
     color: white;
 }
-tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
+
 img {
     width: 100px;
     height: 100px;
@@ -84,16 +82,28 @@ button {
 }
 .header {
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-start;
     width: 100%;
     padding: 10px;
     background-color: #3cb371; /* Medium sea green */
 }
+
+.header nav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.header nav li {
+    margin-right: 20px;
+}
+
 .header-link {
     color: white;
     text-decoration: none;
-    margin-left: 20px;
 }
+
 .header-link:hover {
     color: #f5f5f5; /* Light color on hover */
 }

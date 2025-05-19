@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-	<meta charset="UTF-8">
-	<title>인플루언서 관리</title>
-	<link href="/css/style.css" rel="stylesheet">
+<head th:replace="layout/base :: common_header(~{::title}, ~{::link}, ~{::scripts})">
+	<title>Influencer 관리</title>
 	<link href="/css/influencer/list.css" rel="stylesheet">
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<th:block th:fragment="scripts">
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script src="/js/influencer/list.js"></script>
+		<script src="/js/fragment/modal.js"></script>
+	</th:block>
 </head>
+
+
 <body>
-<div class="header">
-	<a class="header-link" href="/admin/main">홈</a>
-</div>
+<header th:replace="fragment/header :: navigation_bar"></header>
 
 <h1>인플루언서 관리</h1>
 
@@ -49,10 +51,11 @@
 			</td>
 			<td>
 				<button class="btn-edit"
-						onclick="openEditModal(this)"
+						onclick="openInfluencerEditModal(this)"
 						th:data-id="${influencer.id}"
 						th:data-job="${influencer.job}"
-						th:data-name="${influencer.name}">수정
+						th:data-name="${influencer.name}"
+						th:data-img="${influencer.imgUrl}">수정
 				</button>
 			</td>
 		</tr>
@@ -65,11 +68,9 @@
 </div>
 
 <!-- 수정 모달 -->
-<div class="modal" id="editModal">
-	<div class="modal-content">
-		<span class="close">&times;</span>
-		<h2>인플루언서 정보 수정</h2>
-		<form class="form-inline" id="editForm">
+<div th:replace="fragment/modal :: modal('editModal', '인플루언서 정보 수정', ~{::contents})">
+	<th:block th:fragment="contents">
+		<form class="form-inline" id="editForm" onsubmit="updateInfluencer()">
 			<div class="form-group">
 				<label for="editName">이름</label>
 				<input id="editName" name="name" required type="text">
@@ -79,11 +80,11 @@
 				<input id="editJob" name="job" required type="text">
 			</div>
 			<input id="editId" type="hidden">
+			<img alt="프로필 이미지" id="editImg">
 			<button type="submit">저장하기</button>
 		</form>
-	</div>
+	</th:block>
 </div>
 
-<script src="/js/influencer/list.js"></script>
 </body>
 </html>
