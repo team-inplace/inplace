@@ -82,4 +82,10 @@ public class AdminPageController {
     public String getLoginPage() {
         return "admin/login.html";
     }
+
+    @GetMapping("/category")
+    public String getCategoryPage(Model model) {
+        model.addAttribute("parentCategories", categoryRepository.findParentCategories());
+        return "admin/category.html";
+    }
 }

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/base :: common_header(~{::title}, ~{::link}, ~{::scripts})">
+    <title>Categories</title>
+    <link href="/css/style.css" rel="stylesheet">
+    <th:block th:fragment="scripts">
+    </th:block>
+</head>
+
+<body>
+<header th:replace="fragment/header :: navigation_bar"></header>
+
+<table>
+    <thead>
+        <th>Category ID</th>
+        <th>이름</th>
+        <th>수정</th>
+    </thead>
+    <tbody>
+    <tr th:each="parentCategory : ${parentCategories}">
+        <td th:text="${parentCategory.id}"></td>
+        <td th:text="${parentCategory.name}"></td>
+        <td>
+            <button onclick="">
+                수정
+            </button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
