@@ -17,6 +17,7 @@ import team7.inplace.place.presentation.dto.PlaceRequest;
 import team7.inplace.place.presentation.dto.PlaceRequest.Upsert;
 import team7.inplace.place.presentation.dto.PlacesResponse;
 import team7.inplace.place.presentation.dto.PlacesResponse.Admin;
+import team7.inplace.place.presentation.dto.PlacesResponse.AdminCategory;
 import team7.inplace.place.presentation.dto.PlacesResponse.Categories;
 import team7.inplace.place.presentation.dto.PlacesResponse.Marker;
 import team7.inplace.place.presentation.dto.ReviewResponse;
@@ -92,5 +93,10 @@ public interface PlaceControllerApiSpec {
     ResponseEntity<Long> updatePlaceInfo(
         @PathVariable Long placeId,
         @RequestBody Upsert update
+    );
+
+    @Operation(summary = "서브 카테고리 조회", description = "parentId를 통해 subCategory의 전체 정보를 조회합니다.")
+    ResponseEntity<List<AdminCategory>> getSubCategoriesByParentId(
+        @PathVariable Long parentId
     );
 }

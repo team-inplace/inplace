@@ -29,6 +29,7 @@ import team7.inplace.place.presentation.dto.PlaceRequest;
 import team7.inplace.place.presentation.dto.PlaceRequest.Upsert;
 import team7.inplace.place.presentation.dto.PlacesResponse;
 import team7.inplace.place.presentation.dto.PlacesResponse.Admin;
+import team7.inplace.place.presentation.dto.PlacesResponse.AdminCategory;
 import team7.inplace.place.presentation.dto.PlacesResponse.Categories;
 import team7.inplace.place.presentation.dto.PlacesResponse.Marker;
 import team7.inplace.place.presentation.dto.PlacesResponse.MarkerDetail;
@@ -210,5 +211,19 @@ public class PlaceController implements PlaceControllerApiSpec {
         Long updatedPlaceId = placeFacade.updatePlaceInfo(placeId, update.toCommand());
 
         return new ResponseEntity<>(updatedPlaceId, HttpStatus.OK);
+    }
+
+    @Override
+    @GetMapping("/categories/parent/{parentId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<AdminCategory>> getSubCategoriesByParentId(
+        @PathVariable Long parentId
+    ) {
+        List<AdminCategory> subCategories = placeFacade.getSubCategoriesByParentId(parentId)
+            .stream()
+            .map(AdminCategory::of)
+            .toList();
+
+        return new ResponseEntity<>(subCategories, HttpStatus.OK);
     }
 }

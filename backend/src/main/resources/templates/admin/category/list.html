@@ -3,7 +3,11 @@
 <head th:replace="layout/base :: common_header(~{::title}, ~{::link}, ~{::scripts})">
     <title>Categories</title>
     <link href="/css/style.css" rel="stylesheet">
+    <link href="/css/category/list.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <th:block th:fragment="scripts">
+        <script th:src="'https://code.jquery.com/jquery-3.6.0.min.js'" type="text/javascript"></script>
+        <script src="/js/category/list.js"></script>
     </th:block>
 </head>
 
@@ -13,15 +17,23 @@
 <h1>Category List</h1>
 <table>
     <thead>
+        <th>분류</th>
         <th>Category ID</th>
         <th>이름</th>
+        <th>engName</th>
         <th>Parent ID</th>
         <th>수정</th>
     </thead>
     <tbody>
     <tr class="parent-category-row" th:each="parentCategory : ${parentCategories}">
+        <td>
+            <i class="toggle-arrow fa-solid fa-chevron-down"
+               onclick="expandSubCategory(this)"
+               th:attr="data-category-id=${parentCategory.id}"></i>
+        </td>
         <td th:text="${parentCategory.id}"></td>
         <td th:text="${parentCategory.name}"></td>
+        <td th:text="${parentCategory.engName}"></td>
         <td th:text="${parentCategory.parentId}"></td>
         <td>
             <a th:href="@{/admin/category/{categoryId}/edit(categoryId=${parentCategory.id})}">

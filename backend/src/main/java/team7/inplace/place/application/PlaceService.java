@@ -190,6 +190,12 @@ public class PlaceService {
         return categoryRepository.findParentCategoryIds();
     }
 
+    @Transactional(readOnly = true)
+    public List<PlaceInfo.Category> getSubCategoriesByParentId(Long parentId) {
+        return categoryRepository.findSubCategoriesByParentId(parentId)
+            .stream().map(PlaceInfo.Category::from).toList();
+    }
+
     public List<Marker> getPlaceLocationsByName(String name, FilterParams command) {
         return placeReadRepository.findPlaceLocationsByName(
             name,

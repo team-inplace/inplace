@@ -373,4 +373,20 @@ public class PlacesResponse {
             );
         }
     }
+
+    public record AdminCategory(
+        Long id,
+        String name,
+        String engName,
+        Long parentId
+    ) {
+        public static AdminCategory of(PlaceInfo.Category category) {
+            return new AdminCategory(
+                category.id(),
+                category.name(),
+                category.engName(),
+                category.parentId()
+            );
+        }
+    }
 }
