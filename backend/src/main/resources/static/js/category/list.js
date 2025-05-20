@@ -19,11 +19,13 @@ async function expandSubCategory(element) {
                 <td>${category.parentId}</td>
                 <td>
                     <a href="/admin/category/${category.id}/edit">
-                        <button type="button" style="all: unset; cursor: pointer;">
                         수정
-                        </button>
                     </a>
+                    <button type="button" onclick="deleteCategory(${category.id})">
+                        삭제
+                    </button>
                 </td>
+
                 `;
                     mainRow.insertAdjacentElement("afterend", subRow);
                 }
@@ -60,5 +62,23 @@ function getSubCategories(parentId) {
                 reject(new Error("카테고리 요청 실패"));
             }
         });
+    });
+}
+
+function deleteCategory(categoryId) {
+    if (!confirm("카테코리를 삭제하시겠습니까?")) {
+        return;
+    }
+    $.ajax({
+        url: `/places/categories/${categoryId}`,
+        method: 'DELETE',
+        contentType: 'application/json',
+        success: function () {
+            alert("카테고리를 삭제했습니다.");
+            location.reload();
+        },
+        error: function () {
+            alert("카테고리 삭제를 실패했습니다.");
+        }
     });
 }

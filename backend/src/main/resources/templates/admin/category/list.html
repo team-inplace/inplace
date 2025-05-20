@@ -44,10 +44,11 @@
         <td th:text="${parentCategory.parentId}"></td>
         <td>
             <a th:href="@{/admin/category/{categoryId}/edit(categoryId=${parentCategory.id})}">
-                <button type="button" style="all: unset; cursor: pointer;">
-                    수정
-                </button>
+                수정
             </a>
+            <button type="button" th:onclick="deleteCategory([[${parentCategory.id}]])">
+                삭제
+            </button>
         </td>
     </tr>
     </tbody>

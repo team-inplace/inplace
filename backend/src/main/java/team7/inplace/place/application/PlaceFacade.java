@@ -137,4 +137,8 @@ public class PlaceFacade {
     public List<PlaceInfo.Category> getSubCategoriesByParentId(Long parentCategoryId) {
         return placeService.getSubCategoriesByParentId(parentCategoryId);
     }
+
+    public void deleteCategoryById(Long categoryId) {
+        placeService.deleteCategoryById(categoryId);
+    }
 }

@@ -2,3 +2,20 @@
   padding: 1px;
   background-color: #e6f4ea;
 }
+
+button {
+  display: inline-block;
+  margin: 20px 0;
+  padding: 10px 20px;
+  background-color: #3cb371; /* Medium sea green */
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #2e8b57; /* Dark green */
+}

@@ -99,4 +99,9 @@ public interface PlaceControllerApiSpec {
     ResponseEntity<List<AdminCategory>> getSubCategoriesByParentId(
         @PathVariable Long parentId
     );
+
+    @Operation(summary = "카테고리 삭제", description = "Id에 해당하는 카테고리를 삭제합니다.")
+    ResponseEntity<Void> deleteCategoryById(
+        @PathVariable Long categoryId
+    );
 }

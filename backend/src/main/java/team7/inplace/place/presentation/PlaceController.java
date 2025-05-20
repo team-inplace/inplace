@@ -226,4 +226,15 @@ public class PlaceController implements PlaceControllerApiSpec {
 
         return new ResponseEntity<>(subCategories, HttpStatus.OK);
     }
+
+    @Override
+    @DeleteMapping("/categories/{categoryId}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteCategoryById(
+        @PathVariable Long categoryId
+    ) {
+        placeFacade.deleteCategoryById(categoryId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

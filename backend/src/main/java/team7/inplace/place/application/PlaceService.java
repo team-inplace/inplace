@@ -248,4 +248,8 @@ public class PlaceService {
             categoryForm.getParentId()
         );
     }
+
+    public void deleteCategoryById(Long categoryId) {
+        categoryRepository.deleteById(categoryId);
+    }
 }
