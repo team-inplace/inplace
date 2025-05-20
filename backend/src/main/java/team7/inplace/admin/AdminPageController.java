@@ -59,7 +59,7 @@ public class AdminPageController {
         model.addAttribute("videoRegistration", videoRegistration);
         model.addAttribute("kakaoApiKey", kakaoApiProperties.jsKey());
         model.addAttribute("googleApiKey", googleApiProperties.placeKey1());
-        model.addAttribute("categories", categoryRepository.findAll());
+        model.addAttribute("categories", categoryRepository.findSubCategories());
         return "admin/video.html";
     }
 
