@@ -14,7 +14,14 @@
 <body>
 <header th:replace="fragment/header :: navigation_bar"></header>
 
-<h1>Category List</h1>
+<div style="display: flex; justify-content: space-between; width: 80%; max-width: 1000px;">
+    <h1>Category List</h1>
+    <a th:href="@{/admin/category/add}">
+        <button type="button" style="all: unset; cursor: pointer;">
+            추가
+        </button>
+    </a>
+</div>
 <table>
     <thead>
         <th>분류</th>

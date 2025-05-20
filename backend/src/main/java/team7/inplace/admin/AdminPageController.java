@@ -113,4 +113,16 @@ public class AdminPageController {
         placeService.updateCategory(categoryId, categoryForm);
         return "redirect:/admin/category";
     }
+
+    @GetMapping("/category/add")
+    public String getCategoryAddForm(Model model) {
+        model.addAttribute("categoryForm", new CategoryForm());
+        return "admin/category/add.html";
+    }
+
+    @PostMapping("/category/add")
+    public String saveCategory(@ModelAttribute CategoryForm categoryForm) {
+        categoryRepository.save(categoryForm.toEntity());
+        return "redirect:/admin/category";
+    }
 }

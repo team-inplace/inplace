@@ -25,8 +25,9 @@ public class Category {
 
     private Long parentId;
 
-    public Category(String name, Long parentId) {
+    public Category(String name, String engName, Long parentId) {
         this.name = name;
+        this.engName = engName;
         this.parentId = parentId;
     }
 
