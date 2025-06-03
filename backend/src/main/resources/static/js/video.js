@@ -74,7 +74,7 @@ function addPlaceRow(place = null) {
 
   $('#place-register-tbody').append(rowHtml);
 
-  populateCategoryOptions(rowIdx, place?.category.name);
+  populateCategoryOptions(rowIdx, place?.category);
 }
 
 function populateCategoryOptions(rowIdx, selectedCategory = '') {
