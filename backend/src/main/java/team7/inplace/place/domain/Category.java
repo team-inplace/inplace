@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import team7.inplace.admin.dto.CategoryForm;
 
 @Getter
 @Entity(name = "categories")
@@ -24,9 +25,15 @@ public class Category {
 
     private Long parentId;
 
-    public Category(String name, Long parentId) {
+    public Category(String name, String engName, Long parentId) {
         this.name = name;
+        this.engName = engName;
         this.parentId = parentId;
     }
 
+    public void updateInfo(String name, String engName, Long parentId) {
+        this.name = name;
+        this.engName = engName;
+        this.parentId = parentId;
+    }
 }

@@ -21,10 +21,18 @@ export const setCookie = (name: string, value: string, days: number): void => {
   document.cookie = `${name}=${value};${expires};path=/`;
 };
 
+export interface DataLayerEvent {
+  event: string;
+  [key: string]: unknown;
+}
+
 // GA4 이벤트 전송 함수
 export const sendGAEvent = (eventName: string, parameters: Record<string, unknown> = {}): void => {
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', eventName, parameters);
+  if (typeof window !== 'undefined') {
+    window.dataLayer.push({
+      event: eventName,
+      ...parameters,
+    });
   } else {
     console.warn('Google Analytics not initialized');
   }
@@ -32,6 +40,7 @@ export const sendGAEvent = (eventName: string, parameters: Record<string, unknow
 
 declare global {
   interface Window {
-    gtag: (command: string, action: string, params?: Record<string, unknown>) => void;
+    dataLayer: DataLayerEvent[];
+    gtag?: (command: string, action: string, params?: Record<string, unknown>) => void;
   }
 }

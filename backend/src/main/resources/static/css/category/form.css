@@ -1,0 +1,33 @@
+.form-container {
+  width: 500px;
+  margin: 40px auto;
+  font-size: 1.1em;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  margin-bottom: 6px;
+  font-weight: bold;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.form-buttons button {
+  flex: 1;
+  padding: 12px;
+  font-size: 1em;
+  cursor: pointer;
+}

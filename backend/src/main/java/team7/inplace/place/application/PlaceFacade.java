@@ -133,4 +133,12 @@ public class PlaceFacade {
     public Long updatePlaceInfo(Long placeId, Upsert command) {
         return placeService.updatePlaceInfo(placeId, command);
     }
+
+    public List<PlaceInfo.Category> getSubCategoriesByParentId(Long parentCategoryId) {
+        return placeService.getSubCategoriesByParentId(parentCategoryId);
+    }
+
+    public void deleteCategoryById(Long categoryId) {
+        placeService.deleteCategoryById(categoryId);
+    }
 }

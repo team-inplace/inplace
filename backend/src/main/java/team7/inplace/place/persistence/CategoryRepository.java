@@ -9,4 +9,13 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     @Query("select c.id from categories c where c.parentId is null")
     List<Long> findParentCategoryIds();
+
+    @Query("select c from categories c where c.parentId is null")
+    List<Category> findParentCategories();
+
+    @Query("select c from categories c where c.parentId is not null")
+    List<Category> findSubCategories();
+
+    @Query("select c from categories c where c.parentId = :parentId")
+    List<Category> findSubCategoriesByParentId(Long parentId);
 }

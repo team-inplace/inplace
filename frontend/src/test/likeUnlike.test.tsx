@@ -4,12 +4,20 @@ import { MemoryRouter } from 'react-router-dom';
 import InfluencerItem from '@/components/common/Items/InfluencerItem';
 import { AuthContext } from '@/provider/Auth';
 import PlaceItem from '@/components/Map/PlaceSection/PlaceItem';
+import { DataLayerEvent } from '@/utils/test/googleTestUtils';
+
+declare global {
+  interface Window {
+    dataLayer: DataLayerEvent[];
+  }
+}
 
 describe('좋아요/취소 기능 테스트', () => {
   let queryClient: QueryClient;
 
   beforeEach(() => {
     queryClient = new QueryClient();
+    (window as Window).dataLayer = [];
   });
 
   const renderWithProviders = (ui: React.ReactNode) => {

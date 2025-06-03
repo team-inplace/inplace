@@ -10,8 +10,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import team7.inplace.admin.dto.CategoryForm;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
+import team7.inplace.global.exception.code.CategoryErrorCode;
 import team7.inplace.global.exception.code.PlaceErrorCode;
 import team7.inplace.liked.likedPlace.domain.LikedPlace;
 import team7.inplace.liked.likedPlace.persistence.LikedPlaceRepository;
@@ -188,6 +190,12 @@ public class PlaceService {
         return categoryRepository.findParentCategoryIds();
     }
 
+    @Transactional(readOnly = true)
+    public List<PlaceInfo.Category> getSubCategoriesByParentId(Long parentId) {
+        return categoryRepository.findSubCategoriesByParentId(parentId)
+            .stream().map(PlaceInfo.Category::from).toList();
+    }
+
     public List<Marker> getPlaceLocationsByName(String name, FilterParams command) {
         return placeReadRepository.findPlaceLocationsByName(
             name,
@@ -227,5 +235,21 @@ public class PlaceService {
         place.updateInfo(command);
 
         return place.getId();
+    }
+
+    @Transactional
+    public void updateCategory(Long categoryId, CategoryForm categoryForm) {
+        team7.inplace.place.domain.Category category = categoryRepository.findById(categoryId)
+            .orElseThrow(() -> InplaceException.of(CategoryErrorCode.NOT_FOUND));
+
+        category.updateInfo(
+            categoryForm.getName(),
+            categoryForm.getEngName(),
+            categoryForm.getParentId()
+        );
+    }
+
+    public void deleteCategoryById(Long categoryId) {
+        categoryRepository.deleteById(categoryId);
     }
 }

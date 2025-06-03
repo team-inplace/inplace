@@ -7,6 +7,11 @@ import SearchPage from '@/pages/Search';
 import { AuthContext } from '@/provider/Auth';
 import ABTestProvider from '@/provider/ABTest';
 
+Object.defineProperty(window, 'dataLayer', {
+  writable: true,
+  value: [],
+});
+
 jest.mock('@/api/hooks/useGetSearchComplete');
 (completeApi.useGetSearchComplete as jest.Mock).mockReturnValue({
   data: [
