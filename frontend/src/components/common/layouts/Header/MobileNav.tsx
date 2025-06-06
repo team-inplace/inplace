@@ -52,6 +52,7 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
   const commonLinks = [
     { to: '/map', label: '지도' },
     { to: '/influencer', label: '인플루언서' },
+    { to: '/board', label: '커뮤니티' },
   ];
 
   return (

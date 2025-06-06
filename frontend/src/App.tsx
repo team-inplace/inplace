@@ -13,6 +13,7 @@ import InfluencerInfoPage from '@/pages/InfluencerInfo';
 import InfluencerPage from '@/pages/Influencer';
 import MapPage from './pages/Map';
 import ABTestProvider from './provider/ABTest';
+import BoardPage from './pages/Board';
 
 const MyPage = lazy(() => import('@/pages/My'));
 const ChoicePage = lazy(() => import('@/pages/Choice'));
@@ -34,6 +35,7 @@ function App() {
               <Route path="/map" element={<MapPage />} />
               <Route path="/detail/:id" element={<DetailPage />} />
               <Route path="/search" element={<SearchPage />} />
+              <Route path="/board" element={<BoardPage />} />
               <Route
                 path="/my"
                 element={

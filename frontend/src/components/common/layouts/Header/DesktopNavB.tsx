@@ -1,14 +1,12 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { Text } from '@/components/common/typography/Text';
-import useAuth from '@/hooks/useAuth';
 import { useABTest } from '@/provider/ABTest';
 import { sendGAEvent } from '@/utils/test/googleTestUtils';
 
 export default function DesktopNavB() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
   const testGroup = useABTest('map_ui_test');
 
   const isActive = (path: string) => {
@@ -54,18 +52,11 @@ export default function DesktopNavB() {
         </Text>
       </NavItem>
 
-      <NavItemWrapper
-        style={{
-          visibility: isAuthenticated ? 'visible' : 'hidden',
-          pointerEvents: isAuthenticated ? 'auto' : 'none',
-        }}
-      >
-        <NavItem to="/my" aria-label="헤더 마이페이지_B" $isActive={isActive('/my')}>
-          <Text size="m" weight="normal">
-            마이페이지
-          </Text>
-        </NavItem>
-      </NavItemWrapper>
+      <NavItem to="/board" aria-label="헤더 커뮤니티_B" $isActive={isActive('/board')}>
+        <Text size="m" weight="normal">
+          커뮤니티
+        </Text>
+      </NavItem>
     </NavLinksContainer>
   );
 }
@@ -80,8 +71,6 @@ const NavLinksContainer = styled.div`
     display: none;
   }
 `;
-
-const NavItemWrapper = styled.div``;
 
 const NavItem = styled(Link)<{ $isActive: boolean }>`
   margin-left: 20px;
