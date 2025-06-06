@@ -1,0 +1,33 @@
+package team7.inplace.global.exception.code;
+
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+
+@AllArgsConstructor
+public enum PostErrorCode implements ErrorCode {
+
+    POST_TITLE_EMPTY(HttpStatus.BAD_REQUEST, "P001", "게시글 제목은 비어있을 수 없습니다."),
+    POST_CONTENT_EMPTY(HttpStatus.BAD_REQUEST, "P002", "게시글 내용은 비어있을 수 없습니다."),
+    POST_TITLE_LENGTH_EXCEEDED(HttpStatus.BAD_REQUEST, "P003", "게시글 제목은 30자를 초과할 수 없습니다."),
+    POST_CONTENT_LENGTH_EXCEEDED(HttpStatus.BAD_REQUEST, "P004", "게시글 내용은 3000자를 초과할 수 없습니다."),
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "P005", "게시글을 찾을 수 없습니다.");
+
+    private final HttpStatus httpStatus;
+    private final String code;
+    private final String message;
+
+    @Override
+    public HttpStatus httpStatus() {
+        return this.httpStatus;
+    }
+
+    @Override
+    public String code() {
+        return this.code;
+    }
+
+    @Override
+    public String message() {
+        return this.message;
+    }
+}
