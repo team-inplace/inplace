@@ -250,3 +250,15 @@ export type CategoryOption = {
   isMain: boolean;
   mainId?: number;
 };
+
+export type BoardListData = {
+  boardId: number;
+  userNickname: string;
+  userImgUrl: string;
+  title: string;
+  content: string;
+  like: number;
+  comment: number;
+  create: string;
+  contentImgUrl: string;
+};
