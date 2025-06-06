@@ -71,6 +71,7 @@ public class PlacesResponse {
         Double latitude,
         PlacesResponse.Facility facility,
         List<PlacesResponse.Video> videos,
+        List<PlacesResponse.SurroundVideo> surroundVideos,
         List<PlacesResponse.GoogleReview> googleReviews,
         Double rating,
         String kakaoPlaceUrl,
@@ -106,6 +107,9 @@ public class PlacesResponse {
                 null,
                 place.videos().stream()
                     .map(PlacesResponse.Video::from)
+                    .toList(),
+                place.surroundVideos().stream()
+                    .map(PlacesResponse.SurroundVideo::from)
                     .toList(),
                 List.of(),
                 null,
@@ -145,6 +149,9 @@ public class PlacesResponse {
                 place.videos().stream()
                     .map(PlacesResponse.Video::from)
                     .toList(),
+                place.surroundVideos().stream()
+                    .map(PlacesResponse.SurroundVideo::from)
+                    .toList(),
                 place.googlePlace().reviews().orElse(List.of())
                     .stream()
                     .map(PlacesResponse.GoogleReview::from)
@@ -178,7 +185,6 @@ public class PlacesResponse {
         String address2,
         String address3
     ) {
-
     }
 
     @JsonInclude(Include.NON_NULL)
@@ -262,6 +268,39 @@ public class PlacesResponse {
             return new PlacesResponse.Video(video.videoUrl(), video.influencerName());
         }
     }
+
+    public record SurroundVideo(
+        Long videoId,
+        String influencerName,
+        String videoUrl,
+        PlacesResponse.PlaceDetail place
+    ) {
+        public static SurroundVideo from(VideoQueryResult.DetailedVideo videoInfo) {
+            var place = new PlacesResponse.PlaceDetail(
+                videoInfo.placeId(),
+                videoInfo.placeName(),
+                new PlacesResponse.Address(
+                    videoInfo.address1(),
+                    videoInfo.address2(),
+                    videoInfo.address3()
+                )
+            );
+            return new SurroundVideo(
+                videoInfo.videoId(),
+                videoInfo.influencerName(),
+                videoInfo.videoUrl(),
+                place
+            );
+        }
+    }
+
+    public record PlaceDetail(
+        Long placeId,
+        String placeName,
+        PlacesResponse.Address address
+    ) {
+    }
+
 
     public record Marker(
         Long placeId,

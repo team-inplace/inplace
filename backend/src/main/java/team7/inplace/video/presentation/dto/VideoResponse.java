@@ -65,7 +65,6 @@ public class VideoResponse {
         String address2,
         String address3
     ) {
-
     }
 
     public record Admin(
