@@ -108,10 +108,16 @@ export default function BoardPostPage() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    let imageUrls: string[] = [];
 
-    const newImages = formData.contentImgUrls.filter((img) => !img.isExisting);
-    const imageUrls = newImages.length > 0 ? await handleImageUpload(newImages, CLOUDFRONT_DOMAIN) : [];
-
+    try {
+      const newImages = formData.contentImgUrls.filter((img) => !img.isExisting);
+      imageUrls = newImages.length > 0 ? await handleImageUpload(newImages, CLOUDFRONT_DOMAIN) : [];
+    } catch (error) {
+      alert('이미지 업로드에 실패했습니다. 다시 시도해주세요.');
+      console.error(error);
+      return;
+    }
     const existingImageUrls = prevformData?.contentImgUrls || [];
     const currentExistingUrls = formData.contentImgUrls.filter((img) => img.isExisting).map((img) => img.thumbnail);
     const removedUrls = existingImageUrls.filter((url: string) => !currentExistingUrls.includes(url));
@@ -152,7 +158,7 @@ export default function BoardPostPage() {
     <PostContainer>
       <Form onSubmit={handleSubmit}>
         <DetailHeader>
-          <BackBtn onClick={() => navigate(-1)}>
+          <BackBtn type="button" onClick={() => navigate(-1)}>
             <IoIosArrowBack size={24} color="white" />
           </BackBtn>
           <Text size="s" weight="bold">
