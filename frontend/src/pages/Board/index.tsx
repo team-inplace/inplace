@@ -65,16 +65,10 @@ export default function BoardPage() {
             전체 게시글
           </Tap>
         </BoardCategory>
-        <Button
-          aria-label="게시판 글쓰기"
-          variant="visit"
-          size="small"
-          style={{ width: '90px', gap: '4px', height: '36px' }}
-          onClick={handleBoardPost}
-        >
+        <WriteButton aria-label="게시판 글쓰기" size="small" onClick={handleBoardPost}>
           <GoPencil size={16} />
           글쓰기
-        </Button>
+        </WriteButton>
       </Header>
       <SortSection ref={dropdownRef}>
         <StyledButton
@@ -126,7 +120,10 @@ const Header = styled.div`
   align-items: center;
 `;
 const Tap = styled.button<{ $active: boolean }>`
-  color: ${($active) => ($active ? '#55EBFF' : 'white')};
+  color: ${({ $active, theme }) => {
+    if ($active) return theme.backgroundColor === '#292929' ? '#55ebff' : '#47c8d9';
+    return 'black';
+  }};
   border: none;
   background: none;
   font-size: 24px;
@@ -153,9 +150,7 @@ const StyledButton = styled(Button)`
   font-size: 14px;
   margin-left: auto;
   color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#ffffff' : '#333333')};
-
   background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#292929' : '#ecfbfb')};
-
   &:hover {
     background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#222222' : '#daeeee')};
   }
@@ -167,6 +162,18 @@ const StyledButton = styled(Button)`
   }
 `;
 
+const WriteButton = styled(Button)`
+  width: 90px;
+  gap: 4px;
+  height: 36px;
+  color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#55ebff' : 'black')};
+  box-shadow: ${({ theme }) =>
+    theme.backgroundColor === '#292929' ? '0 0 0 1px #55ebff inset' : '0 0 0 1px black inset'};
+  background: none;
+  &:hover {
+    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#1b1a1a' : '#e5f6f6')};
+  }
+`;
 const SortDropdown = styled.div`
   position: absolute;
   top: 100%;

@@ -46,9 +46,9 @@ export default function CommentItem({ item, boardId }: { item: CommentData; boar
             <Text size="s" weight="normal">
               {item.userNickname}
             </Text>
-            <Text size="xs" weight="normal" variant="#A9A9A9">
+            <StyledText size="xs" weight="normal">
               {item.create}
-            </Text>
+            </StyledText>
           </UserInfo>
           <Paragraph size="xs" weight="normal">
             {item.content}
@@ -83,7 +83,7 @@ const Wrapper = styled.button`
   justify-content: space-between;
   gap: 8px;
   &:hover {
-    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#222222' : '#daeeee')};
+    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#222222' : '#eaf5f5')};
   }
   color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#ffffff' : '#333333')};
 `;
@@ -144,4 +144,8 @@ const EditItem = styled.button`
     background-color: #e9e9e9;
     border-radius: 4px;
   }
+`;
+
+const StyledText = styled(Text)`
+  color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#A9A9A9' : '#929292')};
 `;

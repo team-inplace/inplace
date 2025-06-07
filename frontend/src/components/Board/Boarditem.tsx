@@ -15,38 +15,38 @@ export default function Boarditem({ item, activeCategory }: { item: BoardListDat
           <ProfileImg>
             <FallbackImage src={item.userImgUrl} alt="profile" />
           </ProfileImg>
-          <Text size="s" weight="normal" variant="white">
+          <Text size="s" weight="normal">
             {item.userNickname}
           </Text>
         </UserInfo>
         <Content>
-          <Paragraph size="m" weight="bold" variant="white">
+          <Paragraph size="m" weight="bold">
             {item.title}
           </Paragraph>
-          <Paragraph size="s" weight="normal" variant="#D4D4D4">
+          <StyledText size="s" weight="normal">
             {item.content}
-          </Paragraph>
+          </StyledText>
         </Content>
         <ItemInfo>
           <Count>
             {item.likes ? (
               <PiHeartFill color="#fe7373" size={18} data-testid="PiHeartFill" />
             ) : (
-              <PiHeartLight color="#A9A9A9" size={18} data-testid="PiHeartLight" />
+              <PiHeartLight size={18} data-testid="PiHeartLight" />
             )}
-            <Text size="xs" weight="normal" variant="#A9A9A9">
+            <StyledText size="xs" weight="normal">
               {item.like}
-            </Text>
+            </StyledText>
           </Count>
           <Count>
-            <HiOutlineChatBubbleOvalLeft color="#A9A9A9" size={18} />
-            <Text size="xs" weight="normal" variant="#A9A9A9">
+            <HiOutlineChatBubbleOvalLeft size={18} />
+            <StyledText size="xs" weight="normal">
               {item.comment}
-            </Text>
+            </StyledText>
           </Count>
-          <Text size="xs" weight="normal" variant="#A9A9A9">
+          <StyledText size="xs" weight="normal">
             {item.create}
-          </Text>
+          </StyledText>
         </ItemInfo>
       </LeftInfo>
       {item.imgUrls && <BoardImg src={item.imgUrls.imgUrl} />}
@@ -61,8 +61,9 @@ const Wrapper = styled(Link)`
   align-items: center;
   max-height: 150px;
   border-radius: 16px;
+  color: ${(props) => props.theme.textColor};
   &:hover {
-    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#222222' : '#daeeee')};
+    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#222222' : '#eaf5f5')};
   }
 `;
 const LeftInfo = styled.div`
@@ -96,10 +97,16 @@ const Count = styled.div`
   align-items: end;
   display: flex;
   gap: 1px;
+  svg {
+    color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'white' : '#505050')};
+  }
 `;
 
 const BoardImg = styled.img`
   border-radius: 16px;
   height: 130px;
   aspect-ratio: 1 / 1;
+`;
+const StyledText = styled(Text)`
+  color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#D4D4D4' : '#505050')};
 `;

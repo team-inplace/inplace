@@ -104,10 +104,11 @@ const TextArea = styled.textarea`
   display: flex;
   border: 1px solid #c9c9c9;
   border-radius: 10px;
-  background-color: #1f1f1f;
+  background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#1f1f1f' : '#eaf5f5')};
   overflow-y: hidden;
   resize: none;
-  color: white;
+  color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'white' : 'black')};
+
   &::placeholder {
     color: #9b9b9b;
   }
@@ -121,7 +122,7 @@ const SendButton = styled.button`
   transform: translateY(-50%);
   background: transparent;
   border: none;
-  color: white;
+  color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'whie' : 'black')};
   cursor: pointer;
 `;
 

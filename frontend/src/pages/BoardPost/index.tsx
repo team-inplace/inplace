@@ -171,7 +171,7 @@ export default function BoardPostPage() {
       <Form onSubmit={handleSubmit}>
         <DetailHeader>
           <BackBtn type="button" onClick={() => navigate(-1)}>
-            <IoIosArrowBack size={24} color="white" />
+            <IoIosArrowBack size={24} />
           </BackBtn>
           <Text size="s" weight="bold">
             글 쓰기
@@ -244,6 +244,10 @@ const BackBtn = styled.button`
   background: none;
   border: none;
   cursor: pointer;
+
+  svg {
+    color: ${({ theme }) => (theme.textColor === '#ffffff' ? 'white' : 'black')};
+  }
 `;
 const Form = styled.form`
   display: flex;
@@ -262,7 +266,7 @@ const InputField = styled.input`
   box-sizing: border-box;
   background: transparent;
   border-radius: 5px;
-  color: white;
+  color: ${({ theme }) => (theme.textColor === '#ffffff' ? 'white' : 'black')};
   font-size: 20px;
 
   &:focus {
@@ -286,7 +290,7 @@ const TextArea = styled.textarea`
   background: transparent;
   overflow-y: hidden;
   resize: none;
-  color: white;
+  color: ${({ theme }) => (theme.textColor === '#ffffff' ? 'white' : 'black')};
 
   &::placeholder {
     color: #979797;
@@ -301,7 +305,7 @@ const TextArea = styled.textarea`
 const SubmitButton = styled.button`
   border: none;
   background: none;
-  color: #55ebff;
+  color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#55ebff' : '#47c8d9')};
   font-weight: bold;
   font-size: 16px;
   cursor: pointer;

@@ -82,8 +82,8 @@ const BlankCamera = styled.button`
   width: 200px;
   height: 200px;
   box-sizing: border-box;
-  background-color: #242424;
-  border: 1px solid #b7b7b7;
+  background-color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#242424' : '#e7e7e7')};
+  border: ${({ theme }) => (theme.textColor === '#ffffff' ? '1px solid #b7b7b7' : 'none')};
   align-content: center;
   display: flex;
   justify-content: center;

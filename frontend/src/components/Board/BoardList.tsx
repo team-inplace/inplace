@@ -30,5 +30,5 @@ const Wrapper = styled.div``;
 const Separator = styled.div`
   height: 1px;
   width: 100%;
-  background-color: #6d6d6d;
+  background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#6d6d6d' : '#d4d4d4')};
 `;

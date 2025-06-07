@@ -109,9 +109,9 @@ export default function BoardDetailPage() {
                 {boardData.userNickname}
               </Text>
               {/* todo - 칭호 */}
-              <Text size="xs" weight="normal" variant="#A9A9A9">
+              <StyledText size="xs" weight="normal">
                 {boardData.create}
-              </Text>
+              </StyledText>
             </ProfileText>
           </UserInfo>
           <EditMenu ref={editRef}>
@@ -131,9 +131,9 @@ export default function BoardDetailPage() {
           <Paragraph size="m" weight="bold">
             {boardData.title}
           </Paragraph>
-          <Paragraph size="xs" weight="normal" variant="#D4D4D4">
+          <StyledText size="xs" weight="normal">
             {boardData.content}
-          </Paragraph>
+          </StyledText>
         </Content>
         {boardData.imgUrls && (
           <ImageList>
@@ -166,7 +166,7 @@ export default function BoardDetailPage() {
             </Text>
           </Count>
           <Count>
-            <HiOutlineChatBubbleOvalLeft color="white" size={22} />
+            <HiOutlineChatBubbleOvalLeft size={22} />
             <Text size="s" weight="normal">
               {boardData.comment}
             </Text>
@@ -249,6 +249,9 @@ const Count = styled.div`
   display: flex;
   gap: 4px;
   cursor: pointer;
+  svg {
+    color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#A9A9A9' : '#000000')};
+  }
 `;
 const ImageList = styled.div`
   display: flex;
@@ -347,4 +350,7 @@ const CloseBtn = styled.button`
   cursor: pointer;
   right: 2px;
   top: 6px;
+`;
+const StyledText = styled(Text)`
+  color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#c5c5c5' : '#606060')};
 `;
