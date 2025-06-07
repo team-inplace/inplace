@@ -9,16 +9,17 @@ interface Props {
         pageParams: number[];
       }
     | undefined;
+  activeCategory: string;
 }
-export default function BoardList({ items }: Props) {
+export default function BoardList({ items, activeCategory }: Props) {
   return (
     <Wrapper>
       {items?.pages.flatMap((page) =>
         page.content.map((item) => (
-          <>
-            <Boarditem key={item.boardId} item={item} />
+          <div key={item.boardId}>
+            <Boarditem item={item} activeCategory={activeCategory} />
             <Separator />
-          </>
+          </div>
         )),
       )}
     </Wrapper>
