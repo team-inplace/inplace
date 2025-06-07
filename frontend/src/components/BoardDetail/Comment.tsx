@@ -57,7 +57,7 @@ export default function Comment({ id }: { id: string }) {
     <>
       <Wrapper>
         {commentList?.pages.flatMap((page) =>
-          page.content.map((item) => <CommentItem key={item.commentId} item={item} />),
+          page.content.map((item) => <CommentItem key={item.commentId} item={item} boardId={id} />),
         )}
         {/* todo - 언급기능 */}
         <CommentContainer>
