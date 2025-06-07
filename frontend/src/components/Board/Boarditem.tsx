@@ -106,6 +106,8 @@ const BoardImg = styled.img`
   border-radius: 16px;
   height: 130px;
   aspect-ratio: 1 / 1;
+  object-fit: cover;
+  background-color: black;
 `;
 const StyledText = styled(Text)`
   color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#D4D4D4' : '#505050')};
