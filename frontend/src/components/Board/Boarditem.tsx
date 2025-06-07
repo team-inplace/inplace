@@ -7,9 +7,9 @@ import { Text } from '../common/typography/Text';
 import FallbackImage from '../common/Items/FallbackImage';
 import { Paragraph } from '../common/typography/Paragraph';
 
-export default function Boarditem({ item }: { item: BoardListData }) {
+export default function Boarditem({ item, activeCategory }: { item: BoardListData; activeCategory: string }) {
   return (
-    <Wrapper to={`/board/${item.boardId}`}>
+    <Wrapper to={`/board/${item.boardId}`} state={{ activeCategory }}>
       <LeftInfo>
         <UserInfo>
           <ProfileImg>
@@ -45,7 +45,8 @@ export default function Boarditem({ item }: { item: BoardListData }) {
           </Text>
         </ItemInfo>
       </LeftInfo>
-      {item.contentImgUrl && <BoardImg src={item.contentImgUrl} />}
+      {/* todo - 배열로 수정 */}
+      {item.contentImgUrls && <BoardImg src={item.contentImgUrls[0]} />}
     </Wrapper>
   );
 }

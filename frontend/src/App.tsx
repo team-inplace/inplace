@@ -13,13 +13,15 @@ import InfluencerInfoPage from '@/pages/InfluencerInfo';
 import InfluencerPage from '@/pages/Influencer';
 import MapPage from './pages/Map';
 import ABTestProvider from './provider/ABTest';
-import BoardPage from './pages/Board';
+import BoardPostPage from './pages/BoardPost';
 
 const MyPage = lazy(() => import('@/pages/My'));
 const ChoicePage = lazy(() => import('@/pages/Choice'));
 const SearchPage = lazy(() => import('@/pages/Search'));
 // const ReviewPage = lazy(() => import('@/pages/Review'));
 const NotFoundPage = lazy(() => import('@/pages/NotFound'));
+const BoardPage = lazy(() => import('@/pages/Board'));
+const BoardDetailPage = lazy(() => import('@/pages/BoardDetail'));
 
 function App() {
   return (
@@ -36,6 +38,15 @@ function App() {
               <Route path="/detail/:id" element={<DetailPage />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/board" element={<BoardPage />} />
+              <Route
+                path="/board/post"
+                element={
+                  <PrivatedRoute>
+                    <BoardPostPage />
+                  </PrivatedRoute>
+                }
+              />
+              <Route path="/board/:id" element={<BoardDetailPage />} />
               <Route
                 path="/my"
                 element={
