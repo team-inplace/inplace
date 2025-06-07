@@ -1,0 +1,154 @@
+import styled from 'styled-components';
+import { useRef, useState } from 'react';
+import { IoIosSend } from 'react-icons/io';
+import { useQueryClient } from '@tanstack/react-query';
+import { useLocation } from 'react-router-dom';
+import CommentItem from './CommentItem';
+import { useGetInfinitCommentList } from '@/api/hooks/useGetInfinitCommentList';
+import { usePostComment } from '@/api/hooks/usePostComment';
+import useAuth from '@/hooks/useAuth';
+import LoginModal from '../common/modals/LoginModal';
+import FallbackImage from '../common/Items/FallbackImage';
+import { useGetUserInfo } from '@/api/hooks/useGetUserInfo';
+import { Text } from '../common/typography/Text';
+
+export default function Comment({ id }: { id: string }) {
+  const { isAuthenticated } = useAuth();
+  const { data: userInfo } = useGetUserInfo();
+  const location = useLocation();
+  const { data: commentList } = useGetInfinitCommentList({ size: 10, id });
+  const { mutate: postComment } = usePostComment();
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const queryClient = useQueryClient();
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const handleResizeHeight = () => {
+    if (!textareaRef.current) return;
+    textareaRef.current.style.height = 'auto';
+    textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+  };
+  const handleCommentSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!textareaRef.current) return;
+    if (textareaRef.current.value === '') return;
+
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return;
+    }
+    postComment(
+      { boardId: id, comment: textareaRef.current.value },
+      {
+        onSuccess: () => {
+          if (!textareaRef.current) return;
+          queryClient.invalidateQueries({ queryKey: ['infiniteCommenList', id] }); // 좋아요 리스트 초기화
+          textareaRef.current.value = '';
+          textareaRef.current.style.height = 'auto';
+        },
+        onError: () => {
+          alert('댓글 등록에 실패했어요. 다시 시도해주세요!');
+        },
+      },
+    );
+  };
+  const placeholder = isAuthenticated ? '의견을 남겨주세요.' : '댓글을 작성하려면 로그인이 필요해요.';
+  return (
+    <>
+      <Wrapper>
+        {commentList?.pages.flatMap((page) =>
+          page.content.map((item) => <CommentItem key={item.commentId} item={item} />),
+        )}
+        {/* todo - 언급기능 */}
+        <CommentContainer>
+          <ProfileImg>
+            <FallbackImage src={isAuthenticated ? userInfo?.imgUrl : ''} alt="profile" />
+          </ProfileImg>
+          <Content>
+            <UserInfo>
+              <Text size="s" weight="normal">
+                {isAuthenticated ? userInfo?.nickname : `사용자`}
+              </Text>
+            </UserInfo>
+            <CommentInputWrapper onSubmit={handleCommentSubmit}>
+              <TextArea ref={textareaRef} placeholder={placeholder} rows={1} onChange={handleResizeHeight} />
+              <SendButton type="submit">
+                <IoIosSend size={20} />
+              </SendButton>
+            </CommentInputWrapper>
+          </Content>
+        </CommentContainer>
+      </Wrapper>
+      {showLoginModal && (
+        <LoginModal immediateOpen currentPath={location.pathname} onClose={() => setShowLoginModal(false)} />
+      )}
+    </>
+  );
+}
+
+const Wrapper = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+const CommentInputWrapper = styled.form`
+  position: relative;
+`;
+const TextArea = styled.textarea`
+  width: 100%;
+  padding: 10px 50px 10px 10px;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.4;
+  display: flex;
+  border: 1px solid #c9c9c9;
+  border-radius: 10px;
+  background-color: #1f1f1f;
+  overflow-y: hidden;
+  resize: none;
+  color: white;
+  &::placeholder {
+    color: #9b9b9b;
+  }
+`;
+
+const SendButton = styled.button`
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  display: flex;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+`;
+
+const CommentContainer = styled.div`
+  display: flex;
+  width: 100%;
+  gap: 8px;
+  padding: 14px;
+  box-sizing: border-box;
+`;
+const Content = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  text-align: start;
+  gap: 14px;
+  p {
+    line-height: 150%;
+  }
+`;
+const UserInfo = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+`;
+const ProfileImg = styled.div`
+  height: 34px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+`;
