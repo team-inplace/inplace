@@ -5,6 +5,7 @@ import { RxDotsVertical } from 'react-icons/rx';
 import { HiOutlineChatBubbleOvalLeft } from 'react-icons/hi2';
 import { IoIosArrowForward } from 'react-icons/io';
 import { useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Text } from '@/components/common/typography/Text';
 import FallbackImage from '@/components/common/Items/FallbackImage';
 import { Paragraph } from '@/components/common/typography/Paragraph';
@@ -20,6 +21,7 @@ export default function BoardDetailPage() {
   const navigate = useNavigate();
   const editRef = useRef<HTMLDivElement>(null);
   const { activeCategory } = location.state;
+  const queryClient = useQueryClient();
 
   const { data: boardData } = useGetBoardData(id);
   const { mutate: deleteBoard } = useDeleteBoard();
@@ -36,7 +38,7 @@ export default function BoardDetailPage() {
     deleteBoard(boardId, {
       onSuccess: () => {
         alert('삭제되었습니다.');
-        // 새로고침
+        queryClient.invalidateQueries({ queryKey: ['infiniteBoardList'] });
         navigate('/board');
       },
       onError: () => {

@@ -138,7 +138,10 @@ export default function BoardPostPage() {
       editBoard(
         { boardId, formData: formDataWithURL },
         {
-          onSuccess: () => navigate(`/detail/${boardId}`),
+          onSuccess: () => {
+            navigate(`/detail/${boardId}`);
+            queryClient.invalidateQueries({ queryKey: ['infiniteBoardList'] });
+          },
           onError: () => alert('게시글 수정을 실패했습니다. 다시 시도해주세요!'),
         },
       );
