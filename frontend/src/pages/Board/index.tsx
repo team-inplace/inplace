@@ -8,6 +8,7 @@ import BoardList from '@/components/Board/BoardList';
 import { useGetInfinitBoardList } from '@/api/hooks/useGetInfinitBoardList';
 import useAuth from '@/hooks/useAuth';
 import LoginModal from '@/components/common/modals/LoginModal';
+import useClickOutside from '@/hooks/useClickOutside';
 
 export default function BoardPage() {
   const { isAuthenticated } = useAuth();
@@ -53,6 +54,9 @@ export default function BoardPage() {
     navigate('/board/post', { state: { type: 'create' } });
   };
 
+  useClickOutside([dropdownRef], () => {
+    setShowSortOptions(false);
+  });
   return (
     <>
       <Header>
