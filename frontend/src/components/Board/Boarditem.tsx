@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { PiHeartLight } from 'react-icons/pi';
+import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
 import { HiOutlineChatBubbleOvalLeft } from 'react-icons/hi2';
 import { Link } from 'react-router-dom';
 import { BoardListData } from '@/types';
@@ -29,7 +29,11 @@ export default function Boarditem({ item, activeCategory }: { item: BoardListDat
         </Content>
         <ItemInfo>
           <Count>
-            <PiHeartLight color="#A9A9A9" size={18} data-testid="PiHeartLight" />
+            {item.likes ? (
+              <PiHeartFill color="#fe7373" size={18} data-testid="PiHeartFill" />
+            ) : (
+              <PiHeartLight color="#A9A9A9" size={18} data-testid="PiHeartLight" />
+            )}
             <Text size="xs" weight="normal" variant="#A9A9A9">
               {item.like}
             </Text>

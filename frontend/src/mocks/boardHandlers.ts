@@ -16,6 +16,7 @@ const boardListDummy = [
     comment: 3,
     create: '1분전',
     contentImgUrls: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s'],
+    likes: true,
   },
   {
     boardId: 2,
@@ -27,6 +28,7 @@ const boardListDummy = [
     comment: 3,
     create: '1분전',
     contentImgUrls: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s'],
+    likes: true,
   },
   {
     boardId: 3,
@@ -38,6 +40,7 @@ const boardListDummy = [
     comment: 3,
     create: '1분전',
     contentImgUrls: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s'],
+    likes: false,
   },
   {
     boardId: 4,
@@ -49,6 +52,7 @@ const boardListDummy = [
     comment: 3,
     create: '1분전',
     contentImgUrls: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s'],
+    likes: false,
   },
 ];
 
@@ -135,6 +139,7 @@ export const boardHandlers = [
         contentImgUrls: [
           'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
         ],
+        likes: true,
       }),
     );
   }),
