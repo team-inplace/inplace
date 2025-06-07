@@ -11,7 +11,7 @@ export default function DesktopNavB() {
 
   const isActive = (path: string) => {
     if (path.startsWith('http')) return false;
-    return location.pathname === path;
+    return location.pathname.startsWith(path);
   };
 
   const handleMapNavigation = () => {
