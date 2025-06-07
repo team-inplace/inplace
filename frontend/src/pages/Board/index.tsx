@@ -6,10 +6,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Button from '@/components/common/Button';
 import BoardList from '@/components/Board/BoardList';
 import { useGetInfinitBoardList } from '@/api/hooks/useGetInfinitBoardList';
+import useAuth from '@/hooks/useAuth';
+import LoginModal from '@/components/common/modals/LoginModal';
 
 export default function BoardPage() {
+  const { isAuthenticated } = useAuth();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [activeCategory, setActiveCategory] = useState('전체 게시글');
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -41,6 +45,14 @@ export default function BoardPage() {
     setShowSortOptions(false);
   };
 
+  const handleBoardPost = () => {
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return;
+    }
+    navigate('/board/post', { state: { type: 'create' } });
+  };
+
   return (
     <>
       <Header>
@@ -58,6 +70,7 @@ export default function BoardPage() {
           variant="visit"
           size="small"
           style={{ width: '90px', gap: '4px', height: '36px' }}
+          onClick={handleBoardPost}
         >
           <GoPencil size={16} />
           글쓰기
@@ -82,8 +95,11 @@ export default function BoardPage() {
         )}
       </SortSection>
       <Wrapper>
-        <BoardList items={boardList} />
+        <BoardList items={boardList} activeCategory={activeCategory} />
       </Wrapper>
+      {showLoginModal && (
+        <LoginModal immediateOpen currentPath={location.pathname} onClose={() => setShowLoginModal(false)} />
+      )}
     </>
   );
 }
