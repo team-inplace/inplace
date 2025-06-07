@@ -287,6 +287,8 @@ export type CommentData = {
   userImgUrl: string;
   content: string;
   create: string;
+  like: number;
+  likes: boolean;
 };
 
 export type PostCommentProps = {
@@ -309,4 +311,8 @@ export type RequestBoardLike = {
 export type UploadedImageObj = {
   imgUrl: string;
   hash: string;
+};
+export type RequestCommentLike = {
+  commentId: number;
+  likes: boolean;
 };

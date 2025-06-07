@@ -75,6 +75,8 @@ const commentListDummy = [
     userImgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
     content: '토스 커뮤니티에도 웹사이트가 잇어요 놀러오세요~^^',
     create: '4분전',
+    like: 20,
+    likes: true,
   },
   {
     commentId: 2,
@@ -82,6 +84,8 @@ const commentListDummy = [
     userImgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
     content: '@랄라스윗칩 여긴 인플레이슨데 뭔헛소리노',
     create: '3분전',
+    like: 10,
+    likes: false,
   },
   {
     commentId: 3,
@@ -90,6 +94,8 @@ const commentListDummy = [
     content:
       '그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다',
     create: '1분전',
+    like: 0,
+    likes: false,
   },
 ];
 export const boardHandlers = [

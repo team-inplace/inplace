@@ -122,7 +122,8 @@ const SendButton = styled.button`
   transform: translateY(-50%);
   background: transparent;
   border: none;
-  color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'whie' : 'black')};
+
+  color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'white' : 'black')};
   cursor: pointer;
 `;
 
