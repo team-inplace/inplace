@@ -2,7 +2,6 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
 import { RxDotsVertical } from 'react-icons/rx';
-import { HiOutlineChatBubbleOvalLeft } from 'react-icons/hi2';
 import { IoIosArrowForward, IoMdClose } from 'react-icons/io';
 import { useCallback, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -150,29 +149,27 @@ export default function BoardDetailPage() {
             ))}
           </ImageList>
         )}
-        <ItemInfo>
-          <Count
-            role="button"
-            aria-label="게시글 좋아요 버튼"
-            onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
-          >
-            {isLike ? (
-              <PiHeartFill color="#fe7373" size={22} data-testid="PiHeartFill" />
-            ) : (
-              <PiHeartLight size={22} data-testid="PiHeartLight" />
-            )}
-            <Text size="s" weight="normal">
-              {boardData.like}
-            </Text>
-          </Count>
-          <Count>
-            <HiOutlineChatBubbleOvalLeft size={22} />
-            <Text size="s" weight="normal">
-              {boardData.comment}
-            </Text>
-          </Count>
-        </ItemInfo>
+        <Count
+          role="button"
+          aria-label="게시글 좋아요 버튼"
+          onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
+        >
+          {isLike ? (
+            <PiHeartFill color="#fe7373" size={18} data-testid="PiHeartFill" />
+          ) : (
+            <PiHeartLight size={18} data-testid="PiHeartLight" />
+          )}
+          <Text size="xs" weight="normal">
+            {boardData.like}
+          </Text>
+        </Count>
       </BoardContainer>
+      <CommentTitle>
+        <Text size="xs" weight="normal">
+          댓글 {boardData.comment}건
+        </Text>
+      </CommentTitle>
+      <Separator />
       <Comment id={id} />
       <StyledButton size="small" variant="outline" onClick={() => navigate('/board')}>
         목록보기
@@ -210,7 +207,6 @@ const BoardContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 26px;
-  border-bottom: 1px solid #6d6d6d;
   padding: 10px 0px 30px;
 `;
 const BoardTop = styled.div`
@@ -234,23 +230,27 @@ const ProfileImg = styled.div`
   aspect-ratio: 1 / 1;
   border-radius: 50%;
 `;
-const ItemInfo = styled.div`
-  display: flex;
-  gap: 14px;
-  align-items: end;
-`;
+
 const ProfileText = styled.div`
   display: flex;
   flex-direction: column;
   gap: 6px;
 `;
 const Count = styled.div`
+  width: 70px;
+  border: 0.5px solid #838383;
+  border-radius: 6px;
   align-items: end;
+  justify-content: center;
+  padding: 8px 2px;
   display: flex;
   gap: 4px;
   cursor: pointer;
   svg {
     color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#A9A9A9' : '#000000')};
+  }
+  &:hover {
+    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#232323' : '#deeeee')};
   }
 `;
 const ImageList = styled.div`
@@ -353,4 +353,16 @@ const CloseBtn = styled.button`
 `;
 const StyledText = styled(Text)`
   color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#c5c5c5' : '#606060')};
+`;
+
+const Separator = styled.div`
+  height: 1px;
+  width: 100%;
+  background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#6d6d6d' : '#d4d4d4')};
+`;
+
+const CommentTitle = styled.div`
+  width: 70px;
+  padding: 0px 0px xpx 8px;
+  text-align: center;
 `;
