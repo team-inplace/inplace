@@ -260,5 +260,30 @@ export type BoardListData = {
   like: number;
   comment: number;
   create: string;
-  contentImgUrl: string;
+  contentImgUrls: string[];
+};
+export type BoardData = {
+  title: string;
+  content: string;
+  contentImgUrls: string[];
+};
+
+export type CommentData = {
+  commentId: number;
+  userNickname: string;
+  userImgUrl: string;
+  content: string;
+  create: string;
+};
+
+export type PostCommentProps = {
+  boardId: string;
+  comment: string;
+};
+
+export type UploadImage = {
+  file: File;
+  thumbnail: string;
+  isExisting: boolean;
+  hash: string;
 };
