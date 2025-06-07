@@ -261,6 +261,7 @@ export type BoardListData = {
   comment: number;
   create: string;
   contentImgUrls: string[];
+  likes: boolean;
 };
 export type BoardData = {
   title: string;
@@ -286,4 +287,9 @@ export type UploadImage = {
   thumbnail: string;
   isExisting: boolean;
   hash: string;
+};
+
+export type RequestBoardLike = {
+  boardId: number;
+  likes: boolean;
 };

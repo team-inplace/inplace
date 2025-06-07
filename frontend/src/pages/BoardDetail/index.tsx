@@ -1,10 +1,10 @@
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { PiHeartLight } from 'react-icons/pi';
+import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
 import { RxDotsVertical } from 'react-icons/rx';
 import { HiOutlineChatBubbleOvalLeft } from 'react-icons/hi2';
 import { IoIosArrowForward } from 'react-icons/io';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Text } from '@/components/common/typography/Text';
 import FallbackImage from '@/components/common/Items/FallbackImage';
@@ -14,8 +14,12 @@ import Button from '@/components/common/Button';
 import Comment from '@/components/BoardDetail/Comment';
 import { useDeleteBoard } from '@/api/hooks/useDeleteBoard';
 import useClickOutside from '@/hooks/useClickOutside';
+import useAuth from '@/hooks/useAuth';
+import { usePostBoardLike } from '@/api/hooks/usePostBoardLike';
+import LoginModal from '@/components/common/modals/LoginModal';
 
 export default function BoardDetailPage() {
+  const { isAuthenticated } = useAuth();
   const { id } = useParams() as { id: string };
   const location = useLocation();
   const navigate = useNavigate();
@@ -25,7 +29,10 @@ export default function BoardDetailPage() {
 
   const { data: boardData } = useGetBoardData(id);
   const { mutate: deleteBoard } = useDeleteBoard();
+  const { mutate: postLike } = usePostBoardLike();
   const [showEditOptions, setShowEditOptions] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [isLike, setIsLike] = useState(boardData.likes);
 
   const handleEditBoard = (boardId: string, formData: object) => {
     navigate('/board/post', { state: { boardId, prevformData: formData, type: 'update' } });
@@ -47,6 +54,30 @@ export default function BoardDetailPage() {
     });
   };
 
+  const handleLikeClick = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>) => {
+      event.stopPropagation();
+      event.preventDefault();
+      if (!isAuthenticated) {
+        setShowLoginModal(true);
+        return;
+      }
+      const newLikeStatus = !isLike;
+      postLike(
+        { boardId: Number(id), likes: newLikeStatus },
+        {
+          onSuccess: () => {
+            setIsLike(newLikeStatus);
+            queryClient.invalidateQueries({ queryKey: ['BoardData', id] });
+          },
+          onError: () => {
+            alert('좋아요 등록에 실패했어요. 다시 시도해주세요!');
+          },
+        },
+      );
+    },
+    [isLike, id, postLike],
+  );
   const formData = {
     title: boardData.title,
     content: boardData.content,
@@ -109,12 +140,17 @@ export default function BoardDetailPage() {
             ))}
           </ImageList>
         )}
-
-        {/* todo - 이미지 여러개 나열 */}
         <ItemInfo>
-          <Count>
-            <PiHeartLight color="white" size={22} data-testid="PiHeartLight" />
-            {/* todo - 좋아요 클릭 */}
+          <Count
+            role="button"
+            aria-label="게시글 좋아요 버튼"
+            onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
+          >
+            {isLike ? (
+              <PiHeartFill color="#fe7373" size={22} data-testid="PiHeartFill" />
+            ) : (
+              <PiHeartLight size={22} data-testid="PiHeartLight" />
+            )}
             <Text size="s" weight="normal">
               {boardData.like}
             </Text>
@@ -131,6 +167,9 @@ export default function BoardDetailPage() {
       <StyledButton size="small" variant="outline" onClick={() => navigate('/board')}>
         목록보기
       </StyledButton>
+      {showLoginModal && (
+        <LoginModal immediateOpen currentPath={location.pathname} onClose={() => setShowLoginModal(false)} />
+      )}
     </Wrapper>
   );
 }
@@ -188,6 +227,7 @@ const Count = styled.div`
   align-items: end;
   display: flex;
   gap: 4px;
+  cursor: pointer;
 `;
 const ImageList = styled.div`
   display: flex;
