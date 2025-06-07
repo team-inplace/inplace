@@ -1,9 +1,9 @@
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
 import { RxDotsVertical } from 'react-icons/rx';
 import { HiOutlineChatBubbleOvalLeft } from 'react-icons/hi2';
-import { IoIosArrowForward } from 'react-icons/io';
+import { IoIosArrowForward, IoMdClose } from 'react-icons/io';
 import { useCallback, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Text } from '@/components/common/typography/Text';
@@ -33,6 +33,8 @@ export default function BoardDetailPage() {
   const [showEditOptions, setShowEditOptions] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isLike, setIsLike] = useState(boardData.likes);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<string>('');
 
   const handleEditBoard = (boardId: string, formData: object) => {
     navigate('/board/post', { state: { boardId, prevformData: formData, type: 'update' } });
@@ -90,7 +92,7 @@ export default function BoardDetailPage() {
 
   return (
     <Wrapper>
-      <CategoryName>
+      <CategoryName to="/board">
         <Text size="s" weight="bold">
           {activeCategory}
         </Text>
@@ -136,7 +138,15 @@ export default function BoardDetailPage() {
         {boardData.contentImgUrls && (
           <ImageList>
             {boardData.contentImgUrls.map((imgUrl, index) => (
-              <BoardImg key={imgUrl} src={imgUrl} alt={`게시글 이미지 ${index}`} />
+              <BoardImg
+                key={imgUrl}
+                src={imgUrl}
+                alt={`게시글 이미지 ${index}`}
+                onClick={() => {
+                  setSelectedImage(imgUrl);
+                  setIsModalOpen(true);
+                }}
+              />
             ))}
           </ImageList>
         )}
@@ -167,6 +177,16 @@ export default function BoardDetailPage() {
       <StyledButton size="small" variant="outline" onClick={() => navigate('/board')}>
         목록보기
       </StyledButton>
+      {isModalOpen && (
+        <ModalOverlay onClick={() => setIsModalOpen(false)}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <img src={selectedImage} alt="확대 이미지" style={{ maxWidth: '90vw', maxHeight: '90vh' }} />
+            <CloseBtn type="button" onClick={() => setIsModalOpen(false)}>
+              <IoMdClose size={30} />
+            </CloseBtn>
+          </ModalContent>
+        </ModalOverlay>
+      )}
       {showLoginModal && (
         <LoginModal immediateOpen currentPath={location.pathname} onClose={() => setShowLoginModal(false)} />
       )}
@@ -180,10 +200,11 @@ const Wrapper = styled.div`
   gap: 14px;
   padding-top: 20px;
 `;
-const CategoryName = styled.div`
+const CategoryName = styled(Link)`
   display: flex;
   gap: 4px;
   align-items: end;
+  color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'white' : 'black')};
 `;
 const BoardContainer = styled.div`
   display: flex;
@@ -290,5 +311,37 @@ const EditItem = styled.button`
 
   &:hover {
     background-color: #e9e9e9;
+    border-radius: 4px;
   }
+`;
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+const ModalContent = styled.div`
+  position: relative;
+  background: transparent;
+  img {
+    object-fit: contain;
+  }
+`;
+const CloseBtn = styled.button`
+  position: absolute;
+  background: transparent;
+  border: none;
+  aspect-ratio: 1/1;
+  display: flex;
+  align-items: center;
+  color: white;
+  cursor: pointer;
+  right: 2px;
+  top: 6px;
 `;
