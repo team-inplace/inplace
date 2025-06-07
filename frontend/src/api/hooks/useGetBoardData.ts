@@ -4,7 +4,7 @@ import { fetchInstance } from '../instance';
 
 export const getBoardDataPath = (id: string) => `/board/detail/${id}`;
 export const getBoardData = async (id: string) => {
-  const response = await fetchInstance.get<BoardData>(getBoardDataPath(id));
+  const response = await fetchInstance.get<BoardData>(getBoardDataPath(id), { withCredentials: true });
   return response.data;
 };
 export const useGetBoardData = (id: string) => {

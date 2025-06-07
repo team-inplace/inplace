@@ -78,6 +78,7 @@ const commentListDummy = [
     create: '4분전',
     like: 20,
     likes: true,
+    mine: true,
   },
   {
     commentId: 2,
@@ -87,6 +88,7 @@ const commentListDummy = [
     create: '3분전',
     like: 10,
     likes: false,
+    mine: false,
   },
   {
     commentId: 3,
@@ -97,6 +99,7 @@ const commentListDummy = [
     create: '1분전',
     like: 0,
     likes: false,
+    mine: false,
   },
 ];
 export const boardHandlers = [
@@ -162,6 +165,7 @@ export const boardHandlers = [
           },
         ],
         likes: true,
+        mine: true,
       }),
     );
   }),

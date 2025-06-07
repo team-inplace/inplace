@@ -274,6 +274,7 @@ export type BoardData = {
   create: string;
   imgUrls: UploadedImageObj[];
   likes: boolean;
+  mine: boolean;
 };
 export type BoardPostData = {
   title: string;
@@ -289,6 +290,7 @@ export type CommentData = {
   create: string;
   like: number;
   likes: boolean;
+  mine: boolean;
 };
 
 export type PostCommentProps = {

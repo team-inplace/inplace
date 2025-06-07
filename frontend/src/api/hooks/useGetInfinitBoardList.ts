@@ -13,7 +13,7 @@ export const getInfinitBoardList = async (
     sort,
   });
 
-  const response = await fetchInstance.get<PageableData<BoardListData>>(`/board?${params}`);
+  const response = await fetchInstance.get<PageableData<BoardListData>>(`/board?${params}`, { withCredentials: true });
   return response.data;
 };
 

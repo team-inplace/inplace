@@ -107,7 +107,7 @@ export default function CommentItem({ item, boardId }: { item: CommentData; boar
         <RxDotsVertical size={22} />
         {showEditOptions && (
           <EditDropdown>
-            <EditItem onClick={() => handleDeleteComment(item.commentId)}>삭제</EditItem>
+            {item.mine ? <EditItem onClick={() => handleDeleteComment(item.commentId)}>삭제</EditItem> : null}
             <EditItem>신고</EditItem>
           </EditDropdown>
         )}

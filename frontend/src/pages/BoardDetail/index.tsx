@@ -119,8 +119,12 @@ export default function BoardDetailPage() {
             </EditBtn>
             {showEditOptions && (
               <EditDropdown>
-                <EditItem onClick={() => handleEditBoard(id, formData)}>수정</EditItem>
-                <EditItem onClick={() => handleDeleteBoard(id)}>삭제</EditItem>
+                {boardData.mine ? (
+                  <>
+                    <EditItem onClick={() => handleEditBoard(id, formData)}>수정</EditItem>
+                    <EditItem onClick={() => handleDeleteBoard(id)}>삭제</EditItem>
+                  </>
+                ) : null}
                 <EditItem>신고</EditItem>
               </EditDropdown>
             )}
