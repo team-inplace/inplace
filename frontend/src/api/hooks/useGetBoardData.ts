@@ -1,10 +1,10 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { BoardListData } from '@/types';
+import { BoardData } from '@/types';
 import { fetchInstance } from '../instance';
 
 export const getBoardDataPath = (id: string) => `/board/detail/${id}`;
 export const getBoardData = async (id: string) => {
-  const response = await fetchInstance.get<BoardListData>(getBoardDataPath(id));
+  const response = await fetchInstance.get<BoardData>(getBoardDataPath(id));
   return response.data;
 };
 export const useGetBoardData = (id: string) => {

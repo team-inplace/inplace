@@ -2,7 +2,7 @@ import { rest } from 'msw';
 import { BASE_URL } from '@/api/instance';
 import { getBoardDataPath } from '@/api/hooks/useGetBoardData';
 import { postCommentPath } from '@/api/hooks/usePostComment';
-import { BoardData, PostCommentProps } from '@/types';
+import { BoardPostData, PostCommentProps } from '@/types';
 import { postBoardPath } from '@/api/hooks/usePostBoard';
 
 const boardListDummy = [
@@ -15,7 +15,10 @@ const boardListDummy = [
     like: 20,
     comment: 3,
     create: '1분전',
-    contentImgUrls: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s'],
+    imgUrls: {
+      imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+      hash: '1234',
+    },
     likes: true,
   },
   {
@@ -27,7 +30,10 @@ const boardListDummy = [
     like: 20,
     comment: 3,
     create: '1분전',
-    contentImgUrls: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s'],
+    imgUrls: {
+      imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+      hash: '1234',
+    },
     likes: true,
   },
   {
@@ -39,7 +45,10 @@ const boardListDummy = [
     like: 20,
     comment: 3,
     create: '1분전',
-    contentImgUrls: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s'],
+    imgUrls: {
+      imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+      hash: '1234',
+    },
     likes: false,
   },
   {
@@ -51,7 +60,10 @@ const boardListDummy = [
     like: 20,
     comment: 3,
     create: '1분전',
-    contentImgUrls: ['https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s'],
+    imgUrls: {
+      imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+      hash: '1234',
+    },
     likes: false,
   },
 ];
@@ -136,8 +148,11 @@ export const boardHandlers = [
         like: 20,
         comment: 3,
         create: '1분전',
-        contentImgUrls: [
-          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+        imgUrls: [
+          {
+            imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+            hash: '1234',
+          },
         ],
         likes: true,
       }),
@@ -197,13 +212,13 @@ export const boardHandlers = [
     );
   }),
   rest.post(`${BASE_URL}${postBoardPath()}`, async (req, res, ctx) => {
-    const { title, content, contentImgUrls } = req.body as BoardData;
+    const { title, content, imgUrls } = req.body as BoardPostData;
     return res(
       ctx.status(200),
       ctx.json({
         title,
         content,
-        contentImgUrls,
+        imgUrls,
       }),
     );
   }),

@@ -260,13 +260,25 @@ export type BoardListData = {
   like: number;
   comment: number;
   create: string;
-  contentImgUrls: string[];
+  imgUrls: UploadedImageObj;
   likes: boolean;
 };
 export type BoardData = {
+  boardId: number;
+  userNickname: string;
+  userImgUrl: string;
   title: string;
   content: string;
-  contentImgUrls: string[];
+  like: number;
+  comment: number;
+  create: string;
+  imgUrls: UploadedImageObj[];
+  likes: boolean;
+};
+export type BoardPostData = {
+  title: string;
+  content: string;
+  imgUrls: UploadedImageObj[];
 };
 
 export type CommentData = {
@@ -292,4 +304,9 @@ export type UploadImage = {
 export type RequestBoardLike = {
   boardId: number;
   likes: boolean;
+};
+
+export type UploadedImageObj = {
+  imgUrl: string;
+  hash: string;
 };

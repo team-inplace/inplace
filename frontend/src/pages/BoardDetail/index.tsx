@@ -83,7 +83,7 @@ export default function BoardDetailPage() {
   const formData = {
     title: boardData.title,
     content: boardData.content,
-    contentImgUrls: boardData.contentImgUrls,
+    imgUrls: boardData.imgUrls,
   };
 
   useClickOutside([editRef], () => {
@@ -135,15 +135,15 @@ export default function BoardDetailPage() {
             {boardData.content}
           </Paragraph>
         </Content>
-        {boardData.contentImgUrls && (
+        {boardData.imgUrls && (
           <ImageList>
-            {boardData.contentImgUrls.map((imgUrl, index) => (
+            {boardData.imgUrls.map((imgUrl, index) => (
               <BoardImg
-                key={imgUrl}
-                src={imgUrl}
+                key={imgUrl.hash}
+                src={imgUrl.imgUrl}
                 alt={`게시글 이미지 ${index}`}
                 onClick={() => {
-                  setSelectedImage(imgUrl);
+                  setSelectedImage(imgUrl.imgUrl);
                   setIsModalOpen(true);
                 }}
               />
@@ -269,6 +269,7 @@ const BoardImg = styled.img`
   object-fit: cover;
   scroll-snap-align: start;
   flex-shrink: 0;
+  cursor: pointer;
 `;
 
 const EditMenu = styled.div`
@@ -288,6 +289,7 @@ const EditBtn = styled.button`
 const StyledButton = styled(Button)`
   width: 90px;
   margin-left: 90%;
+  cursor: pointer;
 `;
 
 const EditDropdown = styled.div`
@@ -308,6 +310,7 @@ const EditItem = styled.button`
   align-items: center;
   background: none;
   border: none;
+  cursor: pointer;
 
   &:hover {
     background-color: #e9e9e9;

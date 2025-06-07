@@ -49,8 +49,7 @@ export default function Boarditem({ item, activeCategory }: { item: BoardListDat
           </Text>
         </ItemInfo>
       </LeftInfo>
-      {/* todo - 배열로 수정 */}
-      {item.contentImgUrls && <BoardImg src={item.contentImgUrls[0]} />}
+      {item.imgUrls && <BoardImg src={item.imgUrls.imgUrl} />}
     </Wrapper>
   );
 }

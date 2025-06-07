@@ -1,7 +1,9 @@
 import { getObjectKeyFromS3Url } from '@/utils/s3/s3Utils';
 import { UploadImage } from '@/types';
 
-export default async function handleImageUpload(newImages: UploadImage[], CLOUDFRONT_DOMAIN: string) {
+const CLOUDFRONT_DOMAIN = 'https://d1d3zg2ervqwcu.cloudfront.net';
+
+export default async function handleImageUpload(newImages: UploadImage[]) {
   const ids = newImages.map((image) => image.file.name).join(',');
 
   const response = await fetch(`https://fh318e0yce.execute-api.ap-northeast-2.amazonaws.com?ids=${ids}`);
@@ -27,5 +29,8 @@ export default async function handleImageUpload(newImages: UploadImage[], CLOUDF
   return uploadedImageUrls
     .map(getObjectKeyFromS3Url)
     .filter(Boolean)
-    .map((objectKey) => `${CLOUDFRONT_DOMAIN}/${objectKey}`);
+    .map((objectKey, idx) => ({
+      imgUrl: `${CLOUDFRONT_DOMAIN}/${objectKey}`,
+      hash: newImages[idx].hash,
+    }));
 }

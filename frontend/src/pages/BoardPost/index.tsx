@@ -9,22 +9,25 @@ import { usePostBoard } from '@/api/hooks/usePostBoard';
 import { usePutBoard } from '@/api/hooks/usePutBoard';
 import { hashImage } from '@/utils/s3/s3Utils';
 import handleImageUpload from '@/libs/s3/handleImageUpload';
-import { UploadImage } from '@/types';
 import handleDeleteImages from '@/libs/s3/handleImageDelete';
 import ImagePreview from '@/components/Board/ImagePreview';
+import { UploadedImageObj, UploadImage } from '@/types';
 
-const CLOUDFRONT_DOMAIN = 'https://d1d3zg2ervqwcu.cloudfront.net';
-
+interface FormDataType {
+  title: string;
+  content: string;
+  imgUrls: UploadImage[];
+}
 export default function BoardPostPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormDataType>({
     title: '',
     content: '',
-    contentImgUrls: [] as UploadImage[],
+    imgUrls: [],
   });
   const [existingHashes, setExistingHashes] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,13 +42,14 @@ export default function BoardPostPage() {
       setFormData({
         title: prevformData.title,
         content: prevformData.content,
-        contentImgUrls:
-          prevformData.contentImgUrls?.map((url: string) => ({
-            thumbnail: url,
+        imgUrls:
+          prevformData.imgUrls?.map((obj: UploadedImageObj) => ({
+            thumbnail: obj.imgUrl,
             isExisting: true,
-            hash: '',
+            hash: obj.hash,
           })) || [],
       });
+      setExistingHashes(prevformData.imgUrls?.map((obj: UploadedImageObj) => obj.hash) || []);
     }
   }, [prevformData, type]);
 
@@ -55,10 +59,10 @@ export default function BoardPostPage() {
   };
 
   const handleImgRemove = (index: number) => {
-    const removedImage = formData.contentImgUrls[index];
+    const removedImage = formData.imgUrls[index];
     setFormData((prev) => ({
       ...prev,
-      contentImgUrls: prev.contentImgUrls.filter((_, i) => i !== index),
+      imgUrls: prev.imgUrls.filter((_, i) => i !== index),
     }));
     setExistingHashes((prev) => prev.filter((hash) => hash !== removedImage.hash));
   };
@@ -67,7 +71,7 @@ export default function BoardPostPage() {
     const fileList = e.target.files;
     if (!fileList) return;
 
-    if (formData.contentImgUrls.length + fileList.length > 10) {
+    if (formData.imgUrls.length + fileList.length > 10) {
       alert('사진은 최대 10장까지 첨부 가능합니다.');
       return;
     }
@@ -86,7 +90,7 @@ export default function BoardPostPage() {
     }
 
     // 중복이 아닌 이미지만 추가
-    const newImages = results
+    const newImages: UploadImage[] = results
       .filter(({ fileHash }) => !existingHashes.includes(fileHash))
       .map(({ file, fileHash }) => {
         setExistingHashes((prev) => [...prev, fileHash]);
@@ -102,36 +106,44 @@ export default function BoardPostPage() {
       });
     setFormData((prev) => ({
       ...prev,
-      contentImgUrls: [...prev.contentImgUrls, ...newImages],
+      imgUrls: [...prev.imgUrls, ...newImages],
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    let imageUrls: string[] = [];
+    let uploadedObjs: UploadedImageObj[] = [];
 
     try {
-      const newImages = formData.contentImgUrls.filter((img) => !img.isExisting);
-      imageUrls = newImages.length > 0 ? await handleImageUpload(newImages, CLOUDFRONT_DOMAIN) : [];
+      const newImages = formData.imgUrls.filter((img) => !img.isExisting);
+      uploadedObjs = newImages.length > 0 ? await handleImageUpload(newImages) : [];
     } catch (error) {
       alert('이미지 업로드에 실패했습니다. 다시 시도해주세요.');
       console.error(error);
       return;
     }
-    const existingImageUrls = prevformData?.contentImgUrls || [];
-    const currentExistingUrls = formData.contentImgUrls.filter((img) => img.isExisting).map((img) => img.thumbnail);
-    const removedUrls = existingImageUrls.filter((url: string) => !currentExistingUrls.includes(url));
 
-    await handleDeleteImages(removedUrls);
+    const existingObjs: UploadedImageObj[] = formData.imgUrls
+      .filter((img) => img.isExisting)
+      .map((img) => ({
+        imgUrl: img.thumbnail,
+        hash: img.hash,
+      }));
 
-    const allImageUrls = [...currentExistingUrls, ...imageUrls];
+    // 삭제된 이미지 판별
+    const existingLinks = existingObjs.map((obj) => obj.imgUrl);
+    const prevLinks = prevformData?.imgUrls?.map((obj: UploadedImageObj) => obj.imgUrl) || [];
+    const removedLinks = prevLinks.filter((link: string) => !existingLinks.includes(link));
+    await handleDeleteImages(removedLinks);
+
+    // 최종 업로드할 이미지 객체 배열
+    const allImageObjs = [...existingObjs, ...uploadedObjs];
 
     const formDataWithURL = {
       title: formData.title,
       content: formData.content,
-      contentImgUrls: allImageUrls,
+      imgUrls: allImageObjs,
     };
-
     if (type === 'create') {
       postBoard(formDataWithURL, {
         onSuccess: () => {
@@ -192,7 +204,7 @@ export default function BoardPostPage() {
           }
         />
         <ImagePreview
-          images={formData.contentImgUrls}
+          images={formData.imgUrls}
           onRemove={handleImgRemove}
           onPreview={(src) => {
             setSelectedImage(src);

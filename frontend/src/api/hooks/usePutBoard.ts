@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
 import { fetchInstance } from '../instance';
-import { BoardData } from '@/types';
+import { BoardPostData } from '@/types';
 
 interface PutBoardProps {
   boardId: string;
-  formData: BoardData;
+  formData: BoardPostData;
 }
 export const putBoardPath = (boardId: string) => `/board/${boardId}`;
 
@@ -15,6 +15,6 @@ const putBoard = async ({ boardId, formData }: PutBoardProps) => {
 
 export const usePutBoard = () => {
   return useMutation({
-    mutationFn: (putBoardData: PutBoardProps) => putBoard(putBoardData),
+    mutationFn: (putBoardPostData: PutBoardProps) => putBoard(putBoardPostData),
   });
 };
