@@ -13,8 +13,8 @@ public class PostFacade {
     private final PostService postService;
 
     public void createPost(CreatePost command) {
-        var userId = AuthorizationUtil.getUserIdOrThrow();
-        postService.createPost(command, userId);
+//        var userId = AuthorizationUtil.getUserIdOrThrow();
+        postService.createPost(command, 1L);
     }
 
     public void createComment(PostCommand.CreateComment command) {

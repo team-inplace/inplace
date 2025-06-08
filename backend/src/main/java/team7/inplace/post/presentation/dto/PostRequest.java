@@ -8,14 +8,19 @@ public class PostRequest {
     public record CreatePost(
         String title,
         String content,
-        List<String> imageUrls
+        List<CreatePhoto> imageUrls
     ) {
 
         public PostCommand.CreatePost toCommand() {
             return new PostCommand.CreatePost(
                 title,
                 content,
-                imageUrls == null ? List.of() : imageUrls
+                imageUrls == null ? List.of() : imageUrls.stream()
+                    .map(CreatePhoto::imageUrl)
+                    .toList(),
+                imageUrls == null ? List.of() : imageUrls.stream()
+                    .map(CreatePhoto::imgHash)
+                    .toList()
             );
         }
     }
@@ -27,5 +32,12 @@ public class PostRequest {
         public PostCommand.CreateComment toCommand(Long postId) {
             return new PostCommand.CreateComment(postId, content);
         }
+    }
+
+    public record CreatePhoto(
+        String imageUrl,
+        String imgHash
+    ) {
+
     }
 }

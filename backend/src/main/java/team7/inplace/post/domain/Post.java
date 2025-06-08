@@ -2,45 +2,54 @@ package team7.inplace.post.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import team7.inplace.global.baseEntity.BaseEntity;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.PostErrorCode;
 
 @Entity
 @Table(name = "posts")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseEntity {
 
-    private String title;
-    private String content;
+    private PostTitle title;
+    private PostContent content;
+    private PostPhoto photos;
     private Long authorId;
 
-    public Post(String title, String content, Long authorId) {
-        validateTitle(title);
-        validateContent(content);
-        this.title = title;
-        this.content = content;
+    public Post(
+        String title, String content,
+        List<String> imageUrls, List<String> imgHashes,
+        Long authorId
+    ) {
+        this.title = new PostTitle(title);
+        this.content = new PostContent(content);
+        this.photos = new PostPhoto(imageUrls, imgHashes);
         this.authorId = authorId;
     }
 
-    private void validateTitle(String title) {
-        if (title == null || title.isBlank()) {
-            throw InplaceException.of(PostErrorCode.POST_TITLE_EMPTY);
-        }
-        if (title.length() > 30) {
-            throw InplaceException.of(PostErrorCode.POST_TITLE_LENGTH_EXCEEDED);
-        }
+    public String getTitle() {
+        return title.getTitle();
     }
 
-    private void validateContent(String content) {
-        if (content == null || content.isBlank()) {
-            throw InplaceException.of(PostErrorCode.POST_CONTENT_EMPTY);
-        }
+    public String getContent() {
+        return content.getContent();
+    }
 
-        if (content.length() > 3000) {
-            throw InplaceException.of(PostErrorCode.POST_CONTENT_EMPTY);
-        }
+    public List<String> getImageUrls() {
+        return photos.getImageUrls();
+    }
+
+    public List<String> getImgHashes() {
+        return photos.getImgHashes();
+    }
+
+    public void update(
+        String title, String content,
+        List<String> imageUrls, List<String> imgHashes
+    ) {
+        this.title = this.title.update(title);
+        this.content = this.content.update(content);
+        this.photos = new PostPhoto(imageUrls, imgHashes);
     }
 }

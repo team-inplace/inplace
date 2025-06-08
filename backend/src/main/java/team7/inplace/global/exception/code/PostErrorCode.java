@@ -10,7 +10,9 @@ public enum PostErrorCode implements ErrorCode {
     POST_CONTENT_EMPTY(HttpStatus.BAD_REQUEST, "P002", "게시글 내용은 비어있을 수 없습니다."),
     POST_TITLE_LENGTH_EXCEEDED(HttpStatus.BAD_REQUEST, "P003", "게시글 제목은 30자를 초과할 수 없습니다."),
     POST_CONTENT_LENGTH_EXCEEDED(HttpStatus.BAD_REQUEST, "P004", "게시글 내용은 3000자를 초과할 수 없습니다."),
-    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "P005", "게시글을 찾을 수 없습니다.");
+    POST_NOT_FOUND(HttpStatus.NOT_FOUND, "P005", "게시글을 찾을 수 없습니다."),
+    POST_PHOTOS_DUPLICATED(HttpStatus.BAD_REQUEST, "P006", "게시글 사진은 중복될 수 없습니다."),
+    POST_PHOTOS_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "P007", "게시글 사진은 10개를 초과할 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

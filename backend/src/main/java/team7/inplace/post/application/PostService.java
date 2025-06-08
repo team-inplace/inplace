@@ -10,7 +10,6 @@ import team7.inplace.post.application.dto.PostCommand.CreateComment;
 import team7.inplace.post.application.dto.PostCommand.CreatePost;
 import team7.inplace.post.persistence.CommentJpaRepository;
 import team7.inplace.post.persistence.PostJpaRepository;
-import team7.inplace.post.persistence.PostPhotoJapRepository;
 
 @Service
 @Slf4j
@@ -18,19 +17,12 @@ import team7.inplace.post.persistence.PostPhotoJapRepository;
 public class PostService {
 
     private final PostJpaRepository postJpaRepository;
-    private final PostPhotoJapRepository postPhotoJapRepository;
     private final CommentJpaRepository commentJpaRepository;
 
     @Transactional
     public void createPost(CreatePost command, Long userId) {
         var post = command.toPostEntity(userId);
         postJpaRepository.save(post);
-        
-        var photos = command.toPostPhotos(post.getId());
-        if (photos.isEmpty()) {
-            return;
-        }
-        postPhotoJapRepository.saveAll(photos.get());
     }
 
     @Transactional
