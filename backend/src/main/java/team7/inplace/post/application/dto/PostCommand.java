@@ -18,6 +18,16 @@ public class PostCommand {
         }
     }
 
+    public record UpdatePost(
+        Long postId,
+        String title,
+        String content,
+        List<String> imageUrls,
+        List<String> imgHashes
+    ) {
+
+    }
+
     public record CreateComment(
         Long postId,
         String content

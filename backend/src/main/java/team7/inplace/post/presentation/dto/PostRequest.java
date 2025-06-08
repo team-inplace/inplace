@@ -5,10 +5,10 @@ import team7.inplace.post.application.dto.PostCommand;
 
 public class PostRequest {
 
-    public record CreatePost(
+    public record UpsertPost(
         String title,
         String content,
-        List<CreatePhoto> imageUrls
+        List<UpsertPhoto> imageUrls
     ) {
 
         public PostCommand.CreatePost toCommand() {
@@ -16,13 +16,34 @@ public class PostRequest {
                 title,
                 content,
                 imageUrls == null ? List.of() : imageUrls.stream()
-                    .map(CreatePhoto::imageUrl)
+                    .map(UpsertPhoto::imageUrl)
                     .toList(),
                 imageUrls == null ? List.of() : imageUrls.stream()
-                    .map(CreatePhoto::imgHash)
+                    .map(UpsertPhoto::hash)
                     .toList()
             );
         }
+
+        public PostCommand.UpdatePost toUpdateCommand(Long postId) {
+            return new PostCommand.UpdatePost(
+                postId,
+                title,
+                content,
+                imageUrls == null ? List.of() : imageUrls.stream()
+                    .map(UpsertPhoto::imageUrl)
+                    .toList(),
+                imageUrls == null ? List.of() : imageUrls.stream()
+                    .map(UpsertPhoto::hash)
+                    .toList()
+            );
+        }
+    }
+
+    public record UpsertPhoto(
+        String imageUrl,
+        String hash
+    ) {
+
     }
 
     public record CreateComment(
@@ -32,12 +53,5 @@ public class PostRequest {
         public PostCommand.CreateComment toCommand(Long postId) {
             return new PostCommand.CreateComment(postId, content);
         }
-    }
-
-    public record CreatePhoto(
-        String imageUrl,
-        String imgHash
-    ) {
-
     }
 }
