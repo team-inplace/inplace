@@ -40,7 +40,10 @@ public class PostController implements PostControllerApiSpec {
     }
 
     @Override
-    public ResponseEntity<Void> deletePost(Long postId) {
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Void> deletePost(
+        @PathVariable Long postId
+    ) {
         postFacade.deletePost(postId);
 
         return ResponseEntity.ok().build();
