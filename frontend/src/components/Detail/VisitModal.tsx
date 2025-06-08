@@ -49,10 +49,10 @@ export default function VisitModal({ id, onClose }: { id: number; onClose: () =>
       <Overlay onClick={() => onClose()}>
         <Wrapper onClick={handleModalClick}>
           <DescriptionSection>
-            <Paragraph size="l" weight="bold">
+            <Paragraph size="l" weight="bold" variant="#333333">
               Scan QR Code
             </Paragraph>
-            <Paragraph size="xs" weight="normal">
+            <Paragraph size="xs" weight="normal" variant="#333333">
               QR코드를 스캔하면 카카오맵으로 이동해요!
             </Paragraph>
           </DescriptionSection>
