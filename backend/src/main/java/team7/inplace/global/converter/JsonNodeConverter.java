@@ -30,7 +30,7 @@ public class JsonNodeConverter implements AttributeConverter<JsonNode, String> {
     @Override
     public JsonNode convertToEntityAttribute(String dbData) {
         if (dbData == null || dbData.isBlank()) {
-            return null;
+            return objectMapper.createObjectNode();
         }
         try {
             return objectMapper.readTree(dbData);
