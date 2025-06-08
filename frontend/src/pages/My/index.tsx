@@ -59,6 +59,11 @@ export default function MyPage() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (nickname.length < 1 || nickname.length > 8) {
+      alert('닉네임 길이를 확인해주세요!');
+      return;
+    }
     patchNickname(nickname, {
       onSuccess: () => {
         localStorage.setItem('nickname', nickname);
@@ -101,12 +106,17 @@ export default function MyPage() {
             </Text>
           </NickNameWrapper>
         ) : (
-          <Form onSubmit={handleSubmit}>
-            <Input type="text" value={nickname} onChange={(e) => setNickname(e.target.value)} />
-            <CustomButton aria-label="닉네임 수정 완료" type="submit">
-              <MdOutlineDriveFileRenameOutline size={24} color="#47c8d9" />
-            </CustomButton>
-          </Form>
+          <EditWrapper>
+            <Form onSubmit={handleSubmit}>
+              <Input type="text" value={nickname} onChange={(e) => setNickname(e.target.value)} />
+              <CustomButton aria-label="닉네임 수정 완료" type="submit">
+                <MdOutlineDriveFileRenameOutline size={24} color="#47c8d9" />
+              </CustomButton>
+            </Form>
+            <Text size="xs" weight="normal" style={{ color: '#9e9e9e' }}>
+              닉네임 길이는 1~8글자로 제한됩니다.
+            </Text>
+          </EditWrapper>
         )}
         <Paragraph size="m" weight="bold">
           인플레이스를 이용해주셔서 감사합니다.
@@ -171,6 +181,13 @@ const TitleWrapper = styled.div`
     margin-bottom: 10px;
   }
 `;
+
+const EditWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+
 const Form = styled.form`
   display: flex;
   align-items: end;
