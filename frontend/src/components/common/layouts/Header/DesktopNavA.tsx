@@ -52,7 +52,7 @@ export default function DesktopNavA() {
         </Text>
       </NavItem>
 
-      <NavItem to="/board" aria-label="헤더 커뮤니티_A" $isActive={isActive('/board')}>
+      <NavItem to="/post" aria-label="헤더 커뮤니티_A" $isActive={isActive('/post')}>
         <Text size="xs" weight="normal">
           커뮤니티
         </Text>

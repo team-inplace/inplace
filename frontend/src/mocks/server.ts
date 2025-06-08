@@ -5,7 +5,7 @@ import { mapHandlers } from './mapHandlers';
 import { myHandlers } from './myPageHandlers';
 import { searchHandlers } from './searchHandlers';
 import { reviewHandlers } from './reviewHandlers';
-import boardHandlers from './boardHandlers';
+import { postHandlers } from './postHandlers';
 
 const server = setupServer(
   ...mainHandlers,
@@ -14,6 +14,6 @@ const server = setupServer(
   ...myHandlers,
   ...searchHandlers,
   ...reviewHandlers,
-  ...boardHandlers,
+  ...postHandlers,
 );
 export default server;

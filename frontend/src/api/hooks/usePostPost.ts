@@ -1,11 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 import { fetchInstance } from '../instance';
-import { BoardPostData } from '@/types';
+import { PostingData } from '@/types';
 
-export const postBoardPath = () => `/board`;
-const postBoard = async (data: BoardPostData) => {
+export const postPostPath = () => `/posts`;
+const postPost = async (data: PostingData) => {
   const response = await fetchInstance.post(
-    postBoardPath(),
+    postPostPath(),
     {
       data,
     },
@@ -14,8 +14,8 @@ const postBoard = async (data: BoardPostData) => {
   return response.data;
 };
 
-export const usePostBoard = () => {
+export const usePostPost = () => {
   return useMutation({
-    mutationFn: (data: BoardPostData) => postBoard(data),
+    mutationFn: (data: PostingData) => postPost(data),
   });
 };

@@ -5,12 +5,12 @@ import { styled } from 'styled-components';
 import { useQueryClient } from '@tanstack/react-query';
 import { v4 as uuidv4 } from 'uuid';
 import { Text } from '@/components/common/typography/Text';
-import { usePostBoard } from '@/api/hooks/usePostBoard';
-import { usePutBoard } from '@/api/hooks/usePutBoard';
+import { usePostPost } from '@/api/hooks/usePostPost';
+import { usePutPost } from '@/api/hooks/usePutPost';
 import { hashImage } from '@/utils/s3/s3Utils';
 import handleImageUpload from '@/libs/s3/handleImageUpload';
 import handleDeleteImages from '@/libs/s3/handleImageDelete';
-import ImagePreview from '@/components/Board/ImagePreview';
+import ImagePreview from '@/components/Post/ImagePreview';
 import { UploadedImageObj, UploadImage } from '@/types';
 
 interface FormDataType {
@@ -18,7 +18,7 @@ interface FormDataType {
   content: string;
   imgUrls: UploadImage[];
 }
-export default function BoardPostPage() {
+export default function PostingPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -33,9 +33,9 @@ export default function BoardPostPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string>('');
 
-  const { boardId, prevformData, type } = location.state || {};
-  const { mutate: postBoard } = usePostBoard();
-  const { mutate: editBoard } = usePutBoard();
+  const { postId, prevformData, type } = location.state || {};
+  const { mutate: postPost } = usePostPost();
+  const { mutate: editPost } = usePutPost();
 
   useEffect(() => {
     if (type === 'update' && prevformData) {
@@ -145,20 +145,20 @@ export default function BoardPostPage() {
       imgUrls: allImageObjs,
     };
     if (type === 'create') {
-      postBoard(formDataWithURL, {
+      postPost(formDataWithURL, {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['infiniteBoardList'] });
-          navigate('/board');
+          queryClient.invalidateQueries({ queryKey: ['infinitePostList'] });
+          navigate('/post');
         },
         onError: () => alert('게시글 등록을 실패했습니다. 다시 시도해주세요!'),
       });
     } else {
-      editBoard(
-        { boardId, formData: formDataWithURL },
+      editPost(
+        { postId, formData: formDataWithURL },
         {
           onSuccess: () => {
-            navigate(`/detail/${boardId}`);
-            queryClient.invalidateQueries({ queryKey: ['infiniteBoardList'] });
+            navigate(`/detail/${postId}`);
+            queryClient.invalidateQueries({ queryKey: ['infinitePostList'] });
           },
           onError: () => alert('게시글 수정을 실패했습니다. 다시 시도해주세요!'),
         },

@@ -4,13 +4,13 @@ import { GoPencil } from 'react-icons/go';
 import { useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Button from '@/components/common/Button';
-import BoardList from '@/components/Board/BoardList';
-import { useGetInfinitBoardList } from '@/api/hooks/useGetInfinitBoardList';
+import PostList from '@/components/Post/PostList';
+import { useGetInfinitPostList } from '@/api/hooks/useGetInfinitPostList';
 import useAuth from '@/hooks/useAuth';
 import LoginModal from '@/components/common/modals/LoginModal';
 import useClickOutside from '@/hooks/useClickOutside';
 
-export default function BoardPage() {
+export default function PostPage() {
   const { isAuthenticated } = useAuth();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [activeCategory, setActiveCategory] = useState('전체 게시글');
@@ -26,7 +26,7 @@ export default function BoardPage() {
   const [sortOption, setSortOption] = useState(getInitialSortOption());
   const [showSortOptions, setShowSortOptions] = useState(false);
 
-  const { data: boardList } = useGetInfinitBoardList({ size: 5, sort: sortOption });
+  const { data: postList } = useGetInfinitPostList({ size: 5, sort: sortOption });
 
   const sortLabel: Record<string, string> = {
     publishTime: '최신순',
@@ -46,12 +46,12 @@ export default function BoardPage() {
     setShowSortOptions(false);
   };
 
-  const handleBoardPost = () => {
+  const handlePosting = () => {
     if (!isAuthenticated) {
       setShowLoginModal(true);
       return;
     }
-    navigate('/board/post', { state: { type: 'create' } });
+    navigate('/posting', { state: { type: 'create' } });
   };
 
   useClickOutside([dropdownRef], () => {
@@ -60,7 +60,7 @@ export default function BoardPage() {
   return (
     <>
       <Header>
-        <BoardCategory>
+        <PostCategory>
           <Tap
             aria-label="전체 게시글 보기"
             $active={activeCategory === '전체 게시글'}
@@ -68,8 +68,8 @@ export default function BoardPage() {
           >
             전체 게시글
           </Tap>
-        </BoardCategory>
-        <WriteButton aria-label="게시판 글쓰기" size="small" onClick={handleBoardPost}>
+        </PostCategory>
+        <WriteButton aria-label="게시판 글쓰기" size="small" onClick={handlePosting}>
           <GoPencil size={16} />
           글쓰기
         </WriteButton>
@@ -93,7 +93,7 @@ export default function BoardPage() {
         )}
       </SortSection>
       <Wrapper>
-        <BoardList items={boardList} activeCategory={activeCategory} />
+        <PostList items={postList} activeCategory={activeCategory} />
       </Wrapper>
       {showLoginModal && (
         <LoginModal immediateOpen currentPath={location.pathname} onClose={() => setShowLoginModal(false)} />
@@ -102,7 +102,7 @@ export default function BoardPage() {
   );
 }
 
-const BoardCategory = styled.div``;
+const PostCategory = styled.div``;
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;

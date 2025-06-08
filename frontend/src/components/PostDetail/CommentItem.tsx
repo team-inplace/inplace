@@ -14,7 +14,7 @@ import useAuth from '@/hooks/useAuth';
 import { usePostCommentLike } from '@/api/hooks/usePostCommentLike';
 import LoginModal from '../common/modals/LoginModal';
 
-export default function CommentItem({ item, boardId }: { item: CommentData; boardId: string }) {
+export default function CommentItem({ item, postId }: { item: CommentData; postId: string }) {
   const { isAuthenticated } = useAuth();
   const [showEditOptions, setShowEditOptions] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -32,7 +32,7 @@ export default function CommentItem({ item, boardId }: { item: CommentData; boar
     deleteComment(id.toString(), {
       onSuccess: () => {
         alert('삭제되었습니다.');
-        queryClient.invalidateQueries({ queryKey: ['infiniteCommenList', 10, boardId] });
+        queryClient.invalidateQueries({ queryKey: ['infiniteCommentList', 10, postId] });
       },
       onError: () => {
         alert('댓글 삭제에 실패했어요. 다시 시도해주세요!');
@@ -54,7 +54,7 @@ export default function CommentItem({ item, boardId }: { item: CommentData; boar
         {
           onSuccess: () => {
             setIsLike(newLikeStatus);
-            queryClient.invalidateQueries({ queryKey: ['infiniteCommenList', boardId] });
+            queryClient.invalidateQueries({ queryKey: ['infiniteCommentList', postId] });
           },
           onError: () => {
             alert('좋아요 등록에 실패했어요. 다시 시도해주세요!');
@@ -70,7 +70,7 @@ export default function CommentItem({ item, boardId }: { item: CommentData; boar
   });
 
   return (
-    <Wrapper role="button">
+    <Wrapper>
       <LeftInfo>
         <ProfileImg>
           <FallbackImage src={item.userImgUrl} alt="profile" />
@@ -103,11 +103,17 @@ export default function CommentItem({ item, boardId }: { item: CommentData; boar
           </CommentInfo>
         </Content>
       </LeftInfo>
-      <EditMenu aria-label="댓글 편집 버튼" onClick={() => setShowEditOptions(!showEditOptions)}>
-        <RxDotsVertical size={22} />
+      <EditMenu ref={editRef}>
+        <EditBtn aria-label="게시글 편집 버튼" onClick={() => setShowEditOptions(!showEditOptions)}>
+          <RxDotsVertical size={22} />
+        </EditBtn>
         {showEditOptions && (
           <EditDropdown>
-            {item.mine ? <EditItem onClick={() => handleDeleteComment(item.commentId)}>삭제</EditItem> : null}
+            {item.mine ? (
+              <EditItem aria-label="댓글 삭제 버튼" onClick={() => handleDeleteComment(item.commentId)}>
+                삭제
+              </EditItem>
+            ) : null}
             <EditItem>신고</EditItem>
           </EditDropdown>
         )}
@@ -127,10 +133,6 @@ const Wrapper = styled.div`
   border: none;
   justify-content: space-between;
   gap: 8px;
-  &:hover {
-    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#222222' : '#eaf5f5')};
-  }
-  color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#ffffff' : '#333333')};
 `;
 const Content = styled.div`
   display: flex;
@@ -154,19 +156,23 @@ const ProfileImg = styled.div`
   aspect-ratio: 1 / 1;
   border-radius: 50%;
 `;
-const EditMenu = styled.button`
-  height: fit-content;
+
+const EditMenu = styled.div`
   position: relative;
+`;
+
+const EditBtn = styled.button`
   background: none;
   border: none;
   cursor: pointer;
+
   svg {
     color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'white' : 'black')};
   }
 `;
 const EditDropdown = styled.div`
   position: absolute;
-  top: 100%;
+  top: 40%;
   right: 10px;
   z-index: 2;
   background-color: #ffffff;
@@ -174,7 +180,6 @@ const EditDropdown = styled.div`
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   width: 90px;
 `;
-
 const EditItem = styled.button`
   width: 100%;
   padding: 10px 12px;
@@ -197,6 +202,7 @@ const StyledText = styled(Text)`
 const Count = styled.div`
   display: flex;
   gap: 4px;
+  align-items: end;
   cursor: pointer;
   svg {
     color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#A9A9A9' : '#000000')};

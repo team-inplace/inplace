@@ -1,23 +1,23 @@
 import styled from 'styled-components';
-import { BoardListData, PageableData } from '@/types';
-import Boarditem from './Boarditem';
+import { PostListData, PageableData } from '@/types';
+import Postitem from './Postitem';
 
 interface Props {
   items:
     | {
-        pages: PageableData<BoardListData>[];
+        pages: PageableData<PostListData>[];
         pageParams: number[];
       }
     | undefined;
   activeCategory: string;
 }
-export default function BoardList({ items, activeCategory }: Props) {
+export default function PostList({ items, activeCategory }: Props) {
   return (
     <Wrapper>
       {items?.pages.flatMap((page) =>
         page.content.map((item) => (
-          <div key={item.boardId}>
-            <Boarditem item={item} activeCategory={activeCategory} />
+          <div key={item.postId}>
+            <Postitem item={item} activeCategory={activeCategory} />
             <Separator />
           </div>
         )),

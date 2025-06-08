@@ -8,16 +8,16 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Text } from '@/components/common/typography/Text';
 import FallbackImage from '@/components/common/Items/FallbackImage';
 import { Paragraph } from '@/components/common/typography/Paragraph';
-import { useGetBoardData } from '@/api/hooks/useGetBoardData';
+import { useGetPostData } from '@/api/hooks/useGetPostData';
 import Button from '@/components/common/Button';
-import Comment from '@/components/BoardDetail/Comment';
-import { useDeleteBoard } from '@/api/hooks/useDeleteBoard';
+import Comment from '@/components/PostDetail/Comment';
 import useClickOutside from '@/hooks/useClickOutside';
 import useAuth from '@/hooks/useAuth';
-import { usePostBoardLike } from '@/api/hooks/usePostBoardLike';
+import { usePostPostLike } from '@/api/hooks/usePostPostLike';
 import LoginModal from '@/components/common/modals/LoginModal';
+import { useDeletePost } from '@/api/hooks/useDeletePost';
 
-export default function BoardDetailPage() {
+export default function PostDetailPage() {
   const { isAuthenticated } = useAuth();
   const { id } = useParams() as { id: string };
   const location = useLocation();
@@ -26,28 +26,28 @@ export default function BoardDetailPage() {
   const { activeCategory } = location.state;
   const queryClient = useQueryClient();
 
-  const { data: boardData } = useGetBoardData(id);
-  const { mutate: deleteBoard } = useDeleteBoard();
-  const { mutate: postLike } = usePostBoardLike();
+  const { data: postData } = useGetPostData(id);
+  const { mutate: deletePost } = useDeletePost();
+  const { mutate: postLike } = usePostPostLike();
   const [showEditOptions, setShowEditOptions] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [isLike, setIsLike] = useState(boardData.likes);
+  const [isLike, setIsLike] = useState(postData.likes);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string>('');
 
-  const handleEditBoard = (boardId: string, formData: object) => {
-    navigate('/board/post', { state: { boardId, prevformData: formData, type: 'update' } });
+  const handleEditPost = (postId: string, formData: object) => {
+    navigate('/posting', { state: { postId, prevformData: formData, type: 'update' } });
   };
 
-  const handleDeleteBoard = (boardId: string) => {
+  const handleDeletePost = (postId: string) => {
     const isConfirm = window.confirm('삭제하시겠습니까?');
     if (!isConfirm) return;
 
-    deleteBoard(boardId, {
+    deletePost(postId, {
       onSuccess: () => {
         alert('삭제되었습니다.');
-        queryClient.invalidateQueries({ queryKey: ['infiniteBoardList'] });
-        navigate('/board');
+        queryClient.invalidateQueries({ queryKey: ['infinitePostList'] });
+        navigate('/post');
       },
       onError: () => {
         alert('게시글 삭제에 실패했어요. 다시 시도해주세요!');
@@ -65,11 +65,11 @@ export default function BoardDetailPage() {
       }
       const newLikeStatus = !isLike;
       postLike(
-        { boardId: Number(id), likes: newLikeStatus },
+        { postId: Number(id), likes: newLikeStatus },
         {
           onSuccess: () => {
             setIsLike(newLikeStatus);
-            queryClient.invalidateQueries({ queryKey: ['BoardData', id] });
+            queryClient.invalidateQueries({ queryKey: ['PostData', id] });
           },
           onError: () => {
             alert('좋아요 등록에 실패했어요. 다시 시도해주세요!');
@@ -80,9 +80,9 @@ export default function BoardDetailPage() {
     [isLike, id, postLike],
   );
   const formData = {
-    title: boardData.title,
-    content: boardData.content,
-    imgUrls: boardData.imgUrls,
+    title: postData.title,
+    content: postData.content,
+    imgUrls: postData.imgUrls,
   };
 
   useClickOutside([editRef], () => {
@@ -91,25 +91,25 @@ export default function BoardDetailPage() {
 
   return (
     <Wrapper>
-      <CategoryName to="/board">
+      <CategoryName to="/post">
         <Text size="s" weight="bold">
           {activeCategory}
         </Text>
         <IoIosArrowForward size={20} />
       </CategoryName>
-      <BoardContainer>
-        <BoardTop>
+      <PostContainer>
+        <PostTop>
           <UserInfo>
             <ProfileImg>
-              <FallbackImage src={boardData.userImgUrl} alt="profile" />
+              <FallbackImage src={postData.userImgUrl} alt="profile" />
             </ProfileImg>
             <ProfileText>
               <Text size="s" weight="normal">
-                {boardData.userNickname}
+                {postData.userNickname}
               </Text>
               {/* todo - 칭호 */}
               <StyledText size="xs" weight="normal">
-                {boardData.create}
+                {postData.create}
               </StyledText>
             </ProfileText>
           </UserInfo>
@@ -119,29 +119,29 @@ export default function BoardDetailPage() {
             </EditBtn>
             {showEditOptions && (
               <EditDropdown>
-                {boardData.mine ? (
+                {postData.mine ? (
                   <>
-                    <EditItem onClick={() => handleEditBoard(id, formData)}>수정</EditItem>
-                    <EditItem onClick={() => handleDeleteBoard(id)}>삭제</EditItem>
+                    <EditItem onClick={() => handleEditPost(id, formData)}>수정</EditItem>
+                    <EditItem onClick={() => handleDeletePost(id)}>삭제</EditItem>
                   </>
                 ) : null}
                 <EditItem>신고</EditItem>
               </EditDropdown>
             )}
           </EditMenu>
-        </BoardTop>
+        </PostTop>
         <Content>
           <Paragraph size="m" weight="bold">
-            {boardData.title}
+            {postData.title}
           </Paragraph>
           <StyledText size="xs" weight="normal">
-            {boardData.content}
+            {postData.content}
           </StyledText>
         </Content>
-        {boardData.imgUrls && (
+        {postData.imgUrls && (
           <ImageList>
-            {boardData.imgUrls.map((imgUrl, index) => (
-              <BoardImg
+            {postData.imgUrls.map((imgUrl, index) => (
+              <PostImg
                 key={imgUrl.hash}
                 src={imgUrl.imgUrl}
                 alt={`게시글 이미지 ${index}`}
@@ -164,18 +164,18 @@ export default function BoardDetailPage() {
             <PiHeartLight size={18} data-testid="PiHeartLight" />
           )}
           <Text size="xs" weight="normal">
-            {boardData.like}
+            {postData.like}
           </Text>
         </Count>
-      </BoardContainer>
+      </PostContainer>
       <CommentTitle>
         <Text size="xs" weight="normal">
-          댓글 {boardData.comment}건
+          댓글 {postData.comment}건
         </Text>
       </CommentTitle>
       <Separator />
       <Comment id={id} />
-      <StyledButton size="small" variant="outline" onClick={() => navigate('/board')}>
+      <StyledButton size="small" variant="outline" onClick={() => navigate('/post')}>
         목록보기
       </StyledButton>
       {isModalOpen && (
@@ -207,13 +207,13 @@ const CategoryName = styled(Link)`
   align-items: end;
   color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'white' : 'black')};
 `;
-const BoardContainer = styled.div`
+const PostContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 26px;
   padding: 10px 0px 30px;
 `;
-const BoardTop = styled.div`
+const PostTop = styled.div`
   display: flex;
   justify-content: space-between;
 `;
@@ -269,7 +269,7 @@ const ImageList = styled.div`
     display: none;
   }
 `;
-const BoardImg = styled.img`
+const PostImg = styled.img`
   border-radius: 16px;
   max-width: 30%;
   aspect-ratio: 1 / 1;

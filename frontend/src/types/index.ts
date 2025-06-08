@@ -251,8 +251,8 @@ export type CategoryOption = {
   mainId?: number;
 };
 
-export type BoardListData = {
-  boardId: number;
+export type PostListData = {
+  postId: number;
   userNickname: string;
   userImgUrl: string;
   title: string;
@@ -263,8 +263,8 @@ export type BoardListData = {
   imgUrls: UploadedImageObj;
   likes: boolean;
 };
-export type BoardData = {
-  boardId: number;
+export type PostData = {
+  postId: number;
   userNickname: string;
   userImgUrl: string;
   title: string;
@@ -276,7 +276,7 @@ export type BoardData = {
   likes: boolean;
   mine: boolean;
 };
-export type BoardPostData = {
+export type PostingData = {
   title: string;
   content: string;
   imgUrls: UploadedImageObj[];
@@ -294,7 +294,7 @@ export type CommentData = {
 };
 
 export type PostCommentProps = {
-  boardId: string;
+  postId: string;
   comment: string;
 };
 
@@ -305,8 +305,8 @@ export type UploadImage = {
   hash: string;
 };
 
-export type RequestBoardLike = {
-  boardId: number;
+export type RequestPostLike = {
+  postId: number;
   likes: boolean;
 };
 

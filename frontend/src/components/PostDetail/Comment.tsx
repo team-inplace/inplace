@@ -38,7 +38,7 @@ export default function Comment({ id }: { id: string }) {
       return;
     }
     postComment(
-      { boardId: id, comment: textareaRef.current.value },
+      { postId: id, comment: textareaRef.current.value },
       {
         onSuccess: () => {
           if (!textareaRef.current) return;
@@ -57,7 +57,7 @@ export default function Comment({ id }: { id: string }) {
     <>
       <Wrapper>
         {commentList?.pages.flatMap((page) =>
-          page.content.map((item) => <CommentItem key={item.commentId} item={item} boardId={id} />),
+          page.content.map((item) => <CommentItem key={item.commentId} item={item} postId={id} />),
         )}
         {/* todo - 언급기능 */}
         <CommentContainer>

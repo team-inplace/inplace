@@ -2,14 +2,14 @@ import styled from 'styled-components';
 import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
 import { HiOutlineChatBubbleOvalLeft } from 'react-icons/hi2';
 import { Link } from 'react-router-dom';
-import { BoardListData } from '@/types';
+import { PostListData } from '@/types';
 import { Text } from '../common/typography/Text';
 import FallbackImage from '../common/Items/FallbackImage';
 import { Paragraph } from '../common/typography/Paragraph';
 
-export default function Boarditem({ item, activeCategory }: { item: BoardListData; activeCategory: string }) {
+export default function Postitem({ item, activeCategory }: { item: PostListData; activeCategory: string }) {
   return (
-    <Wrapper to={`/board/${item.boardId}`} state={{ activeCategory }}>
+    <Wrapper to={`/post/${item.postId}`} state={{ activeCategory }}>
       <LeftInfo>
         <UserInfo>
           <ProfileImg>
@@ -49,7 +49,7 @@ export default function Boarditem({ item, activeCategory }: { item: BoardListDat
           </StyledText>
         </ItemInfo>
       </LeftInfo>
-      {item.imgUrls && <BoardImg src={item.imgUrls.imgUrl} />}
+      {item.imgUrls && <PostImg src={item.imgUrls.imgUrl} />}
     </Wrapper>
   );
 }
@@ -102,7 +102,7 @@ const Count = styled.div`
   }
 `;
 
-const BoardImg = styled.img`
+const PostImg = styled.img`
   border-radius: 16px;
   height: 130px;
   aspect-ratio: 1 / 1;

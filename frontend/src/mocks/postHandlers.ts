@@ -1,13 +1,13 @@
 import { rest } from 'msw';
 import { BASE_URL } from '@/api/instance';
-import { getBoardDataPath } from '@/api/hooks/useGetBoardData';
 import { postCommentPath } from '@/api/hooks/usePostComment';
-import { BoardPostData, PostCommentProps } from '@/types';
-import { postBoardPath } from '@/api/hooks/usePostBoard';
+import { PostingData, PostCommentProps } from '@/types';
+import { getPostDataPath } from '@/api/hooks/useGetPostData';
+import { postPostPath } from '@/api/hooks/usePostPost';
 
-const boardListDummy = [
+const postListDummy = [
   {
-    boardId: 1,
+    postId: 1,
     userNickname: '랄라스윗칩',
     userImgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
     title: '성시경 먹을텐데 질문',
@@ -23,7 +23,7 @@ const boardListDummy = [
     likes: true,
   },
   {
-    boardId: 2,
+    postId: 2,
     userNickname: '룰라스윗칩',
     userImgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
     title: '성시경 먹을텐데 질문',
@@ -38,7 +38,7 @@ const boardListDummy = [
     likes: true,
   },
   {
-    boardId: 3,
+    postId: 3,
     userNickname: '럴라스윗칩',
     userImgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
     title: '성시경 먹을텐데 질문',
@@ -53,7 +53,7 @@ const boardListDummy = [
     likes: false,
   },
   {
-    boardId: 4,
+    postId: 4,
     userNickname: '롤라스윗칩',
     userImgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
     title: '성시경 먹을텐데 질문',
@@ -102,17 +102,17 @@ const commentListDummy = [
     mine: false,
   },
 ];
-export const boardHandlers = [
-  rest.get(`${BASE_URL}/board`, (req, res, ctx) => {
+export const postHandlers = [
+  rest.get(`${BASE_URL}/posts`, (req, res, ctx) => {
     const url = new URL(req.url);
     const page = parseInt(url.searchParams.get('page') ?? '0', 10);
     const size = parseInt(url.searchParams.get('size') ?? '10', 10);
 
-    const totalElements = boardListDummy.length;
+    const totalElements = postListDummy.length;
     const totalPages = Math.ceil(totalElements / size);
     const startIndex = page * size;
     const endIndex = Math.min(startIndex + size, totalElements);
-    const paginatedContent = boardListDummy.slice(startIndex, endIndex);
+    const paginatedContent = postListDummy.slice(startIndex, endIndex);
 
     return res(
       ctx.status(200),
@@ -146,11 +146,11 @@ export const boardHandlers = [
       }),
     );
   }),
-  rest.get(`${BASE_URL}${getBoardDataPath('1')}`, (_, res, ctx) => {
+  rest.get(`${BASE_URL}${getPostDataPath('1')}`, (_, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json({
-        boardId: 1,
+        postId: 1,
         userNickname: '랄라스윗칩',
         userImgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
         title: '성시경 먹을텐데 질문',
@@ -169,7 +169,7 @@ export const boardHandlers = [
       }),
     );
   }),
-  rest.get(`${BASE_URL}/board/1/comment`, (req, res, ctx) => {
+  rest.get(`${BASE_URL}/posts/1/comments`, (req, res, ctx) => {
     const url = new URL(req.url);
     const page = parseInt(url.searchParams.get('page') ?? '0', 10);
     const size = parseInt(url.searchParams.get('size') ?? '10', 10);
@@ -213,17 +213,17 @@ export const boardHandlers = [
     );
   }),
   rest.post(`${BASE_URL}${postCommentPath('1')}`, async (req, res, ctx) => {
-    const { boardId, comment } = req.body as PostCommentProps;
+    const { postId, comment } = req.body as PostCommentProps;
     return res(
       ctx.status(200),
       ctx.json({
-        boardId,
+        postId,
         comment,
       }),
     );
   }),
-  rest.post(`${BASE_URL}${postBoardPath()}`, async (req, res, ctx) => {
-    const { title, content, imgUrls } = req.body as BoardPostData;
+  rest.post(`${BASE_URL}${postPostPath()}`, async (req, res, ctx) => {
+    const { title, content, imgUrls } = req.body as PostingData;
     return res(
       ctx.status(200),
       ctx.json({
@@ -234,4 +234,4 @@ export const boardHandlers = [
     );
   }),
 ];
-export default boardHandlers;
+export default postHandlers;

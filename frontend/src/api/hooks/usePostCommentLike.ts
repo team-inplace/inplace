@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { fetchInstance } from '../instance';
 import { RequestCommentLike } from '@/types';
 
-export const postCommentLikePath = () => `/comment/likes`;
+export const postCommentLikePath = () => `/comments/likes`;
 const postCommentLike = async ({ commentId, likes }: RequestCommentLike) => {
   const response = await fetchInstance.post(
     postCommentLikePath(),

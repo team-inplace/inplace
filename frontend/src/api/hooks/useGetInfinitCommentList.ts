@@ -13,7 +13,7 @@ export const getInfinitCommentList = async (
     id,
   });
 
-  const response = await fetchInstance.get<PageableData<CommentData>>(`/board/${id}/comment?${params}`, {
+  const response = await fetchInstance.get<PageableData<CommentData>>(`/posts/${id}/comments?${params}`, {
     withCredentials: true,
   });
   return response.data;
