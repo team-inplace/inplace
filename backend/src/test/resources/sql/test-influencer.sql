@@ -1,8 +1,8 @@
-INSERT INTO influencers (id, name, job, channel_id, img_url)
-VALUES (1, '인플루언서1', '직업1', 'channel1', 'img1'),
-       (2, '인플루언서2', '직업2', 'channel2', 'img2'),
-       (3, '인플루언서3', '직업3', 'channel3', 'img3'),
-       (4, '인플루언서4', '직업4', 'channel4', 'img4');
+INSERT INTO influencers (id, name, job, channel_id, img_url, hidden)
+VALUES (1, '인플루언서1', '직업1', 'channel1', 'img1', 0),
+       (2, '인플루언서2', '직업2', 'channel2', 'img2', 0),
+       (3, '인플루언서3', '직업3', 'channel3', 'img3', 0),
+       (4, '인플루언서4', '직업4', 'channel4', 'img4', 0);
 
 INSERT INTO categories(id, name, eng_name, parent_id)
 VALUES (1, '맛집', 'eats', null),
