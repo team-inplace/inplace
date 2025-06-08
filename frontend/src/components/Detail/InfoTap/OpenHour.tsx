@@ -31,6 +31,7 @@ const Wrapper = styled.div`
 
   @media screen and (max-width: 768px) {
     line-height: 140%;
+    padding: 0px 10px;
   }
 `;
 

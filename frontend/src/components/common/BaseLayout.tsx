@@ -87,7 +87,7 @@ export default function BaseLayout({
           </MoreBtn>
         ) : null}
       </TitleContainer>
-      {renderSection()}
+      <RenderContainer $isSurround={type === 'surround'}>{renderSection()}</RenderContainer>
     </Container>
   );
 }
@@ -126,4 +126,8 @@ const MoreBtn = styled.button`
     padding-block: 0;
     padding-inline: 0;
   }
+`;
+
+const RenderContainer = styled.div<{ $isSurround: boolean }>`
+  ${({ $isSurround }) => $isSurround && 'padding: 0px 20px;'}
 `;

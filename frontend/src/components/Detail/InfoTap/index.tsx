@@ -65,9 +65,11 @@ export default function InfoTap({
       <Paragraph size="s" weight="bold">
         주소
       </Paragraph>
-      <Text size="xs" weight="normal">
-        {[address.address1, address.address2, address.address3].join(' ')}
-      </Text>
+      <AddressContainer>
+        <Text size="xs" weight="normal">
+          {[address.address1, address.address2, address.address3].join(' ')}
+        </Text>
+      </AddressContainer>
       {googlePlaceUrl ? (
         <>
           <Paragraph size="s" weight="bold">
@@ -161,6 +163,14 @@ const Wrapper = styled.div`
     gap: 30px;
   }
 `;
+
+const AddressContainer = styled.div`
+  padding: 0px 20px;
+  @media screen and (max-width: 768px) {
+    padding: 0px 10px;
+  }
+`;
+
 const GoogleReviewContainer = styled.div`
   padding: 0px 20px;
   margin-bottom: 10px;
@@ -187,6 +197,7 @@ const MapContainer = styled.div`
     width: 100%;
     height: 300px;
     margin-bottom: 10px;
+    width: 90%;
   }
 `;
 
