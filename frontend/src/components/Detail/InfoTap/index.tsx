@@ -6,7 +6,7 @@ import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import FacilitySign from './FacilitySign';
-import { AddressInfo, FacilityInfo, GoogleReview } from '@/types';
+import { AddressInfo, FacilityInfo, GoogleReview, SpotData } from '@/types';
 import OpenHour from './OpenHour';
 import { Text } from '@/components/common/typography/Text';
 import GoogleReviewList from '../GoogleReviewList';
@@ -15,6 +15,7 @@ import VisitModal from '../VisitModal';
 import Loading from '@/components/common/layouts/Loading';
 import ErrorComponent from '@/components/common/layouts/Error';
 import SpeedDialMap from './SpeedDialMap';
+import BaseLayout from '@/components/common/BaseLayout';
 
 type Props = {
   address: AddressInfo;
@@ -29,6 +30,7 @@ type Props = {
   latitude: string;
   rating: number;
   placeId: number;
+  surroundVideos: SpotData[];
 };
 export default function InfoTap({
   address,
@@ -43,6 +45,7 @@ export default function InfoTap({
   latitude,
   rating,
   placeId,
+  surroundVideos,
 }: Props) {
   const lat = Number(latitude);
   const lng = Number(longitude);
@@ -131,6 +134,9 @@ export default function InfoTap({
           />
         </Map>
       </MapContainer>
+      <SurroundContainer>
+        <BaseLayout type="surround" prevSubText="주변 장소" mainText="" SubText="" items={surroundVideos || []} />
+      </SurroundContainer>
       {visitModal && (
         <QueryErrorResetBoundary>
           {({ reset }) => (
@@ -175,12 +181,12 @@ const MapContainer = styled.div`
   margin: 0 auto;
   width: 95%;
   height: 410px;
-  margin-bottom: 120px;
+  margin-bottom: 10px;
 
   @media screen and (max-width: 768px) {
     width: 100%;
     height: 300px;
-    margin-bottom: 60px;
+    margin-bottom: 10px;
   }
 `;
 
@@ -215,5 +221,13 @@ const ButtonWrapper = styled.div`
   @media screen and (max-width: 768px) {
     gap: 10px;
     right: 46px;
+  }
+`;
+
+const SurroundContainer = styled.div`
+  margin-bottom: 120px;
+
+  @media screen and (max-width: 768px) {
+    margin-bottom: 60px;
   }
 `;

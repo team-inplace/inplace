@@ -4,6 +4,7 @@ import { getPlaceInfoPath } from '@/api/hooks/useGetPlaceInfo';
 import { getReviewPath } from '@/api/hooks/useGetReview';
 import { getSendInfoPath } from '@/api/hooks/useGetSendInfo';
 import BasicImage from '@/assets/images/basic-image.webp';
+import { dummy } from './mainHandlers';
 
 let reviews = [
   {
@@ -206,6 +207,7 @@ export const detailHandlers = [
         },
         likedCount: 100,
         likes: true,
+        surroundVideos: dummy,
       }),
     );
   }),

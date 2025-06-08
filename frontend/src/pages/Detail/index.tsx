@@ -192,6 +192,7 @@ export default function DetailPage() {
           latitude={infoData?.latitude}
           rating={infoData?.rating}
           placeId={Number(id)}
+          surroundVideos={infoData?.surroundVideos || []}
         />
         {/* ) : (
           <QueryErrorResetBoundary>

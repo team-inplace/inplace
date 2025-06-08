@@ -9,7 +9,7 @@ import Back from '@/assets/images/back-card.webp';
 import Basic from '@/assets/images/basic-image.webp';
 import BannerMob from '@/assets/images/mobile_banner.webp';
 
-const dummy = [
+export const dummy = [
   {
     videoId: 1,
     influencerName: '정육왕',
