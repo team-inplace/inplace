@@ -148,7 +148,7 @@ export const detailHandlers = [
           },
           {
             influencerName: '떡볶퀸',
-            videoUrl: 'https://www.youtube.com/watch?v=YdrW34lver4',
+            videoUrl: 'https://www.youtube.com/watch?v=1A0ItL8tFZU',
           },
           {
             influencerName: '기본',

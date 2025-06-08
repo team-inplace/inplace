@@ -104,7 +104,7 @@ export default function DetailPage() {
               const youtubeUrl = isYoutubeUrl ? extractYoutubeId(url.videoUrl) : BasicThumb;
               return (
                 <ImageWrapper key={`${id}-${url.videoUrl}`}>
-                  <FallbackImage src={youtubeUrl} alt="장소 사진" />
+                  <FallbackImage src={youtubeUrl} fallbackSrc={BasicThumb} alt="장소 사진" />
                 </ImageWrapper>
               );
             })}

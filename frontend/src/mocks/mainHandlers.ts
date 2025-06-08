@@ -40,11 +40,11 @@ export const dummy = [
   },
   {
     videoId: 3,
-    influencerName: '히밥',
-    videoUrl: 'https://youtu.be/cz1EvePzqfM?si=L5ZsKV4DXikGIuEP',
+    influencerName: '떡볶퀸',
+    videoUrl: 'https://www.youtube.com/watch?v=1A0ItL8tFZU',
     place: {
       placeId: 3,
-      placeName: '왕거미식당',
+      placeName: '삼성분식',
       address: {
         address1: '대구',
         address2: '북구',

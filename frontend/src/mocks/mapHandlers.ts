@@ -125,7 +125,7 @@ const dummyPlaces: PlaceData[] = [
   },
   {
     placeId: 3,
-    placeName: '맘스터치 대구대현점',
+    placeName: '삼성분식',
     address: {
       address1: '대구',
       address2: '북구',
@@ -134,8 +134,8 @@ const dummyPlaces: PlaceData[] = [
     category: '일식',
     videos: [
       {
-        influencerName: '아이유',
-        videoUrl: 'https://www.youtube.com/watch?v=ZC5klhd08ME&t=6s',
+        influencerName: '떡볶퀸',
+        videoUrl: 'https://www.youtube.com/watch?v=1A0ItL8tFZU5klhd08ME&t=6s',
       },
     ],
     longitude: '128.6101069',
