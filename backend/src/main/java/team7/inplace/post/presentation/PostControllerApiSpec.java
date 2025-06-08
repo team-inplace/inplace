@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import team7.inplace.post.presentation.dto.PostRequest;
+import team7.inplace.post.presentation.dto.PostRequest.UpsertComment;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertPost;
 
 @RequestMapping("/posts")
@@ -30,6 +31,19 @@ public interface PostControllerApiSpec {
     @PostMapping("/{postId}/comments")
     ResponseEntity<Void> createComment(
         @PathVariable(value = "postId") Long postId,
-        @RequestBody PostRequest.CreateComment commentRequest
+        @RequestBody UpsertComment commentRequest
+    );
+
+    @PutMapping("/{postId}/comments/{commentId}")
+    ResponseEntity<Void> updateComment(
+        @PathVariable(value = "postId") Long postId,
+        @PathVariable(value = "commentId") Long commentId,
+        @RequestBody UpsertComment commentRequest
+    );
+
+    @DeleteMapping("/{postId}/comments/{commentId}")
+    ResponseEntity<Void> deleteComment(
+        @PathVariable(value = "postId") Long postId,
+        @PathVariable(value = "commentId") Long commentId
     );
 }

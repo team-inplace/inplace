@@ -46,12 +46,16 @@ public class PostRequest {
 
     }
 
-    public record CreateComment(
-        String content
+    public record UpsertComment(
+        String comment
     ) {
 
         public PostCommand.CreateComment toCommand(Long postId) {
-            return new PostCommand.CreateComment(postId, content);
+            return new PostCommand.CreateComment(postId, comment);
+        }
+
+        public PostCommand.UpdateComment toUpdateCommand(Long commentId, Long postId) {
+            return new PostCommand.UpdateComment(commentId, postId, comment);
         }
     }
 }

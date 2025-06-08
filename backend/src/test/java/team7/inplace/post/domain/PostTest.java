@@ -18,7 +18,7 @@ class PostTest {
         //given
         final Long authorId = 1L;
         final String title = "test";
-        final String content = "test content";
+        final String content = "test comment";
         final List<String> imageUrls = List.of("https://example.com/image.jpg");
         final List<String> imgHashes = List.of("hash123");
 
@@ -42,7 +42,7 @@ class PostTest {
         //given
         final Long authorId = 1L;
         final String title = "test";
-        final String content = "test content";
+        final String content = "test comment";
         final List<String> imageUrls = List.of(
             "https://example.com/image1.jpg",
             "https://example.com/image2.jpg"
@@ -67,7 +67,7 @@ class PostTest {
         //given
         final Long authorId = 1L;
         final String title = "test";
-        final String content = "test content";
+        final String content = "test comment";
         final List<String> imageUrls = List.of(
             "https://example.com/image1.jpg",
             "https://example.com/image2.jpg"
@@ -86,7 +86,7 @@ class PostTest {
         //given
         final Long authorId = 1L;
         final String title = "test";
-        final String content = "test content";
+        final String content = "test comment";
         final List<String> imageUrls = List.of(
             "https://example.com/image1.jpg",
             "https://example.com/image2.jpg",
@@ -118,7 +118,7 @@ class PostTest {
         //given
         final Long authorId = 1L;
         final String title = "";
-        final String content = "test content";
+        final String content = "test comment";
         final List<String> imageUrls = List.of("https://example.com/image.jpg");
         final List<String> imgHashes = List.of("hash123");
 
@@ -150,7 +150,7 @@ class PostTest {
         //given
         final Long authorId = 1L;
         final String title = "a".repeat(31); // 31 characters
-        final String content = "test content";
+        final String content = "test comment";
         final List<String> imageUrls = List.of();
         final List<String> imgHashes = List.of();
 
@@ -182,7 +182,7 @@ class PostTest {
         //given
         final Long authorId = 1L;
         final String title = "test title";
-        final String content = "test content";
+        final String content = "test comment";
         final List<String> imageUrls = List.of();
         final List<String> imgHashes = List.of();
 

@@ -8,6 +8,7 @@ import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.PostErrorCode;
 import team7.inplace.post.application.dto.PostCommand.CreateComment;
 import team7.inplace.post.application.dto.PostCommand.CreatePost;
+import team7.inplace.post.application.dto.PostCommand.UpdateComment;
 import team7.inplace.post.application.dto.PostCommand.UpdatePost;
 import team7.inplace.post.persistence.CommentJpaRepository;
 import team7.inplace.post.persistence.PostJpaRepository;
@@ -55,5 +56,27 @@ public class PostService {
         var post = postJpaRepository.findById(postId)
             .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
         post.deleteSoftly(userId);
+    }
+
+    @Transactional
+    public void updateComment(UpdateComment updateCommand, Long userId) {
+        if (!postJpaRepository.existsById(updateCommand.postId())) {
+            throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
+        }
+        var comment = commentJpaRepository.findById(updateCommand.commentId())
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));
+
+        comment.updateContent(userId, updateCommand.comment());
+    }
+
+    @Transactional
+    public void deleteComment(Long postId, Long commentId, Long userId) {
+        if (!postJpaRepository.existsById(postId)) {
+            throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
+        }
+        var comment = commentJpaRepository.findById(commentId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));
+
+        comment.deleteSoftly(userId);
     }
 }

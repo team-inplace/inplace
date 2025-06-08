@@ -30,11 +30,19 @@ public class PostCommand {
 
     public record CreateComment(
         Long postId,
-        String content
+        String comment
     ) {
 
         public Comment toEntity(Long authorId) {
-            return new Comment(postId, authorId, content);
+            return new Comment(postId, authorId, comment);
         }
+    }
+
+    public record UpdateComment(
+        Long commentId,
+        Long postId,
+        String comment
+    ) {
+
     }
 }

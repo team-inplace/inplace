@@ -32,4 +32,14 @@ public class PostFacade {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.createComment(command, userId);
     }
+
+    public void updateComment(PostCommand.UpdateComment updateCommand) {
+        var userId = AuthorizationUtil.getUserIdOrThrow();
+        postService.updateComment(updateCommand, userId);
+    }
+
+    public void deleteComment(Long postId, Long commentId) {
+        var userId = AuthorizationUtil.getUserIdOrThrow();
+        postService.deleteComment(postId, commentId, userId);
+    }
 }
