@@ -12,6 +12,8 @@ import InfiniteBaseLayout from '@/components/My/infiniteBaseLayout';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import { usePatchNickname } from '@/api/hooks/usePatchNickname';
 import { useGetUserInfo } from '@/api/hooks/useGetUserInfo';
+import { useDeleteUser } from '@/api/hooks/useDeleteUser';
+import useAuth from '@/hooks/useAuth';
 
 export default function MyPage() {
   const influencerRef = useRef<HTMLDivElement>(null);
@@ -51,6 +53,8 @@ export default function MyPage() {
   const [nickname, setNickname] = useState(userNickname?.nickname || '');
   const [isVisible, setIsVisible] = useState(true);
   const { mutate: patchNickname } = usePatchNickname();
+  const { handleLogout } = useAuth();
+  const { mutate: deleteUser } = useDeleteUser();
   const queryClient = useQueryClient();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -65,6 +69,21 @@ export default function MyPage() {
         alert('닉네임 변경에 실패했습니다. 다시 시도해주세요!');
       },
     });
+  };
+
+  const handleDeleteUser = () => {
+    if (window.confirm('정말 회원 탈퇴를 하시겠습니까?')) {
+      deleteUser(undefined, {
+        onSuccess: () => {
+          handleLogout();
+          alert('회원 탈퇴가 완료되었습니다.');
+        },
+        onError: (error) => {
+          console.error('회원탈퇴 실패:', error);
+          alert('회원 탈퇴에 실패했습니다. 다시 시도해주세요.');
+        },
+      });
+    }
   };
   return (
     <Wrapper>
@@ -123,6 +142,9 @@ export default function MyPage() {
         hasNextPage={hasNextPage}
         isFetchingNextPage={isFetchingNextPage}
       />
+      <Text size="xs" weight="normal" style={{ color: '#9e9e9e', width: '90%' }}>
+        인플레이스 회원 탈퇴를 원하시면 <UnderlineText onClick={handleDeleteUser}>여기</UnderlineText>를 눌러주세요.
+      </Text>
     </Wrapper>
   );
 }
@@ -180,4 +202,10 @@ const NickNameWrapper = styled.div`
     align-items: end;
     display: flex;
   }
+`;
+
+const UnderlineText = styled.span`
+  text-decoration: underline;
+  cursor: pointer;
+  color: inherit;
 `;

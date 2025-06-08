@@ -4,7 +4,6 @@ import { motion, Variants } from 'framer-motion';
 import { Text } from '@/components/common/typography/Text';
 import useAuth from '@/hooks/useAuth';
 import LoginModal from '@/components/common/modals/LoginModal';
-import { useDeleteUser } from '@/api/hooks/useDeleteUser';
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -31,23 +30,7 @@ const itemVariants: Variants = {
 
 export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
   const { isAuthenticated, handleLogout } = useAuth();
-  const { mutate: deleteUser } = useDeleteUser();
   const location = useLocation();
-
-  const handleDeleteUser = () => {
-    if (window.confirm('정말 회원 탈퇴를 하시겠습니까?')) {
-      deleteUser(undefined, {
-        onSuccess: () => {
-          handleLogout();
-          alert('회원 탈퇴가 완료되었습니다.');
-        },
-        onError: (error) => {
-          console.error('회원탈퇴 실패:', error);
-          alert('회원 탈퇴에 실패했습니다. 다시 시도해주세요.');
-        },
-      });
-    }
-  };
 
   const commonLinks = [
     { to: '/map', label: '지도' },
@@ -87,11 +70,13 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
 
         {isAuthenticated ? (
           <>
-            <NavItem to="/my" aria-label="모바일 마이페이지" onClick={onClose}>
-              <Text size="xs" weight="normal">
-                마이페이지
-              </Text>
-            </NavItem>
+            {location.pathname !== '/my' && (
+              <NavItem to="/my" aria-label="모바일 마이페이지" onClick={onClose}>
+                <Text size="xs" weight="normal">
+                  마이페이지
+                </Text>
+              </NavItem>
+            )}
             <LogoutButton
               onClick={() => {
                 handleLogout();
@@ -100,16 +85,6 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
             >
               <Text size="xs" weight="normal">
                 로그아웃
-              </Text>
-            </LogoutButton>
-            <LogoutButton
-              onClick={() => {
-                handleDeleteUser();
-                onClose();
-              }}
-            >
-              <Text size="xs" weight="normal">
-                회원탈퇴
               </Text>
             </LogoutButton>
           </>
