@@ -16,7 +16,7 @@ import { UploadedImageObj, UploadImage } from '@/types';
 interface FormDataType {
   title: string;
   content: string;
-  imgUrls: UploadImage[];
+  imageUrls: UploadImage[];
 }
 export default function PostingPage() {
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ export default function PostingPage() {
   const [formData, setFormData] = useState<FormDataType>({
     title: '',
     content: '',
-    imgUrls: [],
+    imageUrls: [],
   });
   const [existingHashes, setExistingHashes] = useState<string[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -42,14 +42,14 @@ export default function PostingPage() {
       setFormData({
         title: prevformData.title,
         content: prevformData.content,
-        imgUrls:
-          prevformData.imgUrls?.map((obj: UploadedImageObj) => ({
-            thumbnail: obj.imgUrl,
+        imageUrls:
+          prevformData.imageUrls?.map((obj: UploadedImageObj) => ({
+            thumbnail: obj.imageUrl,
             isExisting: true,
             hash: obj.hash,
           })) || [],
       });
-      setExistingHashes(prevformData.imgUrls?.map((obj: UploadedImageObj) => obj.hash) || []);
+      setExistingHashes(prevformData.imageUrls?.map((obj: UploadedImageObj) => obj.hash) || []);
     }
   }, [prevformData, type]);
 
@@ -59,10 +59,10 @@ export default function PostingPage() {
   };
 
   const handleImgRemove = (index: number) => {
-    const removedImage = formData.imgUrls[index];
+    const removedImage = formData.imageUrls[index];
     setFormData((prev) => ({
       ...prev,
-      imgUrls: prev.imgUrls.filter((_, i) => i !== index),
+      imageUrls: prev.imageUrls.filter((_, i) => i !== index),
     }));
     setExistingHashes((prev) => prev.filter((hash) => hash !== removedImage.hash));
   };
@@ -71,7 +71,7 @@ export default function PostingPage() {
     const fileList = e.target.files;
     if (!fileList) return;
 
-    if (formData.imgUrls.length + fileList.length > 10) {
+    if (formData.imageUrls.length + fileList.length > 10) {
       alert('사진은 최대 10장까지 첨부 가능합니다.');
       return;
     }
@@ -106,7 +106,7 @@ export default function PostingPage() {
       });
     setFormData((prev) => ({
       ...prev,
-      imgUrls: [...prev.imgUrls, ...newImages],
+      imageUrls: [...prev.imageUrls, ...newImages],
     }));
   };
 
@@ -115,7 +115,7 @@ export default function PostingPage() {
     let uploadedObjs: UploadedImageObj[] = [];
 
     try {
-      const newImages = formData.imgUrls.filter((img) => !img.isExisting);
+      const newImages = formData.imageUrls.filter((img) => !img.isExisting);
       uploadedObjs = newImages.length > 0 ? await handleImageUpload(newImages) : [];
     } catch (error) {
       alert('이미지 업로드에 실패했습니다. 다시 시도해주세요.');
@@ -123,16 +123,16 @@ export default function PostingPage() {
       return;
     }
 
-    const existingObjs: UploadedImageObj[] = formData.imgUrls
+    const existingObjs: UploadedImageObj[] = formData.imageUrls
       .filter((img) => img.isExisting)
       .map((img) => ({
-        imgUrl: img.thumbnail,
+        imageUrl: img.thumbnail,
         hash: img.hash,
       }));
 
     // 삭제된 이미지 판별
-    const existingLinks = existingObjs.map((obj) => obj.imgUrl);
-    const prevLinks = prevformData?.imgUrls?.map((obj: UploadedImageObj) => obj.imgUrl) || [];
+    const existingLinks = existingObjs.map((obj) => obj.imageUrl);
+    const prevLinks = prevformData?.imageUrls?.map((obj: UploadedImageObj) => obj.imageUrl) || [];
     const removedLinks = prevLinks.filter((link: string) => !existingLinks.includes(link));
     await handleDeleteImages(removedLinks);
 
@@ -142,7 +142,7 @@ export default function PostingPage() {
     const formDataWithURL = {
       title: formData.title,
       content: formData.content,
-      imgUrls: allImageObjs,
+      imageUrls: allImageObjs,
     };
     if (type === 'create') {
       postPost(formDataWithURL, {
@@ -204,7 +204,7 @@ export default function PostingPage() {
           }
         />
         <ImagePreview
-          images={formData.imgUrls}
+          images={formData.imageUrls}
           onRemove={handleImgRemove}
           onPreview={(src) => {
             setSelectedImage(src);

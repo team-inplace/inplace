@@ -29,19 +29,19 @@ export default function Postitem({ item, activeCategory }: { item: PostListData;
         </Content>
         <ItemInfo>
           <Count>
-            {item.likes ? (
+            {item.selfLike ? (
               <PiHeartFill color="#fe7373" size={18} data-testid="PiHeartFill" />
             ) : (
               <PiHeartLight size={18} data-testid="PiHeartLight" />
             )}
             <StyledText size="xs" weight="normal">
-              {item.like}
+              {item.totalLikeCount}
             </StyledText>
           </Count>
           <Count>
             <HiOutlineChatBubbleOvalLeft size={18} />
             <StyledText size="xs" weight="normal">
-              {item.comment}
+              {item.commenCount}
             </StyledText>
           </Count>
           <StyledText size="xs" weight="normal">
@@ -49,7 +49,7 @@ export default function Postitem({ item, activeCategory }: { item: PostListData;
           </StyledText>
         </ItemInfo>
       </LeftInfo>
-      {item.imgUrls && <PostImg src={item.imgUrls.imgUrl} />}
+      {item.imageUrls && <PostImg src={item.imageUrls.imageUrl} />}
     </Wrapper>
   );
 }

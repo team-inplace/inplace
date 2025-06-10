@@ -31,7 +31,7 @@ export default function PostDetailPage() {
   const { mutate: postLike } = usePostPostLike();
   const [showEditOptions, setShowEditOptions] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [isLike, setIsLike] = useState(postData.likes);
+  const [isLike, setIsLike] = useState(postData.selfLike);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string>('');
 
@@ -82,7 +82,7 @@ export default function PostDetailPage() {
   const formData = {
     title: postData.title,
     content: postData.content,
-    imgUrls: postData.imgUrls,
+    imageUrls: postData.imageUrls,
   };
 
   useClickOutside([editRef], () => {
@@ -138,15 +138,15 @@ export default function PostDetailPage() {
             {postData.content}
           </StyledText>
         </Content>
-        {postData.imgUrls && (
+        {postData.imageUrls && (
           <ImageList>
-            {postData.imgUrls.map((imgUrl, index) => (
+            {postData.imageUrls.map((imgUrl, index) => (
               <PostImg
                 key={imgUrl.hash}
-                src={imgUrl.imgUrl}
+                src={imgUrl.imageUrl}
                 alt={`게시글 이미지 ${index}`}
                 onClick={() => {
-                  setSelectedImage(imgUrl.imgUrl);
+                  setSelectedImage(imgUrl.imageUrl);
                   setIsModalOpen(true);
                 }}
               />
@@ -164,13 +164,13 @@ export default function PostDetailPage() {
             <PiHeartLight size={18} data-testid="PiHeartLight" />
           )}
           <Text size="xs" weight="normal">
-            {postData.like}
+            {postData.totalLikeCount}
           </Text>
         </Count>
       </PostContainer>
       <CommentTitle>
         <Text size="xs" weight="normal">
-          댓글 {postData.comment}건
+          댓글 {postData.commentCount}건
         </Text>
       </CommentTitle>
       <Separator />

@@ -30,7 +30,7 @@ export default async function handleImageUpload(newImages: UploadImage[]) {
     .map(getObjectKeyFromS3Url)
     .filter(Boolean)
     .map((objectKey, idx) => ({
-      imgUrl: `${CLOUDFRONT_DOMAIN}/${objectKey}`,
+      imageUrl: `${CLOUDFRONT_DOMAIN}/${objectKey}`,
       hash: newImages[idx].hash,
     }));
 }
