@@ -2,7 +2,6 @@ package team7.inplace.post.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import team7.inplace.global.baseEntity.BaseEntity;
@@ -40,10 +39,10 @@ public class Comment extends BaseEntity {
         validateContent(content);
         this.content = content;
     }
-    
+
     public void deleteSoftly(Long authorId) {
         validateAuthor(authorId);
-        super.deleteSoftly(LocalDateTime.now());
+        super.deleteSoftly();
     }
 
     private void validateAuthor(Long authorId) {
