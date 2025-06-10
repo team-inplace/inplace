@@ -32,7 +32,7 @@ export const useGetInfinitCommentList = ({ size, id }: QueryParams, enabled?: bo
     [string, number, string],
     number
   >({
-    queryKey: ['infiniteCommenList', size, id],
+    queryKey: ['infiniteCommentList', size, id],
     queryFn: ({ pageParam = 0 }) => getInfinitCommentList(pageParam, size, id),
     initialPageParam: 0,
     getNextPageParam: (lastPage) => {
