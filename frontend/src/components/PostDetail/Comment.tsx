@@ -11,6 +11,7 @@ import LoginModal from '../common/modals/LoginModal';
 import FallbackImage from '../common/Items/FallbackImage';
 import { useGetUserInfo } from '@/api/hooks/useGetUserInfo';
 import { Text } from '../common/typography/Text';
+import useAutoResizeTextarea from '@/hooks/Post/useAutoResizeTextarea';
 
 export default function Comment({ id }: { id: string }) {
   const { isAuthenticated } = useAuth();
@@ -22,11 +23,8 @@ export default function Comment({ id }: { id: string }) {
   const queryClient = useQueryClient();
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const handleResizeHeight = () => {
-    if (!textareaRef.current) return;
-    textareaRef.current.style.height = 'auto';
-    textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-  };
+  const handleResizeHeight = useAutoResizeTextarea();
+
   const handleCommentSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -71,7 +69,12 @@ export default function Comment({ id }: { id: string }) {
               </Text>
             </UserInfo>
             <CommentInputWrapper onSubmit={handleCommentSubmit}>
-              <TextArea ref={textareaRef} placeholder={placeholder} rows={1} onChange={handleResizeHeight} />
+              <TextArea
+                ref={textareaRef}
+                placeholder={placeholder}
+                rows={1}
+                onChange={(e) => handleResizeHeight(e.target)}
+              />
               <SendButton type="submit">
                 <IoIosSend size={20} />
               </SendButton>
