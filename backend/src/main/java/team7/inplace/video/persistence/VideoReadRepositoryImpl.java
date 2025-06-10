@@ -304,18 +304,23 @@ public class VideoReadRepositoryImpl implements VideoReadRepository {
             .findFirst()
             .ifPresentOrElse(order -> {
                     String property = order.getProperty();
-                    OrderSpecifier<?> specifier = switch (property) {
-                        case "popularity" -> QVideo.video.view.viewCountIncrease.desc();
+                    OrderSpecifier<?>[] specifier = switch (property) {
+                        case "popularity" -> new OrderSpecifier<?>[]{
+                            QVideo.video.view.viewCountIncrease.desc(),
+                            QVideo.video.publishTime.desc()
+                        };
                         case "likes" -> {
                             var likesCount = JPAExpressions
                                 .select(QLikedPlace.likedPlace.count())
                                 .from(QLikedPlace.likedPlace)
                                 .where(QLikedPlace.likedPlace.placeId.eq(QPlace.place.id)
                                     .and(QLikedPlace.likedPlace.isLiked.isTrue()));
-                            yield Expressions.numberTemplate(Long.class, "COALESCE({0}, 0)",
-                                likesCount).desc();
+                            yield new OrderSpecifier<?>[]{
+                                Expressions.numberTemplate(Long.class,"COALESCE({0}, 0)", likesCount).desc(),
+                                QVideo.video.publishTime.desc()
+                            };
                         }
-                        default -> QVideo.video.publishTime.desc();
+                        default -> new OrderSpecifier<?>[]{ QVideo.video.publishTime.desc() };
                     };
                     query.orderBy(specifier);
                 }, () -> query.orderBy(QVideo.video.publishTime.desc())

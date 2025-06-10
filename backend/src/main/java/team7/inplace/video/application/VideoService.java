@@ -126,7 +126,10 @@ public class VideoService {
 
     @Transactional
     public void deleteVideo(Long videoId) {
-        videoRepository.deleteById(videoId);
+        Video video = videoRepository.findById(videoId)
+            .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
+
+        video.deleteSoftly();
     }
 
     @Transactional
