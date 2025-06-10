@@ -12,15 +12,15 @@ const postListDummy = [
     userImgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
     title: '성시경 먹을텐데 질문',
     content: '성시경 먹을텐데 시리즈 중에 제일 추천하는 식당 어디신가요~? 찐후기만 댓글 달아주세요',
-    like: 20,
-    comment: 3,
+    totalLikeCount: 20,
+    commentCount: 3,
     create: '1분전',
-    imgUrls: {
-      imgUrl:
+    imageUrls: {
+      imageUrl:
         'https://www.chosun.com/resizer/v2/https%3A%2F%2Fauthor-service-images-prod-us-east-1.publishing.aws.arc.pub%2Fchosun%2F61ee5a7f-256c-441a-84d0-f71f7fde8753.png?auth=ac62f49ccb40ba0664e55e616e25d60bbe9491af26a5c0e5ac95e3640e0a3f6a&width=616&height=346&smart=true',
       hash: '1234',
     },
-    likes: true,
+    selfLike: true,
   },
   {
     postId: 2,
@@ -28,14 +28,14 @@ const postListDummy = [
     userImgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
     title: '성시경 먹을텐데 질문',
     content: '성시경 먹을텐데 시리즈 중에 제일 추천하는 식당 어디신가요~? 찐후기만 댓글 달아주세요',
-    like: 20,
-    comment: 3,
+    totalLikeCount: 20,
+    commentCount: 3,
     create: '1분전',
-    imgUrls: {
-      imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+    imageUrls: {
+      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
       hash: '1234',
     },
-    likes: true,
+    selfLike: true,
   },
   {
     postId: 3,
@@ -43,14 +43,14 @@ const postListDummy = [
     userImgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
     title: '성시경 먹을텐데 질문',
     content: '성시경 먹을텐데 시리즈 중에 제일 추천하는 식당 어디신가요~? 찐후기만 댓글 달아주세요',
-    like: 20,
-    comment: 3,
+    totalLikeCount: 20,
+    commentCount: 3,
     create: '1분전',
-    imgUrls: {
-      imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+    imageUrls: {
+      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
       hash: '1234',
     },
-    likes: false,
+    selfLike: false,
   },
   {
     postId: 4,
@@ -58,14 +58,14 @@ const postListDummy = [
     userImgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
     title: '성시경 먹을텐데 질문',
     content: '성시경 먹을텐데 시리즈 중에 제일 추천하는 식당 어디신가요~? 찐후기만 댓글 달아주세요',
-    like: 20,
-    comment: 3,
+    totalLikeCount: 20,
+    commentCount: 3,
     create: '1분전',
-    imgUrls: {
-      imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+    imageUrls: {
+      imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
       hash: '1234',
     },
-    likes: false,
+    selfLike: false,
   },
 ];
 
@@ -76,8 +76,8 @@ const commentListDummy = [
     userImgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
     content: '토스 커뮤니티에도 웹사이트가 잇어요 놀러오세요~^^',
     create: '4분전',
-    like: 20,
-    likes: true,
+    totalLikeCount: 20,
+    selfLike: true,
     mine: true,
   },
   {
@@ -86,8 +86,8 @@ const commentListDummy = [
     userImgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
     content: '@랄라스윗칩 여긴 인플레이슨데 뭔헛소리노',
     create: '3분전',
-    like: 10,
-    likes: false,
+    totalLikeCount: 10,
+    selfLike: false,
     mine: false,
   },
   {
@@ -97,8 +97,8 @@ const commentListDummy = [
     content:
       '그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다',
     create: '1분전',
-    like: 0,
-    likes: false,
+    totalLikeCount: 0,
+    selfLike: false,
     mine: false,
   },
 ];
@@ -155,16 +155,16 @@ export const postHandlers = [
         userImgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
         title: '성시경 먹을텐데 질문',
         content: '성시경 먹을텐데 시리즈 중에 제일 추천하는 식당 어디신가요~? 찐후기만 댓글 달아주세요',
-        like: 20,
-        comment: 3,
+        totalLikeCount: 20,
+        commentCount: 3,
         create: '1분전',
-        imgUrls: [
+        imageUrls: [
           {
-            imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+            imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
             hash: '1234',
           },
         ],
-        likes: true,
+        selfLike: true,
         mine: true,
       }),
     );
@@ -223,15 +223,44 @@ export const postHandlers = [
     );
   }),
   rest.post(`${BASE_URL}${postPostPath()}`, async (req, res, ctx) => {
-    const { title, content, imgUrls } = req.body as PostingData;
+    const { title, content, imageUrls } = req.body as PostingData;
     return res(
       ctx.status(200),
       ctx.json({
         title,
         content,
-        imgUrls,
+        imageUrls,
       }),
     );
+  }),
+
+  rest.put(`${BASE_URL}/posts/1/comments/:commentId`, async (req, res, ctx) => {
+    const { commentId } = req.params;
+    const { comment } = req.body as { comment: string };
+
+    const stringId = Array.isArray(commentId) ? commentId[0] : commentId;
+    const numId = Number(stringId);
+    const idx = commentListDummy.findIndex((c) => c.commentId === numId);
+
+    commentListDummy[idx] = {
+      ...commentListDummy[idx],
+      content: comment,
+      create: '방금 전',
+    };
+
+    return res(ctx.status(200), ctx.json('success.'));
+  }),
+
+  rest.delete(`${BASE_URL}/posts/1/comments/:commentId`, async (req, res, ctx) => {
+    const { commentId } = req.params;
+
+    const stringId = Array.isArray(commentId) ? commentId[0] : commentId;
+    const numId = Number(stringId);
+    const idx = commentListDummy.findIndex((c) => c.commentId === numId);
+
+    commentListDummy.splice(idx, 1);
+
+    return res(ctx.status(200), ctx.json('success.'));
   }),
 ];
 export default postHandlers;

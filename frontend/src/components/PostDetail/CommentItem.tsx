@@ -13,31 +13,80 @@ import useClickOutside from '@/hooks/useClickOutside';
 import useAuth from '@/hooks/useAuth';
 import { usePostCommentLike } from '@/api/hooks/usePostCommentLike';
 import LoginModal from '../common/modals/LoginModal';
+import { usePutComment } from '@/api/hooks/usePutComment';
+import Button from '../common/Button';
+import useAutoResizeTextarea from '@/hooks/Post/useAutoResizeTextarea';
 
 export default function CommentItem({ item, postId }: { item: CommentData; postId: string }) {
   const { isAuthenticated } = useAuth();
-  const [showEditOptions, setShowEditOptions] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [isLike, setIsLike] = useState(item.likes);
   const location = useLocation();
   const queryClient = useQueryClient();
+
+  const [showEditOptions, setShowEditOptions] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [isLike, setIsLike] = useState(item.selfLike);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editValue, setEditValue] = useState(item.content);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const editRef = useRef<HTMLDivElement>(null);
+
   const { mutate: deleteComment } = useDeleteComment();
+  const { mutate: putComment } = usePutComment();
   const { mutate: postLike } = usePostCommentLike();
 
-  const handleDeleteComment = (id: number) => {
+  const handleResizeHeight = useAutoResizeTextarea();
+
+  const handleDeleteSubmit = () => {
     const isConfirm = window.confirm('삭제하시겠습니까?');
     if (!isConfirm) return;
 
-    deleteComment(id.toString(), {
-      onSuccess: () => {
-        alert('삭제되었습니다.');
-        queryClient.invalidateQueries({ queryKey: ['infiniteCommentList', 10, postId] });
+    deleteComment(
+      { postId, id: item.commentId.toString() },
+      {
+        onSuccess: () => {
+          alert('삭제되었습니다.');
+          queryClient.invalidateQueries({ queryKey: ['infiniteCommentList', 10, postId] });
+        },
+        onError: () => {
+          alert('댓글 삭제에 실패했어요. 다시 시도해주세요!');
+        },
       },
-      onError: () => {
-        alert('댓글 삭제에 실패했어요. 다시 시도해주세요!');
+    );
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+    setEditValue(item.content);
+    setShowEditOptions(false);
+    setTimeout(() => {
+      textareaRef.current?.focus();
+    }, 0);
+  };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (editValue.trim() === item.content.trim()) {
+      setIsEditing(false);
+      return;
+    }
+    if (!editValue.trim()) {
+      alert('댓글을 입력해주세요.');
+      return;
+    }
+
+    putComment(
+      { postId, commentId: item.commentId.toString(), comment: editValue },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ['infiniteCommentList', 10, postId] });
+          setIsEditing(false);
+        },
+        onError: () => {
+          alert('댓글 수정에 실패했어요. 다시 시도해주세요!');
+        },
       },
-    });
+    );
   };
 
   const handleLikeClick = useCallback(
@@ -71,53 +120,93 @@ export default function CommentItem({ item, postId }: { item: CommentData; postI
 
   return (
     <Wrapper>
-      <LeftInfo>
-        <ProfileImg>
-          <FallbackImage src={item.userImgUrl} alt="profile" />
-        </ProfileImg>
-        <Content>
+      <CommentTop>
+        <UserInfo>
+          <ProfileImg>
+            <FallbackImage src={item.userImgUrl} alt="profile" />
+          </ProfileImg>
           <Text size="s" weight="normal">
             {item.userNickname}
           </Text>
-          <Paragraph size="xs" weight="normal">
-            {item.content}
-          </Paragraph>
-          <CommentInfo>
-            <StyledText size="xs" weight="normal">
-              {item.create}
-            </StyledText>
-            <Count
-              role="button"
-              aria-label="댓글 좋아요 버튼"
-              onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
-            >
-              {isLike ? (
-                <PiHeartFill color="#fe7373" size={18} data-testid="PiHeartFill" />
-              ) : (
-                <PiHeartLight size={18} data-testid="PiHeartLight" />
-              )}
-              <Text size="xs" weight="normal">
-                {item.like}
-              </Text>
-            </Count>
-          </CommentInfo>
-        </Content>
-      </LeftInfo>
-      <EditMenu ref={editRef}>
-        <EditBtn aria-label="게시글 편집 버튼" onClick={() => setShowEditOptions(!showEditOptions)}>
-          <RxDotsVertical size={22} />
-        </EditBtn>
-        {showEditOptions && (
-          <EditDropdown>
-            {item.mine ? (
-              <EditItem aria-label="댓글 삭제 버튼" onClick={() => handleDeleteComment(item.commentId)}>
-                삭제
-              </EditItem>
-            ) : null}
-            <EditItem>신고</EditItem>
-          </EditDropdown>
+        </UserInfo>
+        <EditMenu ref={editRef}>
+          <EditBtn aria-label="댓글 편집 버튼" onClick={() => setShowEditOptions(!showEditOptions)}>
+            <RxDotsVertical size={22} />
+          </EditBtn>
+          {showEditOptions && (
+            <EditDropdown>
+              {item.mine ? (
+                <>
+                  <EditItem aria-label="댓글 수정 버튼" onClick={() => handleEditClick()}>
+                    수정
+                  </EditItem>
+                  <EditItem aria-label="댓글 삭제 버튼" onClick={() => handleDeleteSubmit()}>
+                    삭제
+                  </EditItem>
+                </>
+              ) : null}
+              <EditItem>신고</EditItem>
+            </EditDropdown>
+          )}
+        </EditMenu>
+      </CommentTop>
+      <Content>
+        {isEditing ? (
+          <form onSubmit={handleEditSubmit} style={{ width: '100%' }}>
+            <TextArea
+              ref={textareaRef}
+              value={editValue}
+              onChange={(e) => {
+                setEditValue(e.target.value);
+                handleResizeHeight(e.target);
+              }}
+              rows={1}
+            />
+            <SubmitBtnWrapper>
+              <StyledButton type="submit" aria-label="댓글 수정 완료" variant="outline" size="small">
+                완료
+              </StyledButton>
+              <StyledButton
+                type="button"
+                variant="outline"
+                size="small"
+                aria-label="댓글 수정 취소"
+                onClick={() => {
+                  setIsEditing(false);
+                  setEditValue(item.content);
+                }}
+              >
+                취소
+              </StyledButton>
+            </SubmitBtnWrapper>
+          </form>
+        ) : (
+          <>
+            <Paragraph size="xs" weight="normal">
+              {item.content}
+            </Paragraph>
+            <CommentInfo>
+              <StyledText size="xs" weight="normal">
+                {item.create}
+              </StyledText>
+              <Count
+                role="button"
+                aria-label="댓글 좋아요 버튼"
+                onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
+              >
+                {isLike ? (
+                  <PiHeartFill color="#fe7373" size={18} data-testid="PiHeartFill" />
+                ) : (
+                  <PiHeartLight size={18} data-testid="PiHeartLight" />
+                )}
+                <Text size="xs" weight="normal">
+                  {item.totalLikeCount}
+                </Text>
+              </Count>
+            </CommentInfo>
+          </>
         )}
-      </EditMenu>
+      </Content>
       {showLoginModal && (
         <LoginModal immediateOpen currentPath={location.pathname} onClose={() => setShowLoginModal(false)} />
       )}
@@ -127,6 +216,7 @@ export default function CommentItem({ item, postId }: { item: CommentData; postI
 
 const Wrapper = styled.div`
   display: flex;
+  flex-direction: column;
   padding: 14px;
   border-radius: 16px;
   background: none;
@@ -135,18 +225,26 @@ const Wrapper = styled.div`
   gap: 8px;
 `;
 const Content = styled.div`
+  width: calc(100%-40px);
   display: flex;
   flex-direction: column;
+  padding-left: 40px;
   gap: 8px;
   p {
     line-height: 150%;
   }
 `;
-const LeftInfo = styled.div`
+const CommentTop = styled.div`
+  width: 100%;
   display: flex;
-  gap: 8px;
+  justify-content: space-between;
 `;
 const CommentInfo = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+`;
+const UserInfo = styled.div`
   display: flex;
   gap: 8px;
   align-items: center;
@@ -207,4 +305,34 @@ const Count = styled.div`
   svg {
     color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#A9A9A9' : '#000000')};
   }
+`;
+
+const TextArea = styled.textarea`
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  font-size: 14px;
+  line-height: 1.4;
+  border: 1px solid #c9c9c9;
+  border-radius: 10px;
+  background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#1f1f1f' : '#eaf5f5')};
+  overflow-y: hidden;
+  resize: none;
+  color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'white' : 'black')};
+  margin-bottom: 4px;
+`;
+
+const StyledButton = styled(Button)`
+  width: 60px;
+  font-size: 14px;
+  height: 32px;
+  cursor: pointer;
+`;
+
+const SubmitBtnWrapper = styled.div`
+  margin-top: 6px;
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  justify-content: flex-end;
 `;
