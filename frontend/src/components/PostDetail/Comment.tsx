@@ -107,13 +107,17 @@ const TextArea = styled.textarea`
   display: flex;
   border: 1px solid #c9c9c9;
   border-radius: 10px;
-  background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#1f1f1f' : '#eaf5f5')};
+  background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#1f1f1f' : '#eefbfb')};
   overflow-y: hidden;
   resize: none;
   color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'white' : 'black')};
 
   &::placeholder {
-    color: #9b9b9b;
+    color: #8b8b8b;
+  }
+
+  &:focus {
+    outline-color: #00c4c4;
   }
 `;
 

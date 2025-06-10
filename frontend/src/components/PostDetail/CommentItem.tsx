@@ -16,11 +16,14 @@ import LoginModal from '../common/modals/LoginModal';
 import { usePutComment } from '@/api/hooks/usePutComment';
 import Button from '../common/Button';
 import useAutoResizeTextarea from '@/hooks/Post/useAutoResizeTextarea';
+import useTheme from '@/hooks/useTheme';
 
 export default function CommentItem({ item, postId }: { item: CommentData; postId: string }) {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
   const queryClient = useQueryClient();
+  const { theme } = useTheme();
+  const isDarkMode = theme === 'dark';
 
   const [showEditOptions, setShowEditOptions] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
@@ -163,12 +166,9 @@ export default function CommentItem({ item, postId }: { item: CommentData; postI
               rows={1}
             />
             <SubmitBtnWrapper>
-              <StyledButton type="submit" aria-label="댓글 수정 완료" variant="outline" size="small">
-                완료
-              </StyledButton>
               <StyledButton
                 type="button"
-                variant="outline"
+                variant={isDarkMode ? 'outline' : 'blackOutline'}
                 size="small"
                 aria-label="댓글 수정 취소"
                 onClick={() => {
@@ -177,6 +177,14 @@ export default function CommentItem({ item, postId }: { item: CommentData; postI
                 }}
               >
                 취소
+              </StyledButton>
+              <StyledButton
+                type="submit"
+                aria-label="댓글 수정 완료"
+                variant={isDarkMode ? 'white' : 'black'}
+                size="small"
+              >
+                완료
               </StyledButton>
             </SubmitBtnWrapper>
           </form>
@@ -315,11 +323,14 @@ const TextArea = styled.textarea`
   line-height: 1.4;
   border: 1px solid #c9c9c9;
   border-radius: 10px;
-  background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#1f1f1f' : '#eaf5f5')};
+  background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#1f1f1f' : '#eefbfb')};
   overflow-y: hidden;
   resize: none;
   color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'white' : 'black')};
   margin-bottom: 4px;
+  &:focus {
+    outline-color: #00c4c4;
+  }
 `;
 
 const StyledButton = styled(Button)`
