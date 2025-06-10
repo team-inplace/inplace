@@ -1,0 +1,72 @@
+package team7.inplace.post.domain;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import java.util.List;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import team7.inplace.global.baseEntity.BaseEntity;
+import team7.inplace.global.exception.InplaceException;
+import team7.inplace.global.exception.code.PostErrorCode;
+
+@Entity
+@Table(name = "posts")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Post extends BaseEntity {
+
+    private PostTitle title;
+    private PostContent content;
+    private PostPhoto photos;
+    private Long authorId;
+
+    public Post(
+        String title, String content,
+        List<String> imageUrls, List<String> imgHashes,
+        Long authorId
+    ) {
+        this.title = new PostTitle(title);
+        this.content = new PostContent(content);
+        this.photos = new PostPhoto(imageUrls, imgHashes);
+        this.authorId = authorId;
+    }
+
+    public String getTitle() {
+        return title.getTitle();
+    }
+
+    public String getContent() {
+        return content.getContent();
+    }
+
+    public List<String> getImageUrls() {
+        return photos.getImageUrls();
+    }
+
+    public List<String> getImgHashes() {
+        return photos.getImgHashes();
+    }
+
+    public void update(
+        Long userId,
+        String title, String content,
+        List<String> imageUrls, List<String> imgHashes
+    ) {
+        validateAuthor(userId);
+        this.title = this.title.update(title);
+        this.content = this.content.update(content);
+        this.photos = new PostPhoto(imageUrls, imgHashes);
+    }
+
+    public void deleteSoftly(Long userId) {
+        validateAuthor(userId);
+        super.deleteSoftly(LocalDateTime.now());
+    }
+
+    private void validateAuthor(Long userId) {
+        if (this.authorId.equals(userId)) {
+            return;
+        }
+        throw InplaceException.of(PostErrorCode.POST_CAN_NOT_BE_MODIFIED);
+    }
+}
