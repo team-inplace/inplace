@@ -1,9 +1,8 @@
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
-import { RxDotsVertical } from 'react-icons/rx';
 import { IoIosArrowForward, IoMdClose } from 'react-icons/io';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Text } from '@/components/common/typography/Text';
 import FallbackImage from '@/components/common/Items/FallbackImage';
@@ -11,25 +10,23 @@ import { Paragraph } from '@/components/common/typography/Paragraph';
 import { useGetPostData } from '@/api/hooks/useGetPostData';
 import Button from '@/components/common/Button';
 import Comment from '@/components/PostDetail/Comment';
-import useClickOutside from '@/hooks/useClickOutside';
 import useAuth from '@/hooks/useAuth';
 import { usePostPostLike } from '@/api/hooks/usePostPostLike';
 import LoginModal from '@/components/common/modals/LoginModal';
 import { useDeletePost } from '@/api/hooks/useDeletePost';
+import EditMenu from '@/components/PostDetail/EditMenu';
 
 export default function PostDetailPage() {
   const { isAuthenticated } = useAuth();
   const { id } = useParams() as { id: string };
   const location = useLocation();
   const navigate = useNavigate();
-  const editRef = useRef<HTMLDivElement>(null);
   const { activeCategory } = location.state;
   const queryClient = useQueryClient();
 
   const { data: postData } = useGetPostData(id);
   const { mutate: deletePost } = useDeletePost();
   const { mutate: postLike } = usePostPostLike();
-  const [showEditOptions, setShowEditOptions] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isLike, setIsLike] = useState(postData.selfLike);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -85,10 +82,6 @@ export default function PostDetailPage() {
     imageUrls: postData.imageUrls,
   };
 
-  useClickOutside([editRef], () => {
-    setShowEditOptions(false);
-  });
-
   return (
     <Wrapper>
       <CategoryName to="/post">
@@ -113,22 +106,13 @@ export default function PostDetailPage() {
               </StyledText>
             </ProfileText>
           </UserInfo>
-          <EditMenu ref={editRef}>
-            <EditBtn aria-label="게시글 편집 버튼" onClick={() => setShowEditOptions(!showEditOptions)}>
-              <RxDotsVertical size={22} />
-            </EditBtn>
-            {showEditOptions && (
-              <EditDropdown>
-                {postData.mine ? (
-                  <>
-                    <EditItem onClick={() => handleEditPost(id, formData)}>수정</EditItem>
-                    <EditItem onClick={() => handleDeletePost(id)}>삭제</EditItem>
-                  </>
-                ) : null}
-                <EditItem>신고</EditItem>
-              </EditDropdown>
-            )}
-          </EditMenu>
+          <EditMenu
+            mine={postData.mine}
+            onEdit={() => handleEditPost(id, formData)}
+            onDelete={() => handleDeletePost(id)}
+            onReport={() => alert('신고 기능 준비중')}
+            ariaLabels="게시글"
+          />
         </PostTop>
         <Content>
           <Paragraph size="m" weight="bold">
@@ -279,51 +263,12 @@ const PostImg = styled.img`
   cursor: pointer;
 `;
 
-const EditMenu = styled.div`
-  position: relative;
-`;
-
-const EditBtn = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-
-  svg {
-    color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'white' : 'black')};
-  }
-`;
-
 const StyledButton = styled(Button)`
   width: 90px;
   margin-left: 90%;
   cursor: pointer;
 `;
 
-const EditDropdown = styled.div`
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  z-index: 2;
-  background-color: #ffffff;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  width: 90px;
-`;
-
-const EditItem = styled.button`
-  width: 100%;
-  padding: 10px 12px;
-  display: flex;
-  align-items: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #e9e9e9;
-    border-radius: 4px;
-  }
-`;
 const ModalOverlay = styled.div`
   position: fixed;
   top: 0;

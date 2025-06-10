@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
-import { RxDotsVertical } from 'react-icons/rx';
 import { useCallback, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
@@ -9,7 +8,6 @@ import FallbackImage from '../common/Items/FallbackImage';
 import { Paragraph } from '../common/typography/Paragraph';
 import { CommentData } from '@/types';
 import { useDeleteComment } from '@/api/hooks/useDeleteComment';
-import useClickOutside from '@/hooks/useClickOutside';
 import useAuth from '@/hooks/useAuth';
 import { usePostCommentLike } from '@/api/hooks/usePostCommentLike';
 import LoginModal from '../common/modals/LoginModal';
@@ -17,6 +15,7 @@ import { usePutComment } from '@/api/hooks/usePutComment';
 import Button from '../common/Button';
 import useAutoResizeTextarea from '@/hooks/Post/useAutoResizeTextarea';
 import useTheme from '@/hooks/useTheme';
+import EditMenu from './EditMenu';
 
 export default function CommentItem({ item, postId }: { item: CommentData; postId: string }) {
   const { isAuthenticated } = useAuth();
@@ -25,13 +24,11 @@ export default function CommentItem({ item, postId }: { item: CommentData; postI
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
 
-  const [showEditOptions, setShowEditOptions] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isLike, setIsLike] = useState(item.selfLike);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(item.content);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const editRef = useRef<HTMLDivElement>(null);
 
   const { mutate: deleteComment } = useDeleteComment();
   const { mutate: putComment } = usePutComment();
@@ -60,7 +57,6 @@ export default function CommentItem({ item, postId }: { item: CommentData; postI
   const handleEditClick = () => {
     setIsEditing(true);
     setEditValue(item.content);
-    setShowEditOptions(false);
     setTimeout(() => {
       textareaRef.current?.focus();
     }, 0);
@@ -117,10 +113,6 @@ export default function CommentItem({ item, postId }: { item: CommentData; postI
     [isLike, item.commentId, postLike],
   );
 
-  useClickOutside([editRef], () => {
-    setShowEditOptions(false);
-  });
-
   return (
     <Wrapper>
       <CommentTop>
@@ -132,26 +124,15 @@ export default function CommentItem({ item, postId }: { item: CommentData; postI
             {item.userNickname}
           </Text>
         </UserInfo>
-        <EditMenu ref={editRef}>
-          <EditBtn aria-label="댓글 편집 버튼" onClick={() => setShowEditOptions(!showEditOptions)}>
-            <RxDotsVertical size={22} />
-          </EditBtn>
-          {showEditOptions && (
-            <EditDropdown>
-              {item.mine ? (
-                <>
-                  <EditItem aria-label="댓글 수정 버튼" onClick={() => handleEditClick()}>
-                    수정
-                  </EditItem>
-                  <EditItem aria-label="댓글 삭제 버튼" onClick={() => handleDeleteSubmit()}>
-                    삭제
-                  </EditItem>
-                </>
-              ) : null}
-              <EditItem>신고</EditItem>
-            </EditDropdown>
-          )}
-        </EditMenu>
+        {!isEditing && (
+          <EditMenu
+            mine={item.mine}
+            onEdit={handleEditClick}
+            onDelete={handleDeleteSubmit}
+            onReport={() => alert('신고 기능 준비중')}
+            ariaLabels="댓글"
+          />
+        )}
       </CommentTop>
       <Content>
         {isEditing ? (
@@ -261,44 +242,6 @@ const ProfileImg = styled.div`
   height: 34px;
   aspect-ratio: 1 / 1;
   border-radius: 50%;
-`;
-
-const EditMenu = styled.div`
-  position: relative;
-`;
-
-const EditBtn = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-
-  svg {
-    color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'white' : 'black')};
-  }
-`;
-const EditDropdown = styled.div`
-  position: absolute;
-  top: 40%;
-  right: 10px;
-  z-index: 2;
-  background-color: #ffffff;
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  width: 90px;
-`;
-const EditItem = styled.button`
-  width: 100%;
-  padding: 10px 12px;
-  display: flex;
-  align-items: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #e9e9e9;
-    border-radius: 4px;
-  }
 `;
 
 const StyledText = styled(Text)`
