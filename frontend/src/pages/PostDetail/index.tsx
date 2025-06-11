@@ -15,6 +15,8 @@ import { usePostPostLike } from '@/api/hooks/usePostPostLike';
 import LoginModal from '@/components/common/modals/LoginModal';
 import { useDeletePost } from '@/api/hooks/useDeletePost';
 import EditMenu from '@/components/PostDetail/EditMenu';
+import UserName from '@/components/PostDetail/UserName';
+import TestImg from '@/assets/images/titletest.png';
 
 export default function PostDetailPage() {
   const { isAuthenticated } = useAuth();
@@ -94,20 +96,21 @@ export default function PostDetailPage() {
         <PostTop>
           <UserInfo>
             <ProfileImg>
-              <FallbackImage src={postData.userImgUrl} alt="profile" />
+              <FallbackImage src={postData.author.imgUrl} alt="profile" />
             </ProfileImg>
-            <ProfileText>
-              <Text size="s" weight="normal">
-                {postData.userNickname}
-              </Text>
-              {/* todo - 칭호 */}
+            <UserTitleTop>
+              <UserName
+                userNickname={postData.author.nickname}
+                userTier="https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff"
+                userTitle={TestImg}
+              />
               <StyledText size="xs" weight="normal">
-                {postData.create}
+                {postData.createAt}
               </StyledText>
-            </ProfileText>
+            </UserTitleTop>
           </UserInfo>
           <EditMenu
-            mine={postData.mine}
+            mine={postData.isMine}
             onEdit={() => handleEditPost(id, formData)}
             onDelete={() => handleDeletePost(id)}
             onReport={() => alert('신고 기능 준비중')}
@@ -151,10 +154,13 @@ export default function PostDetailPage() {
             {postData.totalLikeCount}
           </Text>
         </Count>
+        <StyledText size="xs" weight="normal">
+          {postData.createAt}
+        </StyledText>
       </PostContainer>
       <CommentTitle>
         <Text size="xs" weight="normal">
-          댓글 {postData.commentCount}건
+          댓글 {postData.totalCommentCount}건
         </Text>
       </CommentTitle>
       <Separator />
@@ -206,6 +212,12 @@ const Content = styled.div`
   flex-direction: column;
   gap: 14px;
 `;
+
+const UserTitleTop = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
 const UserInfo = styled.div`
   position: relative;
   display: flex;
@@ -219,11 +231,6 @@ const ProfileImg = styled.div`
   border-radius: 50%;
 `;
 
-const ProfileText = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-`;
 const Count = styled.div`
   width: 70px;
   border: 0.5px solid #838383;

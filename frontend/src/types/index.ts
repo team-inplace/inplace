@@ -253,32 +253,45 @@ export type CategoryOption = {
   mainId?: number;
 };
 
+export type CursorData<T> = {
+  posts: T[];
+  cursor: {
+    hasNext: boolean;
+    nextCursorId: number;
+  };
+};
+
 export type PostListData = {
   postId: number;
-  userNickname: string;
-  userImgUrl: string;
+  author: {
+    nickname: string;
+    imgUrl: string;
+  };
   title: string;
   content: string;
+  photoUrls?: string;
   totalLikeCount: number;
-  commenCount: number;
-  create: string;
-  imageUrls: UploadedImageObj;
+  totalCommenCount: number;
+  createAt: string;
+  isMine: boolean;
   selfLike: boolean;
   userTier: string;
   userTitle: string;
 };
 export type PostData = {
   postId: number;
-  userNickname: string;
-  userImgUrl: string;
+  author: {
+    nickname: string;
+    imgUrl: string;
+  };
   title: string;
   content: string;
   totalLikeCount: number;
-  commentCount: number;
-  create: string;
-  imageUrls: UploadedImageObj[];
+  totalCommentCount: number;
+  createAt: string;
+  imageUrls?: UploadedImageObj[];
   selfLike: boolean;
-  mine: boolean;
+  isMine: boolean;
   userTier: string;
   userTitle: string;
 };
@@ -290,13 +303,15 @@ export type PostingData = {
 
 export type CommentData = {
   commentId: number;
-  userNickname: string;
-  userImgUrl: string;
+  author: {
+    nickname: string;
+    imgUrl: string;
+  };
   content: string;
-  create: string;
+  createAt: string;
   totalLikeCount: number;
   selfLike: boolean;
-  mine: boolean;
+  isMine: boolean;
   userTier: string;
 };
 

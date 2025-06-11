@@ -9,6 +9,7 @@ import { useGetInfinitPostList } from '@/api/hooks/useGetInfinitPostList';
 import useAuth from '@/hooks/useAuth';
 import LoginModal from '@/components/common/modals/LoginModal';
 import useClickOutside from '@/hooks/useClickOutside';
+import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 
 export default function PostPage() {
   const { isAuthenticated } = useAuth();
@@ -20,18 +21,24 @@ export default function PostPage() {
 
   const getInitialSortOption = (): string => {
     const searchParams = new URLSearchParams(location.search);
-    return searchParams.get('sort') || 'publishTime';
+    return searchParams.get('sort') || 'createAt';
   };
 
   const [sortOption, setSortOption] = useState(getInitialSortOption());
   const [showSortOptions, setShowSortOptions] = useState(false);
 
-  const { data: postList } = useGetInfinitPostList({ size: 5, sort: sortOption });
+  const {
+    data: postList,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useGetInfinitPostList({ size: 5, sort: sortOption });
+
+  const scrollRef = useInfiniteScroll({ fetchNextPage, hasNextPage, isFetchingNextPage });
 
   const sortLabel: Record<string, string> = {
-    publishTime: '최신순',
+    createAt: '최신순',
     popularity: '인기순',
-    likes: '좋아요순',
   };
 
   const handleSortChange = (option: string) => {
@@ -86,14 +93,19 @@ export default function PostPage() {
         </StyledButton>
         {showSortOptions && (
           <SortDropdown>
-            <SortItem onClick={() => handleSortChange('publishTime')}>최신순 {sortOption === 'publishTime'}</SortItem>
+            <SortItem onClick={() => handleSortChange('createAt')}>최신순 {sortOption === 'createAt'}</SortItem>
             <SortItem onClick={() => handleSortChange('popularity')}>인기순 {sortOption === 'popularity'}</SortItem>
-            <SortItem onClick={() => handleSortChange('likes')}>좋아요순 {sortOption === 'likes'}</SortItem>
           </SortDropdown>
         )}
       </SortSection>
       <Wrapper>
-        <PostList items={postList} activeCategory={activeCategory} />
+        <PostList
+          items={postList}
+          activeCategory={activeCategory}
+          scrollRef={scrollRef}
+          isFetchingNextPage={isFetchingNextPage}
+          hasNextPage={hasNextPage}
+        />
       </Wrapper>
       {showLoginModal && (
         <LoginModal immediateOpen currentPath={location.pathname} onClose={() => setShowLoginModal(false)} />

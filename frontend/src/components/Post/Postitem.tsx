@@ -6,6 +6,8 @@ import { PostListData } from '@/types';
 import { Text } from '../common/typography/Text';
 import FallbackImage from '../common/Items/FallbackImage';
 import { Paragraph } from '../common/typography/Paragraph';
+import UserName from '../PostDetail/UserName';
+import TestImg from '@/assets/images/titletest.png';
 
 export default function Postitem({ item, activeCategory }: { item: PostListData; activeCategory: string }) {
   return (
@@ -13,11 +15,13 @@ export default function Postitem({ item, activeCategory }: { item: PostListData;
       <LeftInfo>
         <UserInfo>
           <ProfileImg>
-            <FallbackImage src={item.userImgUrl} alt="profile" />
+            <FallbackImage src={item.author.imgUrl} alt="profile" />
           </ProfileImg>
-          <Text size="s" weight="normal">
-            {item.userNickname}
-          </Text>
+          <UserName
+            userNickname={item.author.nickname}
+            userTier="https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff"
+            userTitle={TestImg}
+          />
         </UserInfo>
         <Content>
           <Paragraph size="m" weight="bold">
@@ -41,15 +45,15 @@ export default function Postitem({ item, activeCategory }: { item: PostListData;
           <Count>
             <HiOutlineChatBubbleOvalLeft size={18} />
             <StyledText size="xs" weight="normal">
-              {item.commenCount}
+              {item.totalCommenCount}
             </StyledText>
           </Count>
           <StyledText size="xs" weight="normal">
-            {item.create}
+            {item.createAt}
           </StyledText>
         </ItemInfo>
       </LeftInfo>
-      {item.imageUrls && <PostImg src={item.imageUrls.imageUrl} />}
+      {item.photoUrls && <PostImg src={item.photoUrls} />}
     </Wrapper>
   );
 }

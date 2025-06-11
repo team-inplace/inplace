@@ -16,6 +16,7 @@ import Button from '../common/Button';
 import useAutoResizeTextarea from '@/hooks/Post/useAutoResizeTextarea';
 import useTheme from '@/hooks/useTheme';
 import EditMenu from './EditMenu';
+import UserName from './UserName';
 
 export default function CommentItem({ item, postId }: { item: CommentData; postId: string }) {
   const { isAuthenticated } = useAuth();
@@ -118,15 +119,16 @@ export default function CommentItem({ item, postId }: { item: CommentData; postI
       <CommentTop>
         <UserInfo>
           <ProfileImg>
-            <FallbackImage src={item.userImgUrl} alt="profile" />
+            <FallbackImage src={item.author.imgUrl} alt="profile" />
           </ProfileImg>
-          <Text size="s" weight="normal">
-            {item.userNickname}
-          </Text>
+          <UserName
+            userNickname={item.author.nickname}
+            userTier="https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff"
+          />
         </UserInfo>
         {!isEditing && (
           <EditMenu
-            mine={item.mine}
+            mine={item.isMine}
             onEdit={handleEditClick}
             onDelete={handleDeleteSubmit}
             onReport={() => alert('신고 기능 준비중')}
@@ -176,7 +178,7 @@ export default function CommentItem({ item, postId }: { item: CommentData; postI
             </Paragraph>
             <CommentInfo>
               <StyledText size="xs" weight="normal">
-                {item.create}
+                {item.createAt}
               </StyledText>
               <Count
                 role="button"

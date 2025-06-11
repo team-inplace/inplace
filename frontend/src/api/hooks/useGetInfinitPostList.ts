@@ -1,19 +1,22 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchInstance } from '../instance';
-import { PageableData, PostListData } from '@/types';
+import { CursorData, PostListData } from '@/types';
 
 export const getInfinitPostList = async (
-  page: number,
+  nextCursorId: number | null,
   size: number,
   sort: string,
-): Promise<PageableData<PostListData>> => {
+): Promise<CursorData<PostListData>> => {
   const params = new URLSearchParams({
-    page: page.toString(),
     size: size.toString(),
     sort,
   });
 
-  const response = await fetchInstance.get<PageableData<PostListData>>(`/posts?${params}`, { withCredentials: true });
+  if (nextCursorId !== null) {
+    params.append('nextCursorId', nextCursorId.toString());
+  }
+
+  const response = await fetchInstance.get<CursorData<PostListData>>(`/posts?${params}`, { withCredentials: true });
   return response.data;
 };
 
@@ -24,17 +27,17 @@ interface QueryParams {
 
 export const useGetInfinitPostList = ({ size, sort }: QueryParams, enabled?: boolean) => {
   return useInfiniteQuery<
-    PageableData<PostListData>,
+    CursorData<PostListData>,
     Error,
-    { pages: PageableData<PostListData>[]; pageParams: number[] },
+    { pages: CursorData<PostListData>[]; pageParams: (number | null)[] },
     [string, number, string],
-    number
+    number | null
   >({
     queryKey: ['infinitePostList', size, sort],
-    queryFn: ({ pageParam = 0 }) => getInfinitPostList(pageParam, size, sort),
-    initialPageParam: 0,
+    queryFn: ({ pageParam = null }) => getInfinitPostList(pageParam, size, sort),
+    initialPageParam: null,
     getNextPageParam: (lastPage) => {
-      return lastPage.last ? undefined : lastPage.number + 1;
+      return lastPage.cursor.hasNext ? lastPage.cursor.nextCursorId : undefined;
     },
     enabled,
     staleTime: 1000 * 60 * 5,
