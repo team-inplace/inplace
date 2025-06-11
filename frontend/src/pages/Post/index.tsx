@@ -10,6 +10,7 @@ import useAuth from '@/hooks/useAuth';
 import LoginModal from '@/components/common/modals/LoginModal';
 import useClickOutside from '@/hooks/useClickOutside';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
+import ScrollToTop from '@/components/common/Button/ScrollToTop';
 
 export default function PostPage() {
   const { isAuthenticated } = useAuth();
@@ -107,6 +108,7 @@ export default function PostPage() {
           hasNextPage={hasNextPage}
         />
       </Wrapper>
+      <ScrollToTop />
       {showLoginModal && (
         <LoginModal immediateOpen currentPath={location.pathname} onClose={() => setShowLoginModal(false)} />
       )}
