@@ -89,7 +89,8 @@ public class InfluencerReadRepositoryImpl implements InfluencerReadRepository {
             .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
             .where(QPlaceVideo.placeVideo.placeId.eq(placeId)
                 .and(QPlaceVideo.placeVideo.isNotNull())
-                .and(QVideo.video.deleteAt.isNull()))
+                .and(QVideo.video.deleteAt.isNull())
+                .and(QInfluencer.influencer.hidden.isFalse()))
             .fetch();
     }
 
@@ -98,14 +99,15 @@ public class InfluencerReadRepositoryImpl implements InfluencerReadRepository {
         var totalCount = queryFactory
             .select(count(QInfluencer.influencer.id))
             .from(QInfluencer.influencer)
-            .where(QInfluencer.influencer.deleteAt.isNull())
+            .where(QInfluencer.influencer.deleteAt.isNull()
+                .and(QInfluencer.influencer.hidden.isFalse()))
             .fetchOne();
 
         if (totalCount == null || totalCount == 0) {
             return Page.empty(pageable);
         }
 
-        var influeencers = queryFactory
+        var influencers = queryFactory
             .select(new QInfluencerQueryResult_Simple(
                 QInfluencer.influencer.id,
                 QInfluencer.influencer.name,
@@ -121,7 +123,8 @@ public class InfluencerReadRepositoryImpl implements InfluencerReadRepository {
                         Expressions.FALSE :
                         QLikedInfluencer.likedInfluencer.userId.eq(userId)
                 ))
-            .where(QInfluencer.influencer.deleteAt.isNull())
+            .where(QInfluencer.influencer.deleteAt.isNull()
+                .and(QInfluencer.influencer.hidden.isFalse()))
             .orderBy(QLikedInfluencer.likedInfluencer.isLiked.desc(),
                 QInfluencer.influencer.id.asc()
             )
@@ -129,7 +132,7 @@ public class InfluencerReadRepositoryImpl implements InfluencerReadRepository {
             .limit(pageable.getPageSize())
             .fetch();
 
-        return new PageImpl<>(influeencers, pageable, totalCount);
+        return new PageImpl<>(influencers, pageable, totalCount);
     }
 
 }

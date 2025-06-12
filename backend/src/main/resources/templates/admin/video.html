@@ -82,7 +82,7 @@
 <div>
   <div>
     <!-- Previous -->
-    <a th:href="@{/admin/video(page=${videoPage.number - 1}, size=10, influencerId=${selectedInfluencerId})}"
+    <a th:href="@{/admin/video(page=${videoPage.number - 1}, size=10, influencerId=${selectedInfluencerId}, videoRegistration=${videoRegistration})}"
        th:if="${videoPage.hasPrevious()}">Previous</a>
 
     <!-- 페이지 정보 표시 -->
@@ -90,7 +90,7 @@
         th:text="${videoPage.totalPages}"></span></span>
 
     <!-- Next -->
-    <a th:href="@{/admin/video(page=${videoPage.number + 1}, size=10, influencerId=${selectedInfluencerId})}"
+    <a th:href="@{/admin/video(page=${videoPage.number + 1}, size=10, influencerId=${selectedInfluencerId}, videoRegistration=${videoRegistration})}"
        th:if="${videoPage.hasNext()}">Next</a>
   </div>
 </div>

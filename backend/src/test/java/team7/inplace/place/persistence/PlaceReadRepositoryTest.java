@@ -284,11 +284,11 @@ class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
         Double latitude = 37.0;
         Pageable pageable = PageRequest.of(0, 5);
         Long userId = null;
-        List<String> influencerName = List.of("인플루언서1");
+        List<String> influencerName = List.of("인플루언서2");
 
         final int expectedTotalContent = 4;
         final int expectedContentSize = 4;
-        final List<Long> expectedPlaceIds = List.of(1L, 2L, 3L, 4L);
+        final List<Long> expectedPlaceIds = List.of(5L, 6L, 7L, 8L);
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
@@ -316,11 +316,11 @@ class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
         Double latitude = 37.0;
         Pageable pageable = PageRequest.of(0, 5);
         Long userId = null;
-        List<String> influencerName = List.of("인플루언서1", "인플루언서2");
+        List<String> influencerName = List.of("인플루언서2", "인플루언서3");
 
         final int expectedTotalContent = 8;
         final int expectedContentSize = 5;
-        final List<Long> expectedPlaceIds = List.of(1L, 2L, 3L, 4L, 5L);
+        final List<Long> expectedPlaceIds = List.of(5L, 6L, 7L, 8L, 9L);
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
