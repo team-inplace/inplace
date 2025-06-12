@@ -4,16 +4,17 @@ import com.querydsl.core.annotations.QueryProjection;
 
 public class UserQueryResult {
 
-    public record Info(
-        Long userId,
+    public record Simple(
         String nickname,
         String imgUrl,
-        String badgeImgUrl,
-        String tierImgUrl
+        String tierName,
+        String tierImgUrl,
+        String mainBadgeName,
+        String mainBadgeImgUrl
     ) {
 
         @QueryProjection
-        public Info {
+        public Simple {
 
         }
     }
