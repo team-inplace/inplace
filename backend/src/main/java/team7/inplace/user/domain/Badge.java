@@ -23,7 +23,7 @@ public class Badge {
     @Column(name = "name", length = 10)
     private String name;
 
-    @Column(name = "condition", length = 30)
+    @Column(name = "conditions", length = 30)
     private String condition;
 
     @Column(name = "img_url")

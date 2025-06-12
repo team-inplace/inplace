@@ -86,7 +86,7 @@ public class PostReadRepositoryImpl implements PostReadRepository {
             .from(QPost.post)
             .innerJoin(QUser.user).on(QPost.post.authorId.eq(QUser.user.id))
             .innerJoin(QUserTier.userTier).on(QUser.user.tierId.eq(QUserTier.userTier.id))
-            .leftJoin(QUserBadge.userBadge).on(QUser.user.mainBadgeId.eq(QBadge.badge.id))
+            .leftJoin(QBadge.badge).on(QUser.user.mainBadgeId.eq(QBadge.badge.id))
             .leftJoin(QLikedPost.likedPost).on(likedJoinCondition);
     }
 
@@ -116,7 +116,7 @@ public class PostReadRepositoryImpl implements PostReadRepository {
             .from(QPost.post)
             .innerJoin(QUser.user).on(QPost.post.authorId.eq(QUser.user.id))
             .innerJoin(QUserTier.userTier).on(QUser.user.tierId.eq(QUserTier.userTier.id))
-            .leftJoin(QUserBadge.userBadge).on(QUser.user.mainBadgeId.eq(QBadge.badge.id))
+            .leftJoin(QBadge.badge).on(QUser.user.mainBadgeId.eq(QBadge.badge.id))
             .leftJoin(QLikedPost.likedPost).on(likedJoinCondition)
             .where(QPost.post.id.eq(postId));
     }

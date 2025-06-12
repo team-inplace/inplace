@@ -10,7 +10,7 @@ INSERT INTO users (id, created_at, delete_at, update_at, nickname, password, use
                                                                                                                                         (3, NOW(), NULL, NOW(), '유저3', 'pass3', 'user3@gmail.com', 'ADMIN', 'KAKAO', 'img3.png', 2, 3);
 
 -- 3. badges
-INSERT INTO badges (id, condition, name, img_url) VALUES
+INSERT INTO badges (id, conditions, name, img_url) VALUES
                                                       (1, '5개 글 작성', '글쟁이', 'badge1.png'),
                                                       (2, '10개 댓글 작성', '수다쟁이', 'badge2.png'),
                                                       (3, '50개 좋아요', '인기인', 'badge3.png');
