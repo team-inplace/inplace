@@ -16,7 +16,10 @@ import team7.inplace.post.persistence.dto.PostQueryResult.CursorDetailedPost;
 import team7.inplace.post.persistence.dto.PostQueryResult.DetailedPost;
 import team7.inplace.post.persistence.dto.QPostQueryResult_CursorDetailedPost;
 import team7.inplace.post.persistence.dto.QPostQueryResult_DetailedPost;
+import team7.inplace.user.domain.QBadge;
 import team7.inplace.user.domain.QUser;
+import team7.inplace.user.domain.QUserBadge;
+import team7.inplace.user.domain.QUserTier;
 
 @Repository
 @RequiredArgsConstructor
@@ -66,6 +69,8 @@ public class PostReadRepositoryImpl implements PostReadRepository {
                         QPost.post.id,
                         QUser.user.nickname,
                         QUser.user.profileImageUrl,
+                        QUserTier.userTier.imgUrl,
+                        QBadge.badge.imgUrl,
                         QPost.post.title.title,
                         QPost.post.content.content.substring(0, 120),
                         QPost.post.photos.imageInfos,
@@ -80,6 +85,8 @@ public class PostReadRepositoryImpl implements PostReadRepository {
             )
             .from(QPost.post)
             .innerJoin(QUser.user).on(QPost.post.authorId.eq(QUser.user.id))
+            .innerJoin(QUserTier.userTier).on(QUser.user.tierId.eq(QUserTier.userTier.id))
+            .leftJoin(QUserBadge.userBadge).on(QUser.user.mainBadgeId.eq(QBadge.badge.id))
             .leftJoin(QLikedPost.likedPost).on(likedJoinCondition);
     }
 
@@ -94,6 +101,8 @@ public class PostReadRepositoryImpl implements PostReadRepository {
                     QPost.post.id,
                     QUser.user.nickname,
                     QUser.user.profileImageUrl,
+                    QUserTier.userTier.imgUrl,
+                    QBadge.badge.imgUrl,
                     QPost.post.title.title,
                     QPost.post.content.content,
                     QPost.post.photos.imageInfos,
@@ -106,6 +115,8 @@ public class PostReadRepositoryImpl implements PostReadRepository {
             )
             .from(QPost.post)
             .innerJoin(QUser.user).on(QPost.post.authorId.eq(QUser.user.id))
+            .innerJoin(QUserTier.userTier).on(QUser.user.tierId.eq(QUserTier.userTier.id))
+            .leftJoin(QUserBadge.userBadge).on(QUser.user.mainBadgeId.eq(QBadge.badge.id))
             .leftJoin(QLikedPost.likedPost).on(likedJoinCondition)
             .where(QPost.post.id.eq(postId));
     }

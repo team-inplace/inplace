@@ -1,22 +1,68 @@
 package team7.inplace.user.presentation.dto;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.stream.Collectors;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.user.application.dto.UserInfo;
+import team7.inplace.user.application.dto.UserInfo.Badge;
+import team7.inplace.user.application.dto.UserInfo.Detail;
+import team7.inplace.user.application.dto.UserInfo.Simple;
 import team7.inplace.video.persistence.dto.VideoQueryResult;
 
 public class UserResponse {
 
-    public record Info(
+    public record Simple(
         String nickname,
-        String imgUrl
+        String imageUrl,
+        String tierImageUrl,
+        String mainBadgeImageUrl
     ) {
 
-        public static Info from(UserInfo.Profile profile) {
-            return new Info(profile.nickname(), profile.profileImageUrl());
+        public static Simple from(UserInfo.Simple simple) {
+            return new Simple(
+                simple.nickname(),
+                simple.profileImageUrl(),
+                simple.tierImageUrl(),
+                simple.mainBadgeImageUrl()
+            );
         }
+    }
+
+    public record Detail(
+        String nickname,
+        String imgUrl,
+        Tier tier,
+        List<Badge> badges
+    ) {
+
+        public static Detail from(UserInfo.Detail detail) {
+            return new Detail(
+                detail.nickname(),
+                detail.profileImageUrl(),
+                new Tier(detail.tierName(), detail.tierImageUrl()),
+                detail.badges().stream().map(Badge::from).toList()
+            );
+        }
+    }
+
+    public record Badge(
+        String name,
+        String imgUrl
+    ) {
+        public static Badge from(UserInfo.Badge badge) {
+            return new Badge(
+                badge.name(),
+                badge.img_url()
+            );
+        }
+    }
+
+    public record Tier(
+        String name,
+        String imgUrl
+    ) {
     }
 
     public record Review(

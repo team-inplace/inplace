@@ -4,9 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,9 +14,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import team7.inplace.user.persistence.dto.UserQueryResult;
 import team7.inplace.user.persistence.dto.UserQueryResult.Badge;
-import team7.inplace.user.persistence.dto.UserQueryResult.Info;
+import team7.inplace.user.persistence.dto.UserQueryResult.Simple;
 
 @DataJpaTest
 @Import(ObjectMapper.class)
@@ -45,18 +42,21 @@ class UserReadRepositoryImplTest {
         Long expectedUserId = 1L;
         String expectedNickname = "유저1";
         String expectedProfileImgUrl = "img1.png";
-        String expectedBadgeImgUrl = "badge1.png";
+        String expectedTierName = "브론즈";
         String expectedTierImgUrl = "bronze.png";
+        String expectedBadgeName = "글쟁이";
+        String expectedBadgeImgUrl = "badge1.png";
 
         //when
-        Info acutal = userReadRepository.findUserInfoById(userId).get();
+        Simple actual = userReadRepository.findUserInfoById(userId).get();
         //then
 
-        assertThat(acutal.userId()).isEqualTo(expectedUserId);
-        assertThat(acutal.nickname()).isEqualTo(expectedNickname);
-        assertThat(acutal.imgUrl()).isEqualTo(expectedProfileImgUrl);
-        assertThat(acutal.badgeImgUrl()).isEqualTo(expectedBadgeImgUrl);
-        assertThat(acutal.tierImgUrl()).isEqualTo(expectedTierImgUrl);
+        assertThat(actual.nickname()).isEqualTo(expectedNickname);
+        assertThat(actual.imgUrl()).isEqualTo(expectedProfileImgUrl);
+        assertThat(actual.tierName()).isEqualTo(expectedTierName);
+        assertThat(actual.tierImgUrl()).isEqualTo(expectedTierImgUrl);
+        assertThat(actual.mainBadgeName()).isEqualTo(expectedBadgeName);
+        assertThat(actual.mainBadgeImgUrl()).isEqualTo(expectedBadgeImgUrl);
     }
 
     @Test
