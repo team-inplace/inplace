@@ -18,6 +18,7 @@ import org.springframework.test.context.jdbc.Sql;
 import team7.inplace.influencer.persistence.dto.InfluencerQueryResult;
 
 @DataJpaTest
+@Import(ObjectMapper.class)
 @ActiveProfiles("test")
 @Sql("/sql/test-influencer.sql")
 @Import(ObjectMapper.class)
