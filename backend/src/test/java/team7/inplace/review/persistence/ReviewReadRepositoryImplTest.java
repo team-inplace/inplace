@@ -20,6 +20,7 @@ import org.springframework.test.context.jdbc.Sql;
 import team7.inplace.review.persistence.dto.ReviewQueryResult;
 
 @DataJpaTest
+@Import(ObjectMapper.class)
 @ActiveProfiles("test")
 @Sql("/sql/test-review.sql")
 @Import(ObjectMapper.class)

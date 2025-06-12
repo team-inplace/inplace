@@ -26,6 +26,7 @@ import team7.inplace.place.persistence.dto.PlaceQueryResult.Marker;
 
 @DataJpaTest
 @ActiveProfiles("test-mysql")
+@Import(ObjectMapper.class)
 @Sql(scripts = {"/sql/test-place.sql"}, executionPhase = ExecutionPhase.BEFORE_TEST_CLASS)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(ObjectMapper.class)
