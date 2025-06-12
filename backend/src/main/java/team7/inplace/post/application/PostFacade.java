@@ -2,9 +2,11 @@ package team7.inplace.post.application;
 
 import lombok.RequiredArgsConstructor;
 import team7.inplace.global.annotation.Facade;
+import team7.inplace.global.cursor.CursorResult;
 import team7.inplace.post.application.dto.PostCommand;
 import team7.inplace.post.application.dto.PostCommand.CreatePost;
 import team7.inplace.post.application.dto.PostCommand.UpdatePost;
+import team7.inplace.post.persistence.dto.PostQueryResult.DetailedPost;
 import team7.inplace.security.util.AuthorizationUtil;
 
 @Facade
@@ -41,5 +43,16 @@ public class PostFacade {
     public void deleteComment(Long postId, Long commentId) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.deleteComment(postId, commentId, userId);
+    }
+
+    public CursorResult<DetailedPost> getPosts(Long cursorId, int size, String orderBy) {
+        var userId = AuthorizationUtil.getUserIdOrThrow();
+
+        return postService.getPosts(userId, cursorId, size, orderBy);
+    }
+
+    public DetailedPost getPostById(Long postId) {
+        var userId = AuthorizationUtil.getUserIdOrThrow();
+        return postService.getPostById(postId, userId);
     }
 }

@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.StreamSupport;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,19 +22,35 @@ import team7.inplace.global.exception.code.PostErrorCode;
 public class PostPhoto {
 
     @Convert(converter = JsonNodeConverter.class)
-    private JsonNode imageUrls;
+    private JsonNode imageInfos;
 
-    public PostPhoto(List<String> imageUrls, List<String> imgHashes) {
-        validatePhoto(imageUrls, imgHashes);
-        this.imageUrls = photosToJsonNode(imageUrls, imgHashes);
+    public PostPhoto(List<String> imageInfos, List<String> imgHashes) {
+        validatePhoto(imageInfos, imgHashes);
+        this.imageInfos = photosToJsonNode(imageInfos, imgHashes);
     }
 
     public List<String> getImageUrls() {
-        return imageUrls.findValuesAsText("imageUrl").stream().toList();
+        if (imageInfos == null || !imageInfos.isArray()) {
+            return List.of();
+        }
+
+        return StreamSupport.stream(imageInfos.spliterator(), false)
+            .map(node -> node.get("imageUrl"))
+            .filter(urlNode -> urlNode != null && urlNode.isTextual())
+            .map(JsonNode::asText)
+            .toList();
     }
 
     public List<String> getImgHashes() {
-        return imageUrls.findValuesAsText("imgHash").stream().toList();
+        if (imageInfos == null || !imageInfos.isArray()) {
+            return List.of();
+        }
+
+        return StreamSupport.stream(imageInfos.spliterator(), false)
+            .map(node -> node.get("imageHash"))
+            .filter(urlNode -> urlNode != null && urlNode.isTextual())
+            .map(JsonNode::asText)
+            .toList();
     }
 
     public Map<String, String> getImageUrlMap() {
@@ -74,7 +91,7 @@ public class PostPhoto {
         for (int i = 0; i < imageUrls.size(); i++) {
             photosArray[i] = JsonNodeFactory.instance.objectNode()
                 .put("imageUrl", imageUrls.get(i))
-                .put("imgHash", imgHashes.get(i));
+                .put("imageHash", imgHashes.get(i));
         }
         return JsonNodeFactory.instance.arrayNode().addAll(Arrays.asList(photosArray));
     }

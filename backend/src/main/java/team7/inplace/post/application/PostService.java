@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import team7.inplace.global.cursor.CursorResult;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.PostErrorCode;
 import team7.inplace.post.application.dto.PostCommand.CreateComment;
@@ -12,6 +13,8 @@ import team7.inplace.post.application.dto.PostCommand.UpdateComment;
 import team7.inplace.post.application.dto.PostCommand.UpdatePost;
 import team7.inplace.post.persistence.CommentJpaRepository;
 import team7.inplace.post.persistence.PostJpaRepository;
+import team7.inplace.post.persistence.PostReadRepository;
+import team7.inplace.post.persistence.dto.PostQueryResult.DetailedPost;
 
 @Service
 @Slf4j
@@ -19,6 +22,7 @@ import team7.inplace.post.persistence.PostJpaRepository;
 public class PostService {
 
     private final PostJpaRepository postJpaRepository;
+    private final PostReadRepository postReadRepository;
     private final CommentJpaRepository commentJpaRepository;
 
     @Transactional
@@ -78,5 +82,18 @@ public class PostService {
             .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));
 
         comment.deleteSoftly(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public CursorResult<DetailedPost> getPosts(
+        Long userId, Long cursorId, int size, String orderBy
+    ) {
+        return postReadRepository.findPostsOrderBy(userId, cursorId, size, orderBy);
+    }
+
+    @Transactional(readOnly = true)
+    public DetailedPost getPostById(Long postId, Long userId) {
+        return postReadRepository.findPostById(postId, userId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
     }
 }
