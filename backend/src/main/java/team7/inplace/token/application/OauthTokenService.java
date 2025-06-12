@@ -11,13 +11,13 @@ import team7.inplace.token.client.KakaoOauthClient;
 import team7.inplace.token.domain.OauthToken;
 import team7.inplace.token.persistence.OauthTokenRepository;
 import team7.inplace.user.domain.User;
-import team7.inplace.user.persistence.UserRepository;
+import team7.inplace.user.persistence.UserJpaRepository;
 
 @Service
 @RequiredArgsConstructor
 public class OauthTokenService {
 
-    private final UserRepository userRepository;
+    private final UserJpaRepository userJpaRepository;
     private final KakaoOauthClient kakaoOauthClient;
     private final TokenEncryptionUtil tokenEncryptionUtil;
     private final OauthTokenRepository oauthTokenRepository;
@@ -32,7 +32,7 @@ public class OauthTokenService {
 
     @Transactional
     public void insertOauthToken(OauthTokenCommand oauthTokenCommand) {
-        User userProxy = userRepository.getReferenceById(oauthTokenCommand.userId());
+        User userProxy = userJpaRepository.getReferenceById(oauthTokenCommand.userId());
         OauthToken oauthToken = OauthToken.of(
             tokenEncryptionUtil.encrypt(oauthTokenCommand.oauthToken()),
             oauthTokenCommand.expiresAt(),
