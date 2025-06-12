@@ -85,4 +85,12 @@ public class UserService {
         List<Badge> badges = userReadRepository.findAllBadgeByUserId(userId);
         return Detail.from(simpleUser, badges);
     }
+
+    @Transactional
+    public void updateBadge(Long userId, Long badgeId) {
+        User user = userJpaRepository.findById(userId)
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+
+        user.updateMainBadge(badgeId);
+    }
 }

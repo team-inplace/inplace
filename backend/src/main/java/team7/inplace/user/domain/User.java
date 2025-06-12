@@ -59,4 +59,8 @@ public class User extends BaseEntity {
     public void updateProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
     }
+
+    public void updateMainBadge(Long badgeId) {
+        this.mainBadgeId = badgeId;
+    }
 }
