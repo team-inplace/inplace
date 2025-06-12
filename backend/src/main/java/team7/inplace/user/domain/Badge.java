@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "badgess")
+@Table(name = "badges")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Badge {
 
