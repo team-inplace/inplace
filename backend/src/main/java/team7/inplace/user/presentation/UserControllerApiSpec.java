@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import team7.inplace.user.presentation.dto.UserRequest;
 import team7.inplace.user.presentation.dto.UserResponse;
 
@@ -39,4 +40,7 @@ public interface UserControllerApiSpec {
 
     @Operation(summary = "회원탈퇴", description = "회원탈퇴를 진행합니다.")
     ResponseEntity<Void> deleteUser();
+
+    @Operation(summary = "메인 뱃지 변경", description = "메인 뱃지를 변경합니다.")
+    ResponseEntity<Void> updateMainBadge(UserRequest.UpdateMainBadge request);
 }
