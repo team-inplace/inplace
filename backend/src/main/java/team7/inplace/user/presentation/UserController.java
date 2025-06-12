@@ -76,4 +76,11 @@ public class UserController implements UserControllerApiSpec {
         userFacade.deleteUser();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PatchMapping("/main-badge")
+    public ResponseEntity<Void> updateMainBadge(UserRequest.UpdateMainBadge request) {
+        userFacade.updateMainBadge(request.id());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }

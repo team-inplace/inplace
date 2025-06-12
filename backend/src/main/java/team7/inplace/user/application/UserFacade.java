@@ -84,4 +84,9 @@ public class UserFacade {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
         return userService.getUserDetail(userId);
     }
+
+    public void updateMainBadge(Long badgeId) {
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
+        userService.updateBadge(userId, badgeId);
+    }
 }
