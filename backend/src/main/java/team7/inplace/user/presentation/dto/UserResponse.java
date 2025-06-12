@@ -48,11 +48,13 @@ public class UserResponse {
     }
 
     public record Badge(
+        Long id,
         String name,
         String imgUrl
     ) {
         public static Badge from(UserInfo.Badge badge) {
             return new Badge(
+                badge.id(),
                 badge.name(),
                 badge.img_url()
             );
