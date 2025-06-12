@@ -48,6 +48,8 @@ public class User extends BaseEntity {
         this.profileImageUrl = profileImageUrl;
         this.userType = userType;
         this.role = role;
+        this.tierId = 1L;
+        this.mainBadgeId = null;
     }
 
     public void updateNickname(String nickname) {
