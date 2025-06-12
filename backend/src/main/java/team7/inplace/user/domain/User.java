@@ -35,6 +35,12 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(name = "tier_id")
+    private Long tierId;
+
+    @Column(name = "main_badge_id")
+    private Long mainBadgeId;
+
     public User(String username, String password, String nickname, String profileImageUrl, UserType userType, Role role) {
         this.username = username;
         this.password = password;
