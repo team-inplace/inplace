@@ -12,41 +12,43 @@ import team7.inplace.user.application.dto.UserCommand.Info;
 import team7.inplace.user.application.dto.UserInfo;
 import team7.inplace.user.application.dto.UserInfo.Detail;
 import team7.inplace.user.domain.User;
+import team7.inplace.user.domain.UserBadge;
+import team7.inplace.user.persistence.UserBadgeJpaRepository;
 import team7.inplace.user.persistence.UserReadRepository;
-import team7.inplace.user.persistence.UserRepository;
+import team7.inplace.user.persistence.UserJpaRepository;
 import team7.inplace.user.persistence.dto.UserQueryResult;
 import team7.inplace.user.persistence.dto.UserQueryResult.Badge;
-import team7.inplace.user.persistence.dto.UserQueryResult.Simple;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final UserJpaRepository userJpaRepository;
     private final UserReadRepository userReadRepository;
+    private final UserBadgeJpaRepository userBadgeJpaRepository;
 
     @Transactional
     public UserCommand.Info registerUser(UserCommand.Create userCreate) {
         User user = userCreate.toEntity();
-        userRepository.save(user);
+        userJpaRepository.save(user);
         return UserCommand.Info.of(user);
     }
 
     @Transactional(readOnly = true)
     public UserCommand.Info getUserByUsername(String username) {
-        return UserCommand.Info.of(userRepository.findByUsername(username)
+        return UserCommand.Info.of(userJpaRepository.findByUsername(username)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND)));
     }
 
     @Transactional
     public Optional<Info> findUserByUsername(String username) {
-        Optional<User> userOptional = userRepository.findByUsername(username);
+        Optional<User> userOptional = userJpaRepository.findByUsername(username);
         return userOptional.map(Info::of);
     }
 
     @Transactional
     public void updateNickname(Long userId, String nickname) {
-        User user = userRepository.findById(userId)
+        User user = userJpaRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
 
         user.updateNickname(nickname);
@@ -61,14 +63,16 @@ public class UserService {
 
     @Transactional()
     public void deleteUser(Long userId) {
-        User user = userRepository.findById(userId)
+        User user = userJpaRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
-        userRepository.delete(user);
+        List<UserBadge> userBadges = userBadgeJpaRepository.findAllByUserId(userId);
+        userBadgeJpaRepository.deleteAllInBatch(userBadges);
+        userJpaRepository.delete(user);
     }
 
     @Transactional
     public void updateProfileImageUrl(Long userId, String profileImageUrl) {
-        User user = userRepository.findById(userId)
+        User user = userJpaRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
 
         user.updateProfileImageUrl(profileImageUrl);

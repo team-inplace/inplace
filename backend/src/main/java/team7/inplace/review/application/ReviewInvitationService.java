@@ -12,7 +12,7 @@ import team7.inplace.review.application.dto.ReviewInfo;
 import team7.inplace.review.domain.ReviewInvitation;
 import team7.inplace.review.persistence.ReviewInvitationRepository;
 import team7.inplace.review.persistence.ReviewJPARepository;
-import team7.inplace.user.persistence.UserRepository;
+import team7.inplace.user.persistence.UserJpaRepository;
 import team7.inplace.video.persistence.VideoReadRepository;
 
 @Service
@@ -21,7 +21,7 @@ public class ReviewInvitationService {
 
     private final ReviewInvitationRepository reviewInvitationRepository;
     private final ReviewJPARepository reviewJPARepository;
-    private final UserRepository userRepository;
+    private final UserJpaRepository userJpaRepository;
     private final PlaceReadRepository placeReadRepository;
     private final VideoReadRepository videoReadRepository;
 
@@ -67,7 +67,7 @@ public class ReviewInvitationService {
         var place = placeReadRepository.findDetailedPlaceById(invitation.getPlaceId(),
                 invitation.getUserId())
             .orElseThrow(() -> InplaceException.of(ReviewErrorCode.INVALID_PLACE_ID));
-        var user = userRepository.findById(invitation.getUserId())
+        var user = userJpaRepository.findById(invitation.getUserId())
             .orElseThrow(() -> InplaceException.of(ReviewErrorCode.INVALID_USER_ID));
         var videos = videoReadRepository.findSimpleVideosByPlaceId(invitation.getPlaceId());
 

@@ -74,11 +74,6 @@ public class UserFacade {
         userService.updateNickname(userId, nickname);
     }
 
-    public Simple getUserInfo() {
-        Long userId = AuthorizationUtil.getUserIdOrThrow();
-        return userService.getUserInfo(userId);
-    }
-
     public void deleteUser() {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
         oauthTokenService.unlinkOauthToken(userId);
