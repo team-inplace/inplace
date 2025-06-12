@@ -14,7 +14,8 @@ import team7.inplace.review.persistence.dto.ReviewQueryResult;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.token.application.OauthTokenService;
 import team7.inplace.user.application.dto.UserInfo;
-import team7.inplace.user.presentation.dto.UserResponse;
+import team7.inplace.user.application.dto.UserInfo.Detail;
+import team7.inplace.user.application.dto.UserInfo.Simple;
 import team7.inplace.video.application.VideoService;
 
 import java.util.Map;
@@ -73,7 +74,7 @@ public class UserFacade {
         userService.updateNickname(userId, nickname);
     }
 
-    public UserInfo.Profile getUserInfo() {
+    public Simple getUserInfo() {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
         return userService.getUserInfo(userId);
     }
@@ -82,5 +83,10 @@ public class UserFacade {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
         oauthTokenService.unlinkOauthToken(userId);
         userService.deleteUser(userId);
+    }
+
+    public Detail getUserDetail() {
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
+        return userService.getUserDetail(userId);
     }
 }

@@ -1,5 +1,6 @@
 package team7.inplace.user.application;
 
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -9,14 +10,20 @@ import team7.inplace.global.exception.code.UserErrorCode;
 import team7.inplace.user.application.dto.UserCommand;
 import team7.inplace.user.application.dto.UserCommand.Info;
 import team7.inplace.user.application.dto.UserInfo;
+import team7.inplace.user.application.dto.UserInfo.Detail;
 import team7.inplace.user.domain.User;
+import team7.inplace.user.persistence.UserReadRepository;
 import team7.inplace.user.persistence.UserRepository;
+import team7.inplace.user.persistence.dto.UserQueryResult;
+import team7.inplace.user.persistence.dto.UserQueryResult.Badge;
+import team7.inplace.user.persistence.dto.UserQueryResult.Simple;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserReadRepository userReadRepository;
 
     @Transactional
     public UserCommand.Info registerUser(UserCommand.Create userCreate) {
@@ -46,10 +53,10 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserInfo.Profile getUserInfo(Long userId) {
-        User user = userRepository.findById(userId)
+    public UserInfo.Simple getUserInfo(Long userId) {
+        UserQueryResult.Simple simpleUser = userReadRepository.findUserInfoById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
-        return UserInfo.Profile.from(user);
+        return UserInfo.Simple.from(simpleUser);
     }
 
     @Transactional()
@@ -65,5 +72,13 @@ public class UserService {
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
 
         user.updateProfileImageUrl(profileImageUrl);
+    }
+
+    @Transactional
+    public Detail getUserDetail(Long userId) {
+        UserQueryResult.Simple simpleUser = userReadRepository.findUserInfoById(userId)
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+        List<Badge> badges = userReadRepository.findAllBadgeByUserId(userId);
+        return Detail.from(simpleUser, badges);
     }
 }
