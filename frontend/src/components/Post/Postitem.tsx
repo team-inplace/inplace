@@ -68,11 +68,12 @@ export default function Postitem({ item, activeCategory }: { item: PostListData;
 }
 
 const Wrapper = styled(Link)`
+  width: 100%;
   display: flex;
   justify-content: space-between;
+  box-sizing: border-box;
   padding: 20px 10px;
   align-items: center;
-  max-height: 150px;
   border-radius: 16px;
   color: ${(props) => props.theme.textColor};
   &:hover {
@@ -80,9 +81,12 @@ const Wrapper = styled(Link)`
   }
 `;
 const LeftInfo = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
   gap: 10px;
+  padding: 0px 10px;
 `;
 const Content = styled.div`
   padding: 10px 0px;
@@ -126,9 +130,8 @@ const StyledText = styled(Text)`
   line-height: 120%;
   white-space: pre-line;
   display: -webkit-box;
-  -webkit-line-clamp: 2; // 2줄까지만 보여줌
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
   color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#D4D4D4' : '#505050')};
 `;
