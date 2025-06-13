@@ -148,8 +148,16 @@ export type RequestInfluencerLike = {
 export type UserInfoData = {
   nickname: string;
   imgUrl: string;
-  userTier: string;
-  userTitle: string[];
+  tier: {
+    name: string;
+    imgUrl: string;
+  };
+  badges: [
+    {
+      name: string;
+      imgUrl: string;
+    },
+  ];
 };
 export type UserPlaceData = {
   placeId: number;
@@ -266,6 +274,8 @@ export type PostListData = {
   author: {
     nickname: string;
     imgUrl: string;
+    tierImageUrl: string;
+    badgeImageUrl: string;
   };
   title: string;
   content: string;
@@ -275,14 +285,14 @@ export type PostListData = {
   createAt: string;
   isMine: boolean;
   selfLike: boolean;
-  userTier: string;
-  userTitle: string;
 };
 export type PostData = {
   postId: number;
   author: {
     nickname: string;
     imgUrl: string;
+    tierImageUrl: string;
+    badgeImageUrl: string;
   };
   title: string;
   content: string;
@@ -292,13 +302,11 @@ export type PostData = {
   imageUrls?: UploadedImageObj[];
   selfLike: boolean;
   isMine: boolean;
-  userTier: string;
-  userTitle: string;
 };
 export type PostingData = {
   title: string;
   content: string;
-  imageUrls: UploadedImageObj[];
+  imageUrls?: UploadedImageObj[];
 };
 
 export type CommentData = {
@@ -306,13 +314,13 @@ export type CommentData = {
   author: {
     nickname: string;
     imgUrl: string;
+    tierImageUrl: string;
   };
   content: string;
   createAt: string;
   totalLikeCount: number;
   selfLike: boolean;
   isMine: boolean;
-  userTier: string;
 };
 
 export type PostCommentProps = {

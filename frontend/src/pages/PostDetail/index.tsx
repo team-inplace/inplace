@@ -16,7 +16,6 @@ import LoginModal from '@/components/common/modals/LoginModal';
 import { useDeletePost } from '@/api/hooks/useDeletePost';
 import EditMenu from '@/components/PostDetail/EditMenu';
 import UserName from '@/components/PostDetail/UserName';
-import TestImg from '@/assets/images/titletest.png';
 
 export default function PostDetailPage() {
   const { isAuthenticated } = useAuth();
@@ -101,8 +100,8 @@ export default function PostDetailPage() {
             <UserTitleTop>
               <UserName
                 userNickname={postData.author.nickname}
-                userTier="https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff"
-                userTitle={TestImg}
+                tierImageUrl={postData.author.tierImageUrl}
+                badgeImageUrl={postData.author.badgeImageUrl}
               />
               <StyledText size="xs" weight="normal">
                 {postData.createAt}
@@ -308,6 +307,8 @@ const CloseBtn = styled.button`
   top: 6px;
 `;
 const StyledText = styled(Text)`
+  line-height: 120%;
+  white-space: pre-line;
   color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#c5c5c5' : '#606060')};
 `;
 
