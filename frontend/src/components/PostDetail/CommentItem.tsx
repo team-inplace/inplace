@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
 import { Text } from '../common/typography/Text';
@@ -58,9 +58,6 @@ export default function CommentItem({ item, postId }: { item: CommentData; postI
   const handleEditClick = () => {
     setIsEditing(true);
     setEditValue(item.content);
-    setTimeout(() => {
-      textareaRef.current?.focus();
-    }, 0);
   };
 
   const handleEditSubmit = (e: React.FormEvent) => {
@@ -103,7 +100,7 @@ export default function CommentItem({ item, postId }: { item: CommentData; postI
         {
           onSuccess: () => {
             setIsLike(newLikeStatus);
-            queryClient.invalidateQueries({ queryKey: ['infiniteCommentList', postId] });
+            queryClient.invalidateQueries({ queryKey: ['infiniteCommentList', 10, postId] });
           },
           onError: () => {
             alert('좋아요 등록에 실패했어요. 다시 시도해주세요!');
@@ -114,6 +111,15 @@ export default function CommentItem({ item, postId }: { item: CommentData; postI
     [isLike, item.commentId, postLike],
   );
 
+  useEffect(() => {
+    if (isEditing && textareaRef.current) {
+      textareaRef.current.focus();
+      const len = textareaRef.current.value.length;
+      textareaRef.current.setSelectionRange(len, len);
+      handleResizeHeight(textareaRef.current);
+    }
+  }, [isEditing, handleResizeHeight]);
+
   return (
     <Wrapper>
       <CommentTop>
@@ -123,7 +129,7 @@ export default function CommentItem({ item, postId }: { item: CommentData; postI
           </ProfileImg>
           <UserName
             userNickname={item.author.nickname}
-            userTier="https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff"
+            tierImageUrl="https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff"
           />
         </UserInfo>
         {!isEditing && (
@@ -218,6 +224,7 @@ const Wrapper = styled.div`
 const Content = styled.div`
   width: calc(100%-40px);
   display: flex;
+  white-space: pre-line;
   flex-direction: column;
   padding-left: 40px;
   gap: 8px;

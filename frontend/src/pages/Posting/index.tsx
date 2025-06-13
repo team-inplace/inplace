@@ -12,17 +12,22 @@ import handleImageUpload from '@/libs/s3/handleImageUpload';
 import handleDeleteImages from '@/libs/s3/handleImageDelete';
 import ImagePreview from '@/components/Post/ImagePreview';
 import { UploadedImageObj, UploadImage } from '@/types';
+import useAutoResizeTextarea from '@/hooks/Post/useAutoResizeTextarea';
 
 interface FormDataType {
   title: string;
   content: string;
   imageUrls: UploadImage[];
 }
+const ALLOWED_TYPES = ['image/jpeg', 'image/png'];
+
 export default function PostingPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
+  const textareaRef = useRef(null);
+  const handleResizeHeight = useAutoResizeTextarea();
 
   const [formData, setFormData] = useState<FormDataType>({
     title: '',
@@ -71,10 +76,18 @@ export default function PostingPage() {
     const fileList = e.target.files;
     if (!fileList) return;
 
+    const invalidFiles = Array.from(fileList).filter((file) => !ALLOWED_TYPES.includes(file.type));
+    if (invalidFiles.length) {
+      invalidFiles.forEach((file) => alert(`${file.name}: 지원하지 않는 파일 형식입니다.`));
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
     if (formData.imageUrls.length + fileList.length > 10) {
       alert('사진은 최대 10장까지 첨부 가능합니다.');
       return;
     }
+
     // 이미지 해시로 중복 검사
     const results = await Promise.all(
       Array.from(fileList).map(async (file) => ({
@@ -110,9 +123,23 @@ export default function PostingPage() {
     }));
   };
 
+  const validatePostForm = ({ title, content }: FormDataType) => {
+    if (!title.trim()) return '제목은 한 글자 이상 입력해주세요.';
+    if (title.length > 30) return '제목은 30자 내로 작성해주세요.';
+    if (!content.trim()) return '내용은 한 글자 이상 입력해주세요.';
+    if (content.length > 3000) return '내용은 3000자 내로 작성해주세요.';
+    return null;
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     let uploadedObjs: UploadedImageObj[] = [];
+
+    const errorMsg = validatePostForm(formData);
+    if (errorMsg) {
+      alert(errorMsg);
+      return;
+    }
 
     try {
       const newImages = formData.imageUrls.filter((img) => !img.isExisting);
@@ -189,19 +216,22 @@ export default function PostingPage() {
           type="text"
           placeholder="제목을 입력해주세요"
           value={formData.title}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData({ ...formData, title: e.target.value })}
-          required
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+            setFormData({ ...formData, title: e.target.value });
+          }}
         />
         <Separator />
         <TextArea
+          ref={textareaRef}
           placeholder={`자유롭게 입력하세요.
 
 욕설, 비방, 차별, 혐오, 근거 없는 악의적 후기 등 타인의 권리를 침해하는 행위 시 게시물이 삭제되고 서비스 이용이 제한될 수 있습니다.`}
           rows={1}
           value={formData.content}
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-            setFormData({ ...formData, content: e.target.value })
-          }
+          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+            setFormData({ ...formData, content: e.target.value });
+            handleResizeHeight(e.target);
+          }}
         />
         <ImagePreview
           images={formData.imageUrls}
@@ -280,7 +310,7 @@ const InputField = styled.input`
 
 const TextArea = styled.textarea`
   width: 100%;
-  height: 300px;
+  min-height: 400px;
   padding: 10px;
   box-sizing: border-box;
   font-size: 14px;
