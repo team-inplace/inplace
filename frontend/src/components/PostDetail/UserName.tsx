@@ -1,0 +1,38 @@
+import styled from 'styled-components';
+import { Text } from '../common/typography/Text';
+
+interface UserTitleProps {
+  userNickname: string;
+  tierImageUrl: string;
+  badgeImageUrl?: string;
+}
+
+export default function UserName({ userNickname, tierImageUrl, badgeImageUrl }: UserTitleProps) {
+  return (
+    <UserTitleWrapper>
+      <UserTier src={tierImageUrl} alt={`${userNickname} Tier`} />
+      <Text size="s" weight="normal">
+        {userNickname}
+      </Text>
+      {badgeImageUrl && <UserTitle src={badgeImageUrl} alt={`${userNickname} Title`} />}
+    </UserTitleWrapper>
+  );
+}
+
+const UserTitleWrapper = styled.div`
+  display: flex;
+  gap: 6px;
+  align-items: center;
+`;
+
+const UserTier = styled.img`
+  height: 20px;
+  width: auto;
+  vertical-align: middle;
+`;
+const UserTitle = styled.img`
+  height: 20px;
+  width: auto;
+  object-fit: contain;
+  vertical-align: middle;
+`;
