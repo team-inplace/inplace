@@ -1,210 +1,45 @@
-import { useRef, useState, useEffect } from 'react';
-import { IoMdClose, IoIosArrowBack } from 'react-icons/io';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { IoMdClose } from 'react-icons/io';
 import { styled } from 'styled-components';
-import { useQueryClient } from '@tanstack/react-query';
-import { v4 as uuidv4 } from 'uuid';
-import { Text } from '@/components/common/typography/Text';
+import { useNavigate } from 'react-router-dom';
 import { usePostPost } from '@/api/hooks/usePostPost';
 import { usePutPost } from '@/api/hooks/usePutPost';
-import { hashImage } from '@/utils/s3/s3Utils';
 import handleImageUpload from '@/libs/s3/handleImageUpload';
 import handleDeleteImages from '@/libs/s3/handleImageDelete';
 import ImagePreview from '@/components/Post/ImagePreview';
-import { UploadedImageObj, UploadImage } from '@/types';
-import useAutoResizeTextarea from '@/hooks/Post/useAutoResizeTextarea';
-
-interface FormDataType {
-  title: string;
-  content: string;
-  imageUrls: UploadImage[];
-}
-const ALLOWED_TYPES = ['image/jpeg', 'image/png'];
+import PostFormHeader from '@/components/Posting/PostFormHeader';
+import PostTitleInput from '@/components/Posting/PostTitleInput';
+import PostContentTextArea from '@/components/Posting/PostContentTextArea';
+import usePostForm from '@/hooks/Post/usePostForm';
 
 export default function PostingPage() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const queryClient = useQueryClient();
-  const textareaRef = useRef(null);
-  const handleResizeHeight = useAutoResizeTextarea();
 
-  const [formData, setFormData] = useState<FormDataType>({
-    title: '',
-    content: '',
-    imageUrls: [],
+  const {
+    formData,
+    fileInputRef,
+    textareaRef,
+    handleResizeHeight,
+    isModalOpen,
+    setIsModalOpen,
+    selectedImage,
+    setSelectedImage,
+    handleClickFileInput,
+    handleImgRemove,
+    uploadProfile,
+    handleSubmit,
+    handleChange,
+  } = usePostForm({
+    initialFormData: { title: '', content: '', imageUrls: [] },
+    postPost: usePostPost().mutate,
+    editPost: usePutPost().mutate,
+    handleImageUpload,
+    handleDeleteImages,
   });
-  const [existingHashes, setExistingHashes] = useState<string[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<string>('');
-
-  const { postId, prevformData, type } = location.state || {};
-  const { mutate: postPost } = usePostPost();
-  const { mutate: editPost } = usePutPost();
-
-  useEffect(() => {
-    if (type === 'update' && prevformData) {
-      setFormData({
-        title: prevformData.title,
-        content: prevformData.content,
-        imageUrls:
-          prevformData.imageUrls?.map((obj: UploadedImageObj) => ({
-            thumbnail: obj.imageUrl,
-            isExisting: true,
-            hash: obj.hash,
-          })) || [],
-      });
-      setExistingHashes(prevformData.imageUrls?.map((obj: UploadedImageObj) => obj.hash) || []);
-    }
-  }, [prevformData, type]);
-
-  const handleClickFileInput = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    fileInputRef.current?.click();
-  };
-
-  const handleImgRemove = (index: number) => {
-    const removedImage = formData.imageUrls[index];
-    setFormData((prev) => ({
-      ...prev,
-      imageUrls: prev.imageUrls.filter((_, i) => i !== index),
-    }));
-    setExistingHashes((prev) => prev.filter((hash) => hash !== removedImage.hash));
-  };
-
-  const uploadProfile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const fileList = e.target.files;
-    if (!fileList) return;
-
-    const invalidFiles = Array.from(fileList).filter((file) => !ALLOWED_TYPES.includes(file.type));
-    if (invalidFiles.length) {
-      invalidFiles.forEach((file) => alert(`${file.name}: 지원하지 않는 파일 형식입니다.`));
-      if (fileInputRef.current) fileInputRef.current.value = '';
-      return;
-    }
-
-    if (formData.imageUrls.length + fileList.length > 10) {
-      alert('사진은 최대 10장까지 첨부 가능합니다.');
-      return;
-    }
-
-    // 이미지 해시로 중복 검사
-    const results = await Promise.all(
-      Array.from(fileList).map(async (file) => ({
-        file,
-        fileHash: await hashImage(file),
-      })),
-    );
-
-    const duplicates = results.filter(({ fileHash }) => existingHashes.includes(fileHash));
-    if (duplicates.length) {
-      duplicates.forEach(({ file }) => alert(`${file.name}: 이미 같은 이미지가 존재합니다.`));
-      if (fileInputRef.current) fileInputRef.current.value = '';
-    }
-
-    // 중복이 아닌 이미지만 추가
-    const newImages: UploadImage[] = results
-      .filter(({ fileHash }) => !existingHashes.includes(fileHash))
-      .map(({ file, fileHash }) => {
-        setExistingHashes((prev) => [...prev, fileHash]);
-        // 파일명에 UUID 붙이기
-        const newFileName = `${uuidv4()}.${file.name.split('.').pop()}`;
-        const newFile = new File([file], newFileName, { type: file.type });
-        return {
-          file: newFile,
-          thumbnail: URL.createObjectURL(file),
-          isExisting: false,
-          hash: fileHash,
-        };
-      });
-    setFormData((prev) => ({
-      ...prev,
-      imageUrls: [...prev.imageUrls, ...newImages],
-    }));
-  };
-
-  const validatePostForm = ({ title, content }: FormDataType) => {
-    if (!title.trim()) return '제목은 한 글자 이상 입력해주세요.';
-    if (title.length > 30) return '제목은 30자 내로 작성해주세요.';
-    if (!content.trim()) return '내용은 한 글자 이상 입력해주세요.';
-    if (content.length > 3000) return '내용은 3000자 내로 작성해주세요.';
-    return null;
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    let uploadedObjs: UploadedImageObj[] = [];
-
-    const errorMsg = validatePostForm(formData);
-    if (errorMsg) {
-      alert(errorMsg);
-      return;
-    }
-
-    try {
-      const newImages = formData.imageUrls.filter((img) => !img.isExisting);
-      uploadedObjs = newImages.length > 0 ? await handleImageUpload(newImages) : [];
-    } catch (error) {
-      alert('이미지 업로드에 실패했습니다. 다시 시도해주세요.');
-      console.error(error);
-      return;
-    }
-
-    const existingObjs: UploadedImageObj[] = formData.imageUrls
-      .filter((img) => img.isExisting)
-      .map((img) => ({
-        imageUrl: img.thumbnail,
-        hash: img.hash,
-      }));
-
-    // 삭제된 이미지 판별
-    const existingLinks = existingObjs.map((obj) => obj.imageUrl);
-    const prevLinks = prevformData?.imageUrls?.map((obj: UploadedImageObj) => obj.imageUrl) || [];
-    const removedLinks = prevLinks.filter((link: string) => !existingLinks.includes(link));
-    await handleDeleteImages(removedLinks);
-
-    // 최종 업로드할 이미지 객체 배열
-    const allImageObjs = [...existingObjs, ...uploadedObjs];
-
-    const formDataWithURL = {
-      title: formData.title,
-      content: formData.content,
-      imageUrls: allImageObjs,
-    };
-    if (type === 'create') {
-      postPost(formDataWithURL, {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['infinitePostList'] });
-          navigate('/post');
-        },
-        onError: () => alert('게시글 등록을 실패했습니다. 다시 시도해주세요!'),
-      });
-    } else {
-      editPost(
-        { postId, formData: formDataWithURL },
-        {
-          onSuccess: () => {
-            navigate(`/detail/${postId}`);
-            queryClient.invalidateQueries({ queryKey: ['infinitePostList'] });
-          },
-          onError: () => alert('게시글 수정을 실패했습니다. 다시 시도해주세요!'),
-        },
-      );
-    }
-  };
 
   return (
     <PostContainer>
       <Form onSubmit={handleSubmit}>
-        <DetailHeader>
-          <BackBtn type="button" onClick={() => navigate(-1)}>
-            <IoIosArrowBack size={24} />
-          </BackBtn>
-          <Text size="s" weight="bold">
-            글 쓰기
-          </Text>
-          <SubmitButton type="submit">등록</SubmitButton>
-        </DetailHeader>
+        <PostFormHeader onBack={() => navigate(-1)} />
         <FileInput
           type="file"
           accept="image/jpg, image/jpeg, image/png"
@@ -212,26 +47,13 @@ export default function PostingPage() {
           onChange={uploadProfile}
           multiple
         />
-        <InputField
-          type="text"
-          placeholder="제목을 입력해주세요"
-          value={formData.title}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            setFormData({ ...formData, title: e.target.value });
-          }}
-        />
+        <PostTitleInput value={formData.title} onChange={handleChange('title')} />
         <Separator />
-        <TextArea
-          ref={textareaRef}
-          placeholder={`자유롭게 입력하세요.
-
-욕설, 비방, 차별, 혐오, 근거 없는 악의적 후기 등 타인의 권리를 침해하는 행위 시 게시물이 삭제되고 서비스 이용이 제한될 수 있습니다.`}
-          rows={1}
+        <PostContentTextArea
           value={formData.content}
-          onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-            setFormData({ ...formData, content: e.target.value });
-            handleResizeHeight(e.target);
-          }}
+          onChange={handleChange('content')}
+          textareaRef={textareaRef}
+          handleResizeHeight={handleResizeHeight}
         />
         <ImagePreview
           images={formData.imageUrls}
@@ -261,24 +83,6 @@ const PostContainer = styled.div`
   width: 100%;
   margin-top: 20px;
 `;
-const DetailHeader = styled.div`
-  z-index: 10;
-  width: 100%;
-  padding: 10px 0px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const BackBtn = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-
-  svg {
-    color: ${({ theme }) => (theme.textColor === '#ffffff' ? 'white' : 'black')};
-  }
-`;
 const Form = styled.form`
   display: flex;
   flex-direction: column;
@@ -289,62 +93,6 @@ const Form = styled.form`
 const FileInput = styled.input`
   display: none;
 `;
-const InputField = styled.input`
-  width: 100%;
-  padding: 10px;
-  border: none;
-  box-sizing: border-box;
-  background: transparent;
-  border-radius: 5px;
-  color: ${({ theme }) => (theme.textColor === '#ffffff' ? 'white' : 'black')};
-  font-size: 20px;
-
-  &:focus {
-    outline: none;
-    border: none;
-  }
-  &::placeholder {
-    color: #979797;
-  }
-`;
-
-const TextArea = styled.textarea`
-  width: 100%;
-  min-height: 400px;
-  padding: 10px;
-  box-sizing: border-box;
-  font-size: 14px;
-  line-height: 1.4;
-  display: flex;
-  border: none;
-  background: transparent;
-  overflow-y: hidden;
-  resize: none;
-  color: ${({ theme }) => (theme.textColor === '#ffffff' ? 'white' : 'black')};
-
-  &::placeholder {
-    color: #979797;
-  }
-
-  &:focus {
-    outline: none;
-    border: none;
-  }
-`;
-
-const SubmitButton = styled.button`
-  border: none;
-  background: none;
-  color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#55ebff' : '#47c8d9')};
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
 const Separator = styled.div`
   height: 1px;
   width: 100%;
