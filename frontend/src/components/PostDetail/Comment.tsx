@@ -40,7 +40,7 @@ export default function Comment({ id }: { id: string }) {
       {
         onSuccess: () => {
           if (!textareaRef.current) return;
-          queryClient.invalidateQueries({ queryKey: ['infiniteCommenList', id] }); // 좋아요 리스트 초기화
+          queryClient.invalidateQueries({ queryKey: ['infiniteCommentList', 10, id] }); // 좋아요 리스트 초기화
           textareaRef.current.value = '';
           textareaRef.current.style.height = 'auto';
         },

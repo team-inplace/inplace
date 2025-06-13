@@ -1,6 +1,6 @@
 export async function hashImage(file: File) {
   const arrayBuffer = await file.arrayBuffer();
-  const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer); // 해시 생성
+  const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
   const hashArray = new Uint8Array(hashBuffer);
   const hashHex = Array.from(hashArray)
     .map((byte: number) => byte.toString(16).padStart(2, '0'))
