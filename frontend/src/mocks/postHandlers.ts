@@ -187,6 +187,118 @@ const commentListDummy = [
     selfLike: false,
     isMine: false,
   },
+  {
+    commentId: 5,
+    author: {
+      nickname: '풍자',
+      imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+      tierImageUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
+    },
+    content:
+      '그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다',
+    createAt: '1분전',
+    totalLikeCount: 0,
+    selfLike: false,
+    isMine: false,
+  },
+  {
+    commentId: 6,
+    author: {
+      nickname: '풍자',
+      imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+      tierImageUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
+    },
+    content:
+      '그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다',
+    createAt: '1분전',
+    totalLikeCount: 0,
+    selfLike: false,
+    isMine: false,
+  },
+  {
+    commentId: 7,
+    author: {
+      nickname: '풍자',
+      imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+      tierImageUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
+    },
+    content:
+      '그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다',
+    createAt: '1분전',
+    totalLikeCount: 0,
+    selfLike: false,
+    isMine: false,
+  },
+  {
+    commentId: 8,
+    author: {
+      nickname: '풍자',
+      imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+      tierImageUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
+    },
+    content:
+      '그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다',
+    createAt: '1분전',
+    totalLikeCount: 0,
+    selfLike: false,
+    isMine: false,
+  },
+  {
+    commentId: 9,
+    author: {
+      nickname: '풍자',
+      imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+      tierImageUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
+    },
+    content:
+      '그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다',
+    createAt: '1분전',
+    totalLikeCount: 0,
+    selfLike: false,
+    isMine: false,
+  },
+  {
+    commentId: 10,
+    author: {
+      nickname: '풍자',
+      imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+      tierImageUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
+    },
+    content:
+      '그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다',
+    createAt: '1분전',
+    totalLikeCount: 0,
+    selfLike: false,
+    isMine: false,
+  },
+  {
+    commentId: 11,
+    author: {
+      nickname: '풍자',
+      imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+      tierImageUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
+    },
+    content:
+      '그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다',
+    createAt: '1분전',
+    totalLikeCount: 0,
+    selfLike: false,
+    isMine: false,
+  },
+  {
+    commentId: 12,
+    author: {
+      nickname: '풍자',
+      imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+      tierImageUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
+    },
+    content:
+      '그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다',
+    createAt: '1분전',
+    totalLikeCount: 0,
+    selfLike: false,
+    isMine: false,
+  },
 ];
 export const postHandlers = [
   rest.get(`${BASE_URL}/posts`, (req, res, ctx) => {

@@ -18,7 +18,15 @@ import useTheme from '@/hooks/useTheme';
 import EditMenu from './EditMenu';
 import UserName from './UserName';
 
-export default function CommentItem({ item, postId }: { item: CommentData; postId: string }) {
+export default function CommentItem({
+  item,
+  postId,
+  currentPage,
+}: {
+  item: CommentData;
+  postId: string;
+  currentPage: number;
+}) {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
   const queryClient = useQueryClient();
@@ -46,7 +54,7 @@ export default function CommentItem({ item, postId }: { item: CommentData; postI
       {
         onSuccess: () => {
           alert('삭제되었습니다.');
-          queryClient.invalidateQueries({ queryKey: ['infiniteCommentList', 10, postId] });
+          queryClient.invalidateQueries({ queryKey: ['commentList', currentPage, 10, postId] });
         },
         onError: () => {
           alert('댓글 삭제에 실패했어요. 다시 시도해주세요!');
@@ -76,7 +84,7 @@ export default function CommentItem({ item, postId }: { item: CommentData; postI
       { postId, commentId: item.commentId.toString(), comment: editValue },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['infiniteCommentList', 10, postId] });
+          queryClient.invalidateQueries({ queryKey: ['commentList', currentPage, 10, postId] });
           setIsEditing(false);
         },
         onError: () => {
@@ -100,7 +108,7 @@ export default function CommentItem({ item, postId }: { item: CommentData; postI
         {
           onSuccess: () => {
             setIsLike(newLikeStatus);
-            queryClient.invalidateQueries({ queryKey: ['infiniteCommentList', 10, postId] });
+            queryClient.invalidateQueries({ queryKey: ['commentList', currentPage, 10, postId] });
           },
           onError: () => {
             alert('좋아요 등록에 실패했어요. 다시 시도해주세요!');

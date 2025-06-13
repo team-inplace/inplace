@@ -4,7 +4,7 @@ import { IoIosSend } from 'react-icons/io';
 import { useQueryClient } from '@tanstack/react-query';
 import { useLocation } from 'react-router-dom';
 import CommentItem from './CommentItem';
-import { useGetInfinitCommentList } from '@/api/hooks/useGetInfinitCommentList';
+import { useGetCommentList } from '@/api/hooks/useGetCommentList';
 import { usePostComment } from '@/api/hooks/usePostComment';
 import useAuth from '@/hooks/useAuth';
 import LoginModal from '../common/modals/LoginModal';
@@ -12,17 +12,23 @@ import FallbackImage from '../common/Items/FallbackImage';
 import { useGetUserInfo } from '@/api/hooks/useGetUserInfo';
 import { Text } from '../common/typography/Text';
 import useAutoResizeTextarea from '@/hooks/Post/useAutoResizeTextarea';
+import Pagination from '../common/Pagination';
+import Loading from '../common/layouts/Loading';
+import NoItem from '../common/layouts/NoItem';
 
 export default function Comment({ id }: { id: string }) {
-  const { isAuthenticated } = useAuth();
-  const { data: userInfo } = useGetUserInfo();
   const location = useLocation();
-  const { data: commentList } = useGetInfinitCommentList({ size: 10, id });
-  const { mutate: postComment } = usePostComment();
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   const queryClient = useQueryClient();
 
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const { isAuthenticated } = useAuth();
+  const { data: userInfo } = useGetUserInfo();
+  const { mutate: postComment } = usePostComment();
+  const { data: commentList, isLoading } = useGetCommentList(id, currentPage - 1, 10);
+
   const handleResizeHeight = useAutoResizeTextarea();
 
   const handleCommentSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -40,7 +46,7 @@ export default function Comment({ id }: { id: string }) {
       {
         onSuccess: () => {
           if (!textareaRef.current) return;
-          queryClient.invalidateQueries({ queryKey: ['infiniteCommentList', 10, id] }); // 좋아요 리스트 초기화
+          queryClient.invalidateQueries({ queryKey: ['commentList', currentPage, 10, id] }); // 좋아요 리스트 초기화
           textareaRef.current.value = '';
           textareaRef.current.style.height = 'auto';
         },
@@ -50,12 +56,39 @@ export default function Comment({ id }: { id: string }) {
       },
     );
   };
+  const handlePageChange = (pageNum: number) => {
+    setCurrentPage(pageNum);
+  };
   const placeholder = isAuthenticated ? '의견을 남겨주세요.' : '댓글을 작성하려면 로그인이 필요해요.';
+
+  if (isLoading) {
+    return (
+      <Wrapper>
+        <LoadingWrapper>
+          <Loading size={30} />
+        </LoadingWrapper>
+      </Wrapper>
+    );
+  }
+
   return (
     <>
       <Wrapper>
-        {commentList?.pages.flatMap((page) =>
-          page.content.map((item) => <CommentItem key={item.commentId} item={item} postId={id} />),
+        {!commentList || commentList.content.length === 0 ? (
+          <NoItem message="댓글이 없습니다." alignItems="center" />
+        ) : (
+          <>
+            {commentList.content.map((item) => (
+              <CommentItem key={item.commentId} item={item} postId={id} currentPage={currentPage} />
+            ))}
+            <Pagination
+              currentPage={currentPage}
+              totalPages={commentList.totalPages}
+              totalItems={commentList.totalElements}
+              onPageChange={handlePageChange}
+              itemsPerPage={commentList.pageable.pageSize}
+            />
+          </>
         )}
         {/* todo - 언급기능 */}
         <CommentContainer>
@@ -160,4 +193,12 @@ const ProfileImg = styled.div`
   height: 34px;
   aspect-ratio: 1 / 1;
   border-radius: 50%;
+`;
+
+const LoadingWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+  margin-top: 20px;
 `;
