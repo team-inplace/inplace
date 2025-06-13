@@ -2,6 +2,9 @@ package team7.inplace.post.presentation;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.post.application.PostFacade;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertComment;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertPost;
+import team7.inplace.post.presentation.dto.PostResponse.DetailedComment;
 import team7.inplace.post.presentation.dto.PostResponse.SimpleList;
 import team7.inplace.post.presentation.dto.PostResponse.SimplePost;
 
@@ -110,5 +114,16 @@ public class PostController implements PostControllerApiSpec {
         postFacade.deleteComment(postId, commentId);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Page<DetailedComment>> getCommentsByPostId(
+        Long postId,
+        @PageableDefault(size = 10) Pageable pageable
+    ) {
+        var comments = postFacade.getCommentsByPostId(postId, pageable);
+
+        var response = comments.map(DetailedComment::from);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

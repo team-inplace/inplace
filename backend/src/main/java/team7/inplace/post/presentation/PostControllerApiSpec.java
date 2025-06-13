@@ -5,6 +5,9 @@ import static team7.inplace.post.presentation.dto.PostResponse.SimplePost;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import team7.inplace.post.presentation.dto.PostRequest;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertComment;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertPost;
+import team7.inplace.post.presentation.dto.PostResponse.DetailedComment;
 import team7.inplace.post.presentation.dto.PostResponse.SimpleList;
 
 @RequestMapping("/posts")
@@ -77,5 +81,11 @@ public interface PostControllerApiSpec {
     ResponseEntity<Void> deleteComment(
         @PathVariable(value = "postId") Long postId,
         @PathVariable(value = "commentId") Long commentId
+    );
+
+    @GetMapping("/{postId}/comments")
+    ResponseEntity<Page<DetailedComment>> getCommentsByPostId(
+        @PathVariable(value = "postId") Long postId,
+        @PageableDefault(size = 10) Pageable pageable
     );
 }

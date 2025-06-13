@@ -2,6 +2,8 @@ package team7.inplace.post.application;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.global.cursor.CursorResult;
@@ -12,8 +14,10 @@ import team7.inplace.post.application.dto.PostCommand.CreatePost;
 import team7.inplace.post.application.dto.PostCommand.UpdateComment;
 import team7.inplace.post.application.dto.PostCommand.UpdatePost;
 import team7.inplace.post.persistence.CommentJpaRepository;
+import team7.inplace.post.persistence.CommentReadRepository;
 import team7.inplace.post.persistence.PostJpaRepository;
 import team7.inplace.post.persistence.PostReadRepository;
+import team7.inplace.post.persistence.dto.CommentQueryResult.DetailedComment;
 import team7.inplace.post.persistence.dto.PostQueryResult.DetailedPost;
 
 @Service
@@ -24,6 +28,7 @@ public class PostService {
     private final PostJpaRepository postJpaRepository;
     private final PostReadRepository postReadRepository;
     private final CommentJpaRepository commentJpaRepository;
+    private final CommentReadRepository commentReadRepository;
 
     @Transactional
     public void createPost(CreatePost command, Long userId) {
@@ -95,5 +100,13 @@ public class PostService {
     public DetailedPost getPostById(Long postId, Long userId) {
         return postReadRepository.findPostById(postId, userId)
             .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<DetailedComment> getCommentsByPostId(Long postId, Long userId, Pageable pageable) {
+        if (!postJpaRepository.existsById(postId)) {
+            throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
+        }
+        return commentReadRepository.findCommentsByPostId(postId, userId, pageable);
     }
 }
