@@ -3,11 +3,13 @@ package team7.inplace.post.domain;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team7.inplace.global.baseEntity.BaseEntity;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.PostErrorCode;
 
+@Getter
 @Entity
 @Table(name = "comments")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

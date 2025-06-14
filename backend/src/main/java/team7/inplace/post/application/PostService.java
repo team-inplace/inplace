@@ -96,4 +96,34 @@ public class PostService {
         return postReadRepository.findPostById(postId, userId)
             .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
     }
+
+    @Transactional(readOnly = true)
+    public String getPostContentById(Long postId) {
+        return postJpaRepository.findContentById(postId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
+    }
+
+    @Transactional
+    public void deletePostSoftly(Long postId) {
+        var post = postJpaRepository.findById(postId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
+        post.deleteSoftly();
+    }
+
+    @Transactional(readOnly = true)
+    public String getCommentContentById(Long commentId) {
+        return commentJpaRepository.findContentById(commentId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));
+    }
+
+    @Transactional
+    public void deleteCommentSoftly(Long commentId) {
+        var comment = commentJpaRepository.findById(commentId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));
+        if (!postJpaRepository.existsById(comment.getPostId())) {
+            throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
+        }
+        comment.deleteSoftly();
+    }
+
 }

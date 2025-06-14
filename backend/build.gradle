@@ -69,6 +69,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
+    // OpenAI
+    implementation platform("org.springframework.ai:spring-ai-bom:1.0.0")
+    implementation 'org.springframework.ai:spring-ai-starter-model-openai'
+
     // Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
