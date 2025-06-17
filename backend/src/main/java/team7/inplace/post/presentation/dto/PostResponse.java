@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import team7.inplace.global.cursor.CursorResponse;
 import team7.inplace.global.cursor.CursorResult;
+import team7.inplace.post.persistence.dto.CommentQueryResult;
 import team7.inplace.post.persistence.dto.PostQueryResult;
 import team7.inplace.user.presentation.dto.UserResponse;
 
@@ -132,5 +133,29 @@ public class PostResponse {
         String imageHash
     ) {
 
+    }
+
+    public record DetailedComment(
+        Long commentId,
+        UserResponse.Info author,
+        String content,
+        Boolean selfLike,
+        Integer totalLikeCount,
+        Boolean isMine,
+        String createdAt
+    ) {
+
+        public static DetailedComment from(CommentQueryResult.DetailedComment commentQueryResult) {
+            return new DetailedComment(
+                commentQueryResult.commentId(),
+                new UserResponse.Info(commentQueryResult.userNickname(),
+                    commentQueryResult.userImageUrl()),
+                commentQueryResult.content(),
+                commentQueryResult.selfLike(),
+                commentQueryResult.totalLikeCount(),
+                commentQueryResult.isMine(),
+                formatCreatedAt(commentQueryResult.createdAt())
+            );
+        }
     }
 }

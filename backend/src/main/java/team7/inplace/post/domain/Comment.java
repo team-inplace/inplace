@@ -16,12 +16,14 @@ public class Comment extends BaseEntity {
     private Long postId;
     private Long authorId;
     private String content;
+    private Integer totalLikeCount = 0;
 
     public Comment(Long postId, Long authorId, String content) {
         validateContent(content);
         this.postId = postId;
         this.authorId = authorId;
         this.content = content;
+        this.totalLikeCount = 0;
     }
 
     private void validateContent(String content) {
