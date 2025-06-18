@@ -63,19 +63,10 @@ export default function Header() {
           <MobileOnlyIcons>
             {!isMenuOpen ? (
               <>
-                <ThemeButton
-                  onClick={toggleTheme}
-                  aria-label="모바일 테마 변경"
-                  $isDarkMode={isDarkMode}
-                  style={{ position: 'fixed', right: '60px' }}
-                >
+                <ThemeButton onClick={toggleTheme} aria-label="모바일 테마 변경" $isDarkMode={isDarkMode}>
                   {isDarkMode ? <FiSun size={20} color="white" /> : <FiMoon size={20} color="black" />}
                 </ThemeButton>
-                <MobileMenuButton
-                  onClick={() => setIsMenuOpen(true)}
-                  aria-label="모바일 메뉴 열기"
-                  style={{ position: 'fixed', right: '20px' }}
-                >
+                <MobileMenuButton onClick={() => setIsMenuOpen(true)} aria-label="모바일 메뉴 열기">
                   <RiMenuLine size={24} color={isDarkMode ? 'white' : 'grey'} />
                 </MobileMenuButton>
               </>
@@ -90,11 +81,7 @@ export default function Header() {
                     />
                   </FixedMarginSearchBar>
                 )}
-                <MobileMenuButton
-                  onClick={() => setIsMenuOpen(false)}
-                  aria-label="모바일 메뉴 닫기"
-                  style={{ position: 'fixed', right: '20px' }}
-                >
+                <MobileMenuButton onClick={() => setIsMenuOpen(false)} aria-label="모바일 메뉴 닫기">
                   <RiCloseLine size={26} color={isDarkMode ? 'white' : 'grey'} />
                 </MobileMenuButton>
               </>
@@ -163,6 +150,7 @@ const MobileOnlyIcons = styled.div`
   @media screen and (max-width: 768px) {
     display: flex;
     align-items: center;
+    gap: 10px;
   }
 `;
 
