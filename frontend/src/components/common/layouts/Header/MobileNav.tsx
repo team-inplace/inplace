@@ -141,7 +141,7 @@ const Container = styled(motion.nav)<{ $isOpen: boolean }>`
   @media screen and (max-width: 768px) {
     display: flex;
     position: absolute;
-    top: 66px;
+    top: 100%;
     left: 0;
     width: 100%;
     flex-direction: column;

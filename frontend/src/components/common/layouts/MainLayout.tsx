@@ -5,7 +5,7 @@ import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { ErrorBoundary } from 'react-error-boundary';
 import Footer from '@/components/common/layouts/Footer';
 import Loading from '@/components/common/layouts/Loading';
-import Header from '@/components/common/layouts/Header/index';
+import Header, { HEADER_HEIGHT } from '@/components/common/layouts/Header/index';
 import MainSkeleton from '@/components/Main/MainSkeleton';
 import DetailSkeleton from '@/components/Detail/DetailSkeleton';
 import useScrollToTop from '@/hooks/useScrollToTop';
@@ -24,21 +24,23 @@ export default function MainLayout() {
   };
   useScrollToTop();
   return (
-    <Wrapper>
+    <>
       <Header />
-      <InnerWrapper>
-        <QueryErrorResetBoundary>
-          {({ reset }) => (
-            <ErrorBoundary FallbackComponent={ErrorComponent} onReset={reset}>
-              <Suspense fallback={renderSkeleton()}>
-                <Outlet />
-              </Suspense>
-            </ErrorBoundary>
-          )}
-        </QueryErrorResetBoundary>
-      </InnerWrapper>
-      <Footer />
-    </Wrapper>
+      <Wrapper>
+        <InnerWrapper>
+          <QueryErrorResetBoundary>
+            {({ reset }) => (
+              <ErrorBoundary FallbackComponent={ErrorComponent} onReset={reset}>
+                <Suspense fallback={renderSkeleton()}>
+                  <Outlet />
+                </Suspense>
+              </ErrorBoundary>
+            )}
+          </QueryErrorResetBoundary>
+        </InnerWrapper>
+        <Footer />
+      </Wrapper>
+    </>
   );
 }
 
@@ -56,6 +58,7 @@ const Wrapper = styled.div`
 `;
 
 const InnerWrapper = styled.div`
+  margin-top: ${HEADER_HEIGHT}px;
   display: flex;
   flex-grow: 1;
   flex-direction: column;

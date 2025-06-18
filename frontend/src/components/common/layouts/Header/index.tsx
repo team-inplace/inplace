@@ -88,14 +88,13 @@ export default function Header() {
             )}
           </MobileOnlyIcons>
         </RightSection>
+        <MobileNav isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
       </HeaderContentWrapper>
-
-      <MobileNav isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
     </HeaderContainer>
   );
 }
 
-export const HEADER_HEIGHT = 80;
+export const HEADER_HEIGHT = 60;
 
 const HeaderContainer = styled.header``;
 
@@ -106,7 +105,14 @@ const HeaderContentWrapper = styled.div`
   margin-top: 10px;
 
   @media (max-width: 768px) {
+    position: relative;
     padding: 0 20px;
+    width: 90%;
+    position: fixed;
+    top: 0;
+    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#292929' : '#f7fcff')};
+    margin-top: 0px;
+    z-index: 10000;
   }
 `;
 
