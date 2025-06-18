@@ -58,10 +58,14 @@ const Wrapper = styled.div`
 `;
 
 const InnerWrapper = styled.div`
-  margin-top: ${HEADER_HEIGHT}px;
   display: flex;
   flex-grow: 1;
   flex-direction: column;
   width: 100%;
   margin-bottom: 40px;
+  align-items: center;
+
+  @media screen and (max-width: 768px) {
+    margin-top: ${HEADER_HEIGHT}px;
+  }
 `;

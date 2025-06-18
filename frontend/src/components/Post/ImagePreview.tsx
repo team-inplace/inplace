@@ -54,6 +54,10 @@ const ShowFileWapper = styled.div`
   height: 200px;
   flex-shrink: 0;
   flex-grow: 0;
+  @media screen and (max-width: 768px) {
+    width: 150px;
+    height: 150px;
+  }
 `;
 const ShowFileImage = styled.img`
   width: 100%;
@@ -93,4 +97,9 @@ const BlankCamera = styled.button`
   flex-shrink: 0;
   flex-grow: 0;
   padding: 0;
+
+  @media screen and (max-width: 768px) {
+    width: 150px;
+    height: 150px;
+  }
 `;

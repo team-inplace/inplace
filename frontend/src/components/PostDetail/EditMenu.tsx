@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { RxDotsVertical } from 'react-icons/rx';
 import { useRef, useState } from 'react';
 import useClickOutside from '@/hooks/useClickOutside';
+import useIsMobile from '@/hooks/useIsMobile';
 
 interface EditMenuProps {
   mine?: boolean;
@@ -15,6 +16,7 @@ interface EditMenuProps {
 export default function EditMenu({ mine, onEdit, onDelete, onReport, menuItems, ariaLabels }: EditMenuProps) {
   const [showEditOptions, setShowEditOptions] = useState(false);
   const editRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
 
   useClickOutside([editRef], () => setShowEditOptions(false));
   const handleMenuClick = (callback?: () => void) => () => {
@@ -25,7 +27,7 @@ export default function EditMenu({ mine, onEdit, onDelete, onReport, menuItems, 
   return (
     <EditMenuWrapper ref={editRef}>
       <EditBtn aria-label={`${ariaLabels} 편집 드롭다운 버튼`} onClick={() => setShowEditOptions((v) => !v)}>
-        <RxDotsVertical size={22} />
+        <RxDotsVertical size={isMobile ? 20 : 22} />
       </EditBtn>
       {showEditOptions && (
         <EditDropdown>
@@ -63,6 +65,10 @@ export default function EditMenu({ mine, onEdit, onDelete, onReport, menuItems, 
 const EditMenuWrapper = styled.div`
   position: relative;
   height: fit-content;
+
+  @media screen and (max-width: 768px) {
+    margin-top: 6px;
+  }
 `;
 
 const EditBtn = styled.button`
@@ -92,6 +98,7 @@ const EditItem = styled.button`
   background: none;
   border: none;
   cursor: pointer;
+  color: black;
 
   &:hover {
     background-color: #e9e9e9;

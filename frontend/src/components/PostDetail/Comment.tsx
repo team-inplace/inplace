@@ -92,15 +92,15 @@ export default function Comment({ id }: { id: string }) {
         )}
         {/* todo - 언급기능 */}
         <CommentContainer>
-          <ProfileImg>
-            <FallbackImage src={isAuthenticated ? userInfo?.imgUrl : ''} alt="profile" />
-          </ProfileImg>
+          <UserInfo>
+            <ProfileImg>
+              <FallbackImage src={isAuthenticated ? userInfo?.imgUrl : ''} alt="profile" />
+            </ProfileImg>
+            <Text size="s" weight="normal">
+              {isAuthenticated ? userInfo?.nickname : `사용자`}
+            </Text>
+          </UserInfo>
           <Content>
-            <UserInfo>
-              <Text size="s" weight="normal">
-                {isAuthenticated ? userInfo?.nickname : `사용자`}
-              </Text>
-            </UserInfo>
             <CommentInputWrapper onSubmit={handleCommentSubmit}>
               <TextArea
                 ref={textareaRef}
@@ -170,8 +170,9 @@ const SendButton = styled.button`
 const CommentContainer = styled.div`
   display: flex;
   width: 100%;
-  gap: 8px;
+  gap: 14px;
   padding: 14px;
+  flex-direction: column;
   box-sizing: border-box;
 `;
 const Content = styled.div`

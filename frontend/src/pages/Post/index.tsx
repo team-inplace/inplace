@@ -11,14 +11,22 @@ import LoginModal from '@/components/common/modals/LoginModal';
 import useClickOutside from '@/hooks/useClickOutside';
 import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import ScrollToTop from '@/components/common/Button/ScrollToTop';
+import useIsMobile from '@/hooks/useIsMobile';
+import useTheme from '@/hooks/useTheme';
+import { HEADER_HEIGHT } from '@/components/common/layouts/Header';
+import useScrollToTop from '@/hooks/useScrollToTop';
 
 export default function PostPage() {
   const { isAuthenticated } = useAuth();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [activeCategory, setActiveCategory] = useState('전체 게시글');
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const isMobile = useIsMobile();
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
   const navigate = useNavigate();
   const location = useLocation();
+  const handleScrollToTop = useScrollToTop();
 
   const getInitialSortOption = (): string => {
     const searchParams = new URLSearchParams(location.search);
@@ -66,40 +74,45 @@ export default function PostPage() {
     setShowSortOptions(false);
   });
   return (
-    <>
-      <Header>
-        <PostCategory>
-          <Tap
-            aria-label="전체 게시글 보기"
-            $active={activeCategory === '전체 게시글'}
-            onClick={() => setActiveCategory('전체 게시글')}
+    <Wrapper>
+      <MobileHeader>
+        <Header>
+          <PostCategory>
+            <Tap
+              aria-label="전체 게시글 보기"
+              $active={activeCategory === '전체 게시글'}
+              onClick={() => {
+                setActiveCategory('전체 게시글');
+                handleScrollToTop();
+              }}
+            >
+              {isMobile ? '전체' : '전체 게시글'}
+            </Tap>
+          </PostCategory>
+          <WriteButton aria-label="게시판 글쓰기" size="small" onClick={handlePosting}>
+            <GoPencil size={16} />
+            글쓰기
+          </WriteButton>
+        </Header>
+        <SortSection ref={dropdownRef}>
+          <StyledButton
+            aria-label="게시판 정렬"
+            variant="white"
+            size="small"
+            onClick={() => setShowSortOptions(!showSortOptions)}
           >
-            전체 게시글
-          </Tap>
-        </PostCategory>
-        <WriteButton aria-label="게시판 글쓰기" size="small" onClick={handlePosting}>
-          <GoPencil size={16} />
-          글쓰기
-        </WriteButton>
-      </Header>
-      <SortSection ref={dropdownRef}>
-        <StyledButton
-          aria-label="게시판 정렬"
-          variant="white"
-          size="small"
-          onClick={() => setShowSortOptions(!showSortOptions)}
-        >
-          <span>{sortLabel[sortOption]}</span>
-          <IoIosArrowDown size={16} />
-        </StyledButton>
-        {showSortOptions && (
-          <SortDropdown>
-            <SortItem onClick={() => handleSortChange('createAt')}>최신순 {sortOption === 'createAt'}</SortItem>
-            <SortItem onClick={() => handleSortChange('popularity')}>인기순 {sortOption === 'popularity'}</SortItem>
-          </SortDropdown>
-        )}
-      </SortSection>
-      <Wrapper>
+            <span>{sortLabel[sortOption]}</span>
+            <IoIosArrowDown size={16} />
+          </StyledButton>
+          {showSortOptions && (
+            <SortDropdown>
+              <SortItem onClick={() => handleSortChange('createAt')}>최신순 {sortOption === 'createAt'}</SortItem>
+              <SortItem onClick={() => handleSortChange('popularity')}>인기순 {sortOption === 'popularity'}</SortItem>
+            </SortDropdown>
+          )}
+        </SortSection>
+      </MobileHeader>
+      <PostWrapper>
         <PostList
           items={postList}
           activeCategory={activeCategory}
@@ -107,35 +120,65 @@ export default function PostPage() {
           isFetchingNextPage={isFetchingNextPage}
           hasNextPage={hasNextPage}
         />
-      </Wrapper>
+      </PostWrapper>
+      <MobileWriteButton
+        aria-label="모바일 게시판 글쓰기"
+        size="small"
+        variant={isDark ? 'outline' : 'blackOutline'}
+        onClick={handlePosting}
+      >
+        <GoPencil size={20} />
+      </MobileWriteButton>
       <ScrollToTop />
       {showLoginModal && (
         <LoginModal immediateOpen currentPath={location.pathname} onClose={() => setShowLoginModal(false)} />
       )}
-    </>
+    </Wrapper>
   );
 }
 
-const PostCategory = styled.div``;
 const Wrapper = styled.div`
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+`;
+const PostCategory = styled.div``;
+const PostWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 50px;
 
   @media screen and (max-width: 768px) {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 40px;
-    align-items: center;
+    width: 90%;
+    margin-top: 32px;
   }
 `;
 
 const Header = styled.div`
+  width: 100%;
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
   align-items: center;
+  @media screen and (max-width: 768px) {
+    width: 90%;
+    margin-top: 0px;
+  }
+`;
+
+const MobileHeader = styled.div`
+  @media screen and (max-width: 768px) {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    position: fixed;
+    top: ${HEADER_HEIGHT}px;
+    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#292929' : '#ecfbfb')};
+    padding: 10px 0px;
+  }
 `;
 const Tap = styled.button<{ $active: boolean }>`
   color: ${({ $active, theme }) => {
@@ -146,6 +189,11 @@ const Tap = styled.button<{ $active: boolean }>`
   background: none;
   font-size: 24px;
   font-weight: bold;
+
+  @media screen and (max-width: 768px) {
+    font-size: 16px;
+    padding: 0;
+  }
 `;
 const SortSection = styled.div`
   position: relative;
@@ -154,8 +202,8 @@ const SortSection = styled.div`
   margin-top: 10px;
 
   @media screen and (max-width: 768px) {
-    margin-bottom: 6px;
-    margin-top: -14px;
+    width: 90%;
+    margin: 0;
   }
 `;
 
@@ -191,7 +239,26 @@ const WriteButton = styled(Button)`
   &:hover {
     background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#1b1a1a' : '#e5f6f6')};
   }
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
 `;
+const MobileWriteButton = styled(Button)`
+  display: none;
+  @media screen and (max-width: 768px) {
+    display: block;
+    position: fixed;
+    right: max(30px, calc(50% - 480px));
+    bottom: 8%;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#292929' : '#ecfbfb')};
+    cursor: pointer;
+    z-index: 10;
+  }
+`;
+
 const SortDropdown = styled.div`
   position: absolute;
   top: 100%;

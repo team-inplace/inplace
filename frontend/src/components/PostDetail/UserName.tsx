@@ -23,6 +23,10 @@ const UserTitleWrapper = styled.div`
   display: flex;
   gap: 6px;
   align-items: center;
+
+  @media screen and (max-width: 768px) {
+    gap: 2px;
+  }
 `;
 
 const UserTier = styled.img`
@@ -35,4 +39,8 @@ const UserTitle = styled.img`
   width: auto;
   object-fit: contain;
   vertical-align: middle;
+
+  @media screen and (max-width: 768px) {
+    margin-left: 4px;
+  }
 `;

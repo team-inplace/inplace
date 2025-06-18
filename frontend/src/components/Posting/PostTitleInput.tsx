@@ -24,4 +24,8 @@ const InputField = styled.input`
   &::placeholder {
     color: #979797;
   }
+
+  @media screen and (max-width: 768px) {
+    font-size: 18px;
+  }
 `;

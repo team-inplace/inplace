@@ -16,6 +16,7 @@ import LoginModal from '@/components/common/modals/LoginModal';
 import { useDeletePost } from '@/api/hooks/useDeletePost';
 import EditMenu from '@/components/PostDetail/EditMenu';
 import UserName from '@/components/PostDetail/UserName';
+import useIsMobile from '@/hooks/useIsMobile';
 
 export default function PostDetailPage() {
   const { isAuthenticated } = useAuth();
@@ -24,6 +25,7 @@ export default function PostDetailPage() {
   const navigate = useNavigate();
   const { activeCategory } = location.state;
   const queryClient = useQueryClient();
+  const isMobile = useIsMobile();
 
   const { data: postData } = useGetPostData(id);
   const { mutate: deletePost } = useDeletePost();
@@ -89,7 +91,7 @@ export default function PostDetailPage() {
         <Text size="s" weight="bold">
           {activeCategory}
         </Text>
-        <IoIosArrowForward size={20} />
+        <IoIosArrowForward size={isMobile ? 16 : 20} />
       </CategoryName>
       <PostContainer>
         <PostTop>
@@ -103,7 +105,7 @@ export default function PostDetailPage() {
                 tierImageUrl={postData.author.tierImageUrl}
                 badgeImageUrl={postData.author.badgeImageUrl}
               />
-              <StyledText size="xs" weight="normal">
+              <StyledText size="s" weight="normal">
                 {postData.createAt}
               </StyledText>
             </UserTitleTop>
@@ -120,7 +122,7 @@ export default function PostDetailPage() {
           <Paragraph size="m" weight="bold">
             {postData.title}
           </Paragraph>
-          <StyledText size="xs" weight="normal">
+          <StyledText size="s" weight="normal">
             {postData.content}
           </StyledText>
         </Content>
@@ -145,34 +147,34 @@ export default function PostDetailPage() {
           onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
         >
           {isLike ? (
-            <PiHeartFill color="#fe7373" size={18} data-testid="PiHeartFill" />
+            <PiHeartFill color="#fe7373" size={isMobile ? 14 : 18} data-testid="PiHeartFill" />
           ) : (
-            <PiHeartLight size={18} data-testid="PiHeartLight" />
+            <PiHeartLight size={isMobile ? 14 : 18} data-testid="PiHeartLight" />
           )}
-          <Text size="xs" weight="normal">
+          <Text size="s" weight="normal">
             {postData.totalLikeCount}
           </Text>
         </Count>
-        <StyledText size="xs" weight="normal">
+        <StyledText size="s" weight="normal">
           {postData.createAt}
         </StyledText>
       </PostContainer>
       <CommentTitle>
-        <Text size="xs" weight="normal">
+        <Text size="s" weight="normal">
           댓글 {postData.totalCommentCount}건
         </Text>
       </CommentTitle>
       <Separator />
       <Comment id={id} />
       <StyledButton size="small" variant="outline" onClick={() => navigate('/post')}>
-        목록보기
+        {isMobile ? '목록' : '목록보기'}
       </StyledButton>
       {isModalOpen && (
         <ModalOverlay onClick={() => setIsModalOpen(false)}>
           <ModalContent onClick={(e) => e.stopPropagation()}>
             <img src={selectedImage} alt="확대 이미지" style={{ maxWidth: '90vw', maxHeight: '90vh' }} />
             <CloseBtn type="button" onClick={() => setIsModalOpen(false)}>
-              <IoMdClose size={30} />
+              <IoMdClose size={isMobile ? 24 : 30} />
             </CloseBtn>
           </ModalContent>
         </ModalOverlay>
@@ -189,6 +191,9 @@ const Wrapper = styled.div`
   flex-direction: column;
   gap: 14px;
   padding-top: 20px;
+  @media screen and (max-width: 768px) {
+    width: 90%;
+  }
 `;
 const CategoryName = styled(Link)`
   display: flex;
@@ -201,6 +206,10 @@ const PostContainer = styled.div`
   flex-direction: column;
   gap: 26px;
   padding: 10px 0px 30px;
+  @media screen and (max-width: 768px) {
+    gap: 18px;
+    padding: 10px 0px;
+  }
 `;
 const PostTop = styled.div`
   display: flex;
@@ -210,12 +219,18 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   gap: 14px;
+  @media screen and (max-width: 768px) {
+    gap: 10px;
+  }
 `;
 
 const UserTitleTop = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  @media screen and (max-width: 768px) {
+    gap: 4px;
+  }
 `;
 const UserInfo = styled.div`
   position: relative;
@@ -223,11 +238,18 @@ const UserInfo = styled.div`
   justify-content: space-between;
   gap: 10px;
   align-items: center;
+  @media screen and (max-width: 768px) {
+    gap: 6px;
+  }
 `;
 const ProfileImg = styled.div`
   height: 56px;
   aspect-ratio: 1 / 1;
   border-radius: 50%;
+
+  @media screen and (max-width: 768px) {
+    height: 50px;
+  }
 `;
 
 const Count = styled.div`
@@ -246,6 +268,10 @@ const Count = styled.div`
   &:hover {
     background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#232323' : '#deeeee')};
   }
+  @media screen and (max-width: 768px) {
+    width: 50px;
+    border: 1px solid #515151;
+  }
 `;
 const ImageList = styled.div`
   display: flex;
@@ -258,6 +284,9 @@ const ImageList = styled.div`
   &::-webkit-scrollbar {
     display: none;
   }
+  @media screen and (max-width: 768px) {
+    gap: 6px;
+  }
 `;
 const PostImg = styled.img`
   border-radius: 16px;
@@ -267,12 +296,21 @@ const PostImg = styled.img`
   scroll-snap-align: start;
   flex-shrink: 0;
   cursor: pointer;
+
+  @media screen and (max-width: 768px) {
+    border-radius: 10px;
+    max-width: 90%;
+  }
 `;
 
 const StyledButton = styled(Button)`
   width: 90px;
   margin-left: 90%;
   cursor: pointer;
+  @media screen and (max-width: 768px) {
+    width: 60px;
+    margin-left: 80%;
+  }
 `;
 
 const ModalOverlay = styled.div`
@@ -310,6 +348,9 @@ const StyledText = styled(Text)`
   line-height: 120%;
   white-space: pre-line;
   color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#c5c5c5' : '#606060')};
+  @media screen and (max-width: 768px) {
+    line-height: 140%;
+  }
 `;
 
 const Separator = styled.div`
@@ -319,7 +360,11 @@ const Separator = styled.div`
 `;
 
 const CommentTitle = styled.div`
-  width: 70px;
-  padding: 0px 0px xpx 8px;
-  text-align: center;
+  width: 100%;
+  padding: 0px 0px 8px 0px;
+  text-align: left;
+
+  @media screen and (max-width: 768px) {
+    padding: 0;
+  }
 `;

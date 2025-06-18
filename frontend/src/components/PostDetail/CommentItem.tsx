@@ -17,6 +17,7 @@ import useAutoResizeTextarea from '@/hooks/Post/useAutoResizeTextarea';
 import useTheme from '@/hooks/useTheme';
 import EditMenu from './EditMenu';
 import UserName from './UserName';
+import useIsMobile from '@/hooks/useIsMobile';
 
 export default function CommentItem({
   item,
@@ -32,6 +33,7 @@ export default function CommentItem({
   const queryClient = useQueryClient();
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
+  const isMobile = useIsMobile();
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isLike, setIsLike] = useState(item.selfLike);
@@ -187,11 +189,11 @@ export default function CommentItem({
           </form>
         ) : (
           <>
-            <Paragraph size="xs" weight="normal">
+            <Paragraph size="s" weight="normal">
               {item.content}
             </Paragraph>
             <CommentInfo>
-              <StyledText size="xs" weight="normal">
+              <StyledText size="s" weight="normal">
                 {item.createAt}
               </StyledText>
               <Count
@@ -200,11 +202,11 @@ export default function CommentItem({
                 onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
               >
                 {isLike ? (
-                  <PiHeartFill color="#fe7373" size={18} data-testid="PiHeartFill" />
+                  <PiHeartFill color="#fe7373" size={isMobile ? 14 : 18} data-testid="PiHeartFill" />
                 ) : (
-                  <PiHeartLight size={18} data-testid="PiHeartLight" />
+                  <PiHeartLight size={isMobile ? 14 : 18} data-testid="PiHeartLight" />
                 )}
-                <Text size="xs" weight="normal">
+                <Text size="s" weight="normal">
                   {item.totalLikeCount}
                 </Text>
               </Count>
@@ -228,6 +230,11 @@ const Wrapper = styled.div`
   border: none;
   justify-content: space-between;
   gap: 8px;
+
+  @media screen and (max-width: 768px) {
+    padding: 8px 0px;
+    gap: 0px;
+  }
 `;
 const Content = styled.div`
   width: calc(100%-40px);
@@ -254,11 +261,17 @@ const UserInfo = styled.div`
   display: flex;
   gap: 8px;
   align-items: center;
+  @media screen and (max-width: 768px) {
+    gap: 4px;
+  }
 `;
 const ProfileImg = styled.div`
   height: 34px;
   aspect-ratio: 1 / 1;
   border-radius: 50%;
+  @media screen and (max-width: 768px) {
+    height: 30px;
+  }
 `;
 
 const StyledText = styled(Text)`

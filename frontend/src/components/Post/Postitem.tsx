@@ -40,6 +40,7 @@ export default function Postitem({ item, activeCategory }: { item: PostListData;
             {truncatedText}
           </StyledText>
         </Content>
+        {item.photoUrls && isMobile && <PostImg src={item.photoUrls} />}
         <ItemInfo>
           <Count>
             {item.selfLike ? (
@@ -47,22 +48,22 @@ export default function Postitem({ item, activeCategory }: { item: PostListData;
             ) : (
               <PiHeartLight size={18} data-testid="PiHeartLight" />
             )}
-            <StyledText size="xs" weight="normal">
+            <StyledText size="s" weight="normal">
               {item.totalLikeCount}
             </StyledText>
           </Count>
           <Count>
             <HiOutlineChatBubbleOvalLeft size={18} />
-            <StyledText size="xs" weight="normal">
-              {item.totalCommenCount}
+            <StyledText size="s" weight="normal">
+              {item.totalCommentCount}
             </StyledText>
           </Count>
-          <StyledText size="xs" weight="normal">
+          <StyledText size="s" weight="normal">
             {item.createAt}
           </StyledText>
         </ItemInfo>
       </LeftInfo>
-      {item.photoUrls && <PostImg src={item.photoUrls} />}
+      {item.photoUrls && !isMobile && <PostImg src={item.photoUrls} />}
     </Wrapper>
   );
 }
@@ -79,6 +80,14 @@ const Wrapper = styled(Link)`
   &:hover {
     background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#222222' : '#eaf5f5')};
   }
+
+  @media screen and (max-width: 768px) {
+    padding: 10px 0px;
+    flex-direction: column;
+    &:hover {
+      background: none;
+    }
+  }
 `;
 const LeftInfo = styled.div`
   width: 100%;
@@ -87,6 +96,10 @@ const LeftInfo = styled.div`
   box-sizing: border-box;
   gap: 10px;
   padding: 0px 10px;
+
+  @media screen and (max-width: 768px) {
+    padding: 10px 0px;
+  }
 `;
 const Content = styled.div`
   padding: 10px 0px;
@@ -109,13 +122,21 @@ const ItemInfo = styled.div`
   gap: 8px;
   color: #a9a9a9;
   align-items: end;
+
+  @media screen and (max-width: 768px) {
+    margin-top: 2px;
+  }
 `;
 const Count = styled.div`
-  align-items: end;
+  align-items: flex-start;
   display: flex;
-  gap: 1px;
+  gap: 4px;
   svg {
     color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'white' : '#505050')};
+  }
+  @media screen and (max-width: 768px) {
+    gap: 2px;
+    align-items: center;
   }
 `;
 
@@ -125,6 +146,12 @@ const PostImg = styled.img`
   aspect-ratio: 1 / 1;
   object-fit: cover;
   background-color: black;
+
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
 `;
 const StyledText = styled(Text)`
   line-height: 120%;

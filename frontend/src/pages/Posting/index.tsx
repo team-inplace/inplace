@@ -82,6 +82,9 @@ export default function PostingPage() {
 const PostContainer = styled.div`
   width: 100%;
   margin-top: 20px;
+  @media screen and (max-width: 768px) {
+    width: 90%;
+  }
 `;
 const Form = styled.form`
   display: flex;
@@ -89,6 +92,10 @@ const Form = styled.form`
   width: 100%;
   gap: 20px;
   align-items: center;
+
+  @media screen and (max-width: 768px) {
+    gap: 10px;
+  }
 `;
 const FileInput = styled.input`
   display: none;

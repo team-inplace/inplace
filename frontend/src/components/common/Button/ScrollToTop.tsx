@@ -22,6 +22,11 @@ const ButtonWrapper = styled(Button)`
   width: 46px;
   height: 46px;
   border-radius: 50%;
+  background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#292929' : '#ecfbfb')};
   cursor: pointer;
   z-index: 10;
+
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
 `;

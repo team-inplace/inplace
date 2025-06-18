@@ -94,9 +94,12 @@ export default function Header() {
   );
 }
 
-export const HEADER_HEIGHT = 60;
+export const HEADER_HEIGHT = 50;
 
-const HeaderContainer = styled.header``;
+const HeaderContainer = styled.header`
+  width: 960px;
+  margin: 0 auto;
+`;
 
 const HeaderContentWrapper = styled.div`
   display: flex;
@@ -109,6 +112,7 @@ const HeaderContentWrapper = styled.div`
     padding: 0 20px;
     width: 90%;
     position: fixed;
+    max-height: 50px;
     top: 0;
     background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#292929' : '#f7fcff')};
     margin-top: 0px;

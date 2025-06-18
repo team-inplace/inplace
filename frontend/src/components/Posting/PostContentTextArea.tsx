@@ -22,10 +22,10 @@ export default function PostContentTextArea({ value, onChange, textareaRef, hand
 }
 const TextArea = styled.textarea`
   width: 100%;
-  min-height: 400px;
+  min-height: 360px;
   padding: 10px;
   box-sizing: border-box;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.4;
   display: flex;
   border: none;
@@ -41,5 +41,8 @@ const TextArea = styled.textarea`
   &:focus {
     outline: none;
     border: none;
+  }
+  @media screen and (max-width: 768px) {
+    min-height: 260px;
   }
 `;
