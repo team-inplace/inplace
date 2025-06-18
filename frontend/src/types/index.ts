@@ -281,7 +281,7 @@ export type PostListData = {
   content: string;
   photoUrls?: string;
   totalLikeCount: number;
-  totalCommenCount: number;
+  totalCommentCount: number;
   createAt: string;
   isMine: boolean;
   selfLike: boolean;
