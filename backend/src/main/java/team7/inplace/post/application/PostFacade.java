@@ -1,5 +1,6 @@
 package team7.inplace.post.application;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,7 @@ import team7.inplace.post.application.dto.PostCommand.CreatePost;
 import team7.inplace.post.application.dto.PostCommand.UpdatePost;
 import team7.inplace.post.persistence.dto.CommentQueryResult;
 import team7.inplace.post.persistence.dto.PostQueryResult.DetailedPost;
+import team7.inplace.post.persistence.dto.PostQueryResult.UserSuggestion;
 import team7.inplace.security.util.AuthorizationUtil;
 
 @Facade
@@ -64,5 +66,10 @@ public class PostFacade {
     ) {
         var userId = AuthorizationUtil.getUserIdOrNull();
         return postService.getCommentsByPostId(postId, userId, pageable);
+    }
+
+    public List<UserSuggestion> getCommentUserSuggestions(Long postId, String keyword) {
+        var userId = AuthorizationUtil.getUserIdOrThrow();
+        return postService.getUserSuggestions(userId, postId, keyword);
     }
 }

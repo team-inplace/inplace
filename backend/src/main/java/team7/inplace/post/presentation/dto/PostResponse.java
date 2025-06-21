@@ -158,4 +158,19 @@ public class PostResponse {
             );
         }
     }
+
+    public record UserSuggestion(
+        Long userId,
+        String nickname,
+        String imageUrl
+    ) {
+
+        public static UserSuggestion from(PostQueryResult.UserSuggestion userSuggestion) {
+            return new UserSuggestion(
+                userSuggestion.userId(),
+                userSuggestion.userNickname(),
+                userSuggestion.userImageUrl()
+            );
+        }
+    }
 }

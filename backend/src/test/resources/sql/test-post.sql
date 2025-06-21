@@ -1,8 +1,8 @@
-INSERT INTO users (id, username)
-VALUES (1, '유저1'),
-       (2, '유저2'),
-       (3, '유저3'),
-       (4, '유저4');
+INSERT INTO users (id, username, nickname)
+VALUES (1, '유저1', 'user_1'),
+       (2, '유저2', 'user_2'),
+       (3, '유저3', 'user_3'),
+       (4, '유저4', 'user_4');
 
 INSERT INTO posts (id, title, content, author_id, image_infos)
 VALUES (1, '첫 번째 게시글', '첫 번째 게시글 내용', 1,
@@ -61,3 +61,13 @@ VALUES (1, '첫 번째 게시글', '첫 번째 게시글 내용', 1,
                 \"imageHash\": \"vwx234\"
             }
         ]');
+
+INSERT INTO comments (id, content, author_id, post_id)
+VALUES (1, '첫 번째 댓글', 2, 1),
+       (2, '두 번째 댓글', 3, 1),
+       (3, '세 번째 댓글', 4, 2),
+       (4, '네 번째 댓글', 1, 2),
+       (5, '다섯 번째 댓글', 1, 3),
+       (6, '여섯 번째 댓글', 2, 3),
+       (7, '일곱 번째 댓글', 3, 4),
+       (8, '여덟 번째 댓글', 4, 4);

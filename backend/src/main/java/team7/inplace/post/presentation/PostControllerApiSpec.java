@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +22,7 @@ import team7.inplace.post.presentation.dto.PostRequest.UpsertComment;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertPost;
 import team7.inplace.post.presentation.dto.PostResponse.DetailedComment;
 import team7.inplace.post.presentation.dto.PostResponse.SimpleList;
+import team7.inplace.post.presentation.dto.PostResponse.UserSuggestion;
 
 @RequestMapping("/posts")
 @Tag(name = "게시글 관련 API", description = "게시글 관련 API입니다.")
@@ -87,5 +89,11 @@ public interface PostControllerApiSpec {
     ResponseEntity<Page<DetailedComment>> getCommentsByPostId(
         @PathVariable(value = "postId") Long postId,
         @PageableDefault(size = 10) Pageable pageable
+    );
+
+    @GetMapping("/{postId}/comments/complete")
+    ResponseEntity<List<UserSuggestion>> getCommentUserSuggestions(
+        @PathVariable(value = "postId") Long postId,
+        @RequestParam(value = "value", required = true) String value
     );
 }

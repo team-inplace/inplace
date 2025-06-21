@@ -1,5 +1,6 @@
 package team7.inplace.post.application;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -19,6 +20,7 @@ import team7.inplace.post.persistence.PostJpaRepository;
 import team7.inplace.post.persistence.PostReadRepository;
 import team7.inplace.post.persistence.dto.CommentQueryResult.DetailedComment;
 import team7.inplace.post.persistence.dto.PostQueryResult.DetailedPost;
+import team7.inplace.post.persistence.dto.PostQueryResult.UserSuggestion;
 
 @Service
 @Slf4j
@@ -108,5 +110,18 @@ public class PostService {
             throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
         }
         return commentReadRepository.findCommentsByPostId(postId, userId, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserSuggestion> getUserSuggestions(
+        Long userId, Long postId, String keyword
+    ) {
+        var suggestions = postReadRepository.findCommentUserSuggestions(postId, keyword);
+
+        return suggestions.stream()
+            .distinct()
+            .filter(suggestion -> !suggestion.userId().equals(userId))
+            .toList();
+
     }
 }

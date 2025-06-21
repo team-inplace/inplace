@@ -1,5 +1,6 @@
 package team7.inplace.post.presentation;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,6 +22,7 @@ import team7.inplace.post.presentation.dto.PostRequest.UpsertPost;
 import team7.inplace.post.presentation.dto.PostResponse.DetailedComment;
 import team7.inplace.post.presentation.dto.PostResponse.SimpleList;
 import team7.inplace.post.presentation.dto.PostResponse.SimplePost;
+import team7.inplace.post.presentation.dto.PostResponse.UserSuggestion;
 
 @RestController
 @RequiredArgsConstructor
@@ -123,6 +125,20 @@ public class PostController implements PostControllerApiSpec {
         var comments = postFacade.getCommentsByPostId(postId, pageable);
 
         var response = comments.map(DetailedComment::from);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Override
+    @GetMapping("/{postId}/comments/complete")
+    public ResponseEntity<List<UserSuggestion>> getCommentUserSuggestions(
+        @PathVariable(value = "postId") Long postId,
+        @RequestParam(value = "value", required = true) String value
+    ) {
+        var userSuggestions = postFacade.getCommentUserSuggestions(postId, value);
+
+        var response = userSuggestions.stream()
+            .map(UserSuggestion::from)
+            .toList();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
