@@ -10,6 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.global.cursor.CursorResult;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.PostErrorCode;
+import team7.inplace.liked.likedComment.domain.LikedComment;
+import team7.inplace.liked.likedComment.persistence.LikedCommentRepository;
+import team7.inplace.liked.likedPost.domain.LikedPost;
+import team7.inplace.liked.likedPost.persistence.LikedPostRepository;
 import team7.inplace.post.application.dto.PostCommand.CreateComment;
 import team7.inplace.post.application.dto.PostCommand.CreatePost;
 import team7.inplace.post.application.dto.PostCommand.UpdateComment;
@@ -29,23 +33,30 @@ public class PostService {
 
     private final PostJpaRepository postJpaRepository;
     private final PostReadRepository postReadRepository;
+    private final LikedPostRepository likedPostRepository;
+
     private final CommentJpaRepository commentJpaRepository;
     private final CommentReadRepository commentReadRepository;
+    private final LikedCommentRepository likedCommentRepository;
+
+
+    @Transactional(readOnly = true)
+    public CursorResult<DetailedPost> getPosts(
+        Long userId, Long cursorId, int size, String orderBy
+    ) {
+        return postReadRepository.findPostsOrderBy(userId, cursorId, size, orderBy);
+    }
+
+    @Transactional(readOnly = true)
+    public DetailedPost getPostById(Long postId, Long userId) {
+        return postReadRepository.findPostById(postId, userId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
+    }
 
     @Transactional
     public void createPost(CreatePost command, Long userId) {
         var post = command.toPostEntity(userId);
         postJpaRepository.save(post);
-    }
-
-    @Transactional
-    public void createComment(CreateComment command, Long userId) {
-        if (postJpaRepository.existsById(command.postId())) {
-            var comment = command.toEntity(userId);
-            commentJpaRepository.save(comment);
-            return;
-        }
-        throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
     }
 
     @Transactional
@@ -70,6 +81,45 @@ public class PostService {
     }
 
     @Transactional
+    public void likePost(Long postId, Long userId) {
+        if (!postJpaRepository.existsById(postId)) {
+            throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
+        }
+
+        var likedPost = likedPostRepository.findByUserIdAndPostId(userId, postId)
+            .orElseGet(() -> {
+                var newLikedPost = LikedPost.from(userId, postId);
+                return likedPostRepository.save(newLikedPost);
+            });
+
+        var isLiked = likedPost.updateLike();
+        if (isLiked) {
+            postJpaRepository.increaseLikeCount(postId);
+            return;
+        }
+        postJpaRepository.decreaseLikeCount(postId);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<DetailedComment> getCommentsByPostId(Long postId, Long userId, Pageable pageable) {
+        if (!postJpaRepository.existsById(postId)) {
+            throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
+        }
+        return commentReadRepository.findCommentsByPostId(postId, userId, pageable);
+    }
+
+    @Transactional
+    public void createComment(CreateComment command, Long userId) {
+        if (postJpaRepository.existsById(command.postId())) {
+            var comment = command.toEntity(userId);
+            commentJpaRepository.save(comment);
+            postJpaRepository.increaseCommentCount(command.postId());
+            return;
+        }
+        throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
+    }
+
+    @Transactional
     public void updateComment(UpdateComment updateCommand, Long userId) {
         if (!postJpaRepository.existsById(updateCommand.postId())) {
             throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
@@ -89,27 +139,27 @@ public class PostService {
             .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));
 
         comment.deleteSoftly(userId);
+        postJpaRepository.decreaseCommentCount(postId);
     }
 
-    @Transactional(readOnly = true)
-    public CursorResult<DetailedPost> getPosts(
-        Long userId, Long cursorId, int size, String orderBy
-    ) {
-        return postReadRepository.findPostsOrderBy(userId, cursorId, size, orderBy);
-    }
-
-    @Transactional(readOnly = true)
-    public DetailedPost getPostById(Long postId, Long userId) {
-        return postReadRepository.findPostById(postId, userId)
-            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
-    }
-
-    @Transactional(readOnly = true)
-    public Page<DetailedComment> getCommentsByPostId(Long postId, Long userId, Pageable pageable) {
-        if (!postJpaRepository.existsById(postId)) {
-            throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
+    @Transactional
+    public void likeComment(Long postId, Long commentId, Long userId) {
+        if (!commentJpaRepository.existsById(commentId)) {
+            throw InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND);
         }
-        return commentReadRepository.findCommentsByPostId(postId, userId, pageable);
+
+        var likedComment = likedCommentRepository.findByUserIdAndCommentId(userId, commentId)
+            .orElseGet(() -> {
+                var newLikedComment = LikedComment.from(userId, commentId);
+                return likedCommentRepository.save(newLikedComment);
+            });
+
+        var isLiked = likedComment.updateLike();
+        if (isLiked) {
+            commentJpaRepository.increaseLikeCount(commentId);
+            return;
+        }
+        commentJpaRepository.decreaseLikeCount(commentId);
     }
 
     @Transactional(readOnly = true)
