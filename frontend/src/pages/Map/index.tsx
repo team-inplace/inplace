@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import MapWindow from '@/components/Map/MapWindow';
 import PlaceSection from '@/components/Map/PlaceSection';
@@ -20,6 +20,8 @@ export default function MapPage() {
   const [isFilterBarOpened, setIsFilterBarOpened] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [isChangedLocation, setIsChangedLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [shouldRestoreScroll, setShouldRestoreScroll] = useState(false);
+
   const filterRef = useRef<HTMLDivElement | null>(null);
   const {
     center,
@@ -89,6 +91,31 @@ export default function MapPage() {
       return newExpandedState;
     });
   }, []);
+
+  useEffect(() => {
+    if (sessionStorage.getItem('fromDetail') === 'true') {
+      const isMobile = window.innerWidth <= 768;
+
+      if (isMobile) {
+        setIsListExpanded(true);
+        setTranslateY(0);
+        setTimeout(() => {
+          setShouldRestoreScroll(true);
+        }, 400);
+      } else {
+        setShouldRestoreScroll(true);
+      }
+
+      sessionStorage.removeItem('fromDetail');
+    }
+  }, []);
+
+  const handlePlaceItemClick = useCallback(
+    (placeId: number) => {
+      handlePlaceSelect(placeId);
+    },
+    [handlePlaceSelect],
+  );
 
   const dropdownItems: FilterBarItem[] = [
     {
@@ -175,8 +202,10 @@ export default function MapPage() {
           isInitialLoad={isInitialLoad}
           filtersWithPlaceName={filtersWithPlaceName}
           onGetPlaceData={handleGetPlaceData}
-          onPlaceSelect={handlePlaceSelect}
+          onPlaceSelect={handlePlaceItemClick}
           selectedPlaceId={selectedPlaceId}
+          shouldRestoreScroll={shouldRestoreScroll}
+          setShouldRestoreScroll={setShouldRestoreScroll}
         />
       </PlaceSectionDesktop>
       <MobilePlaceSection
@@ -195,10 +224,12 @@ export default function MapPage() {
           center={center}
           isInitialLoad={isInitialLoad}
           onGetPlaceData={handleGetPlaceData}
-          onPlaceSelect={handlePlaceSelect}
+          onPlaceSelect={handlePlaceItemClick}
           selectedPlaceId={selectedPlaceId}
           isListExpanded={isListExpanded}
           onListExpand={handleListExpand}
+          shouldRestoreScroll={shouldRestoreScroll}
+          setShouldRestoreScroll={setShouldRestoreScroll}
         />
       </MobilePlaceSection>
     </PageContainer>

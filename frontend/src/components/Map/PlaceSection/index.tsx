@@ -23,6 +23,8 @@ interface PlaceSectionProps {
   selectedPlaceId: number | null;
   isListExpanded?: boolean;
   onListExpand?: () => void;
+  shouldRestoreScroll?: boolean;
+  setShouldRestoreScroll?: (value: boolean) => void;
 }
 
 export default function PlaceSection({
@@ -36,6 +38,8 @@ export default function PlaceSection({
   selectedPlaceId,
   isListExpanded,
   onListExpand,
+  shouldRestoreScroll,
+  setShouldRestoreScroll,
 }: PlaceSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null); // 무한 스크롤을 위한 ref와 observer 설정
   const previousPlacesRef = useRef<PlaceData[]>([]);
@@ -90,6 +94,55 @@ export default function PlaceSection({
     onGetPlaceData,
   });
 
+  const handleScroll = useCallback(() => {
+    if (sectionRef.current) {
+      sessionStorage.setItem('scrollPos', sectionRef.current.scrollTop.toString());
+    }
+  }, []);
+
+  useEffect(() => {
+    const container = sectionRef.current;
+    if (!container) return undefined;
+    container.addEventListener('scroll', handleScroll);
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+    };
+  }, [handleScroll]);
+
+  useEffect(() => {
+    if (shouldRestoreScroll && filteredPlaces.length > 0) {
+      const savedPos = sessionStorage.getItem('scrollPos');
+      if (savedPos && sectionRef.current) {
+        const targetScroll = parseInt(savedPos, 10);
+
+        const restoreScroll = () => {
+          if (!sectionRef.current) return false;
+          const container = sectionRef.current;
+          const isScrollable = container.scrollHeight > container.clientHeight;
+          const isVisible = container.offsetParent !== null;
+
+          if (isVisible && isScrollable) {
+            container.scrollTop = targetScroll;
+            sessionStorage.removeItem('scrollPos');
+            if (setShouldRestoreScroll) {
+              setShouldRestoreScroll(false);
+            }
+            return true;
+          }
+          return false;
+        };
+        if (!restoreScroll()) {
+          // 첫시도 실패했을 때
+          setTimeout(() => {
+            if (shouldRestoreScroll) {
+              restoreScroll();
+            }
+          }, 300);
+        }
+      }
+    }
+  }, [shouldRestoreScroll, filteredPlaces, setShouldRestoreScroll]);
+
   useEffect(() => {
     if (
       inView &&
@@ -129,7 +182,7 @@ export default function PlaceSection({
     previousPlacesRef.current.length === 0
   ) {
     return (
-      <SectionContainer>
+      <SectionContainer ref={sectionRef}>
         <LoadingContainer>
           <Loading size={50} />
         </LoadingContainer>
@@ -139,7 +192,7 @@ export default function PlaceSection({
 
   if (isError) {
     return (
-      <SectionContainer>
+      <SectionContainer ref={sectionRef}>
         <ErrorContainer>Error: {(error as Error).message}</ErrorContainer>
       </SectionContainer>
     );
