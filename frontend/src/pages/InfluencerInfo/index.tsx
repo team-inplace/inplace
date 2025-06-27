@@ -30,7 +30,23 @@ export default function InfluencerInfoPage() {
     return searchParams.get('sort') || 'publishTime';
   };
 
+  const getInitialActiveTab = (): 'video' | 'map' => {
+    try {
+      const isFromDetail = sessionStorage.getItem('fromDetail') === 'true';
+      if (isFromDetail) {
+        const storedTab = sessionStorage.getItem('influencerPage_activeTab');
+        if (storedTab === 'video' || storedTab === 'map') {
+          return storedTab as 'video' | 'map';
+        }
+      }
+    } catch (error) {
+      console.error('getInitialActiveTab 에러:', error);
+    }
+    return 'video';
+  };
+
   const [sortOption, setSortOption] = useState(getInitialSortOption());
+  const [activeTab, setActiveTab] = useState<'video' | 'map'>(getInitialActiveTab());
 
   const sortLabel: Record<string, string> = {
     publishTime: '최신순',
@@ -42,7 +58,6 @@ export default function InfluencerInfoPage() {
 
   const { isAuthenticated } = useAuth();
 
-  const [activeTab, setActiveTab] = useState<'video' | 'map'>('video');
   const [isLike, setIsLike] = useState(influencerInfoData.likes);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSortOptions, setShowSortOptions] = useState(false);
@@ -88,6 +103,17 @@ export default function InfluencerInfoPage() {
     setShowSortOptions(false);
   };
 
+  const handleTabChange = (tab: 'video' | 'map') => {
+    setActiveTab(tab);
+    sessionStorage.setItem('influencerPage_activeTab', tab);
+  };
+
+  useEffect(() => {
+    if (activeTab === 'map') {
+      sessionStorage.setItem('influencerPage_activeTab', 'map');
+    }
+  }, [activeTab]);
+
   useEffect(() => {
     setSortOption(getInitialSortOption());
   }, [location.search]);
@@ -95,6 +121,28 @@ export default function InfluencerInfoPage() {
   useEffect(() => {
     setIsLike(influencerInfoData.likes);
   }, [influencerInfoData.likes]);
+
+  useEffect(() => {
+    const isFromDetail = sessionStorage.getItem('fromDetail') === 'true';
+    if (isFromDetail) {
+      const timer = setTimeout(() => {
+        sessionStorage.removeItem('fromDetail');
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+    return undefined;
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      const currentPath = window.location.pathname;
+      const isGoingToDetail = currentPath.includes('/detail/');
+      if (!isGoingToDetail) {
+        sessionStorage.removeItem('influencerPage_activeTab');
+        sessionStorage.removeItem('influencerMap_state');
+      }
+    };
+  }, []);
 
   useClickOutside([dropdownRef], () => setShowSortOptions(false));
 
@@ -128,10 +176,10 @@ export default function InfluencerInfoPage() {
         </LikeIcon>
       </InfluencerInfoSection>
       <TapContainer>
-        <Tap aria-label="인플루언서 전용 쿨그" $active={activeTab === 'video'} onClick={() => setActiveTab('video')}>
+        <Tap aria-label="인플루언서 전용 쿨그" $active={activeTab === 'video'} onClick={() => handleTabChange('video')}>
           쿨한 그곳
         </Tap>
-        <Tap aria-label="인플루언서 전용 쿨플" $active={activeTab === 'map'} onClick={() => setActiveTab('map')}>
+        <Tap aria-label="인플루언서 전용 쿨플" $active={activeTab === 'map'} onClick={() => handleTabChange('map')}>
           쿨 플레이스
         </Tap>
       </TapContainer>

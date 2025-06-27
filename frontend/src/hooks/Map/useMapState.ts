@@ -43,6 +43,10 @@ export default function useMapState() {
     setSelectedPlaceId((prev) => (prev === placeId ? null : placeId));
   }, []);
 
+  const forceSelectPlace = useCallback((placeId: number | null) => {
+    setSelectedPlaceId(placeId);
+  }, []);
+
   const handleGetPlaceData = useCallback((data: PlaceData[]) => {
     setPlaceData((prevData) => {
       if (JSON.stringify(prevData) !== JSON.stringify(data)) {
@@ -62,6 +66,7 @@ export default function useMapState() {
     placeData,
     setIsListExpanded,
     handlePlaceSelect,
+    forceSelectPlace,
     handleGetPlaceData,
   };
 }

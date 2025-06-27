@@ -7,6 +7,10 @@ import InfluencerPlaceSection from './InfluencerPlaceSection';
 import useTouchDrag from '@/hooks/Map/useTouchDrag';
 import useMapState from '@/hooks/Map/useMapState';
 
+interface StoredMapState {
+  selectedPlaceId?: number | null;
+}
+
 export default function InfluencerMapTap({
   influencerImg,
   influencerName,
@@ -14,73 +18,139 @@ export default function InfluencerMapTap({
   influencerImg: string;
   influencerName: string;
 }) {
+  const getInitialMapState = (): StoredMapState => {
+    try {
+      const isFromDetail = sessionStorage.getItem('fromDetail') === 'true';
+      if (isFromDetail) {
+        const stored = sessionStorage.getItem('influencerMap_state');
+        if (stored) {
+          const parsedData: StoredMapState = JSON.parse(stored);
+          return parsedData;
+        }
+      }
+    } catch (error) {
+      console.error('InfluencerMapTap getInitialMapState 에러:', error);
+    }
+
+    return {
+      selectedPlaceId: null,
+    };
+  };
+
+  const initialState = getInitialMapState();
+  const isFromDetail = sessionStorage.getItem('fromDetail') === 'true';
+
+  const [center, setCenter] = useState({ lat: 36.2683, lng: 127.6358 });
+  const [mapBounds, setMapBounds] = useState({
+    topLeftLatitude: 40.96529356918684,
+    topLeftLongitude: 117.35362493334182,
+    bottomRightLatitude: 30.52810554762812,
+    bottomRightLongitude: 139.31996436541462,
+  });
+  const [savedZoomLevel, setSavedZoomLevel] = useState<number | undefined>(14);
+  const [isRestoredFromDetail, setIsRestoredFromDetail] = useState(isFromDetail);
+  const [initialSelectedPlaceId] = useState(initialState.selectedPlaceId);
+  const [hasRestored, setHasRestored] = useState(false);
+
   const {
-    center,
-    mapBounds,
-    setCenter,
-    setMapBounds,
     isListExpanded,
     selectedPlaceId,
     placeData,
     setIsListExpanded,
     handlePlaceSelect,
+    forceSelectPlace,
     handleGetPlaceData,
   } = useMapState();
   const { translateY, setTranslateY, handleTouchStart, handleTouchMove, handleTouchEnd } =
     useTouchDrag(setIsListExpanded);
-  const fetchLocationRef = useRef<() => void>();
+  const mapWindowNearbySearchRef = useRef<(() => void) | null>(null);
   const filters = { categories: [], influencers: [influencerName], placeName: '' };
   const [shouldFetchPlaces, setShouldFetchPlaces] = useState(false);
   const [markers, setMarkers] = useState<MarkerData[]>([]);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(!isFromDetail);
   const { data: fetchedMarkers = [] } = useGetAllMarkers(
     {
-      location: {
-        topLeftLatitude: 40.96529356918684,
-        topLeftLongitude: 117.35362493334182,
-        bottomRightLatitude: 30.52810554762812,
-        bottomRightLongitude: 139.31996436541462,
-      },
+      location: mapBounds,
       filters,
       center,
     },
-    isInitialLoad,
+    true,
   );
   useEffect(() => {
-    if (isInitialLoad && fetchedMarkers.length > 0) {
+    if (fetchedMarkers.length > 0) {
       setMarkers(fetchedMarkers);
       setIsInitialLoad(false);
     }
-  }, [isInitialLoad, fetchedMarkers]);
+  }, [fetchedMarkers]);
+
+  // placeData가 준비된 후에 selectedPlaceId 복원해야 됨
+  useEffect(() => {
+    if (isRestoredFromDetail && initialSelectedPlaceId && placeData.length > 0 && !hasRestored) {
+      const targetPlace = placeData.find((place) => place.placeId === initialSelectedPlaceId);
+      if (targetPlace) {
+        forceSelectPlace(initialSelectedPlaceId);
+        setHasRestored(true);
+      }
+    }
+  }, [isRestoredFromDetail, initialSelectedPlaceId, placeData, hasRestored, forceSelectPlace]);
+
+  useEffect(() => {
+    if (hasRestored && selectedPlaceId === initialSelectedPlaceId) {
+      const timer = setTimeout(() => {
+        setIsRestoredFromDetail(false);
+        sessionStorage.removeItem('fromDetail');
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+    return undefined;
+  }, [hasRestored, selectedPlaceId, initialSelectedPlaceId]);
 
   const handleCompleteFetch = useCallback((value: boolean) => {
     setShouldFetchPlaces(value);
   }, []);
 
-  const handleListExpand = useCallback((value: boolean) => {
-    setIsListExpanded(value);
-    setTranslateY(value ? 0 : window.innerHeight);
+  const handleListExpand = useCallback(
+    (value: boolean) => {
+      setIsListExpanded(value);
+      setTranslateY(value ? 0 : window.innerHeight);
+    },
+    [setIsListExpanded, setTranslateY],
+  );
+
+  const onNearbySearchFromMapWindow = useCallback((fn: () => void) => {
+    mapWindowNearbySearchRef.current = fn;
   }, []);
 
-  const handleNearbySearch = useCallback((fn: () => void) => {
-    fetchLocationRef.current = fn;
+  const handleNearbySearchForMobile = useCallback(() => {
+    mapWindowNearbySearchRef.current?.();
   }, []);
+
+  const handlePlaceItemClick = useCallback(
+    (placeId: number) => {
+      handlePlaceSelect(placeId);
+    },
+    [handlePlaceSelect],
+  );
 
   return (
     <Wrapper>
       <InfluencerMapWindow
         influencerImg={influencerImg}
         placeData={placeData}
+        center={center}
         setCenter={setCenter}
         setMapBounds={setMapBounds}
         markers={markers}
         selectedPlaceId={selectedPlaceId}
-        // shouldFetchPlaces={shouldFetchPlaces}
         onCompleteFetch={handleCompleteFetch}
         onPlaceSelect={handlePlaceSelect}
         isListExpanded={isListExpanded}
         onListExpand={handleListExpand}
-        onNearbySearch={handleNearbySearch}
+        onNearbySearch={onNearbySearchFromMapWindow}
+        isRestoredFromDetail={isRestoredFromDetail}
+        savedZoomLevel={savedZoomLevel}
+        setSavedZoomLevel={setSavedZoomLevel}
       />
       <PlaceSectionDesktop>
         <InfluencerPlaceSection
@@ -91,7 +161,7 @@ export default function InfluencerMapTap({
           onCompleteFetch={handleCompleteFetch}
           onGetPlaceData={handleGetPlaceData}
           isInitialLoad={isInitialLoad}
-          onPlaceSelect={handlePlaceSelect}
+          onPlaceSelect={handlePlaceItemClick}
           selectedPlaceId={selectedPlaceId}
         />
       </PlaceSectionDesktop>
@@ -111,12 +181,12 @@ export default function InfluencerMapTap({
           shouldFetchPlaces={shouldFetchPlaces}
           onCompleteFetch={handleCompleteFetch}
           onGetPlaceData={handleGetPlaceData}
-          onPlaceSelect={handlePlaceSelect}
+          onPlaceSelect={handlePlaceItemClick}
           selectedPlaceId={selectedPlaceId}
           isInitialLoad={isInitialLoad}
           isListExpanded={isListExpanded}
           onListExpand={handleListExpand}
-          onSearchNearby={() => fetchLocationRef.current?.()}
+          onSearchNearby={handleNearbySearchForMobile}
         />
       </MobilePlaceSection>
     </Wrapper>

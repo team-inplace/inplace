@@ -16,33 +16,41 @@ interface MapWindowProps {
   influencerImg: string;
   markers: MarkerData[];
   placeData: PlaceData[];
+  center: { lat: number; lng: number };
   setCenter: React.Dispatch<React.SetStateAction<{ lat: number; lng: number }>>;
   setMapBounds: React.Dispatch<React.SetStateAction<LocationData>>;
   selectedPlaceId: number | null;
-  // shouldFetchPlaces: boolean;
   onCompleteFetch: (value: boolean) => void;
   onPlaceSelect: (placeId: number | null) => void;
   isListExpanded?: boolean;
   onListExpand?: (value: boolean) => void;
   onNearbySearch?: (handleNearbySearch: () => void) => void;
+  isRestoredFromDetail?: boolean;
+  savedZoomLevel?: number;
+  setSavedZoomLevel: React.Dispatch<React.SetStateAction<number | undefined>>;
 }
 
 export default function InfluencerMapWindow({
   influencerImg,
   markers,
+  center,
   setCenter,
   setMapBounds,
   placeData,
   selectedPlaceId,
-  // shouldFetchPlaces,
   onCompleteFetch,
   onPlaceSelect,
   isListExpanded,
   onListExpand,
   onNearbySearch,
+  isRestoredFromDetail = false,
+  savedZoomLevel,
+  setSavedZoomLevel,
 }: MapWindowProps) {
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [isMapReady, setIsMapReady] = useState(false);
+  const [hasInitialPositionSet, setHasInitialPositionSet] = useState(false);
   const { moveMapToMarker, handleCenterReset } = useMapActions({ mapRef, onPlaceSelect });
   const { markerInfo, handleMarkerClick, handleMapClick } = useMarkerData({
     selectedPlaceId,
@@ -57,11 +65,55 @@ export default function InfluencerMapWindow({
   const userLocationSize = isMobile ? 16 : 24;
   const selectedMarker = markers.find((m) => m.placeId === selectedPlaceId);
 
+  const updateMapBounds = useCallback(() => {
+    if (!mapRef.current) return;
+
+    const bounds = mapRef.current.getBounds();
+    const currentCenter = mapRef.current.getCenter();
+    const currentZoomLevel = mapRef.current.getLevel();
+
+    const newBounds = {
+      topLeftLatitude: bounds.getNorthEast().getLat(),
+      topLeftLongitude: bounds.getSouthWest().getLng(),
+      bottomRightLatitude: bounds.getSouthWest().getLat(),
+      bottomRightLongitude: bounds.getNorthEast().getLng(),
+    };
+
+    setMapBounds(newBounds);
+    setCenter({ lat: currentCenter.getLat(), lng: currentCenter.getLng() });
+    setSavedZoomLevel(currentZoomLevel);
+    onCompleteFetch(true);
+  }, [setMapBounds, setCenter, setSavedZoomLevel, onCompleteFetch]);
+
   useEffect(() => {
-    if (selectedPlaceId && selectedMarker) {
+    if (isMapReady && mapRef.current && markers.length > 0 && !hasInitialPositionSet) {
+      if (isRestoredFromDetail && selectedPlaceId && selectedMarker) {
+        mapRef.current.setCenter(new kakao.maps.LatLng(selectedMarker.latitude, selectedMarker.longitude));
+        mapRef.current.setLevel(savedZoomLevel || 14);
+      } else {
+        mapRef.current.setCenter(new kakao.maps.LatLng(center.lat, center.lng));
+        mapRef.current.setLevel(savedZoomLevel || 14);
+      }
+      setHasInitialPositionSet(true);
+      updateMapBounds();
+    }
+  }, [
+    isRestoredFromDetail,
+    isMapReady,
+    selectedPlaceId,
+    selectedMarker,
+    markers.length,
+    hasInitialPositionSet,
+    center,
+    savedZoomLevel,
+    updateMapBounds,
+  ]);
+
+  useEffect(() => {
+    if (selectedPlaceId && selectedMarker && isMapReady && hasInitialPositionSet) {
       moveMapToMarker(selectedMarker.latitude, selectedMarker.longitude);
     }
-  }, [selectedPlaceId, selectedMarker, moveMapToMarker]);
+  }, [selectedPlaceId, selectedMarker, moveMapToMarker, isMapReady, hasInitialPositionSet]);
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -84,26 +136,13 @@ export default function InfluencerMapWindow({
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (!mapRef.current) {
+      if (!mapRef.current && !hasInitialPositionSet) {
         alert('지도를 불러오지 못했어요. 네트워크 상태를 확인한 후 새로고침 해주세요.');
       }
     }, 6000);
 
     return () => clearTimeout(timeout);
-  }, []);
-
-  const updateMapBounds = useCallback(() => {
-    if (!mapRef.current) return;
-    const bounds = mapRef.current.getBounds();
-    const newBounds = {
-      topLeftLatitude: bounds.getNorthEast().getLat(),
-      topLeftLongitude: bounds.getSouthWest().getLng(),
-      bottomRightLatitude: bounds.getSouthWest().getLat(),
-      bottomRightLongitude: bounds.getNorthEast().getLng(),
-    };
-    setMapBounds(newBounds);
-    onCompleteFetch(true);
-  }, [setMapBounds, onCompleteFetch]);
+  }, [hasInitialPositionSet]);
 
   const handleNearbySearch = useCallback(() => {
     if (!mapRef.current) return;
@@ -111,25 +150,35 @@ export default function InfluencerMapWindow({
     setCenter({ lat: currentCenter.getLat(), lng: currentCenter.getLng() });
     onPlaceSelect(null);
     updateMapBounds();
-  }, []);
+  }, [setCenter, onPlaceSelect, updateMapBounds]);
 
   useEffect(() => {
-    onNearbySearch?.(handleNearbySearch);
+    if (onNearbySearch) {
+      onNearbySearch(handleNearbySearch);
+    }
   }, [handleNearbySearch, onNearbySearch]);
+  const handleMapChange = useCallback(() => {
+    updateMapBounds();
+  }, [updateMapBounds]);
 
   return (
     <>
       <MapContainer>
         <Map
-          center={{
-            lat: 36.2683,
-            lng: 127.6358,
-          }}
+          center={center}
           style={{ width: '100%', height: 'auto', aspectRatio: isMobile ? '1' : '1.65/1' }}
-          level={14}
+          level={savedZoomLevel || 14}
           onCreate={(map) => {
             mapRef.current = map;
+            setIsMapReady(true);
           }}
+          onZoomChanged={() => {
+            if (mapRef.current) {
+              setSavedZoomLevel(mapRef.current.getLevel());
+              handleMapChange();
+            }
+          }}
+          onDragEnd={handleMapChange}
           onClick={handleMapClick}
         >
           {userLocation && (
@@ -163,7 +212,7 @@ export default function InfluencerMapWindow({
               />
             ))}
           </MarkerClusterer>
-          {selectedPlaceId !== null && selectedMarker && markerInfo && (
+          {selectedPlaceId !== null && selectedMarker && markerInfo && hasInitialPositionSet && (
             <CustomOverlayMap
               zIndex={100}
               position={{

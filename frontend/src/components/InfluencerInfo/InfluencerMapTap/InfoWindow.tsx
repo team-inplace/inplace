@@ -8,6 +8,10 @@ import { Text } from '@/components/common/typography/Text';
 import { AddressInfo, MarkerInfo, PlaceData } from '@/types';
 import FallbackImage from '@/components/common/Items/FallbackImage';
 
+type StoredMapState = {
+  selectedPlaceId?: number | null;
+};
+
 type Props = {
   data: MarkerInfo | PlaceData;
 };
@@ -30,6 +34,22 @@ export default function InfoWindow({ data }: Props) {
 
   const handleInfoClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
+
+    let currentMapState: StoredMapState = {
+      selectedPlaceId: null,
+    };
+    try {
+      const stored = sessionStorage.getItem('influencerMap_state');
+      if (stored) {
+        currentMapState = { ...currentMapState, ...JSON.parse(stored) };
+      }
+    } catch (error) {
+      console.error('sessionStorage에서 저장된 influencerMap_state parsing 오류:', error);
+    }
+    currentMapState.selectedPlaceId = data.placeId;
+    sessionStorage.setItem('influencerMap_state', JSON.stringify(currentMapState));
+    sessionStorage.setItem('fromDetail', 'true');
+    sessionStorage.setItem('influencerPage_activeTab', 'map');
     navigate(`/detail/${data.placeId}`);
   };
 
