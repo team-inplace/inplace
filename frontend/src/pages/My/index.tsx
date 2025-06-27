@@ -47,8 +47,8 @@ export default function MyPage() {
     hasNextPage,
     isFetchingNextPage,
   });
-  const { data: userNickname } = useGetUserInfo();
-  const [nickname, setNickname] = useState(userNickname?.nickname || '');
+  const { data: userInfo } = useGetUserInfo();
+  const [nickname, setNickname] = useState(userInfo?.nickname || '');
   const [isVisible, setIsVisible] = useState(true);
   const { mutate: patchNickname } = usePatchNickname();
   const queryClient = useQueryClient();
@@ -71,9 +71,10 @@ export default function MyPage() {
       <TitleWrapper>
         {isVisible ? (
           <NickNameWrapper>
+            {userInfo?.tier.imgUrl && <UserTier src={userInfo?.tier.imgUrl} alt={`${userInfo.nickname} Tier`} />}
             <Text size="l" weight="bold">
               <Text size="xl" weight="bold" style={{ color: '#47c8d9' }}>
-                {userNickname?.nickname}
+                {userInfo?.nickname}
               </Text>
               <CustomButton aria-label="닉네임 수정" onClick={() => setIsVisible(false)}>
                 <MdOutlineDriveFileRenameOutline size={24} color="#47c8d9" />
@@ -181,4 +182,9 @@ const NickNameWrapper = styled.div`
     align-items: end;
     display: flex;
   }
+`;
+const UserTier = styled.img`
+  height: 34px;
+  width: auto;
+  vertical-align: middle;
 `;

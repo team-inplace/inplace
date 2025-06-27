@@ -413,7 +413,7 @@ export const myHandlers = [
         imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
         tier: {
           name: 'GOLD',
-          imgUrl: 'https://example.com/tier/gold.png',
+          imgUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
         },
         badges: [
           {
