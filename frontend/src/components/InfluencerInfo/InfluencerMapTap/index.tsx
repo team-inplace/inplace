@@ -51,6 +51,7 @@ export default function InfluencerMapTap({
   const [isRestoredFromDetail, setIsRestoredFromDetail] = useState(isFromDetail);
   const [initialSelectedPlaceId] = useState(initialState.selectedPlaceId);
   const [hasRestored, setHasRestored] = useState(false);
+  const [shouldRestoreScroll, setShouldRestoreScroll] = useState(false);
 
   const {
     isListExpanded,
@@ -76,6 +77,23 @@ export default function InfluencerMapTap({
     },
     true,
   );
+
+  useEffect(() => {
+    if (isRestoredFromDetail) {
+      return;
+    }
+    const stateToStore = {
+      selectedPlaceId,
+    };
+    sessionStorage.setItem('influencerMap_state', JSON.stringify(stateToStore));
+  }, [selectedPlaceId, isRestoredFromDetail]);
+
+  useEffect(() => {
+    if (!isFromDetail) {
+      sessionStorage.removeItem('influencerMap_state');
+    }
+  }, []);
+
   useEffect(() => {
     if (fetchedMarkers.length > 0) {
       setMarkers(fetchedMarkers);
@@ -93,6 +111,30 @@ export default function InfluencerMapTap({
       }
     }
   }, [isRestoredFromDetail, initialSelectedPlaceId, placeData, hasRestored, forceSelectPlace]);
+
+  useEffect(() => {
+    if (sessionStorage.getItem('fromDetail') === 'true') {
+      const isMobile = window.innerWidth <= 768;
+
+      if (isMobile) {
+        setIsListExpanded(true);
+        setTranslateY(0);
+        setTimeout(() => {
+          setShouldRestoreScroll(true);
+        }, 400);
+      } else {
+        setTimeout(() => {
+          setShouldRestoreScroll(true);
+        }, 200);
+      }
+      setIsInitialLoad(false);
+      setIsRestoredFromDetail(true);
+      setTimeout(() => {
+        setIsRestoredFromDetail(false);
+      }, 3000);
+      sessionStorage.removeItem('fromDetail');
+    }
+  }, [setIsListExpanded, setTranslateY]);
 
   useEffect(() => {
     if (hasRestored && selectedPlaceId === initialSelectedPlaceId) {
@@ -163,6 +205,8 @@ export default function InfluencerMapTap({
           isInitialLoad={isInitialLoad}
           onPlaceSelect={handlePlaceItemClick}
           selectedPlaceId={selectedPlaceId}
+          shouldRestoreScroll={shouldRestoreScroll}
+          setShouldRestoreScroll={setShouldRestoreScroll}
         />
       </PlaceSectionDesktop>
       <MobilePlaceSection
@@ -187,6 +231,8 @@ export default function InfluencerMapTap({
           isListExpanded={isListExpanded}
           onListExpand={handleListExpand}
           onSearchNearby={handleNearbySearchForMobile}
+          shouldRestoreScroll={shouldRestoreScroll}
+          setShouldRestoreScroll={setShouldRestoreScroll}
         />
       </MobilePlaceSection>
     </Wrapper>
