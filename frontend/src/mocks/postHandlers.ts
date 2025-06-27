@@ -352,23 +352,23 @@ export const postHandlers = [
           {
             imageUrl:
               'https://www.chosun.com/resizer/v2/https%3A%2F%2Fauthor-service-images-prod-us-east-1.publishing.aws.arc.pub%2Fchosun%2F61ee5a7f-256c-441a-84d0-f71f7fde8753.png?auth=ac62f49ccb40ba0664e55e616e25d60bbe9491af26a5c0e5ac95e3640e0a3f6a&width=616&height=346&smart=true',
-            hash: '1234',
+            hash: '124',
           },
           {
             imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
-            hash: '1234',
+            hash: '134',
           },
           {
             imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
-            hash: '1234',
+            hash: '234',
           },
           {
             imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
-            hash: '1234',
+            hash: '123',
           },
           {
             imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
-            hash: '1234',
+            hash: '14',
           },
         ],
         selfLike: true,

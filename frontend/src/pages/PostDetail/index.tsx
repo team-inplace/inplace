@@ -155,9 +155,6 @@ export default function PostDetailPage() {
             {postData.totalLikeCount}
           </Text>
         </Count>
-        <StyledText size="s" weight="normal">
-          {postData.createAt}
-        </StyledText>
       </PostContainer>
       <CommentTitle>
         <Text size="s" weight="normal">
