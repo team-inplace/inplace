@@ -348,3 +348,8 @@ export type RequestCommentLike = {
   commentId: number;
   likes: boolean;
 };
+export type SearchUserComplete = {
+  userId: number;
+  nickname: string;
+  imageUrl: string;
+};

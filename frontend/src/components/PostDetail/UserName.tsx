@@ -3,14 +3,14 @@ import { Text } from '../common/typography/Text';
 
 interface UserTitleProps {
   userNickname: string;
-  tierImageUrl: string;
+  tierImageUrl?: string;
   badgeImageUrl?: string;
 }
 
 export default function UserName({ userNickname, tierImageUrl, badgeImageUrl }: UserTitleProps) {
   return (
     <UserTitleWrapper>
-      <UserTier src={tierImageUrl} alt={`${userNickname} Tier`} />
+      {tierImageUrl && <UserTier src={tierImageUrl} alt={`${userNickname} Tier`} />}
       <Text size="s" weight="normal">
         {userNickname}
       </Text>

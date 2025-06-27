@@ -2,6 +2,7 @@ import { rest } from 'msw';
 import { BASE_URL } from '@/api/instance';
 import { getSearchInfluencerPath, getSearchPlacePath, getSearchVideoPath } from '@/api/hooks/useGetSearchData';
 import { getSearchKeywordPath } from '@/api/hooks/useGetSearchKeyword';
+import { getSearchUserCompletePath } from '@/api/hooks/useGetSearchUserComplete';
 
 export const searchHandlers = [
   rest.get(`${BASE_URL}/search/complete`, (req, res, ctx) => {
@@ -220,6 +221,57 @@ export const searchHandlers = [
     ];
 
     return res(ctx.status(200), ctx.json(data));
+  }),
+  rest.get(`${BASE_URL}${getSearchUserCompletePath('1')}`, (req, res, ctx) => {
+    const searchParam = req.url.searchParams.get('value') || '';
+    const data = [
+      {
+        userId: 1,
+        nickname: '풍자',
+        imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+      },
+      {
+        userId: 2,
+        nickname: '이효은',
+        imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+      },
+      {
+        userId: 3,
+        nickname: '이정민',
+        imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+      },
+      {
+        userId: 4,
+        nickname: '상희찡이',
+        imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+      },
+      {
+        userId: 5,
+        nickname: '정수현이',
+        imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+      },
+      {
+        userId: 6,
+        nickname: '우현이서',
+        imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+      },
+      {
+        userId: 7,
+        nickname: '배준호',
+        imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+      },
+      {
+        userId: 7,
+        nickname: '김동윤그는감히전설이라고할수있다',
+        imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
+      },
+    ];
+
+    const filteredData = data.filter((item) => {
+      return item.nickname.includes(searchParam);
+    });
+
+    return res(ctx.status(200), ctx.json(filteredData));
   }),
 ];
 export default searchHandlers;
