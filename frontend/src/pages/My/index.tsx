@@ -60,7 +60,7 @@ export default function MyPage() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (nickname.length < 1 || nickname.length > 8) {
+    if (nickname.length < 2 || nickname.length > 8) {
       alert('닉네임 길이를 확인해주세요!');
       return;
     }
@@ -114,7 +114,7 @@ export default function MyPage() {
               </CustomButton>
             </Form>
             <Text size="xs" weight="normal" style={{ color: '#9e9e9e' }}>
-              닉네임 길이는 1~8글자로 제한됩니다.
+              닉네임 길이는 2~8글자로 제한됩니다.
             </Text>
           </EditWrapper>
         )}
