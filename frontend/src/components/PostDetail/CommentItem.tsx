@@ -208,7 +208,7 @@ export default function CommentItem({
                   <PiHeartLight size={isMobile ? 14 : 18} data-testid="PiHeartLight" />
                 )}
                 <Text size="s" weight="normal">
-                  {item.totalLikeCount}
+                  {item.totalLikeCount ?? 0}
                 </Text>
               </Count>
             </CommentInfo>

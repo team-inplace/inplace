@@ -49,13 +49,13 @@ export default function Postitem({ item, activeCategory }: { item: PostListData;
               <PiHeartLight size={18} data-testid="PiHeartLight" />
             )}
             <StyledText size="s" weight="normal">
-              {item.totalLikeCount}
+              {item.totalLikeCount ?? 0}
             </StyledText>
           </Count>
           <Count>
             <HiOutlineChatBubbleOvalLeft size={18} />
             <StyledText size="s" weight="normal">
-              {item.totalCommentCount}
+              {item.totalCommentCount ?? 0}
             </StyledText>
           </Count>
           <StyledText size="s" weight="normal">

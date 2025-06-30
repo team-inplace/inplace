@@ -152,13 +152,13 @@ export default function PostDetailPage() {
             <PiHeartLight size={isMobile ? 14 : 18} data-testid="PiHeartLight" />
           )}
           <Text size="s" weight="normal">
-            {postData.totalLikeCount}
+            {postData.totalLikeCount ?? 0}
           </Text>
         </Count>
       </PostContainer>
       <CommentTitle>
         <Text size="s" weight="normal">
-          댓글 {postData.totalCommentCount}건
+          댓글 {postData.totalCommentCount ?? 0}건
         </Text>
       </CommentTitle>
       <Separator />
