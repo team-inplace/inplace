@@ -7,15 +7,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.UserErrorCode;
-import team7.inplace.user.application.dto.UserCommand;
+import team7.inplace.user.application.dto.TierConditions;
+import team7.inplace.user.application.dto.UserCommand.Create;
 import team7.inplace.user.application.dto.UserCommand.Info;
-import team7.inplace.user.application.dto.UserInfo;
 import team7.inplace.user.application.dto.UserInfo.Detail;
+import team7.inplace.user.application.dto.UserInfo.Simple;
 import team7.inplace.user.domain.User;
 import team7.inplace.user.domain.UserBadge;
 import team7.inplace.user.persistence.UserBadgeJpaRepository;
-import team7.inplace.user.persistence.UserReadRepository;
 import team7.inplace.user.persistence.UserJpaRepository;
+import team7.inplace.user.persistence.UserReadRepository;
+import team7.inplace.user.persistence.UserTierJpaRepository;
 import team7.inplace.user.persistence.dto.UserQueryResult;
 import team7.inplace.user.persistence.dto.UserQueryResult.Badge;
 
@@ -26,17 +28,18 @@ public class UserService {
     private final UserJpaRepository userJpaRepository;
     private final UserReadRepository userReadRepository;
     private final UserBadgeJpaRepository userBadgeJpaRepository;
+    private final UserTierJpaRepository userTierJpaRepository;
 
     @Transactional
-    public UserCommand.Info registerUser(UserCommand.Create userCreate) {
+    public Info registerUser(Create userCreate) {
         User user = userCreate.toEntity();
         userJpaRepository.save(user);
-        return UserCommand.Info.of(user);
+        return Info.of(user);
     }
 
     @Transactional(readOnly = true)
-    public UserCommand.Info getUserByUsername(String username) {
-        return UserCommand.Info.of(userJpaRepository.findByUsername(username)
+    public Info getUserByUsername(String username) {
+        return Info.of(userJpaRepository.findByUsername(username)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND)));
     }
 
@@ -55,10 +58,10 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserInfo.Simple getUserInfo(Long userId) {
+    public Simple getUserInfo(Long userId) {
         UserQueryResult.Simple simpleUser = userReadRepository.findUserInfoById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
-        return UserInfo.Simple.from(simpleUser);
+        return Simple.from(simpleUser);
     }
 
     @Transactional()
@@ -92,5 +95,20 @@ public class UserService {
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
 
         user.updateMainBadge(badgeId);
+    }
+
+    @Transactional
+    public void updateUserTier(Long userId) {
+        User user = userJpaRepository.findById(userId)
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+
+        TierConditions tierConditions = TierConditions.of(userTierJpaRepository.findAll());
+        Long calculatedTierId = tierConditions.getCurrentTierId(
+            user.getPostCount(),
+            user.getReceivedCommentCount(),
+            user.getReceivedLikeCount()
+        );
+
+        user.updateTier(calculatedTierId);
     }
 }

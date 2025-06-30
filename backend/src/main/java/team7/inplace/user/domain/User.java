@@ -15,6 +15,7 @@ import team7.inplace.global.baseEntity.BaseEntity;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users")
 public class User extends BaseEntity {
+
     @Column(name = "username", nullable = false)
     private String username;
 
@@ -41,6 +42,15 @@ public class User extends BaseEntity {
     @Column(name = "main_badge_id")
     private Long mainBadgeId;
 
+    @Column(name = "post_count")
+    private Integer postCount;
+
+    @Column(name = "received_comment_count")
+    private Long receivedCommentCount;
+
+    @Column(name = "received_like_count")
+    private Long receivedLikeCount;
+
     public User(String username, String password, String nickname, String profileImageUrl, UserType userType, Role role) {
         this.username = username;
         this.password = password;
@@ -50,6 +60,9 @@ public class User extends BaseEntity {
         this.role = role;
         this.tierId = 1L;
         this.mainBadgeId = null;
+        this.postCount = 0;
+        this.receivedCommentCount = 0L;
+        this.receivedLikeCount = 0L;
     }
 
     public void updateNickname(String nickname) {
@@ -63,4 +76,9 @@ public class User extends BaseEntity {
     public void updateMainBadge(Long badgeId) {
         this.mainBadgeId = badgeId;
     }
+
+    public void updateTier(Long tierId) {
+        this.tierId = tierId;
+    }
+
 }
