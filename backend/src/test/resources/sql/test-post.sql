@@ -1,8 +1,8 @@
-INSERT INTO users (id, username, tier_id, main_badge_id)
-VALUES (1, '유저1', 1, 2),
-       (2, '유저2', 1, 1),
-       (3, '유저3', 2, 3),
-       (4, '유저4', 2, 1);
+INSERT INTO users (id, username, nick_name, tier_id, main_badge_id)
+VALUES (1, '유저1', 'user_1', 1, 2),
+       (2, '유저2', 'user_2', 1, 1),
+       (3, '유저3', 'user_3', 2, 3),
+       (4, '유저4', 'user_4', 2, 1);
 
 INSERT INTO user_tiers (id, name, eng_name, required_posts, required_comments, required_likes, img_url)
 VALUES  (1, '브론즈', 'BRONZE', 0, 0, 0, 'bronze.png'),
@@ -79,3 +79,13 @@ VALUES (1, '첫 번째 게시글', '첫 번째 게시글 내용', 1,
                 \"imageHash\": \"vwx234\"
             }
         ]');
+
+INSERT INTO comments (id, content, author_id, post_id)
+VALUES (1, '첫 번째 댓글', 2, 1),
+       (2, '두 번째 댓글', 3, 1),
+       (3, '세 번째 댓글', 4, 2),
+       (4, '네 번째 댓글', 1, 2),
+       (5, '다섯 번째 댓글', 1, 3),
+       (6, '여섯 번째 댓글', 2, 3),
+       (7, '일곱 번째 댓글', 3, 4),
+       (8, '여덟 번째 댓글', 4, 4);

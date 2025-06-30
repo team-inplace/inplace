@@ -11,8 +11,8 @@ import org.springframework.data.domain.Pageable;
 import team7.inplace.global.annotation.Facade;
 import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand.Coordinate;
-import team7.inplace.place.application.command.PlacesCommand.Upsert;
 import team7.inplace.place.application.command.PlacesCommand.FilterParams;
+import team7.inplace.place.application.command.PlacesCommand.Upsert;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.application.dto.PlaceInfo.Simple;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
@@ -50,8 +50,10 @@ public class PlaceFacade {
         if (googlePlaceId.isEmpty()) {
             var placeInfo = placeService.getPlaceInfo(userId, placeId);
             var surroundVideos = videoService.getVideosBySurround(
-                VideoSearchParams.from(placeInfo.longitude().toString(), placeInfo.latitude().toString()),
-                PageRequest.of(0, 10)
+                VideoSearchParams.from(placeInfo.longitude().toString(),
+                    placeInfo.latitude().toString()),
+                PageRequest.of(0, 10),
+                false
             );
             var videoInfos = videoService.getVideosByPlaceId(placeId);
             var reviewRates = reviewService.getReviewLikeRate(placeId);
@@ -64,13 +66,16 @@ public class PlaceFacade {
 
         var placeInfo = placeService.getPlaceInfo(userId, placeId);
         var surroundVideos = videoService.getVideosBySurround(
-            VideoSearchParams.from(placeInfo.longitude().toString(), placeInfo.latitude().toString()),
-            PageRequest.of(0, 10)
+            VideoSearchParams.from(placeInfo.longitude().toString(),
+                placeInfo.latitude().toString()),
+            PageRequest.of(0, 10),
+            false
         );
         var videoInfos = videoService.getVideosByPlaceId(placeId);
         var reviewRates = reviewService.getReviewLikeRate(placeId);
 
-        return PlaceInfo.Detail.of(placeInfo, googlePlace.join(), videoInfos, reviewRates, surroundVideos);
+        return PlaceInfo.Detail.of(placeInfo, googlePlace.join(), videoInfos, reviewRates,
+            surroundVideos);
     }
 
     public List<Marker> getPlaceLocations(

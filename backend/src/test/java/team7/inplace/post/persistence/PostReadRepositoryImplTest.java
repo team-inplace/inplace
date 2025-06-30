@@ -103,6 +103,66 @@ class PostReadRepositoryImplTest extends AbstractMySQLContainerTest {
         assertThat(posts.value().get(0).getImageUrls().size()).isEqualTo(photoSize);
     }
 
+    @Test
+    @DisplayName("댓글 언급기능 사용자 추천 조회 테스트 - 검색어가 빈칸 인 경우")
+    void findCommentUserSuggestions_NoKeyword() {
+        // given
+        Long postId = 1L;
+        String keyword = "";
+        final int expectedSize = 3;
+        // when
+        var suggestions = postReadRepository.findCommentUserSuggestions(postId, keyword);
+
+        // then
+        assertThat(suggestions).hasSize(expectedSize);
+    }
+
+    @Test
+    @DisplayName("댓글 언급기능 사용자 추천 조회 테스트 - 검색어가 null인 경우")
+    void findCommentUserSuggestions_NullKeyword() {
+        // given
+        Long postId = 1L;
+        String keyword = null;
+        final int expectedSize = 3;
+        // when
+        var suggestions = postReadRepository.findCommentUserSuggestions(postId, keyword);
+
+        // then
+        assertThat(suggestions).hasSize(expectedSize);
+    }
+
+    @Test
+    @DisplayName("댓글 언급기능 사용자 추천 조회 테스트 - 검색어가 존재하는 경우")
+    void findCommentUserSuggestions_WithKeyword() {
+        // given
+        Long postId = 1L;
+        String keyword = "1";
+        final int expectedSize = 1;
+        final int expectedUserId = 1;
+
+        // when
+        var suggestions = postReadRepository.findCommentUserSuggestions(postId, keyword);
+
+        // then
+        assertThat(suggestions).hasSize(expectedSize);
+        assertThat(suggestions.get(0).userId()).isEqualTo(expectedUserId);
+    }
+
+    @Test
+    @DisplayName("댓글 언급기능 사용자 추천 조회 테스트 - 검색 결과가 없는 경우")
+    void findCommentUserSuggestions_NoResults() {
+        // given
+        Long postId = 1L;
+        String keyword = "nonexistent";
+        final int expectedSize = 0;
+
+        // when
+        var suggestions = postReadRepository.findCommentUserSuggestions(postId, keyword);
+
+        // then
+        assertThat(suggestions).hasSize(expectedSize);
+    }
+
     @TestConfiguration
     static class TestConfig {
 

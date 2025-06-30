@@ -38,11 +38,13 @@ public class VideoService {
     @Transactional(readOnly = true)
     public List<VideoQueryResult.DetailedVideo> getVideosBySurround(
         VideoSearchParams videoSearchParams,
-        Pageable pageable
+        Pageable pageable,
+        boolean authorizationRequired
     ) {
         // 토큰 정보에 대한 검증
-        AuthorizationUtil.checkLoginUser();
-
+        if (authorizationRequired) {
+            AuthorizationUtil.checkLoginUser();
+        }
         var surroundVideos = videoReadRepository.findSimpleVideosInSurround(
             Double.valueOf(videoSearchParams.topLeftLongitude()),
             Double.valueOf(videoSearchParams.topLeftLatitude()),
@@ -96,7 +98,8 @@ public class VideoService {
     }
 
     @Transactional(readOnly = true)
-    public Page<AdminVideo> getAdminVideosByCondition(VideoFilterCondition videoFilterCondition, Pageable pageable) {
+    public Page<AdminVideo> getAdminVideosByCondition(
+        VideoFilterCondition videoFilterCondition, Pageable pageable) {
         return videoReadRepository.findAdminVideoByCondition(videoFilterCondition, pageable);
     }
 
@@ -138,7 +141,8 @@ public class VideoService {
 
         // 상위 카테고리별 인기순 top 10 video 가져오기
         for (Long parentCategoryId : parentCategoryIds) {
-            List<DetailedVideo> top10 = videoReadRepository.findTop10ByViewCountIncrement(parentCategoryId);
+            List<DetailedVideo> top10 = videoReadRepository.findTop10ByViewCountIncrement(
+                parentCategoryId);
             coolVideos.addAll(top10);
         }
 

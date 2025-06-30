@@ -54,4 +54,15 @@ public class PostQueryResult {
         public CursorDetailedPost {
         }
     }
+
+    public record UserSuggestion(
+        Long userId,
+        String userNickname,
+        String userImageUrl
+    ) {
+
+        @QueryProjection
+        public UserSuggestion {
+        }
+    }
 }

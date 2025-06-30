@@ -7,13 +7,16 @@ import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Optional;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import team7.inplace.global.cursor.CursorResult;
 import team7.inplace.liked.likedPost.domain.QLikedPost;
+import team7.inplace.post.domain.QComment;
 import team7.inplace.post.domain.QPost;
 import team7.inplace.post.persistence.dto.PostQueryResult.CursorDetailedPost;
 import team7.inplace.post.persistence.dto.PostQueryResult.DetailedPost;
+import team7.inplace.post.persistence.dto.PostQueryResult.UserSuggestion;
 import team7.inplace.post.persistence.dto.QPostQueryResult_CursorDetailedPost;
 import team7.inplace.post.persistence.dto.QPostQueryResult_DetailedPost;
 import team7.inplace.user.domain.QBadge;
@@ -141,5 +144,44 @@ public class PostReadRepositoryImpl implements PostReadRepository {
         return switch (orderBy) {
             default -> QPost.post.id.lt(cursorId);
         };
+    }
+
+    @Override
+    public List<UserSuggestion> findCommentUserSuggestions(
+        Long postId, String keyword
+    ) {
+        var postUser = queryFactory
+            .select(new QPostQueryResult_UserSuggestion(
+                QUser.user.id,
+                QUser.user.nickname,
+                QUser.user.profileImageUrl
+            ))
+            .from(QPost.post)
+            .innerJoin(QUser.user).on(QPost.post.authorId.eq(QUser.user.id))
+            .where(
+                QPost.post.id.eq(postId),
+                keyword == null || keyword.isEmpty()
+                    ? null
+                    : QUser.user.nickname.containsIgnoreCase(keyword)
+            )
+            .fetch();
+
+        var commentUser = queryFactory
+            .select(new QPostQueryResult_UserSuggestion(
+                QUser.user.id,
+                QUser.user.nickname,
+                QUser.user.profileImageUrl
+            )).distinct()
+            .from(QComment.comment)
+            .innerJoin(QUser.user).on(QComment.comment.authorId.eq(QUser.user.id))
+            .where(
+                QComment.comment.postId.eq(postId),
+                keyword == null || keyword.isEmpty()
+                    ? null
+                    : QUser.user.nickname.containsIgnoreCase(keyword)
+            )
+            .fetch();
+
+        return Stream.concat(postUser.stream(), commentUser.stream()).distinct().toList();
     }
 }

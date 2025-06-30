@@ -1,28 +1,30 @@
-package team7.inplace.liked.likedPost.domain;
+package team7.inplace.liked.likedComment.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team7.inplace.global.baseEntity.BaseEntity;
 
+@Getter
 @Entity
-@Table(name = "liked_posts")
+@Table(name = "liked_comments")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class LikedPost extends BaseEntity {
+public class LikedComment extends BaseEntity {
 
     private Long userId;
-    private Long postId;
+    private Long commentId;
     private Boolean isLiked;
 
-    private LikedPost(Long userId, Long postId) {
+    private LikedComment(Long userId, Long commentId) {
         this.userId = userId;
-        this.postId = postId;
+        this.commentId = commentId;
         this.isLiked = false;
     }
 
-    public static LikedPost from(Long userId, Long postId) {
-        return new LikedPost(userId, postId);
+    public static LikedComment from(Long userId, Long commentId) {
+        return new LikedComment(userId, commentId);
     }
 
     public boolean updateLike() {
