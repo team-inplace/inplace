@@ -89,28 +89,32 @@ export default function PostPage() {
               {isMobile ? '전체' : '전체 게시글'}
             </Tap>
           </PostCategory>
-          <WriteButton aria-label="게시판 글쓰기" size="small" onClick={handlePosting}>
-            <GoPencil size={16} />
-            글쓰기
-          </WriteButton>
+          <RightHeader>
+            <SortSection ref={dropdownRef}>
+              <StyledButton
+                aria-label="게시판 정렬"
+                variant="white"
+                size="small"
+                onClick={() => setShowSortOptions(!showSortOptions)}
+              >
+                <span>{sortLabel[sortOption]}</span>
+                <IoIosArrowDown size={16} />
+              </StyledButton>
+              {showSortOptions && (
+                <SortDropdown>
+                  <SortItem onClick={() => handleSortChange('createAt')}>최신순 {sortOption === 'createAt'}</SortItem>
+                  <SortItem onClick={() => handleSortChange('popularity')}>
+                    인기순 {sortOption === 'popularity'}
+                  </SortItem>
+                </SortDropdown>
+              )}
+            </SortSection>
+            <WriteButton aria-label="게시판 글쓰기" size="small" onClick={handlePosting}>
+              <GoPencil size={14} />
+              글쓰기
+            </WriteButton>
+          </RightHeader>
         </Header>
-        <SortSection ref={dropdownRef}>
-          <StyledButton
-            aria-label="게시판 정렬"
-            variant="white"
-            size="small"
-            onClick={() => setShowSortOptions(!showSortOptions)}
-          >
-            <span>{sortLabel[sortOption]}</span>
-            <IoIosArrowDown size={16} />
-          </StyledButton>
-          {showSortOptions && (
-            <SortDropdown>
-              <SortItem onClick={() => handleSortChange('createAt')}>최신순 {sortOption === 'createAt'}</SortItem>
-              <SortItem onClick={() => handleSortChange('popularity')}>인기순 {sortOption === 'popularity'}</SortItem>
-            </SortDropdown>
-          )}
-        </SortSection>
       </MobileHeader>
       <PostWrapper>
         <PostList
@@ -138,8 +142,8 @@ export default function PostPage() {
 }
 
 const Wrapper = styled.div`
+  width: 100%;
   @media screen and (max-width: 768px) {
-    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -161,10 +165,9 @@ const Header = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  margin: 20px 0px 10px;
   align-items: center;
   @media screen and (max-width: 768px) {
-    width: 90%;
     margin-top: 0px;
   }
 `;
@@ -199,7 +202,6 @@ const SortSection = styled.div`
   position: relative;
   display: flex;
   justify-content: flex-end;
-  margin-top: 10px;
 
   @media screen and (max-width: 768px) {
     width: 90%;
@@ -228,10 +230,16 @@ const StyledButton = styled(Button)`
   }
 `;
 
+const RightHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+`;
 const WriteButton = styled(Button)`
-  width: 90px;
+  width: 80px;
   gap: 4px;
-  height: 36px;
+  height: 30px;
+  font-size: 14px;
   color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#55ebff' : 'black')};
   box-shadow: ${({ theme }) =>
     theme.backgroundColor === '#292929' ? '0 0 0 1px #55ebff inset' : '0 0 0 1px black inset'};
