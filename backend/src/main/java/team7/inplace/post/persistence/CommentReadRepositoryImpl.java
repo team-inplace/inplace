@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
-import team7.inplace.liked.likedComment.QLikedComment;
+import team7.inplace.liked.likedComment.domain.QLikedComment;
 import team7.inplace.post.domain.QComment;
 import team7.inplace.post.persistence.dto.CommentQueryResult;
 import team7.inplace.post.persistence.dto.QCommentQueryResult_DetailedComment;
