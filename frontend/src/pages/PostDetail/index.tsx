@@ -141,20 +141,22 @@ export default function PostDetailPage() {
             ))}
           </ImageList>
         )}
-        <Count
+        <CountContainer
           role="button"
           aria-label="게시글 좋아요 버튼"
           onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
         >
-          {isLike ? (
-            <PiHeartFill color="#fe7373" size={isMobile ? 14 : 18} data-testid="PiHeartFill" />
-          ) : (
-            <PiHeartLight size={isMobile ? 14 : 18} data-testid="PiHeartLight" />
-          )}
-          <Text size="s" weight="normal">
-            {postData.totalLikeCount ?? 0}
-          </Text>
-        </Count>
+          <Count>
+            {isLike ? (
+              <PiHeartFill color="#fe7373" size={isMobile ? 14 : 18} data-testid="PiHeartFill" />
+            ) : (
+              <PiHeartLight size={isMobile ? 14 : 18} data-testid="PiHeartLight" />
+            )}
+            <Text size="s" weight="normal">
+              {postData.totalLikeCount ?? 0}
+            </Text>
+          </Count>
+        </CountContainer>
       </PostContainer>
       <CommentTitle>
         <Text size="s" weight="normal">
@@ -249,19 +251,14 @@ const ProfileImg = styled.div`
   }
 `;
 
-const Count = styled.div`
+const CountContainer = styled.div`
   width: 70px;
   border: 0.5px solid #838383;
   border-radius: 6px;
-  align-items: end;
-  justify-content: center;
-  padding: 8px 2px;
-  display: flex;
-  gap: 4px;
+  padding: 8px 2px 6px 2px;
   cursor: pointer;
-  svg {
-    color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#A9A9A9' : '#000000')};
-  }
+  display: flex;
+  justify-content: center;
   &:hover {
     background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#232323' : '#deeeee')};
   }
@@ -270,6 +267,22 @@ const Count = styled.div`
     border: 1px solid #515151;
   }
 `;
+
+const Count = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  svg {
+    color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'white' : '#505050')};
+  }
+  span {
+    line-height: 120%;
+  }
+  @media screen and (max-width: 768px) {
+    gap: 2px;
+  }
+`;
+
 const ImageList = styled.div`
   display: flex;
   gap: 10px;

@@ -44,9 +44,9 @@ export default function Postitem({ item, activeCategory }: { item: PostListData;
         <ItemInfo>
           <Count>
             {item.selfLike ? (
-              <PiHeartFill color="#fe7373" size={18} data-testid="PiHeartFill" />
+              <PiHeartFill color="#fe7373" size={isMobile ? 14 : 18} data-testid="PiHeartFill" />
             ) : (
-              <PiHeartLight size={18} data-testid="PiHeartLight" />
+              <PiHeartLight size={isMobile ? 14 : 18} data-testid="PiHeartLight" />
             )}
             <StyledText size="s" weight="normal">
               {item.totalLikeCount ?? 0}

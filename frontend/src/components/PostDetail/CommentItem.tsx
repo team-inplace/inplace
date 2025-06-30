@@ -281,11 +281,16 @@ const StyledText = styled(Text)`
 
 const Count = styled.div`
   display: flex;
+  align-items: flex-start;
   gap: 4px;
-  align-items: end;
-  cursor: pointer;
   svg {
-    color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#A9A9A9' : '#000000')};
+    color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'white' : '#505050')};
+  }
+  span {
+    line-height: 120%;
+  }
+  @media screen and (max-width: 768px) {
+    gap: 2px;
   }
 `;
 
