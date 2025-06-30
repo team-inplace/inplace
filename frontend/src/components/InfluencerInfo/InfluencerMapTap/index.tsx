@@ -9,6 +9,8 @@ import useMapState from '@/hooks/Map/useMapState';
 
 interface StoredMapState {
   selectedPlaceId?: number | null;
+  center?: { lat: number; lng: number };
+  zoomLevel?: number;
 }
 
 export default function InfluencerMapTap({
@@ -18,14 +20,14 @@ export default function InfluencerMapTap({
   influencerImg: string;
   influencerName: string;
 }) {
-  const getInitialMapState = (): StoredMapState => {
+  const getInitialMapState = (): { state: StoredMapState; isFromDetail: boolean } => {
     try {
       const isFromDetail = sessionStorage.getItem('fromDetail') === 'true';
       if (isFromDetail) {
         const stored = sessionStorage.getItem('influencerMap_state');
         if (stored) {
           const parsedData: StoredMapState = JSON.parse(stored);
-          return parsedData;
+          return { state: parsedData, isFromDetail: true };
         }
       }
     } catch (error) {
@@ -33,21 +35,21 @@ export default function InfluencerMapTap({
     }
 
     return {
-      selectedPlaceId: null,
+      state: { selectedPlaceId: null },
+      isFromDetail: false,
     };
   };
 
-  const initialState = getInitialMapState();
-  const isFromDetail = sessionStorage.getItem('fromDetail') === 'true';
+  const { state: initialState, isFromDetail } = getInitialMapState();
 
-  const [center, setCenter] = useState({ lat: 36.2683, lng: 127.6358 });
+  const [center, setCenter] = useState(initialState.center || { lat: 36.2683, lng: 127.6358 });
   const [mapBounds, setMapBounds] = useState({
     topLeftLatitude: 40.96529356918684,
     topLeftLongitude: 117.35362493334182,
     bottomRightLatitude: 30.52810554762812,
     bottomRightLongitude: 139.31996436541462,
   });
-  const [savedZoomLevel, setSavedZoomLevel] = useState<number | undefined>(14);
+  const [savedZoomLevel, setSavedZoomLevel] = useState<number | undefined>(initialState.zoomLevel || 14);
   const [isRestoredFromDetail, setIsRestoredFromDetail] = useState(isFromDetail);
   const [initialSelectedPlaceId] = useState(initialState.selectedPlaceId);
   const [hasRestored, setHasRestored] = useState(false);
@@ -79,20 +81,21 @@ export default function InfluencerMapTap({
   );
 
   useEffect(() => {
-    if (isRestoredFromDetail) {
-      return;
+    if (!isRestoredFromDetail) {
+      const stateToStore = {
+        selectedPlaceId,
+        center,
+        zoomLevel: savedZoomLevel,
+      };
+      sessionStorage.setItem('influencerMap_state', JSON.stringify(stateToStore));
     }
-    const stateToStore = {
-      selectedPlaceId,
-    };
-    sessionStorage.setItem('influencerMap_state', JSON.stringify(stateToStore));
-  }, [selectedPlaceId, isRestoredFromDetail]);
+  }, [selectedPlaceId, center, savedZoomLevel, isRestoredFromDetail]);
 
   useEffect(() => {
     if (!isFromDetail) {
       sessionStorage.removeItem('influencerMap_state');
     }
-  }, []);
+  }, [isFromDetail]);
 
   useEffect(() => {
     if (fetchedMarkers.length > 0) {
@@ -101,19 +104,16 @@ export default function InfluencerMapTap({
     }
   }, [fetchedMarkers]);
 
-  // placeData가 준비된 후에 selectedPlaceId 복원해야 됨
+  // 마커 데이터 로딩 완료될 때까지 기다리지 않고, 바로 center을 복원
   useEffect(() => {
-    if (isRestoredFromDetail && initialSelectedPlaceId && placeData.length > 0 && !hasRestored) {
-      const targetPlace = placeData.find((place) => place.placeId === initialSelectedPlaceId);
-      if (targetPlace) {
-        forceSelectPlace(initialSelectedPlaceId);
-        setHasRestored(true);
-      }
+    if (isRestoredFromDetail && initialSelectedPlaceId && !hasRestored) {
+      forceSelectPlace(initialSelectedPlaceId);
+      setHasRestored(true);
     }
-  }, [isRestoredFromDetail, initialSelectedPlaceId, placeData, hasRestored, forceSelectPlace]);
+  }, [isRestoredFromDetail, initialSelectedPlaceId, hasRestored, forceSelectPlace]);
 
   useEffect(() => {
-    if (sessionStorage.getItem('fromDetail') === 'true') {
+    if (isFromDetail) {
       const isMobile = window.innerWidth <= 768;
 
       if (isMobile) {
@@ -130,11 +130,11 @@ export default function InfluencerMapTap({
       setIsInitialLoad(false);
       setIsRestoredFromDetail(true);
       setTimeout(() => {
+        sessionStorage.removeItem('fromDetail');
         setIsRestoredFromDetail(false);
       }, 3000);
-      sessionStorage.removeItem('fromDetail');
     }
-  }, [setIsListExpanded, setTranslateY]);
+  }, [isFromDetail, setIsListExpanded, setTranslateY]);
 
   useEffect(() => {
     if (hasRestored && selectedPlaceId === initialSelectedPlaceId) {
@@ -193,6 +193,7 @@ export default function InfluencerMapTap({
         isRestoredFromDetail={isRestoredFromDetail}
         savedZoomLevel={savedZoomLevel}
         setSavedZoomLevel={setSavedZoomLevel}
+        savedCenter={initialState.center}
       />
       <PlaceSectionDesktop>
         <InfluencerPlaceSection
