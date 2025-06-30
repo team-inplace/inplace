@@ -9,11 +9,6 @@ export default function DesktopNavB() {
   const navigate = useNavigate();
   const testGroup = useABTest('map_ui_test');
 
-  const isActive = (path: string) => {
-    if (path.startsWith('http')) return false;
-    return location.pathname.startsWith(path);
-  };
-
   const handleMapNavigation = () => {
     sendGAEvent('map_navigation_click_header', {
       test_name: 'map_ui_test',
@@ -40,19 +35,19 @@ export default function DesktopNavB() {
         </Text>
       </NavExternalLink>
 
-      <NavButton aria-label="헤더 지도_B" onClick={handleMapNavigation} $isActive={isActive('/map')}>
+      <NavButton aria-label="헤더 지도_B" onClick={handleMapNavigation}>
         <Text size="m" weight="normal">
           지도
         </Text>
       </NavButton>
 
-      <NavItem to="/influencer" aria-label="헤더 인플루언서_B" $isActive={isActive('/influencer')}>
+      <NavItem to="/influencer" aria-label="헤더 인플루언서_B">
         <Text size="m" weight="normal">
           인플루언서
         </Text>
       </NavItem>
 
-      <NavItem to="/post" aria-label="헤더 커뮤니티_B" $isActive={isActive('/post')}>
+      <NavItem to="/post" aria-label="헤더 커뮤니티_B">
         <Text size="m" weight="normal">
           커뮤니티
         </Text>
@@ -72,28 +67,12 @@ const NavLinksContainer = styled.div`
   }
 `;
 
-const NavItem = styled(Link)<{ $isActive: boolean }>`
+const NavItem = styled(Link)`
   margin-left: 20px;
   text-decoration: none;
   cursor: pointer;
   color: inherit;
   position: relative;
-
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -6px;
-    width: 100%;
-    height: 3px;
-    background-color: #47c8d9;
-    transform: ${({ $isActive }) => ($isActive ? 'scaleX(1)' : 'scaleX(0)')};
-    transition: transform 0.3s ease;
-  }
-
-  &:hover::after {
-    transform: scaleX(1);
-  }
 `;
 
 const NavExternalLink = styled.a`
@@ -102,25 +81,9 @@ const NavExternalLink = styled.a`
   cursor: pointer;
   color: inherit;
   position: relative;
-
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -6px;
-    width: 100%;
-    height: 3px;
-    background-color: #47c8d9;
-    transform: scaleX(0);
-    transition: transform 0.3s ease;
-  }
-
-  &:hover::after {
-    transform: scaleX(1);
-  }
 `;
 
-const NavButton = styled.button<{ $isActive: boolean }>`
+const NavButton = styled.button`
   margin-left: 20px;
   background: none;
   border: none;
@@ -130,20 +93,4 @@ const NavButton = styled.button<{ $isActive: boolean }>`
   color: inherit;
   text-align: left;
   position: relative;
-
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -6px;
-    width: 100%;
-    height: 3px;
-    background-color: #47c8d9;
-    transform: ${({ $isActive }) => ($isActive ? 'scaleX(1)' : 'scaleX(0)')};
-    transition: transform 0.3s ease;
-  }
-
-  &:hover::after {
-    transform: scaleX(1);
-  }
 `;
