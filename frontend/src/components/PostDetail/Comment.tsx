@@ -130,7 +130,8 @@ export default function Comment({ id }: { id: string }) {
         onSuccess: () => {
           if (!textareaRef.current) return;
           setInputValue('');
-          queryClient.invalidateQueries({ queryKey: ['commentList', currentPage - 1, 10, id] }); // 좋아요 리스트 초기화
+          queryClient.invalidateQueries({ queryKey: ['commentList', currentPage - 1, 10, id] }); // 댓글 리스트 초기화
+          queryClient.invalidateQueries({ queryKey: ['postData', id] }); // 댓글 건수 갱신
           textareaRef.current.style.height = 'auto';
           setCurrentPage(commentList?.totalPages ?? 1);
         },

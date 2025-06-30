@@ -9,7 +9,7 @@ export const getPostData = async (id: string) => {
 };
 export const useGetPostData = (id: string) => {
   return useSuspenseQuery({
-    queryKey: ['PostData', id],
+    queryKey: ['postData', id],
     queryFn: () => getPostData(id),
     staleTime: 1000 * 60 * 5,
   });

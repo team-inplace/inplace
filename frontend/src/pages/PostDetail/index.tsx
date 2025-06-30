@@ -69,7 +69,7 @@ export default function PostDetailPage() {
         {
           onSuccess: () => {
             setIsLike(newLikeStatus);
-            queryClient.invalidateQueries({ queryKey: ['PostData', id] });
+            queryClient.invalidateQueries({ queryKey: ['postData', id] });
           },
           onError: () => {
             alert('좋아요 등록에 실패했어요. 다시 시도해주세요!');
