@@ -10,7 +10,6 @@ import team7.inplace.user.domain.QUser;
 import team7.inplace.user.domain.QUserBadge;
 import team7.inplace.user.domain.QUserTier;
 import team7.inplace.user.persistence.dto.QUserQueryResult_Badge;
-import team7.inplace.user.persistence.dto.QUserQueryResult_Info;
 import team7.inplace.user.persistence.dto.QUserQueryResult_Simple;
 import team7.inplace.user.persistence.dto.UserQueryResult.Badge;
 import team7.inplace.user.persistence.dto.UserQueryResult.Simple;

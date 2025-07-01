@@ -13,7 +13,9 @@ import team7.inplace.liked.likedComment.domain.QLikedComment;
 import team7.inplace.post.domain.QComment;
 import team7.inplace.post.persistence.dto.CommentQueryResult;
 import team7.inplace.post.persistence.dto.QCommentQueryResult_DetailedComment;
+import team7.inplace.user.domain.QBadge;
 import team7.inplace.user.domain.QUser;
+import team7.inplace.user.domain.QUserTier;
 
 @Repository
 @RequiredArgsConstructor
@@ -59,6 +61,8 @@ public class CommentReadRepositoryImpl implements CommentReadRepository {
                     QComment.comment.id,
                     QUser.user.nickname,
                     QUser.user.profileImageUrl,
+                    QUserTier.userTier.imgUrl,
+                    QBadge.badge.imgUrl,
                     QComment.comment.content,
                     userId == null ?
                         Expressions.constant(false) :
@@ -78,6 +82,8 @@ public class CommentReadRepositoryImpl implements CommentReadRepository {
             )
             .from(QComment.comment)
             .join(QUser.user).on(QComment.comment.authorId.eq(QUser.user.id))
+            .innerJoin(QUserTier.userTier).on(QUser.user.tierId.eq(QUserTier.userTier.id))
+            .leftJoin(QBadge.badge).on(QUser.user.mainBadgeId.eq(QBadge.badge.id))
             .leftJoin(QLikedComment.likedComment)
             .on(userId == null ? Expressions.FALSE : likedJoinCondition)
             .where(QComment.comment.postId.eq(postId));
