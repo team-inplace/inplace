@@ -13,16 +13,20 @@ import team7.inplace.post.persistence.dto.CommentQueryResult;
 import team7.inplace.post.persistence.dto.PostQueryResult.DetailedPost;
 import team7.inplace.post.persistence.dto.PostQueryResult.UserSuggestion;
 import team7.inplace.security.util.AuthorizationUtil;
+import team7.inplace.user.application.UserService;
 
 @Facade
 @RequiredArgsConstructor
 public class PostFacade {
 
     private final PostService postService;
+    private final UserService userService;
 
     public void createPost(CreatePost command) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.createPost(command, userId);
+        userService.addToPostCount(userId, 1);
+        userService.updateUserTier(userId);
     }
 
     public void updatePost(UpdatePost updateCommand) {
@@ -33,11 +37,14 @@ public class PostFacade {
     public void deletePost(Long postId) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.deletePost(postId, userId);
+        userService.addToPostCount(userId, -1);
+        userService.updateUserTier(userId);
     }
 
     public void createComment(PostCommand.CreateComment command) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.createComment(command, userId);
+        userService.addToReceivedCommentByPostId(command.postId(), 1L);
     }
 
     public void updateComment(PostCommand.UpdateComment updateCommand) {
@@ -48,6 +55,7 @@ public class PostFacade {
     public void deleteComment(Long postId, Long commentId) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.deleteComment(postId, commentId, userId);
+        userService.addToReceivedCommentByPostId(postId, -1L);
     }
 
     public CursorResult<DetailedPost> getPosts(Long cursorId, int size, String orderBy) {
