@@ -81,4 +81,11 @@ public class User extends BaseEntity {
         this.tierId = tierId;
     }
 
+    public void updatePostCount(Integer postCount) {
+        this.postCount = postCount;
+    }
+
+    public void updateReceivedCommentCount(Long receivedCommentCount) {
+        this.receivedCommentCount = receivedCommentCount;
+    }
 }
