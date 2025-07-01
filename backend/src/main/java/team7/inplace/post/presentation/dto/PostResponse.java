@@ -145,7 +145,7 @@ public class PostResponse {
 
     public record DetailedComment(
         Long commentId,
-        UserResponse.Info author,
+        UserResponse.Simple author,
         String content,
         Boolean selfLike,
         Integer totalLikeCount,
@@ -156,8 +156,10 @@ public class PostResponse {
         public static DetailedComment from(CommentQueryResult.DetailedComment commentQueryResult) {
             return new DetailedComment(
                 commentQueryResult.commentId(),
-                new UserResponse.Info(commentQueryResult.userNickname(),
-                    commentQueryResult.userImageUrl()),
+                new UserResponse.Simple(commentQueryResult.userNickname(),
+                    commentQueryResult.userImageUrl(),
+                    commentQueryResult.tierImageUrl(),
+                    commentQueryResult.mainBadgeImageUrl()),
                 commentQueryResult.content(),
                 commentQueryResult.selfLike(),
                 commentQueryResult.totalLikeCount(),
