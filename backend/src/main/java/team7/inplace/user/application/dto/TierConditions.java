@@ -13,19 +13,19 @@ public class TierConditions {
 
     public Long getCurrentTierId(Integer postCount, Long receivedCommentCount, Long receivedLikeCount) {
         int left = 0, right = tierConditions.size() - 1;
-        long calculatedTierId = 0L;
+        int calculatedIdx = 0;
         while (left <= right) {
             int mid = (left + right) / 2;
             TierCondition tierCondition = tierConditions.get(mid);
             if (tierCondition.isSatisfied(postCount, receivedCommentCount, receivedLikeCount)) {
-                calculatedTierId = mid;
+                calculatedIdx = mid;
                 left = mid + 1;
             } else {
                 right = mid - 1;
             }
         }
 
-        return calculatedTierId;
+        return tierConditions.get(calculatedIdx).id();
     }
 
     public static TierConditions of(List<UserTier> userTiers) {
