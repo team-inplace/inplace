@@ -6,7 +6,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.global.exception.InplaceException;
+import team7.inplace.global.exception.code.PostErrorCode;
 import team7.inplace.global.exception.code.UserErrorCode;
+import team7.inplace.post.domain.Post;
+import team7.inplace.post.persistence.PostJpaRepository;
 import team7.inplace.user.application.dto.TierConditions;
 import team7.inplace.user.application.dto.UserCommand.Create;
 import team7.inplace.user.application.dto.UserCommand.Info;
@@ -29,6 +32,7 @@ public class UserService {
     private final UserReadRepository userReadRepository;
     private final UserBadgeJpaRepository userBadgeJpaRepository;
     private final UserTierJpaRepository userTierJpaRepository;
+    private final PostJpaRepository postJpaRepository;
 
     @Transactional
     public Info registerUser(Create userCreate) {
@@ -110,5 +114,24 @@ public class UserService {
         );
 
         user.updateTier(calculatedTierId);
+    }
+
+    @Transactional
+    public void addToPostCount(Long userId, Integer delta) {
+        User user = userJpaRepository.findById(userId)
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+
+        user.updatePostCount(user.getPostCount() + delta);
+    }
+
+    @Transactional
+    public void addToReceivedCommentByPostId(Long postId, Long delta) {
+        Post post = postJpaRepository.findById(postId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
+
+        User user = userJpaRepository.findById(post.getAuthorId())
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+
+        user.updateReceivedCommentCount(user.getReceivedCommentCount() + delta);
     }
 }
