@@ -11,6 +11,7 @@ import team7.inplace.global.baseEntity.BaseEntity;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.PostErrorCode;
 
+@Getter
 @Entity
 @Getter
 @Table(name = "posts")
