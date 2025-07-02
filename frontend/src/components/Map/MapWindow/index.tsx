@@ -39,6 +39,7 @@ interface MapWindowProps {
   isRestoredFromDetail?: boolean;
   savedZoomLevel?: number;
   setSavedZoomLevel: React.Dispatch<React.SetStateAction<number | undefined>>;
+  savedCenter?: { lat: number; lng: number } | null;
 }
 
 export default function MapWindow({
@@ -59,6 +60,7 @@ export default function MapWindow({
   isRestoredFromDetail = false,
   savedZoomLevel,
   setSavedZoomLevel,
+  savedCenter,
 }: MapWindowProps) {
   const GEOLOCATION_CONFIG = {
     maximumAge: 500000,
@@ -72,7 +74,8 @@ export default function MapWindow({
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [showSearchButton, setShowSearchButton] = useState(false);
   const [showNoMarkerMessage, setShowNoMarkerMessage] = useState(false);
-  const [isRestoringFromDetail, setIsRestoringFromDetail] = useState(false);
+  const [isRestored, setIsRestored] = useState(false);
+  const [hasInitialLoad, setHasInitialLoad] = useState(false);
   const isMobile = useIsMobile();
   const { moveMapToMarker, handleCenterReset } = useMapActions({ mapRef, onPlaceSelect });
   const { markerInfo, handleMarkerClick, handleMapClick } = useMarkerData({
@@ -108,43 +111,32 @@ export default function MapWindow({
   const selectedMarker = markerListToRender.find((m) => m.placeId === selectedPlaceId) || null;
 
   useEffect(() => {
-    if (isRestoredFromDetail && isMapReady && mapRef.current) {
-      try {
-        if (savedZoomLevel && center.lat !== 37.5665 && center.lng !== 126.978) {
-          setIsRestoringFromDetail(true);
+    if (isMapReady && mapRef.current && !hasInitialLoad) {
+      if (isRestoredFromDetail) {
+        if (savedCenter) {
+          mapRef.current.setCenter(new kakao.maps.LatLng(savedCenter.lat, savedCenter.lng));
+          mapRef.current.setLevel(savedZoomLevel || 14);
+          setIsRestored(true);
+        } else {
           mapRef.current.setCenter(new kakao.maps.LatLng(center.lat, center.lng));
-          mapRef.current.setLevel(savedZoomLevel);
-          setIsLoading(false);
-          setTimeout(() => {
-            setIsRestoringFromDetail(false);
-          }, 500);
-        } else if (!savedZoomLevel) {
-          const { topLeftLatitude, topLeftLongitude, bottomRightLatitude, bottomRightLongitude } = mapBounds;
-          if (topLeftLatitude !== 0 && bottomRightLatitude !== 0) {
-            setIsRestoringFromDetail(true);
-            const bounds = new kakao.maps.LatLngBounds(
-              new kakao.maps.LatLng(bottomRightLatitude, topLeftLongitude),
-              new kakao.maps.LatLng(topLeftLatitude, bottomRightLongitude),
-            );
-            mapRef.current.setBounds(bounds);
-            setIsLoading(false);
-            setTimeout(() => {
-              setIsRestoringFromDetail(false);
-            }, 500);
-          }
+          mapRef.current.setLevel(savedZoomLevel || 14);
+          setIsRestored(true);
         }
-      } catch (error) {
-        setIsRestoringFromDetail(false);
+        setIsLoading(false);
+      } else {
+        mapRef.current.setCenter(new kakao.maps.LatLng(center.lat, center.lng));
+        mapRef.current.setLevel(savedZoomLevel || DEFAULT_MAP_ZOOM_LEVEL);
       }
+      setHasInitialLoad(true);
+      updateMapBounds();
     }
-  }, [isRestoredFromDetail, isMapReady, mapBounds, center, savedZoomLevel]);
+  }, [isMapReady, isRestoredFromDetail, savedCenter, savedZoomLevel, center, hasInitialLoad]);
 
   // placeName로 검색 시 지도 범위 확장
   useEffect(() => {
     if (!mapRef.current) return;
     if (!filtersWithPlaceName.placeName) return;
     if (!placeNameMarkers || placeNameMarkers.length === 0) return;
-    if (isRestoringFromDetail) return;
 
     const bounds = new kakao.maps.LatLngBounds();
     placeNameMarkers.forEach((marker) => {
@@ -153,7 +145,7 @@ export default function MapWindow({
 
     mapRef.current.setBounds(bounds);
     setShowSearchButton(false);
-  }, [placeNameMarkers, filtersWithPlaceName.placeName, isRestoringFromDetail]);
+  }, [placeNameMarkers, filtersWithPlaceName.placeName]);
 
   // 초기 접속 시
   useEffect(() => {
@@ -161,6 +153,8 @@ export default function MapWindow({
       return;
     }
     if (isRestoredFromDetail) {
+      setIsLoading(false);
+      setIsInitialLoad(false);
       return;
     }
     if (center.lat !== 37.5665 || center.lng !== 126.978) {
@@ -213,17 +207,17 @@ export default function MapWindow({
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (!mapRef.current && !isRestoringFromDetail) {
+      if (!mapRef.current && !hasInitialLoad) {
         alert('지도를 불러오지 못했어요. 네트워크 상태를 확인한 후 새로고침 해주세요.');
         setIsLoading(false);
       }
     }, 6000);
 
     return () => clearTimeout(timeout);
-  }, [isRestoringFromDetail]);
+  }, [hasInitialLoad]);
 
   const updateMapBounds = useCallback(() => {
-    if (!mapRef.current || isRestoredFromDetail || isRestoringFromDetail) {
+    if (!mapRef.current) {
       return;
     }
     const bounds = mapRef.current.getBounds();
@@ -238,7 +232,7 @@ export default function MapWindow({
     setMapBounds(newBounds);
     setCenter({ lat: currentCenter.getLat(), lng: currentCenter.getLng() });
     setSavedZoomLevel(currentZoomLevel);
-  }, [setMapBounds, setCenter, setSavedZoomLevel, isRestoredFromDetail, isRestoringFromDetail]);
+  }, [setMapBounds, setCenter, setSavedZoomLevel]);
 
   const handleNearbyClick = () => {
     if (!mapRef.current) return;
@@ -251,7 +245,7 @@ export default function MapWindow({
   };
 
   useEffect(() => {
-    if (!mapRef.current || !isChangedLocation || isInitialLoad || isRestoringFromDetail) return;
+    if (!mapRef.current || !isChangedLocation || isInitialLoad) return;
     const LocPosition = new kakao.maps.LatLng(isChangedLocation.lat, isChangedLocation.lng);
     mapRef.current.setCenter(LocPosition);
     mapRef.current.setLevel(DEFAULT_MAP_ZOOM_LEVEL);
@@ -259,18 +253,13 @@ export default function MapWindow({
     onPlaceSelect(null);
     updateMapBounds();
     setShowSearchButton(false);
-  }, [isChangedLocation?.lat, isChangedLocation?.lng, isRestoringFromDetail]);
+  }, [isChangedLocation?.lat, isChangedLocation?.lng]);
 
-  // 초기 선택 시에만 이동하도록
   useEffect(() => {
-    if (!selectedPlaceId || !mapRef.current || isRestoringFromDetail) return;
-
-    const list = filtersWithPlaceName.placeName ? placeNameMarkers : markers;
-    const marker = list.find((m) => m.placeId === selectedPlaceId);
-    if (marker) {
-      moveMapToMarker(marker.latitude, marker.longitude);
+    if (selectedPlaceId && selectedMarker && hasInitialLoad && (!isRestoredFromDetail || isRestored)) {
+      moveMapToMarker(selectedMarker.latitude, selectedMarker.longitude);
     }
-  }, [selectedPlaceId, placeNameMarkers, markers, isRestoringFromDetail]);
+  }, [selectedPlaceId, selectedMarker, moveMapToMarker, hasInitialLoad, isRestoredFromDetail, isRestored]);
 
   useEffect(() => {
     const isEmpty = !isLoading && !isLoadingMarker && markerListToRender.length === 0;
@@ -285,13 +274,30 @@ export default function MapWindow({
     return undefined;
   }, [markerListToRender, isLoadingMarker, isLoading]);
 
+  const handleMapChange = useCallback(() => {
+    if (hasInitialLoad && (!isRestoredFromDetail || isRestored)) {
+      if (mapRef.current) {
+        const currentZoomLevel = mapRef.current.getLevel();
+        setSavedZoomLevel(currentZoomLevel);
+      }
+      setShowSearchButton(true);
+    }
+  }, [setSavedZoomLevel, hasInitialLoad, isRestoredFromDetail, isRestored]);
+
+  const handleZoomChange = useCallback(() => {
+    if (mapRef.current && hasInitialLoad && (!isRestoredFromDetail || isRestored)) {
+      const currentZoomLevel = mapRef.current.getLevel();
+      setSavedZoomLevel(currentZoomLevel);
+    }
+  }, [setSavedZoomLevel, hasInitialLoad, isRestoredFromDetail, isRestored]);
+
   return (
     <MapContainer>
-      {(isLoading || isRestoringFromDetail) && (
+      {(isInitialLoad || (isRestoredFromDetail && !isRestored)) && (
         <LoadingWrapper>
           <Loading />
           <Text size="s" weight="normal" variant="white">
-            {isRestoringFromDetail ? '지도 복원 중...' : '내 위치 찾는 중...'}
+            {isRestoredFromDetail ? '지도 복원 중...' : '내 위치 찾는 중...'}
           </Text>
         </LoadingWrapper>
       )}
@@ -330,18 +336,10 @@ export default function MapWindow({
           setIsMapReady(true);
         }}
         onCenterChanged={() => {
-          if (!isRestoringFromDetail && !isRestoredFromDetail) {
-            setShowSearchButton(true);
-          }
+          setShowSearchButton(true);
         }}
-        onZoomChanged={() => {
-          if (!isRestoringFromDetail && !isRestoredFromDetail) {
-            setShowSearchButton(true);
-            if (mapRef.current) {
-              setSavedZoomLevel(mapRef.current.getLevel());
-            }
-          }
-        }}
+        onZoomChanged={handleZoomChange}
+        onDragEnd={handleMapChange}
         onClick={handleMapClick}
       >
         {userLocation && (
@@ -384,7 +382,7 @@ export default function MapWindow({
             }}
             clickable
           >
-            <InfoWindow data={markerInfo} />
+            <InfoWindow data={markerInfo} stateKey="mapPage_state" />
           </CustomOverlayMap>
         )}
       </Map>

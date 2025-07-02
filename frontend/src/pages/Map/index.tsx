@@ -12,10 +12,11 @@ import MapSearchBar from '@/components/Map/MapSearchBar';
 import useClickOutside from '@/hooks/useClickOutside';
 import { LocationData } from '@/types';
 
-interface StoredFilters {
+interface StoredMapState {
   selectedInfluencers: string[];
   selectedCategories: { id: number; label: string }[];
   selectedPlaceName: string;
+  selectedPlaceId?: number | null;
   mapBounds?: LocationData;
   center?: { lat: number; lng: number };
   zoomLevel?: number;
@@ -25,11 +26,12 @@ export default function MapPage() {
   const { data: influencerOptions } = useGetDropdownInfluencer();
   const { data: categoryOptions = [] } = useGetDropdownCategory();
 
-  const getInitialFilters = (): StoredFilters => {
-    const defaultFilters = {
+  const getInitialMapState = (): { state: StoredMapState; isFromDetail: boolean } => {
+    const defaultState = {
       selectedInfluencers: [],
       selectedCategories: [],
       selectedPlaceName: '',
+      selectedPlaceId: null,
       mapBounds: undefined,
       center: undefined,
       zoomLevel: undefined,
@@ -37,30 +39,32 @@ export default function MapPage() {
     try {
       const isFromDetail = sessionStorage.getItem('fromDetail') === 'true';
       if (isFromDetail) {
-        const stored = sessionStorage.getItem('mapPage_filters');
+        const stored = sessionStorage.getItem('mapPage_state');
         if (stored) {
-          const parsedData: StoredFilters = JSON.parse(stored);
-          return parsedData;
+          const parsedData: StoredMapState = JSON.parse(stored);
+          return { state: parsedData, isFromDetail: true };
         }
       }
-      return defaultFilters;
     } catch (error) {
-      return defaultFilters;
+      console.error('MapPage getInitialMapState 에러:', error);
     }
+    return { state: defaultState, isFromDetail: false };
   };
 
-  const initialFilters = getInitialFilters();
-  const [selectedInfluencers, setSelectedInfluencers] = useState<string[]>(initialFilters.selectedInfluencers);
+  const { state: initialState, isFromDetail } = useMemo(() => getInitialMapState(), []);
+  const [selectedInfluencers, setSelectedInfluencers] = useState<string[]>(initialState.selectedInfluencers);
   const [selectedCategories, setSelectedCategories] = useState<{ id: number; label: string }[]>(
-    initialFilters.selectedCategories,
+    initialState.selectedCategories,
   );
-  const [selectedPlaceName, setSelectedPlaceName] = useState<string>(initialFilters.selectedPlaceName);
+  const [selectedPlaceName, setSelectedPlaceName] = useState<string>(initialState.selectedPlaceName);
   const [isFilterBarOpened, setIsFilterBarOpened] = useState(false);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(!isFromDetail);
   const [isChangedLocation, setIsChangedLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [shouldRestoreScroll, setShouldRestoreScroll] = useState(false);
-  const [isRestoredFromDetail, setIsRestoredFromDetail] = useState(false);
-  const [savedZoomLevel, setSavedZoomLevel] = useState<number | undefined>(initialFilters.zoomLevel);
+  const [isRestoredFromDetail, setIsRestoredFromDetail] = useState(isFromDetail);
+  const [savedZoomLevel, setSavedZoomLevel] = useState<number | undefined>(initialState.zoomLevel);
+  const [initialSelectedPlaceId] = useState(initialState.selectedPlaceId);
+  const [hasRestored, setHasRestored] = useState(false);
 
   const filterRef = useRef<HTMLDivElement | null>(null);
   const {
@@ -73,6 +77,7 @@ export default function MapPage() {
     placeData,
     setIsListExpanded,
     handlePlaceSelect,
+    forceSelectPlace,
     handleGetPlaceData,
   } = useMapState();
   const { translateY, setTranslateY, handleTouchStart, handleTouchMove, handleTouchEnd } =
@@ -83,25 +88,23 @@ export default function MapPage() {
   });
 
   useEffect(() => {
-    if (isRestoredFromDetail) {
-      // detail 페이지에서 복원된 직후에는 저장 안 함
-      return;
+    if (!isRestoredFromDetail) {
+      const stateToStore: StoredMapState = {
+        selectedInfluencers,
+        selectedCategories,
+        selectedPlaceName,
+        selectedPlaceId,
+        mapBounds,
+        center,
+        zoomLevel: savedZoomLevel,
+      };
+      sessionStorage.setItem('mapPage_state', JSON.stringify(stateToStore));
     }
-
-    const filtersToStore: StoredFilters = {
-      selectedInfluencers,
-      selectedCategories,
-      selectedPlaceName,
-      mapBounds,
-      center,
-      zoomLevel: savedZoomLevel,
-    };
-
-    sessionStorage.setItem('mapPage_filters', JSON.stringify(filtersToStore));
   }, [
     selectedInfluencers,
     selectedCategories,
     selectedPlaceName,
+    selectedPlaceId,
     mapBounds,
     center,
     isRestoredFromDetail,
@@ -109,11 +112,27 @@ export default function MapPage() {
   ]);
 
   useEffect(() => {
-    const isFromDetail = sessionStorage.getItem('fromDetail') === 'true';
     if (!isFromDetail) {
-      sessionStorage.removeItem('mapPage_filters');
+      sessionStorage.removeItem('mapPage_state');
     }
-  }, []);
+  }, [isFromDetail]);
+
+  useEffect(() => {
+    if (isFromDetail && initialSelectedPlaceId && !hasRestored) {
+      forceSelectPlace(initialSelectedPlaceId);
+      setHasRestored(true);
+    }
+  }, [isFromDetail, initialSelectedPlaceId, hasRestored, forceSelectPlace]);
+
+  useEffect(() => {
+    if (hasRestored) {
+      setTimeout(() => {
+        setIsRestoredFromDetail(false);
+        sessionStorage.removeItem('fromDetail');
+      }, 2000);
+    }
+    return undefined;
+  }, [hasRestored]);
 
   const filters = useMemo(
     () => ({
@@ -166,7 +185,7 @@ export default function MapPage() {
   }, []);
 
   useEffect(() => {
-    if (sessionStorage.getItem('fromDetail') === 'true') {
+    if (isFromDetail) {
       const isMobile = window.innerWidth <= 768;
 
       if (isMobile) {
@@ -176,17 +195,13 @@ export default function MapPage() {
           setShouldRestoreScroll(true);
         }, 400);
       } else {
-        setShouldRestoreScroll(true);
+        setTimeout(() => {
+          setShouldRestoreScroll(true);
+        }, 200);
       }
       setIsInitialLoad(false);
-      setIsRestoredFromDetail(true);
-      setTimeout(() => {
-        setIsRestoredFromDetail(false);
-      }, 3000);
-
-      sessionStorage.removeItem('fromDetail');
     }
-  }, []);
+  }, [isFromDetail, setIsListExpanded, setTranslateY]);
 
   const handlePlaceItemClick = useCallback(
     (placeId: number) => {
@@ -274,6 +289,7 @@ export default function MapPage() {
         isRestoredFromDetail={isRestoredFromDetail}
         savedZoomLevel={savedZoomLevel}
         setSavedZoomLevel={setSavedZoomLevel}
+        savedCenter={initialState.center}
       />
       <PlaceSectionDesktop>
         <PlaceSection

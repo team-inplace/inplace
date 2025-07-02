@@ -5,7 +5,7 @@ export default function useMapState() {
   const getInitialMapState = () => {
     try {
       const isFromDetail = sessionStorage.getItem('fromDetail') === 'true';
-      const stored = sessionStorage.getItem('mapPage_filters');
+      const stored = sessionStorage.getItem('mapPage_state');
       if (isFromDetail && stored) {
         const parsedData = JSON.parse(stored);
         if (parsedData.center && parsedData.mapBounds) {

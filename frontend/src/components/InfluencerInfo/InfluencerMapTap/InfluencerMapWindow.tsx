@@ -239,7 +239,7 @@ export default function InfluencerMapWindow({
               }}
               clickable
             >
-              <InfoWindow data={markerInfo} />
+              <InfoWindow data={markerInfo} stateKey="influencerMap_state" />
             </CustomOverlayMap>
           )}
         </Map>
