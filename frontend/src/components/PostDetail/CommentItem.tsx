@@ -47,6 +47,30 @@ export default function CommentItem({
 
   const handleResizeHeight = useAutoResizeTextarea();
 
+  function highlightMentions(text: string) {
+    const regex = /<<@(\d+):([^>]+)>>/g;
+    const parts = [];
+    let lastIndex = 0;
+    let match = regex.exec(text);
+    while (match !== null) {
+      if (match.index > lastIndex) {
+        parts.push(text.slice(lastIndex, match.index));
+      }
+      parts.push(
+        <span key={match[1]} style={{ color: '#00c4c4', fontWeight: 700 }}>
+          @{match[2]}
+        </span>,
+      );
+      lastIndex = regex.lastIndex;
+      match = regex.exec(text);
+    }
+    // 남은 텍스트
+    if (lastIndex < text.length) {
+      parts.push(text.slice(lastIndex));
+    }
+    return parts;
+  }
+
   const handleDeleteSubmit = () => {
     const isConfirm = window.confirm('삭제하시겠습니까?');
     if (!isConfirm) return;
@@ -191,7 +215,7 @@ export default function CommentItem({
         ) : (
           <>
             <Paragraph size="s" weight="normal">
-              {item.content}
+              {highlightMentions(item.content)}
             </Paragraph>
             <CommentInfo>
               <StyledText size="s" weight="normal">

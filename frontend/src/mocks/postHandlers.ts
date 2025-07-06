@@ -150,7 +150,7 @@ const commentListDummy = [
   {
     commentId: 1,
     author: {
-      nickname: '리라스윗칩',
+      nickname: '이효은',
       imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
       tierImageUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
     },
@@ -167,7 +167,7 @@ const commentListDummy = [
       imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
       tierImageUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
     },
-    content: '@랄라스윗칩 여긴 인플레이슨데 뭔헛소리노',
+    content: '<<@1:이효은>> 여긴 인플레이슨데 뭔헛소리노',
     createAt: '3분전',
     totalLikeCount: 10,
     selfLike: false,

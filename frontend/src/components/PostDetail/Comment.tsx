@@ -19,6 +19,8 @@ import { useGetSearchUserComplete } from '@/api/hooks/useGetSearchUserComplete';
 import useDebounce from '@/hooks/useDebounce';
 import UserName from './UserName';
 import useClickOutside from '@/hooks/useClickOutside';
+import useMentionableUsers from '@/hooks/Comment/useMentionableUsers';
+import { convertMentionsToEntities, extractMentionQuery } from '@/libs/mention/metion';
 
 export default function Comment({ id }: { id: string }) {
   const location = useLocation();
@@ -42,6 +44,8 @@ export default function Comment({ id }: { id: string }) {
 
   const handleResizeHeight = useAutoResizeTextarea();
 
+  const mentionableUsers = useMentionableUsers(searchResults);
+
   const handleFocus = (e: React.FocusEvent<HTMLTextAreaElement>) => {
     if (!isAuthenticated) {
       setShowLoginModal(true);
@@ -57,13 +61,6 @@ export default function Comment({ id }: { id: string }) {
       setMentionQuery(query);
     }
   };
-  function extractMentionQuery(text: string, cursorPos: number): string {
-    const beforeCursor = text.slice(0, cursorPos);
-    const atIndex = beforeCursor.lastIndexOf('@');
-    if (atIndex === -1) return '';
-    const match = beforeCursor.slice(atIndex + 1).match(/^[A-Za-z0-9가-힣_]+/);
-    return match ? match[0] : '';
-  }
 
   // 텍스트 변경 시 닉네임 추출
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -87,20 +84,6 @@ export default function Comment({ id }: { id: string }) {
     }
   };
 
-  // const highlightText = (text: string) => {
-  //   const regex = /(@[A-Za-z0-9가-힣_]+)/g;
-  //   return text.split(regex).map((part) => {
-  //     if (part.startsWith('@') && searchResults) {
-  //       const username = part.slice(1);
-  //       const user = searchResults.find((u) => u.nickname === username);
-  //       if (user) {
-  //         return <span style={{ color: 'mintcream' }}>{part}</span>;
-  //       }
-  //     }
-  //     return part;
-  //   });
-  // };
-
   const handleSelectUser = (nickname: string) => {
     if (!textareaRef.current) return;
     const { value } = textareaRef.current;
@@ -116,16 +99,17 @@ export default function Comment({ id }: { id: string }) {
     setInputValue(newValue);
     setShowMentionList(false);
     setMentionQuery('');
-
     handleResizeHeight(textareaRef.current);
   };
 
-  const handleCommentSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleCommentSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!textareaRef.current || inputValue === '') return;
 
+    const convertedValue = convertMentionsToEntities(inputValue, mentionableUsers);
+
     postComment(
-      { postId: id, comment: inputValue },
+      { postId: id, comment: convertedValue },
       {
         onSuccess: () => {
           if (!textareaRef.current) return;
