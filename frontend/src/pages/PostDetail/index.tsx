@@ -1,7 +1,7 @@
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
-import { IoIosArrowForward, IoMdClose } from 'react-icons/io';
+import { IoIosArrowBack, IoIosArrowForward, IoMdClose } from 'react-icons/io';
 import { useCallback, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { Text } from '@/components/common/typography/Text';
@@ -33,7 +33,7 @@ export default function PostDetailPage() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isLike, setIsLike] = useState(postData.selfLike);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<string>('');
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
 
   const handleEditPost = (postId: string, formData: object) => {
     navigate('/posting', { state: { postId, prevformData: formData, type: 'update' } });
@@ -85,6 +85,23 @@ export default function PostDetailPage() {
     imageUrls: postData.imageUrls,
   };
 
+  const imageUrls = postData.imageUrls ?? [];
+
+  const openImageModal = (idx: number) => {
+    setSelectedImageIndex(idx);
+    setIsModalOpen(true);
+  };
+
+  const showPrevImage = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    setSelectedImageIndex((prev) => (prev === 0 ? imageUrls.length - 1 : prev - 1));
+  };
+
+  const showNextImage = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    setSelectedImageIndex((prev) => (prev === imageUrls.length - 1 ? 0 : prev + 1));
+  };
+
   return (
     <Wrapper>
       <CategoryName to="/post">
@@ -134,8 +151,7 @@ export default function PostDetailPage() {
                 src={imgUrl.imageUrl}
                 alt={`게시글 이미지 ${index}`}
                 onClick={() => {
-                  setSelectedImage(imgUrl.imageUrl);
-                  setIsModalOpen(true);
+                  openImageModal(index);
                 }}
               />
             ))}
@@ -171,9 +187,22 @@ export default function PostDetailPage() {
       {isModalOpen && (
         <ModalOverlay onClick={() => setIsModalOpen(false)}>
           <ModalContent onClick={(e) => e.stopPropagation()}>
-            <img src={selectedImage} alt="확대 이미지" style={{ maxWidth: '90vw', maxHeight: '90vh' }} />
+            <ImageIndex>
+              {selectedImageIndex + 1} / {imageUrls.length}
+            </ImageIndex>
+            {imageUrls.length > 1 && (
+              <>
+                <ArrowBtnLeft type="button" onClick={showPrevImage} aria-label="이전 이미지">
+                  <IoIosArrowBack size={36} />
+                </ArrowBtnLeft>
+                <ArrowBtnRight type="button" onClick={showNextImage} aria-label="다음 이미지">
+                  <IoIosArrowForward size={36} />
+                </ArrowBtnRight>
+              </>
+            )}
+            <img src={imageUrls[selectedImageIndex]?.imageUrl} alt="확대 이미지" />
             <CloseBtn type="button" onClick={() => setIsModalOpen(false)}>
-              <IoMdClose size={isMobile ? 24 : 30} />
+              <IoMdClose size={isMobile ? 20 : 24} />
             </CloseBtn>
           </ModalContent>
         </ModalOverlay>
@@ -323,37 +352,6 @@ const StyledButton = styled(Button)`
   }
 `;
 
-const ModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-`;
-const ModalContent = styled.div`
-  position: relative;
-  background: transparent;
-  img {
-    object-fit: contain;
-  }
-`;
-const CloseBtn = styled.button`
-  position: absolute;
-  background: transparent;
-  border: none;
-  aspect-ratio: 1/1;
-  display: flex;
-  align-items: center;
-  color: white;
-  cursor: pointer;
-  right: 2px;
-  top: 6px;
-`;
 const StyledText = styled(Text)`
   line-height: 120%;
   white-space: pre-line;
@@ -377,4 +375,80 @@ const CommentTitle = styled.div`
   @media screen and (max-width: 768px) {
     padding: 0;
   }
+`;
+
+const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+const ModalContent = styled.div`
+  position: relative;
+  background: transparent;
+  img {
+    width: 100%;
+    object-fit: contain;
+  }
+  @media screen and (max-width: 768px) {
+    width: 100%;
+  }
+`;
+const CloseBtn = styled.button`
+  position: absolute;
+  background: transparent;
+  border: none;
+  aspect-ratio: 1/1;
+  display: flex;
+  align-items: center;
+  color: white;
+  cursor: pointer;
+  right: 2px;
+  top: 6px;
+`;
+const ArrowBtnLeft = styled.button`
+  position: absolute;
+  left: -50px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  z-index: 2;
+  @media screen and (max-width: 768px) {
+    left: 0;
+  }
+`;
+
+const ArrowBtnRight = styled.button`
+  position: absolute;
+  right: -50px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  z-index: 2;
+  @media screen and (max-width: 768px) {
+    right: 0;
+  }
+`;
+
+const ImageIndex = styled.div`
+  position: absolute;
+  top: -14%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-size: 16px;
+  z-index: 3;
+  pointer-events: none;
 `;
