@@ -203,7 +203,7 @@ const Input = styled.input`
   font-size: 32px;
   color: ${({ theme }) => (theme.textColor === '#ffffff' ? 'white' : '#333333')};
   height: 32px;
-  max-width: 200px;
+  max-width: 230px;
   padding: 0;
   &:focus {
     outline: none;
