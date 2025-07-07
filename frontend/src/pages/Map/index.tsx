@@ -334,10 +334,10 @@ export default function MapPage() {
 }
 
 const PageContainer = styled.div`
+  width: 100%;
   padding: 16px 0;
   @media screen and (max-width: 768px) {
     position: relative;
-    width: 100%;
     align-items: center;
     touch-action: none;
   }

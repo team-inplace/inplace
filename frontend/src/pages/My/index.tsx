@@ -49,8 +49,8 @@ export default function MyPage() {
     hasNextPage,
     isFetchingNextPage,
   });
-  const { data: userNickname } = useGetUserInfo();
-  const [nickname, setNickname] = useState(userNickname?.nickname || '');
+  const { data: userInfo } = useGetUserInfo();
+  const [nickname, setNickname] = useState(userInfo?.nickname || '');
   const [isVisible, setIsVisible] = useState(true);
   const { mutate: patchNickname } = usePatchNickname();
   const { handleLogout } = useAuth();
@@ -100,9 +100,10 @@ export default function MyPage() {
       <TitleWrapper>
         {isVisible ? (
           <NickNameWrapper>
+            {userInfo?.tier.imgUrl && <UserTier src={userInfo?.tier.imgUrl} alt={`${userInfo.nickname} Tier`} />}
             <Text size="l" weight="bold">
               <Text size="xl" weight="bold" style={{ color: '#47c8d9' }}>
-                {userNickname?.nickname}
+                {userInfo?.nickname}
               </Text>
               <CustomButton aria-label="닉네임 수정" onClick={() => setIsVisible(false)}>
                 <MdOutlineDriveFileRenameOutline size={24} color="#47c8d9" />
@@ -164,6 +165,7 @@ export default function MyPage() {
   );
 }
 const Wrapper = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 60px;
@@ -225,9 +227,13 @@ const NickNameWrapper = styled.div`
     display: flex;
   }
 `;
-
 const UnderlineText = styled.span`
   text-decoration: underline;
   cursor: pointer;
   color: inherit;
+`;
+const UserTier = styled.img`
+  height: 34px;
+  width: auto;
+  vertical-align: middle;
 `;

@@ -1,14 +1,12 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { Text } from '@/components/common/typography/Text';
-import useAuth from '@/hooks/useAuth';
 import { useABTest } from '@/provider/ABTest';
 import { sendGAEvent } from '@/utils/test/googleTestUtils';
 
 export default function DesktopNavA() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
   const testGroup = useABTest('map_ui_test');
 
   const isActive = (path: string) => {
@@ -54,13 +52,11 @@ export default function DesktopNavA() {
         </Text>
       </NavItem>
 
-      {isAuthenticated && (
-        <NavItem to="/my" aria-label="헤더 마이페이지_A" $isActive={isActive('/my')}>
-          <Text size="xs" weight="normal">
-            마이페이지
-          </Text>
-        </NavItem>
-      )}
+      <NavItem to="/post" aria-label="헤더 커뮤니티_A" $isActive={isActive('/post')}>
+        <Text size="xs" weight="normal">
+          커뮤니티
+        </Text>
+      </NavItem>
     </NavLinksContainer>
   );
 }

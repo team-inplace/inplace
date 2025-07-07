@@ -115,7 +115,7 @@ const UserDropdown = styled.div`
   top: 100%;
   right: 0px;
   padding: 4px 0px;
-  z-index: 2;
+  z-index: 100;
   background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#434343' : 'white')};
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);

@@ -35,6 +35,7 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
   const commonLinks = [
     { to: '/map', label: '지도' },
     { to: '/influencer', label: '인플루언서' },
+    { to: '/post', label: '커뮤니티' },
   ];
 
   return (
@@ -115,7 +116,7 @@ const Container = styled(motion.nav)<{ $isOpen: boolean }>`
   @media screen and (max-width: 768px) {
     display: flex;
     position: absolute;
-    top: 66px;
+    top: 100%;
     left: 0;
     width: 100%;
     flex-direction: column;
