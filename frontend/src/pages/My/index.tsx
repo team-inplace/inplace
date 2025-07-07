@@ -60,13 +60,18 @@ export default function MyPage() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (nickname.length < 2 || nickname.length > 8) {
+    const trimmedNickname = nickname.trim();
+    if (trimmedNickname.includes(' ')) {
+      alert('닉네임에 공백이 들어갈 수 없습니다!');
+      return;
+    }
+    if (trimmedNickname.length < 2 || trimmedNickname.length > 8) {
       alert('닉네임 길이를 확인해주세요!');
       return;
     }
-    patchNickname(nickname, {
+    patchNickname(trimmedNickname, {
       onSuccess: () => {
-        localStorage.setItem('nickname', nickname);
+        localStorage.setItem('nickname', trimmedNickname);
         setIsVisible(true);
         queryClient.invalidateQueries({ queryKey: ['UserInfo'] });
       },
