@@ -319,6 +319,6 @@ const MentionItem = styled.div`
   padding: 10px 12px;
   cursor: pointer;
   &:hover {
-    background-color: #1f1f1f;
+    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#1f1f1f' : '#eefbfb')};
   }
 `;
