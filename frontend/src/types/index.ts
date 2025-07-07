@@ -148,6 +148,16 @@ export type RequestInfluencerLike = {
 export type UserInfoData = {
   nickname: string;
   imgUrl: string;
+  tier: {
+    name: string;
+    imgUrl: string;
+  };
+  badges: [
+    {
+      name: string;
+      imgUrl: string;
+    },
+  ];
 };
 export type UserPlaceData = {
   placeId: number;
@@ -249,4 +259,97 @@ export type CategoryOption = {
   id: number;
   isMain: boolean;
   mainId?: number;
+};
+
+export type CursorData<T> = {
+  posts: T[];
+  cursor: {
+    hasNext: boolean;
+    nextCursorId: number;
+  };
+};
+
+export type PostListData = {
+  postId: number;
+  author: {
+    nickname: string;
+    imgUrl: string;
+    tierImageUrl: string;
+    badgeImageUrl: string;
+  };
+  title: string;
+  content: string;
+  photoUrls?: string;
+  totalLikeCount: number;
+  totalCommentCount: number;
+  createAt: string;
+  isMine: boolean;
+  selfLike: boolean;
+};
+export type PostData = {
+  postId: number;
+  author: {
+    nickname: string;
+    imgUrl: string;
+    tierImageUrl: string;
+    badgeImageUrl: string;
+  };
+  title: string;
+  content: string;
+  totalLikeCount: number;
+  totalCommentCount: number;
+  createAt: string;
+  imageUrls?: UploadedImageObj[];
+  selfLike: boolean;
+  isMine: boolean;
+};
+export type PostingData = {
+  title: string;
+  content: string;
+  imageUrls?: UploadedImageObj[];
+};
+
+export type CommentData = {
+  commentId: number;
+  author: {
+    nickname: string;
+    imgUrl: string;
+    tierImageUrl: string;
+  };
+  content: string;
+  createAt: string;
+  totalLikeCount: number;
+  selfLike: boolean;
+  isMine: boolean;
+};
+
+export type PostCommentProps = {
+  postId: string;
+  comment: string;
+};
+
+export type UploadImage = {
+  file: File;
+  thumbnail: string;
+  isExisting: boolean;
+  hash: string;
+};
+
+export type RequestPostLike = {
+  postId: number;
+  likes: boolean;
+};
+
+export type UploadedImageObj = {
+  imageUrl: string;
+  hash: string;
+};
+export type RequestCommentLike = {
+  commentId: number;
+  likes: boolean;
+};
+export type SearchUserComplete = {
+  userId: number;
+  nickname: string;
+  imageUrl: string;
 };

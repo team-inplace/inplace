@@ -63,19 +63,10 @@ export default function Header() {
           <MobileOnlyIcons>
             {!isMenuOpen ? (
               <>
-                <ThemeButton
-                  onClick={toggleTheme}
-                  aria-label="모바일 테마 변경"
-                  $isDarkMode={isDarkMode}
-                  style={{ position: 'fixed', right: '60px' }}
-                >
+                <ThemeButton onClick={toggleTheme} aria-label="모바일 테마 변경" $isDarkMode={isDarkMode}>
                   {isDarkMode ? <FiSun size={20} color="white" /> : <FiMoon size={20} color="black" />}
                 </ThemeButton>
-                <MobileMenuButton
-                  onClick={() => setIsMenuOpen(true)}
-                  aria-label="모바일 메뉴 열기"
-                  style={{ position: 'fixed', right: '20px' }}
-                >
+                <MobileMenuButton onClick={() => setIsMenuOpen(true)} aria-label="모바일 메뉴 열기">
                   <RiMenuLine size={24} color={isDarkMode ? 'white' : 'grey'} />
                 </MobileMenuButton>
               </>
@@ -90,27 +81,25 @@ export default function Header() {
                     />
                   </FixedMarginSearchBar>
                 )}
-                <MobileMenuButton
-                  onClick={() => setIsMenuOpen(false)}
-                  aria-label="모바일 메뉴 닫기"
-                  style={{ position: 'fixed', right: '20px' }}
-                >
+                <MobileMenuButton onClick={() => setIsMenuOpen(false)} aria-label="모바일 메뉴 닫기">
                   <RiCloseLine size={26} color={isDarkMode ? 'white' : 'grey'} />
                 </MobileMenuButton>
               </>
             )}
           </MobileOnlyIcons>
         </RightSection>
+        <MobileNav isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
       </HeaderContentWrapper>
-
-      <MobileNav isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
     </HeaderContainer>
   );
 }
 
-export const HEADER_HEIGHT = 80;
+export const HEADER_HEIGHT = 50;
 
-const HeaderContainer = styled.header``;
+const HeaderContainer = styled.header`
+  width: 960px;
+  margin: 0 auto;
+`;
 
 const HeaderContentWrapper = styled.div`
   display: flex;
@@ -119,7 +108,15 @@ const HeaderContentWrapper = styled.div`
   margin-top: 10px;
 
   @media (max-width: 768px) {
+    position: relative;
     padding: 0 20px;
+    width: 90%;
+    position: fixed;
+    max-height: 50px;
+    top: 0;
+    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#292929' : '#f7fcff')};
+    margin-top: 0px;
+    z-index: 10000;
   }
 `;
 
@@ -163,6 +160,7 @@ const MobileOnlyIcons = styled.div`
   @media screen and (max-width: 768px) {
     display: flex;
     align-items: center;
+    gap: 10px;
   }
 `;
 

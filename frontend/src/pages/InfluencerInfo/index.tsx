@@ -190,6 +190,7 @@ export default function InfluencerInfoPage() {
 }
 
 const PageContainer = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
   margin-top: 30px;
@@ -314,7 +315,6 @@ const StyledButton = styled(Button)`
   font-size: 14px;
   margin-left: auto;
   color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#ffffff' : '#333333')};
-
   background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#292929' : '#ecfbfb')};
 
   &:hover {
