@@ -137,7 +137,13 @@ export default function InfoTap({
         </Map>
       </MapContainer>
       <SurroundContainer>
-        <BaseLayout type="surround" prevSubText="주변 장소" mainText="" SubText="" items={surroundVideos || []} />
+        <BaseLayout
+          type="surround"
+          prevSubText="이 장소는 어때요?"
+          mainText=""
+          SubText=""
+          items={surroundVideos || []}
+        />
       </SurroundContainer>
       {visitModal && (
         <QueryErrorResetBoundary>
