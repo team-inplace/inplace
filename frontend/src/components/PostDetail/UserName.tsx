@@ -10,10 +10,12 @@ interface UserTitleProps {
 export default function UserName({ userNickname, tierImageUrl, badgeImageUrl }: UserTitleProps) {
   return (
     <UserTitleWrapper>
-      {tierImageUrl && <UserTier src={tierImageUrl} alt={`${userNickname} Tier`} />}
-      <Text size="s" weight="normal">
-        {userNickname}
-      </Text>
+      <MobileUserUI>
+        {tierImageUrl && <UserTier src={tierImageUrl} alt={`${userNickname} Tier`} />}
+        <Text size="s" weight="normal">
+          {userNickname}
+        </Text>
+      </MobileUserUI>
       {badgeImageUrl && <UserTitle src={badgeImageUrl} alt={`${userNickname} Title`} />}
     </UserTitleWrapper>
   );
@@ -25,7 +27,9 @@ const UserTitleWrapper = styled.div`
   align-items: center;
 
   @media screen and (max-width: 768px) {
-    gap: 2px;
+    flex-wrap: wrap;
+    gap: 4px;
+    align-items: start;
   }
 `;
 
@@ -44,3 +48,5 @@ const UserTitle = styled.img`
     margin-left: 4px;
   }
 `;
+
+const MobileUserUI = styled.div``;

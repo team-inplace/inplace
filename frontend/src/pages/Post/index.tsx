@@ -165,7 +165,7 @@ const Header = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
-  margin: 20px 0px 10px;
+  margin: 20px 0px 0px;
   align-items: center;
   @media screen and (max-width: 768px) {
     margin-top: 0px;
