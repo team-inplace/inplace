@@ -60,7 +60,7 @@ jobs:
 
   deploy-to-test-server:
       needs: build-docker-image
-      runs-on: ubuntu-latest
+      runs-on: ubuntu-22.04
       steps:
         - name: Verify dev branch
           run: |
@@ -108,7 +108,7 @@ jobs:
               sudo docker run \
                 --name inplace-test \
                 --rm -d \
-                --network ip6net \
+                --network ip6net
                 -p 8080:8080 \
                 -p ${{ secrets.EC2_MONITORING_PORT }}:${{ secrets.EC2_MONITORING_PORT }} \
                 --restart unless-stopped \
