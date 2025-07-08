@@ -68,6 +68,11 @@ jobs:
               echo "Deployment is only allowed from dev branch"
               exit 1
             fi
+            
+        - name: Set up WARP 
+          uses: fscarmen/warp-on-actions@v1.3 # ipv6용 wrapper
+          with:
+            stack: dual
 
         - name: Configure SSH
           run: |
