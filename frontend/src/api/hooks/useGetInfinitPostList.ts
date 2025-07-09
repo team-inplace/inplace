@@ -3,7 +3,7 @@ import { fetchInstance } from '../instance';
 import { CursorData, PostListData } from '@/types';
 
 export const getInfinitPostList = async (
-  nextCursorId: number | null,
+  cursorId: number | null,
   size: number,
   sort: string,
 ): Promise<CursorData<PostListData>> => {
@@ -12,8 +12,8 @@ export const getInfinitPostList = async (
     sort,
   });
 
-  if (nextCursorId !== null) {
-    params.append('nextCursorId', nextCursorId.toString());
+  if (cursorId !== null) {
+    params.append('cursorId', cursorId.toString());
   }
 
   const response = await fetchInstance.get<CursorData<PostListData>>(`/posts?${params}`, { withCredentials: true });

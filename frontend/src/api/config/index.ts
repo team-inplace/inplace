@@ -11,7 +11,7 @@ const DEFAULT_CONFIGS: Record<Environment, Config> = {
     environment: 'production',
   },
   development: {
-    baseURL: 'https://a7b2c3d4-dev.inplace.my:444',
+    baseURL: 'https://a7b2c3d4-dev.inplace.my',
     environment: 'development',
   },
 } as const;
