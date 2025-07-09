@@ -40,6 +40,7 @@ interface MapWindowProps {
   savedZoomLevel?: number;
   setSavedZoomLevel: React.Dispatch<React.SetStateAction<number | undefined>>;
   savedCenter?: { lat: number; lng: number } | null;
+  isFromDetail?: boolean;
 }
 
 export default function MapWindow({
@@ -58,6 +59,7 @@ export default function MapWindow({
   isListExpanded,
   onListExpand,
   isRestoredFromDetail = false,
+  isFromDetail = false,
   savedZoomLevel,
   setSavedZoomLevel,
   savedCenter,
@@ -77,13 +79,18 @@ export default function MapWindow({
   const [isRestored, setIsRestored] = useState(false);
   const [hasInitialLoad, setHasInitialLoad] = useState(false);
   const isMobile = useIsMobile();
-  const { moveMapToMarker, handleCenterReset } = useMapActions({ mapRef, onPlaceSelect });
+  const { moveMapToMarker, handleCenterReset, markRestorationComplete } = useMapActions({
+    mapRef,
+    onPlaceSelect,
+    isFromDetail,
+  });
   const { markerInfo, handleMarkerClick, handleMapClick } = useMarkerData({
     selectedPlaceId,
     placeData,
     onPlaceSelect,
     moveMapToMarker,
     mapRef,
+    isRestoredFromDetail,
   });
 
   const originSize = isMobile ? 26 : 34;
@@ -234,6 +241,40 @@ export default function MapWindow({
     setSavedZoomLevel(currentZoomLevel);
   }, [setMapBounds, setCenter, setSavedZoomLevel]);
 
+  const updateSessionOnly = useCallback(() => {
+    if (!mapRef.current || isRestoredFromDetail) return;
+
+    const bounds = mapRef.current.getBounds();
+    const currentCenter = mapRef.current.getCenter();
+    const currentZoomLevel = mapRef.current.getLevel();
+
+    const newBounds = {
+      topLeftLatitude: bounds.getNorthEast().getLat(),
+      topLeftLongitude: bounds.getSouthWest().getLng(),
+      bottomRightLatitude: bounds.getSouthWest().getLat(),
+      bottomRightLongitude: bounds.getNorthEast().getLng(),
+    };
+
+    const newCenter = { lat: currentCenter.getLat(), lng: currentCenter.getLng() };
+
+    // 세션 스토리지만 업데이트 (API 호출 없음)
+    const currentState = sessionStorage.getItem('mapPage_state');
+    if (currentState) {
+      try {
+        const parsedState = JSON.parse(currentState);
+        const updatedState = {
+          ...parsedState,
+          center: newCenter,
+          zoomLevel: currentZoomLevel,
+          mapBounds: newBounds,
+        };
+        sessionStorage.setItem('mapPage_state', JSON.stringify(updatedState));
+      } catch (error) {
+        console.error('세션 저장 실패:', error);
+      }
+    }
+  }, [isRestoredFromDetail]);
+
   const handleNearbyClick = () => {
     if (!mapRef.current) return;
     const currentCenter = mapRef.current.getCenter();
@@ -255,11 +296,19 @@ export default function MapWindow({
     setShowSearchButton(false);
   }, [isChangedLocation?.lat, isChangedLocation?.lng]);
 
+  // selectedPlaceId가 변경될 때 지도 이동 처리
   useEffect(() => {
-    if (selectedPlaceId && selectedMarker && hasInitialLoad && (!isRestoredFromDetail || isRestored)) {
-      moveMapToMarker(selectedMarker.latitude, selectedMarker.longitude);
+    if (selectedPlaceId && selectedMarker && hasInitialLoad && !isRestoredFromDetail) {
+      moveMapToMarker(selectedMarker.latitude, selectedMarker.longitude); // 마커 선택으로 인한 지도 이동(복원 중 아닌 경우)
     }
-  }, [selectedPlaceId, selectedMarker, moveMapToMarker, hasInitialLoad, isRestoredFromDetail, isRestored]);
+  }, [selectedPlaceId, selectedMarker, moveMapToMarker, hasInitialLoad, isRestoredFromDetail]);
+
+  // 복원 완료 후 지도 이동 다시 활성화
+  useEffect(() => {
+    if (isFromDetail && !isRestoredFromDetail) {
+      markRestorationComplete(); // 복원 완료 처리
+    }
+  }, [isFromDetail, isRestoredFromDetail, markRestorationComplete]);
 
   useEffect(() => {
     const isEmpty = !isLoading && !isLoadingMarker && markerListToRender.length === 0;
@@ -273,23 +322,6 @@ export default function MapWindow({
     }
     return undefined;
   }, [markerListToRender, isLoadingMarker, isLoading]);
-
-  const handleMapChange = useCallback(() => {
-    if (hasInitialLoad && (!isRestoredFromDetail || isRestored)) {
-      if (mapRef.current) {
-        const currentZoomLevel = mapRef.current.getLevel();
-        setSavedZoomLevel(currentZoomLevel);
-      }
-      setShowSearchButton(true);
-    }
-  }, [setSavedZoomLevel, hasInitialLoad, isRestoredFromDetail, isRestored]);
-
-  const handleZoomChange = useCallback(() => {
-    if (mapRef.current && hasInitialLoad && (!isRestoredFromDetail || isRestored)) {
-      const currentZoomLevel = mapRef.current.getLevel();
-      setSavedZoomLevel(currentZoomLevel);
-    }
-  }, [setSavedZoomLevel, hasInitialLoad, isRestoredFromDetail, isRestored]);
 
   return (
     <MapContainer>
@@ -337,9 +369,14 @@ export default function MapWindow({
         }}
         onCenterChanged={() => {
           setShowSearchButton(true);
+          updateSessionOnly();
         }}
-        onZoomChanged={handleZoomChange}
-        onDragEnd={handleMapChange}
+        onZoomChanged={() => {
+          updateSessionOnly();
+        }}
+        onDragEnd={() => {
+          updateSessionOnly();
+        }}
         onClick={handleMapClick}
       >
         {userLocation && (

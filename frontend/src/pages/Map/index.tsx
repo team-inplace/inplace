@@ -88,6 +88,13 @@ export default function MapPage() {
   });
 
   useEffect(() => {
+    if (isFromDetail && initialState.mapBounds) {
+      // 세션에 저장된 mapBounds를 복원
+      setMapBounds(initialState.mapBounds);
+    }
+  }, [isFromDetail, initialState.mapBounds, setMapBounds]);
+
+  useEffect(() => {
     if (!isRestoredFromDetail) {
       const stateToStore: StoredMapState = {
         selectedInfluencers,
@@ -125,14 +132,13 @@ export default function MapPage() {
   }, [isFromDetail, initialSelectedPlaceId, hasRestored, forceSelectPlace]);
 
   useEffect(() => {
-    if (hasRestored) {
+    if (hasRestored && isRestoredFromDetail) {
       setTimeout(() => {
         setIsRestoredFromDetail(false);
         sessionStorage.removeItem('fromDetail');
-      }, 2000);
+      }, 1000);
     }
-    return undefined;
-  }, [hasRestored]);
+  }, [hasRestored, isRestoredFromDetail]);
 
   const filters = useMemo(
     () => ({
@@ -287,6 +293,7 @@ export default function MapPage() {
         isListExpanded={isListExpanded}
         onListExpand={handleListExpand}
         isRestoredFromDetail={isRestoredFromDetail}
+        isFromDetail={isFromDetail}
         savedZoomLevel={savedZoomLevel}
         setSavedZoomLevel={setSavedZoomLevel}
         savedCenter={initialState.center}
