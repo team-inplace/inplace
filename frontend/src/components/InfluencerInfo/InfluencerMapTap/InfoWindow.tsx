@@ -8,8 +8,13 @@ import { Text } from '@/components/common/typography/Text';
 import { AddressInfo, MarkerInfo, PlaceData } from '@/types';
 import FallbackImage from '@/components/common/Items/FallbackImage';
 
+type StoredMapState = {
+  selectedPlaceId?: number | null;
+};
+
 type Props = {
   data: MarkerInfo | PlaceData;
+  stateKey: 'mapPage_state' | 'influencerMap_state';
 };
 
 const getFullAddress = (addr: AddressInfo) => {
@@ -22,7 +27,7 @@ const extractYoutubeId = (url: string) => {
   return `https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`;
 };
 
-export default function InfoWindow({ data }: Props) {
+export default function InfoWindow({ data, stateKey }: Props) {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0);
   const videos = data.videos || [];
@@ -30,6 +35,22 @@ export default function InfoWindow({ data }: Props) {
 
   const handleInfoClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
+
+    let currentMapState: StoredMapState = {
+      selectedPlaceId: null,
+    };
+    try {
+      const stored = sessionStorage.getItem(stateKey);
+      if (stored) {
+        currentMapState = { ...currentMapState, ...JSON.parse(stored) };
+      }
+    } catch (error) {
+      console.error('sessionStorage에서 저장된 influencerMap_state parsing 오류:', error);
+    }
+    currentMapState.selectedPlaceId = data.placeId;
+    sessionStorage.setItem(stateKey, JSON.stringify(currentMapState));
+    sessionStorage.setItem('fromDetail', 'true');
+    if (stateKey === 'influencerMap_state') sessionStorage.setItem('influencerPage_activeTab', 'map');
     navigate(`/detail/${data.placeId}`);
   };
 

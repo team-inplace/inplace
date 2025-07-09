@@ -131,6 +131,7 @@ describe('세부페이지 ErrorBoundary 테스트', () => {
             address3: '',
           },
           category: '',
+          surroundVideos: [],
         },
         error: null,
       },

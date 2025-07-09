@@ -104,7 +104,7 @@ export default function DetailPage() {
               const youtubeUrl = isYoutubeUrl ? extractYoutubeId(url.videoUrl) : BasicThumb;
               return (
                 <ImageWrapper key={`${id}-${url.videoUrl}`}>
-                  <FallbackImage src={youtubeUrl} alt="장소 사진" />
+                  <FallbackImage src={youtubeUrl} fallbackSrc={BasicThumb} alt="장소 사진" />
                 </ImageWrapper>
               );
             })}
@@ -192,6 +192,7 @@ export default function DetailPage() {
           latitude={infoData?.latitude}
           rating={infoData?.rating}
           placeId={Number(id)}
+          surroundVideos={infoData?.surroundVideos || []}
         />
         {/* ) : (
           <QueryErrorResetBoundary>
@@ -213,13 +214,13 @@ export default function DetailPage() {
 }
 
 const Wrapper = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 30px;
   padding: 16px 0;
 
   @media screen and (max-width: 768px) {
-    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 20px;

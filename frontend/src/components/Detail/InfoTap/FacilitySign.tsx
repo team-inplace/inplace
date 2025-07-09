@@ -102,7 +102,7 @@ const Wrapper = styled.div`
   @media screen and (max-width: 768px) {
     flex-wrap: wrap;
     gap: 6px;
-    padding: 0px 6px;
+    padding: 0px 10px;
   }
 `;
 

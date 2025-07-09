@@ -4,19 +4,16 @@ import { FiSun, FiMoon } from 'react-icons/fi';
 import { MdOutlineLogout } from 'react-icons/md';
 import { useRef, useState } from 'react';
 import { AiOutlineUser } from 'react-icons/ai';
-import { RiUserUnfollowLine } from 'react-icons/ri';
 import useAuth from '@/hooks/useAuth';
 import useTheme from '@/hooks/useTheme';
 import LoginModal from '@/components/common/modals/LoginModal';
 import { useGetUserInfo } from '@/api/hooks/useGetUserInfo';
 import FallbackImage from '../../Items/FallbackImage';
 import useClickOutside from '@/hooks/useClickOutside';
-import { useDeleteUser } from '@/api/hooks/useDeleteUser';
 
 export default function AuthButtons() {
   const { isAuthenticated, handleLogout } = useAuth();
   const { data: imgSrc } = useGetUserInfo();
-  const { mutate: deleteUser } = useDeleteUser();
   const { theme, toggleTheme } = useTheme();
   const isDarkMode = theme === 'dark';
   const location = useLocation();
@@ -26,22 +23,6 @@ export default function AuthButtons() {
   const handleClickProfile = () => {
     setIsOpen(!isOpen);
   };
-
-  const handleDeleteUser = () => {
-    if (window.confirm('정말 회원 탈퇴를 하시겠습니까?')) {
-      deleteUser(undefined, {
-        onSuccess: () => {
-          handleLogout();
-          alert('회원탈퇴가 완료되었습니다.');
-        },
-        onError: (error) => {
-          console.error('회원탈퇴 실패:', error);
-          alert('회원탈퇴에 실패했습니다. 다시 시도해주세요.');
-        },
-      });
-    }
-  };
-
   useClickOutside([dropdownRef], () => setIsOpen(false));
 
   return (
@@ -59,10 +40,6 @@ export default function AuthButtons() {
               <DropdownItem onClick={handleLogout}>
                 <MdOutlineLogout size={16} />
                 로그아웃
-              </DropdownItem>
-              <DropdownItem onClick={handleDeleteUser}>
-                <RiUserUnfollowLine size={16} />
-                회원탈퇴
               </DropdownItem>
             </UserDropdown>
           )}
@@ -130,7 +107,7 @@ const UserDropdown = styled.div`
   background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#434343' : 'white')};
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  width: 100px;
+  width: 110px;
   margin-top: 4px;
   color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#ffffff' : '#333333')};
 

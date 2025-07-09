@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import styled from 'styled-components';
 import MapWindow from '@/components/Map/MapWindow';
 import PlaceSection from '@/components/Map/PlaceSection';
@@ -10,16 +10,62 @@ import useMapState from '@/hooks/Map/useMapState';
 import DropdownFilterBar, { FilterBarItem } from '@/components/Map/DropdownFilterBar';
 import MapSearchBar from '@/components/Map/MapSearchBar';
 import useClickOutside from '@/hooks/useClickOutside';
+import { LocationData } from '@/types';
+
+interface StoredMapState {
+  selectedInfluencers: string[];
+  selectedCategories: { id: number; label: string }[];
+  selectedPlaceName: string;
+  selectedPlaceId?: number | null;
+  mapBounds?: LocationData;
+  center?: { lat: number; lng: number };
+  zoomLevel?: number;
+}
 
 export default function MapPage() {
   const { data: influencerOptions } = useGetDropdownInfluencer();
   const { data: categoryOptions = [] } = useGetDropdownCategory();
-  const [selectedInfluencers, setSelectedInfluencers] = useState<string[]>([]);
-  const [selectedCategories, setSelectedCategories] = useState<{ id: number; label: string }[]>([]);
-  const [selectedPlaceName, setSelectedPlaceName] = useState<string>('');
+
+  const getInitialMapState = (): { state: StoredMapState; isFromDetail: boolean } => {
+    const defaultState = {
+      selectedInfluencers: [],
+      selectedCategories: [],
+      selectedPlaceName: '',
+      selectedPlaceId: null,
+      mapBounds: undefined,
+      center: undefined,
+      zoomLevel: undefined,
+    };
+    try {
+      const isFromDetail = sessionStorage.getItem('fromDetail') === 'true';
+      if (isFromDetail) {
+        const stored = sessionStorage.getItem('mapPage_state');
+        if (stored) {
+          const parsedData: StoredMapState = JSON.parse(stored);
+          return { state: parsedData, isFromDetail: true };
+        }
+      }
+    } catch (error) {
+      console.error('MapPage getInitialMapState 에러:', error);
+    }
+    return { state: defaultState, isFromDetail: false };
+  };
+
+  const { state: initialState, isFromDetail } = useMemo(() => getInitialMapState(), []);
+  const [selectedInfluencers, setSelectedInfluencers] = useState<string[]>(initialState.selectedInfluencers);
+  const [selectedCategories, setSelectedCategories] = useState<{ id: number; label: string }[]>(
+    initialState.selectedCategories,
+  );
+  const [selectedPlaceName, setSelectedPlaceName] = useState<string>(initialState.selectedPlaceName);
   const [isFilterBarOpened, setIsFilterBarOpened] = useState(false);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [isInitialLoad, setIsInitialLoad] = useState(!isFromDetail);
   const [isChangedLocation, setIsChangedLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [shouldRestoreScroll, setShouldRestoreScroll] = useState(false);
+  const [isRestoredFromDetail, setIsRestoredFromDetail] = useState(isFromDetail);
+  const [savedZoomLevel, setSavedZoomLevel] = useState<number | undefined>(initialState.zoomLevel);
+  const [initialSelectedPlaceId] = useState(initialState.selectedPlaceId);
+  const [hasRestored, setHasRestored] = useState(false);
+
   const filterRef = useRef<HTMLDivElement | null>(null);
   const {
     center,
@@ -31,6 +77,7 @@ export default function MapPage() {
     placeData,
     setIsListExpanded,
     handlePlaceSelect,
+    forceSelectPlace,
     handleGetPlaceData,
   } = useMapState();
   const { translateY, setTranslateY, handleTouchStart, handleTouchMove, handleTouchEnd } =
@@ -39,6 +86,59 @@ export default function MapPage() {
   useClickOutside([filterRef], () => {
     if (isFilterBarOpened) setIsFilterBarOpened(false);
   });
+
+  useEffect(() => {
+    if (isFromDetail && initialState.mapBounds) {
+      // 세션에 저장된 mapBounds를 복원
+      setMapBounds(initialState.mapBounds);
+    }
+  }, [isFromDetail, initialState.mapBounds, setMapBounds]);
+
+  useEffect(() => {
+    if (!isRestoredFromDetail) {
+      const stateToStore: StoredMapState = {
+        selectedInfluencers,
+        selectedCategories,
+        selectedPlaceName,
+        selectedPlaceId,
+        mapBounds,
+        center,
+        zoomLevel: savedZoomLevel,
+      };
+      sessionStorage.setItem('mapPage_state', JSON.stringify(stateToStore));
+    }
+  }, [
+    selectedInfluencers,
+    selectedCategories,
+    selectedPlaceName,
+    selectedPlaceId,
+    mapBounds,
+    center,
+    isRestoredFromDetail,
+    savedZoomLevel,
+  ]);
+
+  useEffect(() => {
+    if (!isFromDetail) {
+      sessionStorage.removeItem('mapPage_state');
+    }
+  }, [isFromDetail]);
+
+  useEffect(() => {
+    if (isFromDetail && initialSelectedPlaceId && !hasRestored) {
+      forceSelectPlace(initialSelectedPlaceId);
+      setHasRestored(true);
+    }
+  }, [isFromDetail, initialSelectedPlaceId, hasRestored, forceSelectPlace]);
+
+  useEffect(() => {
+    if (hasRestored && isRestoredFromDetail) {
+      setTimeout(() => {
+        setIsRestoredFromDetail(false);
+        sessionStorage.removeItem('fromDetail');
+      }, 1000);
+    }
+  }, [hasRestored, isRestoredFromDetail]);
 
   const filters = useMemo(
     () => ({
@@ -89,6 +189,32 @@ export default function MapPage() {
       return newExpandedState;
     });
   }, []);
+
+  useEffect(() => {
+    if (isFromDetail) {
+      const isMobile = window.innerWidth <= 768;
+
+      if (isMobile) {
+        setIsListExpanded(true);
+        setTranslateY(0);
+        setTimeout(() => {
+          setShouldRestoreScroll(true);
+        }, 400);
+      } else {
+        setTimeout(() => {
+          setShouldRestoreScroll(true);
+        }, 200);
+      }
+      setIsInitialLoad(false);
+    }
+  }, [isFromDetail, setIsListExpanded, setTranslateY]);
+
+  const handlePlaceItemClick = useCallback(
+    (placeId: number) => {
+      handlePlaceSelect(placeId);
+    },
+    [handlePlaceSelect],
+  );
 
   const dropdownItems: FilterBarItem[] = [
     {
@@ -166,6 +292,11 @@ export default function MapPage() {
         onPlaceSelect={handlePlaceSelect}
         isListExpanded={isListExpanded}
         onListExpand={handleListExpand}
+        isRestoredFromDetail={isRestoredFromDetail}
+        isFromDetail={isFromDetail}
+        savedZoomLevel={savedZoomLevel}
+        setSavedZoomLevel={setSavedZoomLevel}
+        savedCenter={initialState.center}
       />
       <PlaceSectionDesktop>
         <PlaceSection
@@ -175,8 +306,10 @@ export default function MapPage() {
           isInitialLoad={isInitialLoad}
           filtersWithPlaceName={filtersWithPlaceName}
           onGetPlaceData={handleGetPlaceData}
-          onPlaceSelect={handlePlaceSelect}
+          onPlaceSelect={handlePlaceItemClick}
           selectedPlaceId={selectedPlaceId}
+          shouldRestoreScroll={shouldRestoreScroll}
+          setShouldRestoreScroll={setShouldRestoreScroll}
         />
       </PlaceSectionDesktop>
       <MobilePlaceSection
@@ -195,10 +328,12 @@ export default function MapPage() {
           center={center}
           isInitialLoad={isInitialLoad}
           onGetPlaceData={handleGetPlaceData}
-          onPlaceSelect={handlePlaceSelect}
+          onPlaceSelect={handlePlaceItemClick}
           selectedPlaceId={selectedPlaceId}
           isListExpanded={isListExpanded}
           onListExpand={handleListExpand}
+          shouldRestoreScroll={shouldRestoreScroll}
+          setShouldRestoreScroll={setShouldRestoreScroll}
         />
       </MobilePlaceSection>
     </PageContainer>

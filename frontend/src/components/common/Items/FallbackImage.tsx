@@ -10,9 +10,27 @@ export default function FallbackImage({ src, fallbackSrc = BasicImage, alt = '',
   const [currentSrc, setCurrentSrc] = useState<string>(src || fallbackSrc);
   const [hasError, setHasError] = useState<boolean>(false);
 
+  const checkImageExists = async (url: string): Promise<boolean> => {
+    try {
+      const response = await fetch(url, { method: 'HEAD' });
+      return response.ok;
+    } catch {
+      return false;
+    }
+  };
+
   useEffect(() => {
     setCurrentSrc(src || fallbackSrc);
     setHasError(false);
+
+    if (src) {
+      checkImageExists(src).then((exists) => {
+        if (!exists) {
+          setCurrentSrc(fallbackSrc);
+          setHasError(true);
+        }
+      });
+    }
   }, [src, fallbackSrc]);
 
   const handleError = () => {

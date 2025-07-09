@@ -63,16 +63,18 @@ export default function BaseLayout({
     if (type === 'influencer') {
       return <InfluencerSection items={items as InfluencerData[]} />;
     }
-    if (type === 'spot') {
+    if (type === 'spot' || type === 'surround') {
       return <SpotSection items={items as SpotData[]} />;
     }
     return <UserPlaceSection items={items as UserPlaceData[]} />;
   };
 
+  const paragraphSize = type === 'surround' ? 's' : 'm';
+
   return (
     <Container>
       <TitleContainer>
-        <Paragraph size="m" weight="bold">
+        <Paragraph size={paragraphSize} weight="bold">
           {prevSubText || ''}
           <Text size="ll" weight="bold" style={isDarkMode ? { color: '#55EBFF' } : { color: '#47c8d9' }}>
             {mainText || ''}
@@ -85,7 +87,7 @@ export default function BaseLayout({
           </MoreBtn>
         ) : null}
       </TitleContainer>
-      {renderSection()}
+      <RenderContainer $isSurround={type === 'surround'}>{renderSection()}</RenderContainer>
     </Container>
   );
 }
@@ -124,4 +126,8 @@ const MoreBtn = styled.button`
     padding-block: 0;
     padding-inline: 0;
   }
+`;
+
+const RenderContainer = styled.div<{ $isSurround: boolean }>`
+  ${({ $isSurround }) => $isSurround && 'padding: 0px 20px;'}
 `;

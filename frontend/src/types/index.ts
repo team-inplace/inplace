@@ -112,6 +112,7 @@ export type PlaceInfo = {
   reviewLikes: PlaceLikes;
   likedCount: number;
   likes: boolean;
+  surroundVideos: SpotData[];
 };
 export type GoogleReview = {
   like: boolean;

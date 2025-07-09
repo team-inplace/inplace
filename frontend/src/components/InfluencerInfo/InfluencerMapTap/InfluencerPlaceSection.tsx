@@ -26,6 +26,8 @@ export interface PlaceSectionProps {
   isListExpanded?: boolean;
   onListExpand?: (value: boolean) => void;
   onSearchNearby?: () => void;
+  shouldRestoreScroll?: boolean;
+  setShouldRestoreScroll?: (value: boolean) => void;
 }
 
 export default function InfluencerPlaceSection({
@@ -41,6 +43,8 @@ export default function InfluencerPlaceSection({
   isInitialLoad,
   onListExpand,
   onSearchNearby,
+  shouldRestoreScroll,
+  setShouldRestoreScroll,
 }: PlaceSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const previousPlacesRef = useRef<PlaceData[]>([]);
@@ -63,6 +67,56 @@ export default function InfluencerPlaceSection({
 
   const { filteredPlaces } = usePlaceList({ data, onGetPlaceData });
 
+  const handleScroll = useCallback(() => {
+    if (sectionRef.current) {
+      sessionStorage.setItem('influencerScrollPos', sectionRef.current.scrollTop.toString());
+    }
+  }, []);
+
+  useEffect(() => {
+    const container = sectionRef.current;
+    if (!container) return undefined;
+    container.addEventListener('scroll', handleScroll);
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+    };
+  }, [handleScroll]);
+
+  useEffect(() => {
+    if (shouldRestoreScroll && filteredPlaces.length > 0 && sectionRef.current) {
+      const savedPos = sessionStorage.getItem('influencerScrollPos');
+      if (savedPos) {
+        const targetScroll = parseInt(savedPos, 10);
+        const restoreScroll = () => {
+          if (!sectionRef.current) return false;
+          const container = sectionRef.current;
+          const isScrollable = container.scrollHeight > container.clientHeight;
+          const isVisible = container.offsetParent !== null;
+          if (isVisible && isScrollable) {
+            container.scrollTop = targetScroll;
+            sessionStorage.removeItem('influencerScrollPos');
+            if (setShouldRestoreScroll) {
+              setShouldRestoreScroll(false);
+            }
+            return true;
+          }
+          return false;
+        };
+        if (!restoreScroll()) {
+          setTimeout(() => {
+            if (shouldRestoreScroll && !restoreScroll()) {
+              setTimeout(() => {
+                if (shouldRestoreScroll) {
+                  restoreScroll();
+                }
+              }, 300);
+            }
+          }, 100);
+        }
+      }
+    }
+  }, [shouldRestoreScroll, filteredPlaces, setShouldRestoreScroll]);
+
   useEffect(() => {
     if (shouldFetchPlaces) {
       onCompleteFetch(false);
@@ -75,15 +129,14 @@ export default function InfluencerPlaceSection({
     }
   }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // 장소 클릭 시 상위로 선택된 장소 전달
   const handlePlaceClick = useCallback(
     (placeId: number) => {
       onPlaceSelect(placeId);
-      if (window.innerWidth <= 768 && onListExpand) {
+      if (window.innerWidth <= 768 && onListExpand && isListExpanded) {
         onListExpand(false);
       }
     },
-    [onPlaceSelect, isListExpanded, onListExpand],
+    [onPlaceSelect, onListExpand, isListExpanded],
   );
 
   if (isLoading && !isFetchingNextPage && previousPlacesRef.current.length === 0) {
