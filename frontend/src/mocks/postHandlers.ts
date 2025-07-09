@@ -304,7 +304,7 @@ export const postHandlers = [
   rest.get(`${BASE_URL}/posts`, (req, res, ctx) => {
     const url = new URL(req.url);
     const size = parseInt(url.searchParams.get('size') ?? '10', 10);
-    const nextCursorId = url.searchParams.get('nextCursorId');
+    const nextCursorId = url.searchParams.get('cursorId');
 
     let startIndex = 0;
     if (nextCursorId) {
