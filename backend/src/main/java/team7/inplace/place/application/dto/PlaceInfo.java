@@ -14,18 +14,23 @@ public class PlaceInfo {
         PlaceQueryResult.DetailedPlace place,
         GooglePlaceClientResponse.Place googlePlace,
         List<VideoQueryResult.SimpleVideo> videos,
-        ReviewQueryResult.LikeRate reviewLikeRate
+        ReviewQueryResult.LikeRate reviewLikeRate,
+        List<VideoQueryResult.DetailedVideo> surroundVideos
     ) {
 
         public static Detail of(
-            PlaceQueryResult.DetailedPlace place, GooglePlaceClientResponse.Place googlePlace,
-            List<VideoQueryResult.SimpleVideo> videos, ReviewQueryResult.LikeRate reviewLikeRate
+            PlaceQueryResult.DetailedPlace place,
+            GooglePlaceClientResponse.Place googlePlace,
+            List<VideoQueryResult.SimpleVideo> videos,
+            ReviewQueryResult.LikeRate reviewLikeRate,
+            List<VideoQueryResult.DetailedVideo> surroundVideos
         ) {
             return new Detail(
                 place,
                 googlePlace,
                 videos,
-                reviewLikeRate
+                reviewLikeRate,
+                surroundVideos
             );
         }
     }

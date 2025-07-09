@@ -1,5 +1,6 @@
 package team7.inplace.video.persistence;
 
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +22,6 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
         countQuery = "SELECT COUNT(v) FROM Video v where v.placeId IS NULL"
     )
     Page<Video> findAllByPlaceIdIsNull(Pageable pageable);
+
+    List<Video> findAllByDeleteAtIsNull();
 }

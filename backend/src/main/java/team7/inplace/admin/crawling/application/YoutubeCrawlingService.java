@@ -45,7 +45,7 @@ public class YoutubeCrawlingService {
 
     @Transactional(readOnly = true)
     public List<ViewInfo> crawlingVideoView() {
-        var videos = videoRepository.findAll();
+        var videos = videoRepository.findAllByDeleteAtIsNull();
 
         var videoInfos = videos.stream().map(video -> {
             var videoId = video.getId();

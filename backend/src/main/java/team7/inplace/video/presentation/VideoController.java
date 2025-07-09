@@ -36,7 +36,7 @@ public class VideoController implements VideoControllerApiSpec {
         @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
         VideoSearchParams searchParams = VideoSearchParams.from(longitude, latitude);
-        var videoResponses = videoService.getVideosBySurround(searchParams, pageable)
+        var videoResponses = videoService.getVideosBySurround(searchParams, pageable, true)
             .stream().map(VideoResponse.Detail::from).toList();
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }

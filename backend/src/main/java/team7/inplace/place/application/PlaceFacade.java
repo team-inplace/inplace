@@ -6,12 +6,13 @@ import java.util.concurrent.Executor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import team7.inplace.global.annotation.Facade;
 import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand.Coordinate;
-import team7.inplace.place.application.command.PlacesCommand.Upsert;
 import team7.inplace.place.application.command.PlacesCommand.FilterParams;
+import team7.inplace.place.application.command.PlacesCommand.Upsert;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.application.dto.PlaceInfo.Simple;
 import team7.inplace.place.persistence.dto.PlaceQueryResult;
@@ -20,6 +21,7 @@ import team7.inplace.place.persistence.dto.PlaceQueryResult.MarkerDetail;
 import team7.inplace.review.application.ReviewService;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.video.application.VideoService;
+import team7.inplace.video.presentation.dto.VideoSearchParams;
 
 @Slf4j
 @Facade
@@ -47,9 +49,15 @@ public class PlaceFacade {
         var googlePlaceId = placeService.getGooglePlaceId(placeId);
         if (googlePlaceId.isEmpty()) {
             var placeInfo = placeService.getPlaceInfo(userId, placeId);
+            var surroundVideos = videoService.getVideosBySurround(
+                VideoSearchParams.from(placeInfo.longitude().toString(),
+                    placeInfo.latitude().toString()),
+                PageRequest.of(0, 10),
+                false
+            );
             var videoInfos = videoService.getVideosByPlaceId(placeId);
             var reviewRates = reviewService.getReviewLikeRate(placeId);
-            return PlaceInfo.Detail.of(placeInfo, null, videoInfos, reviewRates);
+            return PlaceInfo.Detail.of(placeInfo, null, videoInfos, reviewRates, surroundVideos);
         }
 
         var googlePlace = CompletableFuture.supplyAsync(
@@ -57,10 +65,17 @@ public class PlaceFacade {
         ).exceptionally(e -> null);
 
         var placeInfo = placeService.getPlaceInfo(userId, placeId);
+        var surroundVideos = videoService.getVideosBySurround(
+            VideoSearchParams.from(placeInfo.longitude().toString(),
+                placeInfo.latitude().toString()),
+            PageRequest.of(0, 10),
+            false
+        );
         var videoInfos = videoService.getVideosByPlaceId(placeId);
         var reviewRates = reviewService.getReviewLikeRate(placeId);
 
-        return PlaceInfo.Detail.of(placeInfo, googlePlace.join(), videoInfos, reviewRates);
+        return PlaceInfo.Detail.of(placeInfo, googlePlace.join(), videoInfos, reviewRates,
+            surroundVideos);
     }
 
     public List<Marker> getPlaceLocations(

@@ -1,0 +1,177 @@
+package team7.inplace.post.application;
+
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import team7.inplace.global.cursor.CursorResult;
+import team7.inplace.global.exception.InplaceException;
+import team7.inplace.global.exception.code.PostErrorCode;
+import team7.inplace.liked.likedComment.domain.LikedComment;
+import team7.inplace.liked.likedComment.persistence.LikedCommentRepository;
+import team7.inplace.liked.likedPost.domain.LikedPost;
+import team7.inplace.liked.likedPost.persistence.LikedPostRepository;
+import team7.inplace.post.application.dto.PostCommand.CreateComment;
+import team7.inplace.post.application.dto.PostCommand.CreatePost;
+import team7.inplace.post.application.dto.PostCommand.UpdateComment;
+import team7.inplace.post.application.dto.PostCommand.UpdatePost;
+import team7.inplace.post.persistence.CommentJpaRepository;
+import team7.inplace.post.persistence.CommentReadRepository;
+import team7.inplace.post.persistence.PostJpaRepository;
+import team7.inplace.post.persistence.PostReadRepository;
+import team7.inplace.post.persistence.dto.CommentQueryResult.DetailedComment;
+import team7.inplace.post.persistence.dto.PostQueryResult.DetailedPost;
+import team7.inplace.post.persistence.dto.PostQueryResult.UserSuggestion;
+
+@Service
+@Slf4j
+@RequiredArgsConstructor
+public class PostService {
+
+    private final PostJpaRepository postJpaRepository;
+    private final PostReadRepository postReadRepository;
+    private final LikedPostRepository likedPostRepository;
+
+    private final CommentJpaRepository commentJpaRepository;
+    private final CommentReadRepository commentReadRepository;
+    private final LikedCommentRepository likedCommentRepository;
+
+
+    @Transactional(readOnly = true)
+    public CursorResult<DetailedPost> getPosts(
+        Long userId, Long cursorId, int size, String orderBy
+    ) {
+        return postReadRepository.findPostsOrderBy(userId, cursorId, size, orderBy);
+    }
+
+    @Transactional(readOnly = true)
+    public DetailedPost getPostById(Long postId, Long userId) {
+        return postReadRepository.findPostById(postId, userId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
+    }
+
+    @Transactional
+    public void createPost(CreatePost command, Long userId) {
+        var post = command.toPostEntity(userId);
+        postJpaRepository.save(post);
+    }
+
+    @Transactional
+    public void updatePost(UpdatePost updateCommand, Long userId) {
+        var post = postJpaRepository.findById(updateCommand.postId())
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
+
+        post.update(
+            userId,
+            updateCommand.title(),
+            updateCommand.content(),
+            updateCommand.imageUrls(),
+            updateCommand.imgHashes()
+        );
+    }
+
+    @Transactional
+    public void deletePost(Long postId, Long userId) {
+        var post = postJpaRepository.findById(postId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
+        post.deleteSoftly(userId);
+    }
+
+    @Transactional
+    public void likePost(Long postId, Long userId) {
+        if (!postJpaRepository.existsById(postId)) {
+            throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
+        }
+
+        var likedPost = likedPostRepository.findByUserIdAndPostId(userId, postId)
+            .orElseGet(() -> {
+                var newLikedPost = LikedPost.from(userId, postId);
+                return likedPostRepository.save(newLikedPost);
+            });
+
+        var isLiked = likedPost.updateLike();
+        if (isLiked) {
+            postJpaRepository.increaseLikeCount(postId);
+            return;
+        }
+        postJpaRepository.decreaseLikeCount(postId);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<DetailedComment> getCommentsByPostId(Long postId, Long userId, Pageable pageable) {
+        if (!postJpaRepository.existsById(postId)) {
+            throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
+        }
+        return commentReadRepository.findCommentsByPostId(postId, userId, pageable);
+    }
+
+    @Transactional
+    public void createComment(CreateComment command, Long userId) {
+        if (postJpaRepository.existsById(command.postId())) {
+            var comment = command.toEntity(userId);
+            commentJpaRepository.save(comment);
+            postJpaRepository.increaseCommentCount(command.postId());
+            return;
+        }
+        throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
+    }
+
+    @Transactional
+    public void updateComment(UpdateComment updateCommand, Long userId) {
+        if (!postJpaRepository.existsById(updateCommand.postId())) {
+            throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
+        }
+        var comment = commentJpaRepository.findById(updateCommand.commentId())
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));
+
+        comment.updateContent(userId, updateCommand.comment());
+    }
+
+    @Transactional
+    public void deleteComment(Long postId, Long commentId, Long userId) {
+        if (!postJpaRepository.existsById(postId)) {
+            throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
+        }
+        var comment = commentJpaRepository.findById(commentId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));
+
+        comment.deleteSoftly(userId);
+        postJpaRepository.decreaseCommentCount(postId);
+    }
+
+    @Transactional
+    public void likeComment(Long postId, Long commentId, Long userId) {
+        if (!commentJpaRepository.existsById(commentId)) {
+            throw InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND);
+        }
+
+        var likedComment = likedCommentRepository.findByUserIdAndCommentId(userId, commentId)
+            .orElseGet(() -> {
+                var newLikedComment = LikedComment.from(userId, commentId);
+                return likedCommentRepository.save(newLikedComment);
+            });
+
+        var isLiked = likedComment.updateLike();
+        if (isLiked) {
+            commentJpaRepository.increaseLikeCount(commentId);
+            return;
+        }
+        commentJpaRepository.decreaseLikeCount(commentId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserSuggestion> getUserSuggestions(
+        Long userId, Long postId, String keyword
+    ) {
+        var suggestions = postReadRepository.findCommentUserSuggestions(postId, keyword);
+
+        return suggestions.stream()
+            .distinct()
+            .filter(suggestion -> !suggestion.userId().equals(userId))
+            .toList();
+
+    }
+}
