@@ -5,12 +5,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import java.util.List;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team7.inplace.global.baseEntity.BaseEntity;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.PostErrorCode;
 
 @Entity
+@Getter
 @Table(name = "posts")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseEntity {
@@ -24,6 +26,7 @@ public class Post extends BaseEntity {
     private Integer totalLikeCount;
     private Integer totalCommentCount;
     private Long authorId;
+    private Boolean isReported = false;
 
     public Post(
         String title, String content,
@@ -77,5 +80,11 @@ public class Post extends BaseEntity {
             return;
         }
         throw InplaceException.of(PostErrorCode.POST_CAN_NOT_BE_MODIFIED);
+    }
+
+    public void report() {
+        if (!Boolean.TRUE.equals(this.isReported)) {
+            this.isReported = true;
+        }
     }
 }

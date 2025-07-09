@@ -3,11 +3,13 @@ package team7.inplace.post.domain;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team7.inplace.global.baseEntity.BaseEntity;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.PostErrorCode;
 
+@Getter
 @Entity
 @Table(name = "comments")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -17,6 +19,7 @@ public class Comment extends BaseEntity {
     private Long authorId;
     private String content;
     private Integer totalLikeCount = 0;
+    private Boolean isReported = false;
 
     public Comment(Long postId, Long authorId, String content) {
         validateContent(content);
@@ -52,6 +55,12 @@ public class Comment extends BaseEntity {
             return;
         }
         throw InplaceException.of(PostErrorCode.COMMENT_CAN_NOT_BE_MODIFIED);
+    }
+
+    public void report() {
+        if (!Boolean.TRUE.equals(this.isReported)) {
+            this.isReported = true;
+        }
     }
 
 }

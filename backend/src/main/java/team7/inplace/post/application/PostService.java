@@ -174,4 +174,48 @@ public class PostService {
             .toList();
 
     }
+
+    @Transactional(readOnly = true)
+    public String getPostContentById(Long postId) {
+        return postJpaRepository.findContentById(postId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
+    }
+
+    @Transactional
+    public void deletePostSoftly(Long postId) {
+        var post = postJpaRepository.findById(postId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
+        post.deleteSoftly();
+    }
+
+    @Transactional
+    public void reportPost(Long postId) {
+        var post = postJpaRepository.findById(postId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
+        post.report();
+    }
+
+    @Transactional(readOnly = true)
+    public String getCommentContentById(Long commentId) {
+        return commentJpaRepository.findContentById(commentId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));
+    }
+
+    @Transactional
+    public void deleteCommentSoftly(Long commentId) {
+        var comment = commentJpaRepository.findById(commentId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));
+        if (!postJpaRepository.existsById(comment.getPostId())) {
+            throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
+        }
+        comment.deleteSoftly();
+    }
+
+    @Transactional
+    public void reportComment(Long commentId) {
+        var comment = commentJpaRepository.findById(commentId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));
+        comment.report();
+    }
+
 }
