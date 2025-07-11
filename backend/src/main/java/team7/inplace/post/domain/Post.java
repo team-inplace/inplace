@@ -13,7 +13,6 @@ import team7.inplace.global.exception.code.PostErrorCode;
 
 @Getter
 @Entity
-@Getter
 @Table(name = "posts")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseEntity {
