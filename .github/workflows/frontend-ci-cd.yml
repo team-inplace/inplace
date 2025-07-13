@@ -4,7 +4,7 @@ on:
     branches:
       - "**"
     paths:
-      - "frontend/**"
+      - "frontend/web/**"
       - ".github/**"
 jobs:
   lint-and-test:
@@ -15,14 +15,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Install pnpm
+        run: npm install -g pnpm
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
       - name: Run ESLint
-        run: npm run lint
+        run: pnpm run lint
       - name: Run Prettier
-        run: npm run format -- --check
+        run: pnpm run format -- --check
       - name: Run Tests
-        run: npm test
+        run: pnpm test
 
   build-and-deploy:
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
@@ -37,12 +39,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+      - name: Install pnpm
+        run: npm install -g pnpm
 
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Run tests
-        run: npm test
+        run: pnpm test
 
       - name: Create and Upload Sentry Release
         if: github.ref == 'refs/heads/main'
@@ -52,18 +56,18 @@ jobs:
           SENTRY_ORG: inplace-na
           SENTRY_PROJECT: inplace
         run: |
-          npm install -g @sentry/cli
+          pnpm install -g @sentry/cli
           sentry-cli releases new -p $SENTRY_PROJECT ${{ github.sha }}
           sentry-cli releases set-commits --auto ${{ github.sha }} --ignore-missing
-          sentry-cli releases files ${{ github.sha }} upload-sourcemaps ./dist
+          sentry-cli releases files ${{ github.sha }} upload-sourcemaps ./web/dist
           sentry-cli releases finalize ${{ github.sha }}
 
       - name: Build project
         run: |
           if [[ ${{ github.ref }} == 'refs/heads/dev' ]]; then
-            npm run build:dev
+            pnpm run build:dev
           else
-            npm run build
+            pnpm run build
           fi
         env:
           VITE_KAKAO_JS_KEY: ${{ secrets.VITE_KAKAO_JS_KEY }}
@@ -82,11 +86,11 @@ jobs:
         run: |
           if [[ ${{ github.ref }} == 'refs/heads/main' ]]; then
             # production 배포
-            aws s3 sync dist/ s3://inplace.my --delete
-            aws s3 sync dist/ s3://www.inplace.my --delete
+            aws s3 sync web/dist/ s3://inplace.my --delete
+            aws s3 sync web/dist/ s3://www.inplace.my --delete
             aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_CLOUDFRONT_ID }} --paths "/*"
           elif [[ ${{ github.ref }} == 'refs/heads/dev' ]]; then
             # dev 배포
-            aws s3 sync dist/ s3://ecalpni-dev.inplace.my/ --delete
+            aws s3 sync web/dist/ s3://ecalpni-dev.inplace.my/ --delete
             aws cloudfront create-invalidation --distribution-id ${{ secrets.AWS_DEV_CLOUDFRONT_ID }} --paths "/*"
           fi
