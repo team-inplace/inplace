@@ -20,11 +20,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Run ESLint
-        run: pnpm run lint
+        run: pnpm --filter web run lint
       - name: Run Prettier
-        run: pnpm run format -- --check
+        run: pnpm --filter web run format
       - name: Run Tests
-        run: pnpm test
+        run: pnpm --filter web run test
 
   build-and-deploy:
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
@@ -46,7 +46,7 @@ jobs:
         run: pnpm install
 
       - name: Run tests
-        run: pnpm test
+        run: pnpm --filter web run test
 
       - name: Create and Upload Sentry Release
         if: github.ref == 'refs/heads/main'
@@ -65,9 +65,9 @@ jobs:
       - name: Build project
         run: |
           if [[ ${{ github.ref }} == 'refs/heads/dev' ]]; then
-            pnpm run build:dev
+            pnpm --filter web run build:dev 
           else
-            pnpm run build
+            pnpm --filter web run build 
           fi
         env:
           VITE_KAKAO_JS_KEY: ${{ secrets.VITE_KAKAO_JS_KEY }}
