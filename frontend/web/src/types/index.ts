@@ -354,3 +354,8 @@ export type SearchUserComplete = {
   nickname: string;
   imageUrl: string;
 };
+
+export type RequestReport = {
+  id: number;
+  reason: string;
+};
