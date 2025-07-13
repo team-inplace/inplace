@@ -18,6 +18,8 @@ import useTheme from '@/hooks/useTheme';
 import EditMenu from './EditMenu';
 import UserName from './UserName';
 import useIsMobile from '@/hooks/useIsMobile';
+import ReportModal from '../common/modals/ReportModal';
+import { usePostReportComment } from '@/api/hooks/usePostReportComment';
 
 export default function CommentItem({
   item,
@@ -37,6 +39,7 @@ export default function CommentItem({
 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isLike, setIsLike] = useState(item.selfLike);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(item.content);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -44,6 +47,7 @@ export default function CommentItem({
   const { mutate: deleteComment } = useDeleteComment();
   const { mutate: putComment } = usePutComment();
   const { mutate: postLike } = usePostCommentLike();
+  const { mutate: reportComment } = usePostReportComment();
 
   const handleResizeHeight = useAutoResizeTextarea();
 
@@ -121,6 +125,18 @@ export default function CommentItem({
     );
   };
 
+  const handleReportSubmit = (type: string, content: string) => {
+    const reason = content ? `${type} : ${content}` : type;
+    reportComment(
+      { id: Number(item.commentId), reason },
+      {
+        onError: () => {
+          alert('댓글 신고에 실패했어요. 다시 시도해주세요!');
+        },
+      },
+    );
+  };
+
   const handleLikeClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       event.stopPropagation();
@@ -172,7 +188,7 @@ export default function CommentItem({
             mine={item.isMine}
             onEdit={handleEditClick}
             onDelete={handleDeleteSubmit}
-            onReport={() => alert('신고 기능 준비중')}
+            onReport={() => setIsReportModalOpen(true)}
             ariaLabels="댓글"
           />
         )}
@@ -242,6 +258,7 @@ export default function CommentItem({
       {showLoginModal && (
         <LoginModal immediateOpen currentPath={location.pathname} onClose={() => setShowLoginModal(false)} />
       )}
+      {isReportModalOpen && <ReportModal onClose={() => setIsReportModalOpen(false)} onSubmit={handleReportSubmit} />}
     </Wrapper>
   );
 }
