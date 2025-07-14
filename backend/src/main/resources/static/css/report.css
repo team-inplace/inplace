@@ -1,0 +1,62 @@
+/* 탭 스타일 */
+.tabs {
+  display: flex;
+  border-bottom: 2px solid #ccc;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+.tabs button {
+  background: none;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 28px; /* <h1> 태그 크기에 맞춰 조절, 더 크게 설정 */
+  font-weight: bold; /* 굵게 */
+  color: #ccc;
+  border-bottom: 3px solid transparent; /* 비활성 탭의 밑줄 */
+  transition: all 0.3s ease;
+  outline: none;
+  text-align: left; /* 텍스트 왼쪽 정렬 */
+  flex-grow: 0; /* 버튼이 공간을 채우지 않도록 함 */
+}
+.tabs button.active {
+  color: #2e8b57;
+  border-bottom-color: #2e8b57;
+  font-weight: bold;
+}
+.tabs button:hover:not(.active) {
+  color: #2e8b57;
+}
+
+/* 표 크기 및 스타일 */
+table {
+  width: 100%;
+  max-width: 1200px; /* 최대 넓이 설정 */
+  border-collapse: collapse;
+  word-wrap: break-word;
+  margin: 0 auto; /* 중앙 정렬 */
+}
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+th {
+  background-color: #3cb371;
+  color: white;
+}
+tbody tr:hover {
+  background-color: #fafafa;
+}
+/* 표 내용이 너무 길면 줄바꿈 */
+td {
+  word-break: break-word;
+}
+
+/* 내용 셀 클릭하게 표시*/
+.content-cell {
+  cursor: pointer;
+  text-decoration: underline;
+  color: #007bff;
+}
