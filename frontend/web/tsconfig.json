@@ -13,20 +13,23 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
 
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "types": ["kakao.maps.d.ts", "jest"],
+    "types": ["jest"],
 
     /* Folder Link */
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"],
+      "@inplace-frontend-monorepo/shared": ["../shared/src"],
+      "@inplace-frontend-monorepo/shared/*": ["../shared/src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "vite.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

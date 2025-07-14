@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { LuParkingCircle, LuParkingCircleOff, LuParkingSquare, LuParkingSquareOff } from 'react-icons/lu';
+import { LuCircleParking, LuCircleParkingOff, LuSquareParking, LuSquareParkingOff } from 'react-icons/lu';
 import { TbDisabled } from 'react-icons/tb';
 import styled from 'styled-components';
 import { ImSpoonKnife } from 'react-icons/im';
@@ -24,15 +24,15 @@ export default function FacilitySign({ category, facilityInfo }: { facilityInfo:
     },
     freeParkingLot: {
       icon: {
-        true: <LuParkingCircle size={60} color={iconVariant} strokeWidth={1} />,
-        false: <LuParkingCircleOff size={60} color={iconVariant} strokeWidth={1} />,
+        true: <LuCircleParking size={60} color={iconVariant} strokeWidth={1} />,
+        false: <LuCircleParkingOff size={60} color={iconVariant} strokeWidth={1} />,
       },
       label: '무료주차',
     },
     paidParkingLot: {
       icon: {
-        true: <LuParkingSquare size={60} color={iconVariant} strokeWidth={1} />,
-        false: <LuParkingSquareOff size={60} color={iconVariant} strokeWidth={1} />,
+        true: <LuSquareParking size={60} color={iconVariant} strokeWidth={1} />,
+        false: <LuSquareParkingOff size={60} color={iconVariant} strokeWidth={1} />,
       },
       label: '유료주차',
     },

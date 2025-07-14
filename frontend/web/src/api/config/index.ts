@@ -11,7 +11,7 @@ const DEFAULT_CONFIGS: Record<Environment, Config> = {
     environment: 'production',
   },
   development: {
-    baseURL: 'https://a7b2c3d4-dev.inplace.my',
+    baseURL: 'https://a7b2c3d4-dev.inplace.my:444',
     environment: 'development',
   },
 } as const;
@@ -23,7 +23,7 @@ const getCurrentConfig = (): Config => {
   }
 
   // Vite 환경용 (빌드 시점에 교체됨)
-  const currentMode = import.meta.env.MODE as Environment;
+  const currentMode = process.env.NODE_ENV as Environment;
   return DEFAULT_CONFIGS[currentMode];
 };
 
