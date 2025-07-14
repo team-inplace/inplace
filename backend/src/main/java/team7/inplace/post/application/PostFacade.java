@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.global.annotation.Facade;
 import team7.inplace.global.cursor.CursorResult;
 import team7.inplace.post.application.dto.PostCommand;
@@ -22,6 +23,7 @@ public class PostFacade {
     private final PostService postService;
     private final UserService userService;
 
+    @Transactional
     public void createPost(CreatePost command) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.createPost(command, userId);
@@ -34,6 +36,7 @@ public class PostFacade {
         postService.updatePost(updateCommand, userId);
     }
 
+    @Transactional
     public void deletePost(Long postId) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.deletePost(postId, userId);
@@ -41,10 +44,12 @@ public class PostFacade {
         userService.updateUserTier(userId);
     }
 
+    @Transactional(readOnly = true)
     public void createComment(PostCommand.CreateComment command) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.createComment(command, userId);
-        userService.addToReceivedCommentByPostId(command.postId(), 1L);
+        Long authorId = postService.getAuthorIdByPostId(command.postId());
+        userService.addToReceivedCommentByPostId(authorId, 1);
     }
 
     public void updateComment(PostCommand.UpdateComment updateCommand) {
@@ -52,10 +57,12 @@ public class PostFacade {
         postService.updateComment(updateCommand, userId);
     }
 
+    @Transactional
     public void deleteComment(Long postId, Long commentId) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.deleteComment(postId, commentId, userId);
-        userService.addToReceivedCommentByPostId(postId, -1L);
+        Long authorId = postService.getAuthorIdByPostId(postId);
+        userService.addToReceivedCommentByPostId(authorId, -1);
     }
 
     public CursorResult<DetailedPost> getPosts(Long cursorId, int size, String orderBy) {

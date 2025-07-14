@@ -3,6 +3,8 @@ package team7.inplace.user.application;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.global.exception.InplaceException;
@@ -124,14 +126,11 @@ public class UserService {
         user.updatePostCount(user.getPostCount() + delta);
     }
 
-    @Transactional
-    public void addToReceivedCommentByPostId(Long postId, Long delta) {
-        Post post = postJpaRepository.findById(postId)
-            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
-
-        User user = userJpaRepository.findById(post.getAuthorId())
+    @CachePut(cacheNames = {"receivedCommentCache"}, key="#userId")
+    public Long addToReceivedCommentByPostId(Long userId, Integer delta) {
+        User user = userJpaRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
 
-        user.updateReceivedCommentCount(user.getReceivedCommentCount() + delta);
+        return user.getReceivedCommentCount() + delta;
     }
 }

@@ -18,6 +18,7 @@ import team7.inplace.post.application.dto.PostCommand.CreateComment;
 import team7.inplace.post.application.dto.PostCommand.CreatePost;
 import team7.inplace.post.application.dto.PostCommand.UpdateComment;
 import team7.inplace.post.application.dto.PostCommand.UpdatePost;
+import team7.inplace.post.domain.Post;
 import team7.inplace.post.persistence.CommentJpaRepository;
 import team7.inplace.post.persistence.CommentReadRepository;
 import team7.inplace.post.persistence.PostJpaRepository;
@@ -232,4 +233,11 @@ public class PostService {
         comment.unreport();
     }
 
+    @Transactional(readOnly = true)
+    public Long getAuthorIdByPostId(Long postId) {
+        Post post = postJpaRepository.findById(postId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
+
+        return post.getAuthorId();
+    }
 }
