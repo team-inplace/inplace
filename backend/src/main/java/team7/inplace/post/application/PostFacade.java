@@ -49,7 +49,7 @@ public class PostFacade {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.createComment(command, userId);
         Long authorId = postService.getAuthorIdByPostId(command.postId());
-        userService.addToReceivedCommentByPostId(authorId, 1);
+        userService.addToReceivedCommentByUserId(authorId, 1);
     }
 
     public void updateComment(PostCommand.UpdateComment updateCommand) {
@@ -62,7 +62,7 @@ public class PostFacade {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.deleteComment(postId, commentId, userId);
         Long authorId = postService.getAuthorIdByPostId(postId);
-        userService.addToReceivedCommentByPostId(authorId, -1);
+        userService.addToReceivedCommentByUserId(authorId, -1);
     }
 
     public CursorResult<DetailedPost> getPosts(Long cursorId, int size, String orderBy) {

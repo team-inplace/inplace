@@ -37,7 +37,7 @@ class UserServiceTest {
         Long expected = 5L;
 
         // when
-        Long updatedCount = userService.addToReceivedCommentByPostId(userId, delta);
+        Long updatedCount = userService.addToReceivedCommentByUserId(userId, delta);
 
         Cache.ValueWrapper wrapper = cacheManager.getCache("receivedCommentCache").get(userId);
         assertNotNull(wrapper);
