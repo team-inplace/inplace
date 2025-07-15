@@ -4,13 +4,10 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.PostErrorCode;
 import team7.inplace.global.exception.code.UserErrorCode;
-import team7.inplace.post.domain.Post;
 import team7.inplace.post.persistence.PostJpaRepository;
 import team7.inplace.user.application.dto.TierConditions;
 import team7.inplace.user.application.dto.UserCommand.Create;
@@ -127,10 +124,18 @@ public class UserService {
     }
 
     @CachePut(cacheNames = {"receivedCommentCache"}, key="#userId")
-    public Long addToReceivedCommentByPostId(Long userId, Integer delta) {
+    public Long addToReceivedCommentByUserId(Long userId, Integer delta) {
         User user = userJpaRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
 
         return user.getReceivedCommentCount() + delta;
+    }
+
+    @CachePut(cacheNames = {"receivedLikeCache"}, key = "#userId")
+    public Long addToReceivedLikeByUserId(Long userId, Integer delta) {
+        User user = userJpaRepository.findById(userId)
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+
+        return user.getReceivedLikeCount() + delta;
     }
 }

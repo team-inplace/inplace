@@ -81,6 +81,7 @@ public class PostService {
         post.deleteSoftly(userId);
     }
 
+    // TODO : likeCount 업데이트 후 배치 업데이트 하는 과정 필요
     @Transactional
     public void likePost(Long postId, Long userId) {
         if (!postJpaRepository.existsById(postId)) {
