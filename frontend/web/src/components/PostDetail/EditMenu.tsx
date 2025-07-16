@@ -1,8 +1,11 @@
 import styled from 'styled-components';
 import { RxDotsVertical } from 'react-icons/rx';
 import { useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import useClickOutside from '@/hooks/useClickOutside';
 import useIsMobile from '@/hooks/useIsMobile';
+import useAuth from '@/hooks/useAuth';
+import LoginModal from '../common/modals/LoginModal';
 
 interface EditMenuProps {
   mine?: boolean;
@@ -14,12 +17,20 @@ interface EditMenuProps {
 }
 
 export default function EditMenu({ mine, onEdit, onDelete, onReport, menuItems, ariaLabels }: EditMenuProps) {
+  const { isAuthenticated } = useAuth();
   const [showEditOptions, setShowEditOptions] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const editRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
+  const location = useLocation();
 
   useClickOutside([editRef], () => setShowEditOptions(false));
   const handleMenuClick = (callback?: () => void) => () => {
+    if (!isAuthenticated) {
+      setShowLoginModal(true);
+      return;
+    }
+
     setShowEditOptions(false);
     if (callback) callback();
   };
@@ -57,6 +68,9 @@ export default function EditMenu({ mine, onEdit, onDelete, onReport, menuItems, 
             </>
           )}
         </EditDropdown>
+      )}
+      {showLoginModal && (
+        <LoginModal immediateOpen currentPath={location.pathname} onClose={() => setShowLoginModal(false)} />
       )}
     </EditMenuWrapper>
   );
