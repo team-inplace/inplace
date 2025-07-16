@@ -16,15 +16,16 @@ import team7.inplace.admin.banner.persistence.BannerRepository;
 import team7.inplace.admin.dto.CategoryForm;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.CategoryErrorCode;
-import team7.inplace.global.exception.code.PlaceErrorCode;
 import team7.inplace.global.properties.GoogleApiProperties;
 import team7.inplace.global.properties.KakaoApiProperties;
 import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.place.application.PlaceService;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.persistence.CategoryRepository;
+import team7.inplace.post.application.PostService;
+import team7.inplace.post.persistence.CommentJpaRepository;
+import team7.inplace.post.persistence.PostJpaRepository;
 import team7.inplace.video.application.VideoService;
-import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
 import team7.inplace.video.persistence.dto.VideoFilterCondition;
 import team7.inplace.video.presentation.dto.VideoResponse;
@@ -40,8 +41,11 @@ public class AdminPageController {
     private final BannerRepository bannerRepository;
     private final InfluencerRepository influencerRepository;
     private final CategoryRepository categoryRepository;
+    private final PostJpaRepository postJpaRepository;
+    private final CommentJpaRepository commentJpaRepository;
     private final VideoService videoService;
     private final PlaceService placeService;
+    private final PostService postService;
 
     @GetMapping("/video")
     public String getVideos(
@@ -125,4 +129,38 @@ public class AdminPageController {
         categoryRepository.save(categoryForm.toEntity());
         return "redirect:/admin/category";
     }
+
+    @GetMapping("/report")
+    public String getReportPage(Model model) {
+        model.addAttribute("reportedPosts", postJpaRepository.findAllByIsReportedTrueAndDeleteAtIsNull());
+        model.addAttribute("reportedComments", commentJpaRepository.findAllByIsReportedTrueAndDeleteAtIsNull());
+        return "admin/report";
+    }
+
+    @PostMapping("/post/delete/{postId}")
+    public String deletePost(@PathVariable Long postId) {
+        postService.deletePostSoftly(postId);
+        return "redirect:/admin/report";
+    }
+
+    @PostMapping("/post/unreport/{postId}")
+    public String unreportPost(@PathVariable Long postId) {
+        postService.unreportPost(postId);
+        return "redirect:/admin/report";
+    }
+
+    @PostMapping("/comment/delete/{commentId}")
+    public String deleteComment(@PathVariable Long commentId) {
+        postService.deleteCommentSoftly(commentId);
+        return "redirect:/admin/report";
+    }
+
+    @PostMapping("/comment/unreport/{commentId}")
+    public String unreportComment(@PathVariable Long commentId) {
+        postService.unreportComment(commentId);
+        return "redirect:/admin/report";
+    }
+
+
+
 }

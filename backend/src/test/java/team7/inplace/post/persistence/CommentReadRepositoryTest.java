@@ -40,7 +40,7 @@ class CommentReadRepositoryTest extends AbstractMySQLContainerTest {
         // given
         final Long postId = 1L;
         final Long userId = null;
-        final Pageable pageable = Pageable.ofSize(10);
+        final Pageable pageable = Pageable.ofSize(5);
 
         final int expectedCommentSize = 5;
         final int expectedTotalPages = 2;

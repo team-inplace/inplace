@@ -63,4 +63,10 @@ public class Comment extends BaseEntity {
         }
     }
 
+    public void unreport() {
+        if (Boolean.TRUE.equals(this.isReported)) {
+            this.isReported = false;
+        }
+    }
+
 }

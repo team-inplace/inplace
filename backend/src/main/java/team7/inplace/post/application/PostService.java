@@ -195,6 +195,13 @@ public class PostService {
         post.report();
     }
 
+    @Transactional
+    public void unreportPost(Long postId) {
+        var post = postJpaRepository.findById(postId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
+        post.unreport();
+    }
+
     @Transactional(readOnly = true)
     public String getCommentContentById(Long commentId) {
         return commentJpaRepository.findContentById(commentId)
@@ -216,6 +223,13 @@ public class PostService {
         var comment = commentJpaRepository.findById(commentId)
             .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));
         comment.report();
+    }
+
+    @Transactional
+    public void unreportComment(Long commentId) {
+        var comment = commentJpaRepository.findById(commentId)
+            .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));
+        comment.unreport();
     }
 
 }
