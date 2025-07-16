@@ -235,7 +235,7 @@ export default function CommentItem({
             </Paragraph>
             <CommentInfo>
               <StyledText size="s" weight="normal">
-                {item.createAt}
+                {item.createdAt}
               </StyledText>
               <Count
                 role="button"
