@@ -41,6 +41,5 @@ export const sendGAEvent = (eventName: string, parameters: Record<string, unknow
 declare global {
   interface Window {
     dataLayer: DataLayerEvent[];
-    gtag?: (command: string, action: string, params?: Record<string, unknown>) => void;
   }
 }
