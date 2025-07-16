@@ -51,13 +51,13 @@ public class PostFacade {
     }
 
     public CursorResult<DetailedPost> getPosts(Long cursorId, int size, String orderBy) {
-        var userId = AuthorizationUtil.getUserIdOrThrow();
+        var userId = AuthorizationUtil.getUserIdOrNull();
 
         return postService.getPosts(userId, cursorId, size, orderBy);
     }
 
     public DetailedPost getPostById(Long postId) {
-        var userId = AuthorizationUtil.getUserIdOrThrow();
+        var userId = AuthorizationUtil.getUserIdOrNull();
         return postService.getPostById(postId, userId);
     }
 
