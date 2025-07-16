@@ -1,5 +1,6 @@
 package team7.inplace.post.persistence;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -29,4 +30,6 @@ public interface PostJpaRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p.content.content FROM Post p WHERE p.id = :postId")
     Optional<String> findContentById(@Param("postId") Long postId);
+
+    List<Post> findAllByIsReportedTrueAndDeleteAtIsNull();
 }

@@ -136,7 +136,6 @@ export default function CommentItem({
       },
     );
   };
-
   const handleLikeClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       event.stopPropagation();

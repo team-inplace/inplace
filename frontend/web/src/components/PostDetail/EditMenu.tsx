@@ -30,7 +30,6 @@ export default function EditMenu({ mine, onEdit, onDelete, onReport, menuItems, 
       setShowLoginModal(true);
       return;
     }
-
     setShowEditOptions(false);
     if (callback) callback();
   };

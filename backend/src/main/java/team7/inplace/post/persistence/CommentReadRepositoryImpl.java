@@ -60,9 +60,19 @@ public class CommentReadRepositoryImpl implements CommentReadRepository {
                     QUser.user.nickname,
                     QUser.user.profileImageUrl,
                     QComment.comment.content,
-                    userId == null ? Expressions.FALSE : QLikedComment.likedComment.isNotNull(),
+                    userId == null ?
+                        Expressions.constant(false) :
+                        Expressions.cases()
+                            .when(QLikedComment.likedComment.userId.eq(userId))
+                            .then(true)
+                            .otherwise(false),
                     QComment.comment.totalLikeCount,
-                    userId == null ? Expressions.FALSE : QComment.comment.authorId.eq(userId),
+                    userId == null ?
+                        Expressions.constant(false) :
+                        Expressions.cases()
+                            .when(QComment.comment.authorId.eq(userId))
+                            .then(true)
+                            .otherwise(false),
                     QComment.comment.createdAt
                 )
             )

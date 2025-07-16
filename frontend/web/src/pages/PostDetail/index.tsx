@@ -70,7 +70,6 @@ export default function PostDetailPage() {
       },
     );
   };
-
   const handleLikeClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       event.stopPropagation();
