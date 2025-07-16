@@ -139,7 +139,7 @@ export default function PostDetailPage() {
                 badgeImageUrl={postData.author.badgeImageUrl}
               />
               <StyledText size="s" weight="normal">
-                {postData.createAt}
+                {postData.createdAt}
               </StyledText>
             </UserTitleTop>
           </UserInfo>
