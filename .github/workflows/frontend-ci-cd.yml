@@ -22,7 +22,7 @@ jobs:
       - name: Run ESLint
         run: pnpm --filter web run lint
       - name: Run Prettier
-        run: pnpm --filter web run format:check
+        run: pnpm --filter web run format -- --check
       - name: Run Tests
         run: pnpm --filter web run test
 
