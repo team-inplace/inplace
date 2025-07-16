@@ -283,7 +283,7 @@ export type PostListData = {
   photoUrls?: string;
   totalLikeCount: number;
   totalCommentCount: number;
-  createAt: string;
+  createdAt: string;
   isMine: boolean;
   selfLike: boolean;
 };
@@ -299,7 +299,7 @@ export type PostData = {
   content: string;
   totalLikeCount: number;
   totalCommentCount: number;
-  createAt: string;
+  createdAt: string;
   imageUrls?: UploadedImageObj[];
   selfLike: boolean;
   isMine: boolean;
@@ -318,7 +318,7 @@ export type CommentData = {
     tierImageUrl: string;
   };
   content: string;
-  createAt: string;
+  createdAt: string;
   totalLikeCount: number;
   selfLike: boolean;
   isMine: boolean;
@@ -353,4 +353,9 @@ export type SearchUserComplete = {
   userId: number;
   nickname: string;
   imageUrl: string;
+};
+
+export type RequestReport = {
+  id: number;
+  reason: string;
 };

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchInstance } from '../instance';
 import { SearchUserComplete } from '@/types';
 
-export const getSearchUserCompletePath = (postId: string) => `/post/${postId}/comments/complete`;
+export const getSearchUserCompletePath = (postId: string) => `/posts/${postId}/comments/complete`;
 const getSearchUserComplete = async (postId: string, value: string) => {
   const params = new URLSearchParams({
     value: value.toString(),

@@ -17,6 +17,8 @@ import { useDeletePost } from '@/api/hooks/useDeletePost';
 import EditMenu from '@/components/PostDetail/EditMenu';
 import UserName from '@/components/PostDetail/UserName';
 import useIsMobile from '@/hooks/useIsMobile';
+import ReportModal from '@/components/common/modals/ReportModal';
+import { usePostReportPost } from '@/api/hooks/usePostReportPost';
 
 export default function PostDetailPage() {
   const { isAuthenticated } = useAuth();
@@ -29,8 +31,10 @@ export default function PostDetailPage() {
 
   const { data: postData } = useGetPostData(id);
   const { mutate: deletePost } = useDeletePost();
+  const { mutate: reportPost } = usePostReportPost();
   const { mutate: postLike } = usePostPostLike();
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isLike, setIsLike] = useState(postData.selfLike);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
@@ -55,6 +59,17 @@ export default function PostDetailPage() {
     });
   };
 
+  const handleReportSubmit = (type: string, content: string) => {
+    const reason = content ? `${type} : ${content}` : type;
+    reportPost(
+      { id: Number(id), reason },
+      {
+        onError: () => {
+          alert('게시글 신고에 실패했어요. 다시 시도해주세요!');
+        },
+      },
+    );
+  };
   const handleLikeClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
       event.stopPropagation();
@@ -123,7 +138,7 @@ export default function PostDetailPage() {
                 badgeImageUrl={postData.author.badgeImageUrl}
               />
               <StyledText size="s" weight="normal">
-                {postData.createAt}
+                {postData.createdAt}
               </StyledText>
             </UserTitleTop>
           </UserInfo>
@@ -131,7 +146,7 @@ export default function PostDetailPage() {
             mine={postData.isMine}
             onEdit={() => handleEditPost(id, formData)}
             onDelete={() => handleDeletePost(id)}
-            onReport={() => alert('신고 기능 준비중')}
+            onReport={() => setIsReportModalOpen(true)}
             ariaLabels="게시글"
           />
         </PostTop>
@@ -210,6 +225,7 @@ export default function PostDetailPage() {
       {showLoginModal && (
         <LoginModal immediateOpen currentPath={location.pathname} onClose={() => setShowLoginModal(false)} />
       )}
+      {isReportModalOpen && <ReportModal onClose={() => setIsReportModalOpen(false)} onSubmit={handleReportSubmit} />}
     </Wrapper>
   );
 }

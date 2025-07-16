@@ -7,7 +7,9 @@ export const getCommentList = async (id: string, page: number, size: number) => 
     page: page.toString(),
     size: size.toString(),
   });
-  const response = await fetchInstance.get<PageableData<CommentData>>(`/posts/${id}/comments?${params}`);
+  const response = await fetchInstance.get<PageableData<CommentData>>(`/posts/${id}/comments?${params}`, {
+    withCredentials: true,
+  });
   return response.data;
 };
 export const useGetCommentList = (id: string, page: number, size: number) => {

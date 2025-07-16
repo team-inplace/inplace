@@ -30,7 +30,7 @@ export default function PostPage() {
 
   const getInitialSortOption = (): string => {
     const searchParams = new URLSearchParams(location.search);
-    return searchParams.get('sort') || 'createAt';
+    return searchParams.get('sort') || 'createdAt';
   };
 
   const [sortOption, setSortOption] = useState(getInitialSortOption());
@@ -46,7 +46,7 @@ export default function PostPage() {
   const scrollRef = useInfiniteScroll({ fetchNextPage, hasNextPage, isFetchingNextPage });
 
   const sortLabel: Record<string, string> = {
-    createAt: '최신순',
+    createdAt: '최신순',
     popularity: '인기순',
   };
 
@@ -102,7 +102,7 @@ export default function PostPage() {
               </StyledButton>
               {showSortOptions && (
                 <SortDropdown>
-                  <SortItem onClick={() => handleSortChange('createAt')}>최신순 {sortOption === 'createAt'}</SortItem>
+                  <SortItem onClick={() => handleSortChange('createdAt')}>최신순 {sortOption === 'createdAt'}</SortItem>
                   <SortItem onClick={() => handleSortChange('popularity')}>
                     인기순 {sortOption === 'popularity'}
                   </SortItem>

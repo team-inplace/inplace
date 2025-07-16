@@ -20,7 +20,7 @@ const postListDummy = [
       '성시경 먹을텐데 시리즈 중에 제일 추천하는 식당 어디신가요~? 찐후기만 댓글 달아주세요성시경 먹을텐데 시리즈 중에 제일 추천하는 식당 어디신가요~? 찐후기만 댓글 달아주세요성시경 먹을텐데 시리즈 중에 제일 추천하여기ㅁㄴㅇㅁㅇㅁㄴ',
     totalLikeCount: 20,
     totalCommentCount: 3,
-    createAt: '1분전',
+    createdAt: '1분전',
     photoUrls:
       'https://www.chosun.com/resizer/v2/https%3A%2F%2Fauthor-service-images-prod-us-east-1.publishing.aws.arc.pub%2Fchosun%2F61ee5a7f-256c-441a-84d0-f71f7fde8753.png?auth=ac62f49ccb40ba0664e55e616e25d60bbe9491af26a5c0e5ac95e3640e0a3f6a&width=616&height=346&smart=true',
 
@@ -39,7 +39,7 @@ const postListDummy = [
     content: '성시경 먹을텐데 시리즈 중에 제일 추천하는 식당 어디신가요~? 찐후기만 댓글 달아주세요',
     totalLikeCount: 20,
     totalCommentCount: 3,
-    createAt: '1분전',
+    createdAt: '1분전',
     photoUrls:
       'https://www.chosun.com/resizer/v2/https%3A%2F%2Fauthor-service-images-prod-us-east-1.publishing.aws.arc.pub%2Fchosun%2F61ee5a7f-256c-441a-84d0-f71f7fde8753.png?auth=ac62f49ccb40ba0664e55e616e25d60bbe9491af26a5c0e5ac95e3640e0a3f6a&width=616&height=346&smart=true',
     isMine: false,
@@ -57,7 +57,7 @@ const postListDummy = [
     content: '성시경 먹을텐데 시리즈 중에 제일 추천하는 식당 어디신가요~? 찐후기만 댓글 달아주세요',
     totalLikeCount: 20,
     commentCount: 3,
-    createAt: '1분전',
+    createdAt: '1분전',
     photoUrls:
       'https://www.chosun.com/resizer/v2/https%3A%2F%2Fauthor-service-images-prod-us-east-1.publishing.aws.arc.pub%2Fchosun%2F61ee5a7f-256c-441a-84d0-f71f7fde8753.png?auth=ac62f49ccb40ba0664e55e616e25d60bbe9491af26a5c0e5ac95e3640e0a3f6a&width=616&height=346&smart=true',
 
@@ -76,7 +76,7 @@ const postListDummy = [
     content: '성시경 먹을텐데 시리즈 중에 제일 추천하는 식당 어디신가요~? 찐후기만 댓글 달아주세요',
     totalLikeCount: 20,
     totalCommentCount: 3,
-    createAt: '1분전',
+    createdAt: '1분전',
     isMine: false,
     selfLike: false,
   },
@@ -92,7 +92,7 @@ const postListDummy = [
     content: '성시경 먹을텐데 시리즈 중에 제일 추천하는 식당 어디신가요~? 찐후기만 댓글 달아주세요',
     totalLikeCount: 20,
     totalCommentCount: 3,
-    createAt: '1분전',
+    createdAt: '1분전',
     isMine: false,
     selfLike: false,
   },
@@ -108,7 +108,7 @@ const postListDummy = [
     content: '성시경 먹을텐데 시리즈 중에 제일 추천하는 식당 어디신가요~? 찐후기만 댓글 달아주세요',
     totalLikeCount: 20,
     totalCommentCount: 3,
-    createAt: '1분전',
+    createdAt: '1분전',
     isMine: false,
     selfLike: false,
   },
@@ -124,7 +124,7 @@ const postListDummy = [
     content: '성시경 먹을텐데 시리즈 중에 제일 추천하는 식당 어디신가요~? 찐후기만 댓글 달아주세요',
     totalLikeCount: 20,
     totalCommentCount: 3,
-    createAt: '1분전',
+    createdAt: '1분전',
     isMine: false,
     selfLike: false,
   },
@@ -140,7 +140,7 @@ const postListDummy = [
     content: '성시경 먹을텐데 시리즈 중에 제일 추천하는 식당 어디신가요~? 찐후기만 댓글 달아주세요',
     totalLikeCount: 20,
     totalCommentCount: 3,
-    createAt: '1분전',
+    createdAt: '1분전',
     isMine: true,
     selfLike: false,
   },
@@ -155,7 +155,7 @@ const commentListDummy = [
       tierImageUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
     },
     content: '토스 커뮤니티에도 웹사이트가 잇어요 놀러오세요~^^',
-    createAt: '4분전',
+    createdAt: '4분전',
     totalLikeCount: 20,
     selfLike: true,
     isMine: true,
@@ -168,7 +168,7 @@ const commentListDummy = [
       tierImageUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
     },
     content: '<<@1:이효은>> 여긴 인플레이슨데 뭔헛소리노',
-    createAt: '3분전',
+    createdAt: '3분전',
     totalLikeCount: 10,
     selfLike: false,
     isMine: false,
@@ -182,7 +182,7 @@ const commentListDummy = [
     },
     content:
       '그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다',
-    createAt: '1분전',
+    createdAt: '1분전',
     totalLikeCount: 0,
     selfLike: false,
     isMine: false,
@@ -196,7 +196,7 @@ const commentListDummy = [
     },
     content:
       '그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다',
-    createAt: '1분전',
+    createdAt: '1분전',
     totalLikeCount: 0,
     selfLike: false,
     isMine: false,
@@ -210,7 +210,7 @@ const commentListDummy = [
     },
     content:
       '그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다',
-    createAt: '1분전',
+    createdAt: '1분전',
     totalLikeCount: 0,
     selfLike: false,
     isMine: false,
@@ -224,7 +224,7 @@ const commentListDummy = [
     },
     content:
       '그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다',
-    createAt: '1분전',
+    createdAt: '1분전',
     totalLikeCount: 0,
     selfLike: false,
     isMine: false,
@@ -238,7 +238,8 @@ const commentListDummy = [
     },
     content:
       '그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다',
-    createAt: '1분전',
+    createdAt: '1분전',
+
     totalLikeCount: 0,
     selfLike: false,
     isMine: false,
@@ -252,7 +253,7 @@ const commentListDummy = [
     },
     content:
       '그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다',
-    createAt: '1분전',
+    createdAt: '1분전',
     totalLikeCount: 0,
     selfLike: false,
     isMine: false,
@@ -266,7 +267,7 @@ const commentListDummy = [
     },
     content:
       '그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다',
-    createAt: '1분전',
+    createdAt: '1분전',
     totalLikeCount: 0,
     selfLike: false,
     isMine: false,
@@ -280,7 +281,7 @@ const commentListDummy = [
     },
     content:
       '그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다',
-    createAt: '1분전',
+    createdAt: '1분전',
     totalLikeCount: 0,
     selfLike: false,
     isMine: false,
@@ -294,7 +295,7 @@ const commentListDummy = [
     },
     content:
       '그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다ㅍ그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다그것참맛나겠다',
-    createAt: '1분전',
+    createdAt: '1분전',
     totalLikeCount: 0,
     selfLike: false,
     isMine: false,
@@ -347,7 +348,7 @@ export const postHandlers = [
           '성시경 먹을텐데 시리즈 중에 제일 추천하는 식\n당 어디신가요~? 찐후기만 댓글 달아주세요성시경 먹을텐데 시리즈 중에 제일 추천하는 식당 어디신가요~? 찐후기만 댓글 달아주세요성시경 먹을텐데 시리즈 중에 제일 추천하여기ㅁㄴㅇㅁㅇㅁㄴ',
         totalLikeCount: 20,
         totalCommentCount: 3,
-        createAt: '1분전',
+        createdAt: '1분전',
         imageUrls: [
           {
             imageUrl:
@@ -429,7 +430,7 @@ export const postHandlers = [
         tierImageUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
       },
       content: comment,
-      createAt: '1분전',
+      createdAt: '1분전',
       totalLikeCount: 0,
       selfLike: false,
       isMine: true,
@@ -452,7 +453,7 @@ export const postHandlers = [
       content,
       totalLikeCount: 0,
       totalCommentCount: 0,
-      createAt: '1분전',
+      createdAt: '1분전',
       selfLike: false,
       isMine: true,
     };
@@ -471,7 +472,7 @@ export const postHandlers = [
     commentListDummy[idx] = {
       ...commentListDummy[idx],
       content: comment,
-      createAt: '방금 전',
+      createdAt: '방금 전',
     };
 
     return res(ctx.status(200), ctx.json('success.'));

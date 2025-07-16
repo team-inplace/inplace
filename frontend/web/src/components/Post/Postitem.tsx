@@ -59,7 +59,7 @@ export default function Postitem({ item, activeCategory }: { item: PostListData;
             </StyledText>
           </Count>
           <StyledText size="s" weight="normal">
-            {item.createAt}
+            {item.createdAt}
           </StyledText>
         </ItemInfo>
       </LeftInfo>

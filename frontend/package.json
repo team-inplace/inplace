@@ -19,7 +19,8 @@
   ],
   "devDependencies": {
     "@types/jest": "^30.0.0",
-    "@types/node": "^24.0.12"
+    "@types/node": "^24.0.12",
+    "prettier": "^3.6.2"
   },
   "pnpm": {
     "overrides": {
