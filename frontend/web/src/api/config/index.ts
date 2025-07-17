@@ -23,7 +23,7 @@ const getCurrentConfig = (): Config => {
   }
 
   // Vite 환경용 (빌드 시점에 교체됨)
-  const currentMode = process.env.NODE_ENV as Environment;
+  const currentMode = import.meta.env.MODE as Environment;
   return DEFAULT_CONFIGS[currentMode];
 };
 
