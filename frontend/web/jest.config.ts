@@ -25,8 +25,18 @@ const config: Config = {
         astTransformers: {
           before: [
             {
-              path: 'node_modules/ts-jest-mock-import-meta',
-              options: { metaObjectReplacement: { url: 'https://www.url.com' } },
+              path: 'ts-jest-mock-import-meta',
+              options: {
+                metaObjectReplacement: {
+                  env: {
+                    MODE: 'test',
+                    NODE_ENV: 'test',
+                    DEV: false,
+                    PROD: false,
+                    BASE_URL: '/',
+                  },
+                },
+              },
             },
           ],
         },
