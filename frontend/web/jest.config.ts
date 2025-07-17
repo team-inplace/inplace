@@ -25,7 +25,7 @@ const config: Config = {
         astTransformers: {
           before: [
             {
-              path: require.resolve('ts-jest-mock-import-meta'),
+              path: 'ts-jest-mock-import-meta',
               options: {
                 metaObjectReplacement: {
                   env: {
