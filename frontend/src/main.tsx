@@ -9,6 +9,7 @@ import App from './App';
 import { setSentryInitialized } from './libs/Sentry/sentry.js';
 import initSentryWithRetry from './libs/Sentry/initSentryWithRetry.js';
 import getCurrentConfig from './api/config/index.js';
+import 'public/firebase-messaging-sw.js';
 
 async function startApp() {
   if (import.meta.env.DEV) {
