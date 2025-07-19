@@ -88,4 +88,8 @@ public class User extends BaseEntity {
     public void updateReceivedCommentCount(Long receivedCommentCount) {
         this.receivedCommentCount = receivedCommentCount;
     }
+
+    public void updateReceivedLikeCount(Long receivedLikeCount) {
+        this.receivedLikeCount = receivedLikeCount;
+    }
 }
