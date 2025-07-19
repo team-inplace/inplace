@@ -1,0 +1,525 @@
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+import styled from 'styled-components';
+import MapWindow from '@/components/Map/MapWindow';
+import PlaceSection from '@/components/Map/PlaceSection';
+import Chip from '@/components/common/Chip';
+import useGetDropdownCategory from '@/api/hooks/useGetDropdownCategory';
+import useGetDropdownInfluencer from '@/api/hooks/useGetDropdownName';
+import useTouchDrag from '@/hooks/Map/useTouchDrag';
+import useMapState from '@/hooks/Map/useMapState';
+import DropdownFilterBar, { FilterBarItem } from '@/components/Map/DropdownFilterBar';
+import MapSearchBar from '@/components/Map/MapSearchBar';
+import useClickOutside from '@/hooks/useClickOutside';
+import { LocationData } from '@/types';
+
+interface StoredMapState {
+  selectedInfluencers: string[];
+  selectedCategories: { id: number; label: string }[];
+  selectedPlaceName: string;
+  selectedPlaceId?: number | null;
+  mapBounds?: LocationData;
+  center?: { lat: number; lng: number };
+  zoomLevel?: number;
+}
+
+export default function MapPage() {
+  const { data: influencerOptions } = useGetDropdownInfluencer();
+  const { data: categoryOptions = [] } = useGetDropdownCategory();
+
+  const getInitialMapState = (): { state: StoredMapState; isFromDetail: boolean } => {
+    const defaultState = {
+      selectedInfluencers: [],
+      selectedCategories: [],
+      selectedPlaceName: '',
+      selectedPlaceId: null,
+      mapBounds: undefined,
+      center: undefined,
+      zoomLevel: undefined,
+    };
+    try {
+      const isFromDetail = sessionStorage.getItem('fromDetail') === 'true';
+      if (isFromDetail) {
+        const stored = sessionStorage.getItem('mapPage_state');
+        if (stored) {
+          const parsedData: StoredMapState = JSON.parse(stored);
+          return { state: parsedData, isFromDetail: true };
+        }
+      }
+    } catch (error) {
+      console.error('MapPage getInitialMapState 에러:', error);
+    }
+    return { state: defaultState, isFromDetail: false };
+  };
+
+  const { state: initialState, isFromDetail } = useMemo(() => getInitialMapState(), []);
+  const [selectedInfluencers, setSelectedInfluencers] = useState<string[]>(initialState.selectedInfluencers);
+  const [selectedCategories, setSelectedCategories] = useState<{ id: number; label: string }[]>(
+    initialState.selectedCategories,
+  );
+  const [selectedPlaceName, setSelectedPlaceName] = useState<string>(initialState.selectedPlaceName);
+  const [isFilterBarOpened, setIsFilterBarOpened] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(!isFromDetail);
+  const [isChangedLocation, setIsChangedLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [shouldRestoreScroll, setShouldRestoreScroll] = useState(false);
+  const [isRestoredFromDetail, setIsRestoredFromDetail] = useState(isFromDetail);
+  const [savedZoomLevel, setSavedZoomLevel] = useState<number | undefined>(initialState.zoomLevel);
+  const [initialSelectedPlaceId] = useState(initialState.selectedPlaceId);
+  const [hasRestored, setHasRestored] = useState(false);
+
+  const filterRef = useRef<HTMLDivElement | null>(null);
+  const {
+    center,
+    setCenter,
+    setMapBounds,
+    mapBounds,
+    isListExpanded,
+    selectedPlaceId,
+    placeData,
+    setIsListExpanded,
+    handlePlaceSelect,
+    forceSelectPlace,
+    handleGetPlaceData,
+  } = useMapState();
+  const { translateY, setTranslateY, handleTouchStart, handleTouchMove, handleTouchEnd } =
+    useTouchDrag(setIsListExpanded);
+
+  useClickOutside([filterRef], () => {
+    if (isFilterBarOpened) setIsFilterBarOpened(false);
+  });
+
+  useEffect(() => {
+    if (isFromDetail && initialState.mapBounds) {
+      // 세션에 저장된 mapBounds를 복원
+      setMapBounds(initialState.mapBounds);
+    }
+  }, [isFromDetail, initialState.mapBounds, setMapBounds]);
+
+  useEffect(() => {
+    if (!isRestoredFromDetail) {
+      const stateToStore: StoredMapState = {
+        selectedInfluencers,
+        selectedCategories,
+        selectedPlaceName,
+        selectedPlaceId,
+        mapBounds,
+        center,
+        zoomLevel: savedZoomLevel,
+      };
+      sessionStorage.setItem('mapPage_state', JSON.stringify(stateToStore));
+    }
+  }, [
+    selectedInfluencers,
+    selectedCategories,
+    selectedPlaceName,
+    selectedPlaceId,
+    mapBounds,
+    center,
+    isRestoredFromDetail,
+    savedZoomLevel,
+  ]);
+
+  useEffect(() => {
+    if (!isFromDetail) {
+      sessionStorage.removeItem('mapPage_state');
+    }
+  }, [isFromDetail]);
+
+  useEffect(() => {
+    if (isFromDetail && initialSelectedPlaceId && !hasRestored) {
+      forceSelectPlace(initialSelectedPlaceId);
+      setHasRestored(true);
+    }
+  }, [isFromDetail, initialSelectedPlaceId, hasRestored, forceSelectPlace]);
+
+  useEffect(() => {
+    if (hasRestored && isRestoredFromDetail) {
+      setTimeout(() => {
+        setIsRestoredFromDetail(false);
+        sessionStorage.removeItem('fromDetail');
+      }, 1000);
+    }
+  }, [hasRestored, isRestoredFromDetail]);
+
+  const filters = useMemo(
+    () => ({
+      categories: selectedCategories.map((cat) => cat.id),
+      influencers: selectedInfluencers,
+    }),
+    [selectedCategories, selectedInfluencers],
+  );
+
+  const filtersWithPlaceName = useMemo(
+    () => ({
+      categories: selectedCategories.map((cat) => cat.id),
+      influencers: selectedInfluencers,
+      placeName: selectedPlaceName,
+    }),
+    [selectedCategories, selectedInfluencers, selectedPlaceName],
+  );
+
+  const handleInfluencerChange = useCallback((value: { main: string }) => {
+    setSelectedInfluencers((prev) => {
+      // 이미 선택된 인플루언서인 경우 추가하지 않음
+      if (prev.includes(value.main)) return prev;
+      return [...prev, value.main];
+    });
+  }, []);
+
+  const handleCategoryChange = useCallback((value: { main: string; id?: number }) => {
+    if (typeof value.id === 'number') {
+      setSelectedCategories((prev) => {
+        if (prev.some((category) => category.id === value.id)) return prev;
+        return [...prev, { id: value.id!, label: value.main }];
+      });
+    }
+  }, []);
+
+  const handleInfluencerClear = useCallback((influencerToRemove: string) => {
+    setSelectedInfluencers((prev) => prev.filter((influencer) => influencer !== influencerToRemove));
+  }, []);
+
+  const handleCategoryClear = useCallback((categoryToRemove: number) => {
+    setSelectedCategories((prev) => prev.filter((category) => category.id !== categoryToRemove));
+  }, []);
+
+  const handleListExpand = useCallback(() => {
+    setIsListExpanded((prev) => {
+      const newExpandedState = !prev;
+      setTranslateY(newExpandedState ? 0 : window.innerHeight);
+      return newExpandedState;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (isFromDetail) {
+      const isMobile = window.innerWidth <= 768;
+
+      if (isMobile) {
+        setIsListExpanded(true);
+        setTranslateY(0);
+        setTimeout(() => {
+          setShouldRestoreScroll(true);
+        }, 400);
+      } else {
+        setTimeout(() => {
+          setShouldRestoreScroll(true);
+        }, 200);
+      }
+      setIsInitialLoad(false);
+    }
+  }, [isFromDetail, setIsListExpanded, setTranslateY]);
+
+  const handlePlaceItemClick = useCallback(
+    (placeId: number) => {
+      handlePlaceSelect(placeId);
+    },
+    [handlePlaceSelect],
+  );
+
+  const dropdownItems: FilterBarItem[] = [
+    {
+      type: 'dropdown',
+      id: 'category',
+      props: {
+        options: categoryOptions,
+        onChange: handleCategoryChange,
+        isMobileOpen: false,
+        placeholder: '카테고리',
+        type: 'category',
+        width: 140,
+        selectedOptions: selectedCategories.map((cat) => cat.id),
+      },
+    },
+    { type: 'separator', id: 'sep2' },
+    {
+      type: 'dropdown',
+      id: 'influencer',
+      props: {
+        options: influencerOptions,
+        onChange: handleInfluencerChange,
+        isMobileOpen: true,
+        placeholder: '인플루언서',
+        type: 'influencer',
+        width: 140,
+        selectedOptions: selectedInfluencers,
+      },
+    },
+  ];
+
+  return (
+    <PageContainer>
+      <Wrapper>
+        <FilterContainer>
+          <MobileFilterContainer>
+            <FilterButtonContainer aria-label="모바일 지도 필터" onClick={() => setIsFilterBarOpened((prev) => !prev)}>
+              필터
+            </FilterButtonContainer>
+            <MapSearchBar setIsChangedLocation={setIsChangedLocation} setSelectedPlaceName={setSelectedPlaceName} />
+          </MobileFilterContainer>
+          <DesktopDropdownSection>
+            <DropdownFilterBar items={dropdownItems} />
+          </DesktopDropdownSection>
+        </FilterContainer>
+
+        <Chip
+          selectedInfluencers={selectedInfluencers}
+          selectedCategories={selectedCategories}
+          onClearInfluencer={handleInfluencerClear}
+          onClearCategory={handleCategoryClear}
+        />
+      </Wrapper>
+      {isFilterBarOpened && (
+        <>
+          <Background onClick={() => setIsFilterBarOpened(false)} />
+          <MobileDropdownSection ref={filterRef}>
+            <CloseBtn onClick={() => setIsFilterBarOpened(false)}>X</CloseBtn>
+            <DropdownFilterBar items={dropdownItems} />
+          </MobileDropdownSection>
+        </>
+      )}
+      <MapWindow
+        center={center}
+        setCenter={setCenter}
+        setMapBounds={setMapBounds}
+        mapBounds={mapBounds}
+        isInitialLoad={isInitialLoad}
+        setIsInitialLoad={setIsInitialLoad}
+        filters={filters}
+        filtersWithPlaceName={filtersWithPlaceName}
+        placeData={placeData}
+        selectedPlaceId={selectedPlaceId}
+        isChangedLocation={isChangedLocation}
+        onPlaceSelect={handlePlaceSelect}
+        isListExpanded={isListExpanded}
+        onListExpand={handleListExpand}
+        isRestoredFromDetail={isRestoredFromDetail}
+        isFromDetail={isFromDetail}
+        savedZoomLevel={savedZoomLevel}
+        setSavedZoomLevel={setSavedZoomLevel}
+        savedCenter={initialState.center}
+      />
+      <PlaceSectionDesktop>
+        <PlaceSection
+          center={center}
+          mapBounds={mapBounds}
+          filters={filters}
+          isInitialLoad={isInitialLoad}
+          filtersWithPlaceName={filtersWithPlaceName}
+          onGetPlaceData={handleGetPlaceData}
+          onPlaceSelect={handlePlaceItemClick}
+          selectedPlaceId={selectedPlaceId}
+          shouldRestoreScroll={shouldRestoreScroll}
+          setShouldRestoreScroll={setShouldRestoreScroll}
+        />
+      </PlaceSectionDesktop>
+      <MobilePlaceSection
+        $isExpanded={isListExpanded}
+        onClick={() => isListExpanded && setIsListExpanded(false)}
+        $translateY={translateY}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        <DragHandle />
+        <PlaceSection
+          mapBounds={mapBounds}
+          filters={filters}
+          filtersWithPlaceName={filtersWithPlaceName}
+          center={center}
+          isInitialLoad={isInitialLoad}
+          onGetPlaceData={handleGetPlaceData}
+          onPlaceSelect={handlePlaceItemClick}
+          selectedPlaceId={selectedPlaceId}
+          isListExpanded={isListExpanded}
+          onListExpand={handleListExpand}
+          shouldRestoreScroll={shouldRestoreScroll}
+          setShouldRestoreScroll={setShouldRestoreScroll}
+        />
+      </MobilePlaceSection>
+    </PageContainer>
+  );
+}
+
+const PageContainer = styled.div`
+  width: 100%;
+  padding: 16px 0;
+  @media screen and (max-width: 768px) {
+    position: relative;
+    align-items: center;
+    touch-action: none;
+  }
+`;
+
+const Wrapper = styled.div`
+  @media screen and (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    > * {
+      width: 90%;
+    }
+  }
+`;
+
+const FilterContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  @media screen and (max-width: 768px) {
+    width: 90%;
+    z-index: 100;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+`;
+
+const PlaceSectionDesktop = styled.div`
+  margin-top: 10px;
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const MobilePlaceSection = styled.div<{ $translateY: number; $isExpanded: boolean }>`
+  display: ${({ $isExpanded }) => ($isExpanded ? 'block' : 'none')};
+
+  @media screen and (max-width: 768px) {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    transform: translateY(${(props) => props.$translateY}px);
+    height: 80vh;
+    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#3c3c3c' : '#fafafa')};
+    z-index: 90;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    transition: transform 0.3s ease-out;
+    touch-action: none;
+  }
+`;
+
+const DragHandle = styled.div`
+  width: 100%;
+  height: 20px;
+  padding: 12px 0;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  background-color: transparent;
+  cursor: grab;
+  touch-action: none;
+
+  &:after {
+    content: '';
+    width: 40px;
+    height: 4px;
+    background-color: #666;
+    border-radius: 2px;
+  }
+`;
+
+const MobileFilterContainer = styled.div`
+  @media screen and (max-width: 768px) {
+    width: 100%;
+    z-index: 2001;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+  }
+`;
+
+const DesktopDropdownSection = styled.div`
+  @media screen and (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const FilterButtonContainer = styled.div`
+  display: none;
+
+  @media screen and (max-width: 768px) {
+    display: block;
+    flex-shrink: 1;
+    z-index: 9;
+    padding: 8px 6px;
+    background: white;
+    color: #292929;
+    font-size: 12px;
+    border: 1.5px solid #a5a5a5;
+    border-radius: 6px;
+  }
+`;
+
+const MobileDropdownSection = styled.div`
+  display: none;
+
+  @media screen and (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    align-items: end;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60vh;
+    background-color: ${({ theme }) => theme.backgroundColor};
+    z-index: 101;
+    padding: 10px 20px;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    animation: slideUp 0.3s ease-out forwards;
+    box-sizing: border-box;
+
+    @keyframes slidUp {
+      from {
+        transform: translateY(100%);
+      }
+      to {
+        transform: translateY(0%);
+      }
+    }
+  }
+`;
+const CloseBtn = styled.button`
+  display: none;
+
+  @media screen and (max-width: 768px) {
+    display: block;
+    top: 10px;
+    right: 4px;
+    font-size: 16px;
+    padding: 10px 0px;
+    background: none;
+    color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'white' : '#a5a5a5')};
+    border: none;
+  }
+`;
+
+const Background = styled.div`
+  display: none;
+
+  @media screen and (max-width: 768px) {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    animation: fadeIn 0.3s ease-out forwards;
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  }
+`;

@@ -2,6 +2,7 @@ package team7.inplace.place.persistence;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +28,7 @@ import team7.inplace.place.persistence.dto.PlaceQueryResult.Marker;
 @ActiveProfiles("test-mysql")
 @Sql(scripts = {"/sql/test-place.sql"}, executionPhase = ExecutionPhase.BEFORE_TEST_CLASS)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import(ObjectMapper.class)
 class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
 
     @Autowired
@@ -284,11 +287,11 @@ class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
         Double latitude = 37.0;
         Pageable pageable = PageRequest.of(0, 5);
         Long userId = null;
-        List<String> influencerName = List.of("인플루언서1");
+        List<String> influencerName = List.of("인플루언서2");
 
         final int expectedTotalContent = 4;
         final int expectedContentSize = 4;
-        final List<Long> expectedPlaceIds = List.of(1L, 2L, 3L, 4L);
+        final List<Long> expectedPlaceIds = List.of(5L, 6L, 7L, 8L);
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(
@@ -316,11 +319,11 @@ class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
         Double latitude = 37.0;
         Pageable pageable = PageRequest.of(0, 5);
         Long userId = null;
-        List<String> influencerName = List.of("인플루언서1", "인플루언서2");
+        List<String> influencerName = List.of("인플루언서2", "인플루언서3");
 
         final int expectedTotalContent = 8;
         final int expectedContentSize = 5;
-        final List<Long> expectedPlaceIds = List.of(1L, 2L, 3L, 4L, 5L);
+        final List<Long> expectedPlaceIds = List.of(5L, 6L, 7L, 8L, 9L);
 
         // when
         Page<DetailedPlace> places = placeReadRepository.findPlacesInMapRangeWithPaging(

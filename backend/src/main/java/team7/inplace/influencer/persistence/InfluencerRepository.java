@@ -9,13 +9,13 @@ import team7.inplace.influencer.domain.Influencer;
 public interface InfluencerRepository extends JpaRepository<Influencer, Long> {
 
     @Override
-    @Query("SELECT i FROM Influencer i WHERE i.deleteAt IS NULL AND i.id IN :longs")
+    @Query("SELECT i FROM Influencer i WHERE i.deleteAt IS NULL AND i.hidden = false AND i.id IN :longs")
     List<Influencer> findAllById(Iterable<Long> longs);
 
-    @Query("SELECT i FROM Influencer i WHERE i.deleteAt IS NULL AND i.name IN :names")
+    @Query("SELECT i FROM Influencer i WHERE i.deleteAt IS NULL AND i.hidden = false AND i.name IN :names")
     List<Influencer> findByNameIn(List<String> names);
 
-    @Query("SELECT i.name FROM Influencer i WHERE i.deleteAt IS NULL")
+    @Query("SELECT i.name FROM Influencer i WHERE i.deleteAt IS NULL AND i.hidden = false")
     List<String> findAllInfluencerNames();
 
     @Query("SELECT i.id FROM Influencer i WHERE i.name = :name")

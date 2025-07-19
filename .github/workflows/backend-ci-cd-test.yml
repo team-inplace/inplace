@@ -60,7 +60,7 @@ jobs:
 
   deploy-to-test-server:
       needs: build-docker-image
-      runs-on: ubuntu-latest
+      runs-on: ubuntu-22.04
       steps:
         - name: Verify dev branch
           run: |
@@ -100,11 +100,11 @@ jobs:
         - name: Run new container
           run: |
             ssh ubuntu@${{ secrets.EC2_HOST_TEST_SERVER }} "
-              sudo docker run -d \
+              sudo docker run \
                 --name inplace-test \
+                -d \
                 -p 8080:8080 \
                 -p ${{ secrets.EC2_MONITORING_PORT }}:${{ secrets.EC2_MONITORING_PORT }} \
-                --restart unless-stopped \
                 --env-file .env \
-                ${{ secrets.DOCKERHUB_USERNAME }}/inplace:test
+                ${{ secrets.DOCKERHUB_USERNAME }}/inplace:test 
             "

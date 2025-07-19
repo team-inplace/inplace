@@ -70,3 +70,8 @@ logging:
 springdoc:
   swagger-ui:
     enabled: false
+---
+spring:
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}

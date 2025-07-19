@@ -2,8 +2,8 @@ package team7.inplace.video.persistence;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,7 @@ import team7.inplace.video.persistence.dto.VideoQueryResult;
 @DataJpaTest
 @ActiveProfiles("test")
 @Sql("/sql/test-video.sql")
+@Import(ObjectMapper.class)
 public class VideoReadRepositoryTest {
     @Autowired
     private TestEntityManager testEntityManager;
@@ -117,8 +119,8 @@ public class VideoReadRepositoryTest {
     @DisplayName("비디오 조회 테스트 - 특정 장소의 비디오 조회")
     void findVideo_PlaceInfo() {
         // given
-        final int expectedTotalContent = 1;
-        final List<Long> expectedVideoIds = List.of(1L);
+        final int expectedTotalContent = 3;
+        final List<Long> expectedVideoIds = List.of(1L, 2L, 3L);
 
         // when
         List<VideoQueryResult.SimpleVideo> videos = videoReadRepository.findSimpleVideosByPlaceId(1L);
@@ -174,11 +176,11 @@ public class VideoReadRepositoryTest {
     @DisplayName("비디오 조회 테스트 - 인플루언서 id를 통해 비디오 조회 - 기본(날짜 순) 정렬")
     void findVideo_InfluencerId() {
         // given
-        Pageable pageable = PageRequest.of(0, 5);
+        Pageable pageable = PageRequest.of(0, 15);
 
-        final int expectedTotalContent = 4;
-        final int expectedContentSize = 4;
-        final List<Long> expectedVideoIds = List.of(4L, 3L, 2L, 1L);
+        final int expectedTotalContent = 10;
+        final int expectedContentSize = 10;
+        final List<Long> expectedVideoIds = List.of(4L, 3L, 3L, 3L, 2L, 2L, 2L, 1L, 1L, 1L);
 
         // when
         Page<VideoQueryResult.DetailedVideo> videos = videoReadRepository.findDetailedVideosWithOneInfluencerId(
@@ -195,11 +197,11 @@ public class VideoReadRepositoryTest {
     @DisplayName("비디오 조회 테스트 - 인플루언서 id를 통해 비디오 조회 - 인기순(조회수 증가량) 정렬")
     void findVideo_InfluencerId_popularity() {
         // given
-        Pageable pageable = PageRequest.of(0, 5, Sort.by("popularity"));
+        Pageable pageable = PageRequest.of(0, 15, Sort.by("popularity"));
 
-        final int expectedTotalContent = 4;
-        final int expectedContentSize = 4;
-        final List<Long> expectedVideoIds = List.of(4L, 3L, 2L, 1L);
+        final int expectedTotalContent = 10;
+        final int expectedContentSize = 10;
+        final List<Long> expectedVideoIds = List.of(4L, 3L, 3L, 3L, 2L, 2L, 2L, 1L, 1L, 1L);
 
         // when
         Page<VideoQueryResult.DetailedVideo> videos = videoReadRepository.findDetailedVideosWithOneInfluencerId(
@@ -216,11 +218,11 @@ public class VideoReadRepositoryTest {
     @DisplayName("비디오 조회 테스트 - 인플루언서 id를 통해 비디오 조회 - 장소 좋아요순 정렬")
     void findVideo_InfluencerId_likes() {
         // given
-        Pageable pageable = PageRequest.of(0, 5, Sort.by("likes"));
+        Pageable pageable = PageRequest.of(0, 15, Sort.by("likes"));
 
-        final int expectedTotalContent = 4;
-        final int expectedContentSize = 4;
-        final List<Long> expectedVideoIds = List.of(3L, 2L, 1L, 4L);
+        final int expectedTotalContent = 10;
+        final int expectedContentSize = 10;
+        final List<Long> expectedVideoIds = List.of(3L, 2L, 1L, 3L, 2L, 1L, 3L, 2L, 1L, 4L);
 
         // when
         Page<VideoQueryResult.DetailedVideo> videos = videoReadRepository.findDetailedVideosWithOneInfluencerId(
