@@ -177,10 +177,7 @@ export default function CommentItem({
           <ProfileImg>
             <FallbackImage src={item.author.imgUrl} alt="profile" />
           </ProfileImg>
-          <UserName
-            userNickname={item.author.nickname}
-            tierImageUrl="https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff"
-          />
+          <UserName userNickname={item.author.nickname} tierImageUrl={item.author.tierImageUrl} />
         </UserInfo>
         {!isEditing && (
           <EditMenu
@@ -246,9 +243,9 @@ export default function CommentItem({
                 ) : (
                   <PiHeartLight size={isMobile ? 14 : 18} data-testid="PiHeartLight" />
                 )}
-                <Text size="s" weight="normal">
+                <StyledText size="s" weight="normal">
                   {item.totalLikeCount ?? 0}
-                </Text>
+                </StyledText>
               </Count>
             </CommentInfo>
           </>
@@ -316,7 +313,13 @@ const ProfileImg = styled.div`
 `;
 
 const StyledText = styled(Text)`
-  color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#A9A9A9' : '#929292')};
+  line-height: 120%;
+  white-space: pre-line;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#bbbbbb' : '#717171')};
 `;
 
 const Count = styled.div`
@@ -324,13 +327,14 @@ const Count = styled.div`
   align-items: flex-start;
   gap: 4px;
   svg {
-    color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'white' : '#505050')};
+    color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#bbbbbb' : '#717171')};
   }
   span {
     line-height: 120%;
   }
   @media screen and (max-width: 768px) {
     gap: 2px;
+    align-items: center;
   }
 `;
 

@@ -36,12 +36,16 @@ export default function Postitem({ item, activeCategory }: { item: PostListData;
           <Paragraph size="m" weight="bold">
             {item.title}
           </Paragraph>
-          <StyledText size="s" weight="normal">
+          <StyledText className="content" size="s" weight="normal">
             {truncatedText}
           </StyledText>
         </Content>
         {item.photoUrls && isMobile && <PostImg src={item.photoUrls} />}
         <ItemInfo>
+          <StyledText size="s" weight="normal">
+            {item.createdAt}
+          </StyledText>
+          <Divider />
           <Count>
             {item.selfLike ? (
               <PiHeartFill color="#fe7373" size={isMobile ? 14 : 18} data-testid="PiHeartFill" />
@@ -53,14 +57,11 @@ export default function Postitem({ item, activeCategory }: { item: PostListData;
             </StyledText>
           </Count>
           <Count>
-            <HiOutlineChatBubbleOvalLeft size={18} />
+            <HiOutlineChatBubbleOvalLeft size={isMobile ? 14 : 18} />
             <StyledText size="s" weight="normal">
               {item.totalCommentCount ?? 0}
             </StyledText>
           </Count>
-          <StyledText size="s" weight="normal">
-            {item.createdAt}
-          </StyledText>
         </ItemInfo>
       </LeftInfo>
       {item.photoUrls && !isMobile && <PostImg src={item.photoUrls} />}
@@ -106,6 +107,10 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+
+  .content {
+    color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#d4d4d4' : '#454545')};
+  }
 `;
 const UserInfo = styled.div`
   display: flex;
@@ -119,9 +124,9 @@ const ProfileImg = styled.div`
 `;
 const ItemInfo = styled.div`
   display: flex;
-  gap: 8px;
+  gap: 10px;
   color: #a9a9a9;
-  align-items: end;
+  align-items: center;
 
   @media screen and (max-width: 768px) {
     margin-top: 2px;
@@ -132,7 +137,7 @@ const Count = styled.div`
   display: flex;
   gap: 4px;
   svg {
-    color: ${({ theme }) => (theme.backgroundColor === '#292929' ? 'white' : '#505050')};
+    color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#bbbbbb' : '#717171')};
   }
   @media screen and (max-width: 768px) {
     gap: 2px;
@@ -160,5 +165,16 @@ const StyledText = styled(Text)`
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#D4D4D4' : '#505050')};
+  color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#bbbbbb' : '#717171')};
+`;
+
+const Divider = styled.div`
+  width: 0;
+  height: 12px;
+  border-radius: 10px;
+  border: 0.5px solid grey;
+  margin-bottom: 2px;
+  @media screen and (max-width: 768px) {
+    margin: 0;
+  }
 `;

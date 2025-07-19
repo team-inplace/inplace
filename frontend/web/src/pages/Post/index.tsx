@@ -154,6 +154,7 @@ const PostWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 50px;
+  margin-top: 10px;
 
   @media screen and (max-width: 768px) {
     width: 90%;

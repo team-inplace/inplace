@@ -8,7 +8,9 @@ const getSearchUserComplete = async (postId: string, value: string) => {
   const params = new URLSearchParams({
     value: value.toString(),
   });
-  const response = await fetchInstance.get<SearchUserComplete[]>(`${getSearchUserCompletePath(postId)}?${params}`);
+  const response = await fetchInstance.get<SearchUserComplete[]>(`${getSearchUserCompletePath(postId)}?${params}`, {
+    withCredentials: true,
+  });
   return response.data;
 };
 

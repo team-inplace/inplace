@@ -15,16 +15,15 @@ const postListDummy = [
       tierImageUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
       badgeImageUrl: TestImg,
     },
-    title: '성시경 먹을텐데 질문',
-    content:
-      '성시경 먹을텐데 시리즈 중에 제일 추천하는 식당 어디신가요~? 찐후기만 댓글 달아주세요성시경 먹을텐데 시리즈 중에 제일 추천하는 식당 어디신가요~? 찐후기만 댓글 달아주세요성시경 먹을텐데 시리즈 중에 제일 추천하여기ㅁㄴㅇㅁㅇㅁㄴ',
-    totalLikeCount: 20,
+    title: '성',
+    content: '성',
+    totalLikeCount: 2,
     totalCommentCount: 3,
-    createdAt: '1분전',
+    createdAt: '25.07.17',
     photoUrls:
       'https://www.chosun.com/resizer/v2/https%3A%2F%2Fauthor-service-images-prod-us-east-1.publishing.aws.arc.pub%2Fchosun%2F61ee5a7f-256c-441a-84d0-f71f7fde8753.png?auth=ac62f49ccb40ba0664e55e616e25d60bbe9491af26a5c0e5ac95e3640e0a3f6a&width=616&height=346&smart=true',
 
-    selfLike: true,
+    selfLike: false,
     isMine: true,
   },
   {
@@ -39,7 +38,7 @@ const postListDummy = [
     content: '성시경 먹을텐데 시리즈 중에 제일 추천하는 식당 어디신가요~? 찐후기만 댓글 달아주세요',
     totalLikeCount: 20,
     totalCommentCount: 3,
-    createdAt: '1분전',
+    createdAt: '2025.07.17',
     photoUrls:
       'https://www.chosun.com/resizer/v2/https%3A%2F%2Fauthor-service-images-prod-us-east-1.publishing.aws.arc.pub%2Fchosun%2F61ee5a7f-256c-441a-84d0-f71f7fde8753.png?auth=ac62f49ccb40ba0664e55e616e25d60bbe9491af26a5c0e5ac95e3640e0a3f6a&width=616&height=346&smart=true',
     isMine: false,
@@ -348,7 +347,7 @@ export const postHandlers = [
           '성시경 먹을텐데 시리즈 중에 제일 추천하는 식\n당 어디신가요~? 찐후기만 댓글 달아주세요성시경 먹을텐데 시리즈 중에 제일 추천하는 식당 어디신가요~? 찐후기만 댓글 달아주세요성시경 먹을텐데 시리즈 중에 제일 추천하여기ㅁㄴㅇㅁㅇㅁㄴ',
         totalLikeCount: 20,
         totalCommentCount: 3,
-        createdAt: '1분전',
+        createdAt: '2025.07.17',
         imageUrls: [
           {
             imageUrl:
