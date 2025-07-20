@@ -1,7 +1,8 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { FiSun, FiMoon } from 'react-icons/fi';
 import { MdOutlineLogout } from 'react-icons/md';
+import { TiHome } from 'react-icons/ti';
 import { useRef, useState } from 'react';
 import { AiOutlineUser } from 'react-icons/ai';
 import useAuth from '@/hooks/useAuth';
@@ -16,6 +17,7 @@ export default function AuthButtons() {
   const { isAuthenticated, handleLogout } = useAuth();
   const { data: imgSrc } = useGetUserInfo();
   const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
   const isDarkMode = theme === 'dark';
   const location = useLocation();
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -24,6 +26,10 @@ export default function AuthButtons() {
   const handleClickProfile = () => {
     setIsOpen(!isOpen);
   };
+  const handleMyPage = () => {
+    navigate('/my');
+  };
+
   useClickOutside([dropdownRef], () => setIsOpen(false));
 
   const handleLoginIconClick = async () => {
@@ -46,6 +52,12 @@ export default function AuthButtons() {
           </Profile>
           {isOpen && (
             <UserDropdown>
+              {location.pathname !== '/my' && (
+                <DropdownItem onClick={handleMyPage}>
+                  <TiHome size={16} />
+                  마이페이지
+                </DropdownItem>
+              )}
               <DropdownItem onClick={handleLogout}>
                 <MdOutlineLogout size={16} />
                 로그아웃
