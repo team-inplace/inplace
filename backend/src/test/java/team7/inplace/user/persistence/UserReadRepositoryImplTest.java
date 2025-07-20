@@ -4,13 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
@@ -18,20 +18,20 @@ import team7.inplace.user.persistence.dto.UserQueryResult.Badge;
 import team7.inplace.user.persistence.dto.UserQueryResult.Simple;
 
 @DataJpaTest
-@Import(ObjectMapper.class)
+@Import({ObjectMapper.class})
 @ActiveProfiles("test")
 @Sql("/sql/test-user.sql")
 class UserReadRepositoryImplTest {
 
-    @Autowired
-    private TestEntityManager testEntityManager;
+    @PersistenceContext
+    EntityManager entityManager;
 
-    private UserReadRepository userReadRepository;
+    UserReadRepository userReadRepository;
 
     @BeforeEach
     void setUp() {
-        JPAQueryFactory queryFactory = new JPAQueryFactory(testEntityManager.getEntityManager());
-        this.userReadRepository = new UserReadRepositoryImpl(queryFactory);
+        JPAQueryFactory jpaQueryFactory = new JPAQueryFactory(entityManager);
+        userReadRepository = new UserReadRepositoryImpl(jpaQueryFactory);
     }
 
     @Test
@@ -39,7 +39,6 @@ class UserReadRepositoryImplTest {
     void getUserInfoTest() {
         //given
         Long userId = 1L;
-        Long expectedUserId = 1L;
         String expectedNickname = "유저1";
         String expectedProfileImgUrl = "img1.png";
         String expectedTierName = "브론즈";

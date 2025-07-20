@@ -32,10 +32,11 @@ public class UserReadRepositoryImpl implements UserReadRepository {
                 QBadge.badge.imgUrl
             ))
             .from(QUser.user)
-            .leftJoin(QBadge.badge).on(QBadge.badge.id.eq(QUser.user.mainBadgeId))
             .innerJoin(QUserTier.userTier).on(QUserTier.userTier.id.eq(QUser.user.tierId))
+            .leftJoin(QBadge.badge).on(QBadge.badge.id.eq(QUser.user.mainBadgeId))
             .where(QUser.user.id.eq(id))
             .fetchOne();
+
         return Optional.ofNullable(userSimple);
     }
 
