@@ -2,6 +2,8 @@ package team7.inplace.user.util;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.CacheManager;
@@ -18,10 +20,10 @@ public class UserCommentCountFlusher {
     private final UserWriteRepository userWriteRepository;
 
     @Transactional
-    public void flushReceivedCommentCounts() {
+    public Set<Long> flushReceivedCommentCounts() {
         CaffeineCache caffeineCache = (CaffeineCache) cacheManager.getCache("receivedCommentCache");
-        if (caffeineCache == null) {
-            return;
+        if (Objects.isNull(caffeineCache)) {
+            return null;
         }
 
         Cache<Object, Object> cache = caffeineCache.getNativeCache();
@@ -33,9 +35,12 @@ public class UserCommentCountFlusher {
                     e -> (Long) e.getValue()
                 )
             );
+        Set<Long> set = counts.keySet();
 
         userWriteRepository.updateBatchReceivedCommentCount(counts);
 
         cache.invalidateAll();
+
+        return set;
     }
 }

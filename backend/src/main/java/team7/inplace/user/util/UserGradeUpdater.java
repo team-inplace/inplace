@@ -26,6 +26,10 @@ public class UserGradeUpdater {
 
     @Transactional
     public void updateGradesByUserIds(Set<Long> userIds) {
+        if (Objects.isNull(userIds) || userIds.isEmpty()) {
+            return;
+        }
+
         List<User> usersToCheck = userIds.stream()
             .map(userId
                 -> userJpaRepository.findById(userId)
