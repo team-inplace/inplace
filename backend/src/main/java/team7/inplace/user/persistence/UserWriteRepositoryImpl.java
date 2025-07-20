@@ -32,4 +32,25 @@ public class UserWriteRepositoryImpl implements UserWriteRepository {
 
         // commentCount 는 조회 하는 로직이 존재하지 않기 때문에 em.clear() 하지 않음.
     }
+
+    @Override
+    public void updateBatchUserTiers(Map<Long, Long> tiers) {
+        em.unwrap(Session.class)
+            .doWork(
+                conn -> {
+                    try (PreparedStatement ps = conn.prepareStatement(
+                        "update users u set u.tier_id = ? where u.id = ?"
+                    )) {
+                        for (Entry<Long, Long> e : tiers.entrySet()) {
+                            ps.setLong(1, e.getValue());
+                            ps.setLong(2, e.getKey());
+                            ps.addBatch();
+                        }
+                        ps.executeBatch();
+                    }
+                }
+            );
+
+        em.clear();
+    }
 }
