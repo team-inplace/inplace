@@ -354,3 +354,11 @@ export type SearchUserComplete = {
   nickname: string;
   imageUrl: string;
 };
+
+export type AlarmData = {
+  alaemId: number;
+  postId: number;
+  commentId: number;
+  content: string;
+  checked: boolean;
+};
