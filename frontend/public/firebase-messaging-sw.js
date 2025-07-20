@@ -1,21 +1,20 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from 'firebase/app';
-import { getMessaging } from 'firebase/messaging';
+importScripts('https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js');
+importScripts('https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js');
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: process.env.VITE_FIREBASE_API_KEY,
-  authDomain: process.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.VITE_FIREBASE_APP_ID,
-  measurementId: process.env.VITE_FIREBASE_MEASUREMENT_ID
-}
+  apiKey: "AIzaSyDhN1r3xw82OiadDuKxv4i2c7JOLIseOiw",
+  authDomain: "inplace-70c36.firebaseapp.com",
+  projectId: "inplace-70c36",
+  storageBucket: "inplace-70c36.firebasestorage.app",
+  messagingSenderId: "799415377379",
+  appId: "1:799415377379:web:142590452f3452073114d6",
+  measurementId: "G-E5J7MJJV9P"
+};
 
 // Initialize Firebase
-export const app = initializeApp(firebaseConfig);
-export const messaging = getMessaging(app);
+firebase.initializeApp(firebaseConfig);
