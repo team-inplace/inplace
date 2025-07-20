@@ -12,6 +12,8 @@ import { useGetSearchInfluencers } from '@/api/hooks/useGetSearchInfluencers';
 import useDebounce from '@/hooks/useDebounce';
 import useTheme from '@/hooks/useTheme';
 import useIsMobile from '@/hooks/useIsMobile';
+import { usePostDeviceToken } from '@/api/hooks/usePostDeviceToken';
+import { setupFCMToken } from '@/libs/FCM';
 
 export default function ChoicePage() {
   const PAGE_SIZE_MOBILE = 9;
@@ -20,6 +22,7 @@ export default function ChoicePage() {
 
   const navigate = useNavigate();
   const { mutateAsync: postMultipleLikes } = usePostMultipleInfluencerLike();
+  const { mutateAsync: postDeviceToken } = usePostDeviceToken();
   const [selectedInfluencers, setSelectedInfluencers] = useState<Set<number>>(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [inputValue, setInputValue] = useState('');
@@ -37,6 +40,14 @@ export default function ChoicePage() {
       navigate('/', { replace: true });
       return;
     }
+    const setupFCMForNewUser = async () => {
+      try {
+        await setupFCMToken(postDeviceToken);
+      } catch (fcmError) {
+        console.error('FCM 설정 실패:', fcmError);
+      }
+    };
+    setupFCMForNewUser();
     document.cookie = 'is_first_user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.inplace.my; Secure';
   }, [navigate]);
 

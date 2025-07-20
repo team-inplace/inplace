@@ -10,6 +10,7 @@ import LoginModal from '@/components/common/modals/LoginModal';
 import { useGetUserInfo } from '@/api/hooks/useGetUserInfo';
 import FallbackImage from '../../Items/FallbackImage';
 import useClickOutside from '@/hooks/useClickOutside';
+import { requestNotificationPermission } from '@/libs/FCM';
 
 export default function AuthButtons() {
   const { isAuthenticated, handleLogout } = useAuth();
@@ -24,6 +25,14 @@ export default function AuthButtons() {
     setIsOpen(!isOpen);
   };
   useClickOutside([dropdownRef], () => setIsOpen(false));
+
+  const handleLoginIconClick = async () => {
+    try {
+      await requestNotificationPermission();
+    } catch (error) {
+      console.log('알림 권한 요청 실패:', error);
+    }
+  };
 
   return (
     <Container>
@@ -47,7 +56,12 @@ export default function AuthButtons() {
       ) : (
         <LoginModal currentPath={location.pathname}>
           {(openModal: () => void) => (
-            <IconButton onClick={openModal}>
+            <IconButton
+              onClick={async () => {
+                await handleLoginIconClick(); // 권한 요청 후 모달 열기
+                openModal();
+              }}
+            >
               <AiOutlineUser size={26} />
             </IconButton>
           )}

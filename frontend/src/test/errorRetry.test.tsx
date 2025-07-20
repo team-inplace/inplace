@@ -4,6 +4,11 @@ import MainPage from '@/pages/Main';
 import { useGetLogoutVideo } from '@/api/hooks/useGetLogoutVideo';
 import { testErrorBoundaryBehavior } from '@/utils/test/testUtils';
 
+jest.mock('@/libs/FCM/firebaseSetting', () => ({
+  app: {},
+  messaging: {},
+}));
+
 beforeAll(() => {
   jest.clearAllMocks();
   jest.spyOn(console, 'error').mockImplementation(() => {});

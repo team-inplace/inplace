@@ -2,17 +2,25 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '@/hooks/useAuth';
 import { useGetUserInfo } from '@/api/hooks/useGetUserInfo';
+import { usePostDeviceToken } from '@/api/hooks/usePostDeviceToken';
+import { setupFCMToken } from '@/libs/FCM';
 
 export default function AuthPage() {
   const navigate = useNavigate();
   const { handleLoginSuccess, isAuthenticated } = useAuth();
   const { data: userInfo } = useGetUserInfo();
+  const { mutateAsync: postDeviceToken } = usePostDeviceToken();
 
   useEffect(() => {
     const processAuth = async () => {
       if (!isAuthenticated && userInfo?.nickname) {
         try {
           await handleLoginSuccess(userInfo);
+          try {
+            await setupFCMToken(postDeviceToken);
+          } catch (fcmError) {
+            console.error('FCM 설정 실패:', fcmError);
+          }
 
           const redirectPath = localStorage.getItem('redirectPath');
           if (redirectPath) {
