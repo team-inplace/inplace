@@ -5,6 +5,7 @@ import { MdOutlineLogout } from 'react-icons/md';
 import { TiHome } from 'react-icons/ti';
 import { useRef, useState } from 'react';
 import { AiOutlineUser } from 'react-icons/ai';
+import { FaRegBell } from 'react-icons/fa';
 import useAuth from '@/hooks/useAuth';
 import useTheme from '@/hooks/useTheme';
 import LoginModal from '@/components/common/modals/LoginModal';
@@ -42,9 +43,7 @@ export default function AuthButtons() {
 
   return (
     <Container>
-      <ThemeButton onClick={toggleTheme} aria-label="테마 변경 버튼_B" $isDarkMode={isDarkMode}>
-        {isDarkMode ? <FiSun size={24} color="white" /> : <FiMoon size={22} color="black" />}
-      </ThemeButton>
+      <FaRegBell size={23} onClick={() => setIsOpen(!isOpen)} />
       {isAuthenticated ? (
         <UserProfile ref={dropdownRef}>
           <Profile onClick={handleClickProfile}>
@@ -58,6 +57,12 @@ export default function AuthButtons() {
                   마이페이지
                 </DropdownItem>
               )}
+              <DropdownItem onClick={toggleTheme} $isDarkMode={isDarkMode}>
+                <ThemeButton $isDarkMode={isDarkMode}>
+                  {isDarkMode ? <FiSun size={16} color="white" /> : <FiMoon size={16} color="black" />}
+                </ThemeButton>
+                테마 변경
+              </DropdownItem>
               <DropdownItem onClick={handleLogout}>
                 <MdOutlineLogout size={16} />
                 로그아웃
@@ -105,11 +110,6 @@ const ThemeButton = styled.button<{ $isDarkMode: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.3s ease;
-
-  &:hover {
-    transform: rotate(${(props) => (props.$isDarkMode ? '30deg' : '36deg')});
-  }
 `;
 
 const UserProfile = styled.div`
@@ -142,7 +142,7 @@ const UserDropdown = styled.div`
   }
 `;
 
-const DropdownItem = styled.div`
+const DropdownItem = styled.div<{ $isDarkMode?: boolean }>`
   padding: 12px 10px;
   display: flex;
   justify-content: space-around;
@@ -152,6 +152,10 @@ const DropdownItem = styled.div`
 
   &:hover {
     background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#222222' : '#daeeee')};
+    button {
+      transform: rotate(${(props) => (props.$isDarkMode ? '30deg' : '36deg')});
+      transition: transform 0.3s ease;
+    }
   }
 
   @media screen and (max-width: 768px) {

@@ -9,7 +9,7 @@ export const getAlarms = async () => {
   const response = await fetchInstance.get<AlarmData[]>(getAlarmsPath(), { withCredentials: true });
   return response.data;
 };
-export const useGetMyInfluencerVideo = (enabled: boolean) => {
+export const useGetAlarms = (enabled: boolean) => {
   return useQuery({
     queryKey: ['alarms'],
     queryFn: getAlarms,
