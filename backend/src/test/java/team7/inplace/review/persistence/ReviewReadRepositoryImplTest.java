@@ -23,6 +23,7 @@ import team7.inplace.review.persistence.dto.ReviewQueryResult;
 @Import(ObjectMapper.class)
 @ActiveProfiles("test")
 @Sql("/sql/test-review.sql")
+@Import(ObjectMapper.class)
 public class ReviewReadRepositoryImplTest {
     @Autowired
     private TestEntityManager testEntityManager;

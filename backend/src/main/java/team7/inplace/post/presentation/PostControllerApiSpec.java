@@ -5,10 +5,10 @@ import static team7.inplace.post.presentation.dto.PostResponse.SimplePost;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,7 +50,7 @@ public interface PostControllerApiSpec {
         )
     )
     ResponseEntity<SimpleList> getPosts(
-        @RequestParam(value = "cursorId") Long cursorId,
+        @RequestParam(value = "cursorId", required = false) Long cursorId,
         @RequestParam(value = "size", defaultValue = "5") int size,
         @RequestParam(value = "sort", defaultValue = "createAt") String sort
     );

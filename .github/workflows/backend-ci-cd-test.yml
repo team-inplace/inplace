@@ -69,11 +69,6 @@ jobs:
               exit 1
             fi
 
-        - name: Set up WARP 
-          uses: fscarmen/warp-on-actions@v1.3 # ipv6용 wrapper
-          with:
-            stack: dual
-
         - name: Configure SSH
           run: |
             mkdir -p ~/.ssh/
@@ -107,11 +102,9 @@ jobs:
             ssh ubuntu@${{ secrets.EC2_HOST_TEST_SERVER }} "
               sudo docker run \
                 --name inplace-test \
-                --rm -d \
-                --network ip6net \
+                -d \
                 -p 8080:8080 \
                 -p ${{ secrets.EC2_MONITORING_PORT }}:${{ secrets.EC2_MONITORING_PORT }} \
-                --restart unless-stopped \
                 --env-file .env \
-                ${{ secrets.DOCKERHUB_USERNAME }}/inplace:test
+                ${{ secrets.DOCKERHUB_USERNAME }}/inplace:test 
             "
