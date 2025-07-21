@@ -51,6 +51,13 @@ public class PostController implements PostControllerApiSpec {
     }
 
     @Override
+    public ResponseEntity<Void> likePost(Long postId) {
+        postFacade.likePost(postId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> deletePost(
         @PathVariable Long postId
@@ -91,6 +98,17 @@ public class PostController implements PostControllerApiSpec {
         postFacade.createComment(commentRequest.toCommand(postId));
 
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @Override
+    @PostMapping("/{postId}/comments/{commentId}/like")
+    public ResponseEntity<Void> likeComment(
+        @PathVariable Long postId,
+        @PathVariable Long commentId
+    ) {
+        postFacade.likeComment(postId, commentId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override

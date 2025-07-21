@@ -37,6 +37,9 @@ public interface PostControllerApiSpec {
         @RequestBody PostRequest.UpsertPost postRequest
     );
 
+    @PostMapping("/{postId}/like")
+    ResponseEntity<Void> likePost(@PathVariable(value = "postId") Long postId);
+
     @DeleteMapping("/{postId}")
     ResponseEntity<Void> deletePost(@PathVariable(value = "postId") Long postId);
 
@@ -70,6 +73,12 @@ public interface PostControllerApiSpec {
     ResponseEntity<Void> createComment(
         @PathVariable(value = "postId") Long postId,
         @RequestBody UpsertComment commentRequest
+    );
+
+    @PostMapping("/{postId}/comments/{commentId}/like")
+    ResponseEntity<Void> likeComment(
+        @PathVariable(value = "postId") Long postId,
+        @PathVariable(value = "commentId") Long commentId
     );
 
     @PutMapping("/{postId}/comments/{commentId}")
