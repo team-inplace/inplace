@@ -229,10 +229,7 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public Long getAuthorIdByPostId(Long postId) {
-        Post post = postJpaRepository.findById(postId)
-            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
-
-        return post.getAuthorId();
+        return postJpaRepository.findAuthorIdByPostId(postId);
     }
 
     @Transactional
