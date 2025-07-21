@@ -21,7 +21,6 @@ import team7.inplace.influencer.persistence.dto.InfluencerQueryResult;
 @Import(ObjectMapper.class)
 @ActiveProfiles("test")
 @Sql("/sql/test-influencer.sql")
-@Import(ObjectMapper.class)
 class InfluencerReadRepositoryImplTest {
 
     @Autowired

@@ -32,4 +32,7 @@ public interface PostJpaRepository extends JpaRepository<Post, Long> {
     Optional<String> findContentById(@Param("postId") Long postId);
 
     List<Post> findAllByIsReportedTrueAndDeleteAtIsNull();
+
+    @Query("SELECT p.authorId FROM Post p WHERE p.id = :postId")
+    Long findAuthorIdByPostId(@Param("postId") Long postId);
 }

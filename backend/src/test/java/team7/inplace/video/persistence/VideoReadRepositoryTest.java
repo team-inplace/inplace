@@ -26,7 +26,6 @@ import team7.inplace.video.persistence.dto.VideoQueryResult;
 @Import(ObjectMapper.class)
 @ActiveProfiles("test")
 @Sql("/sql/test-video.sql")
-@Import(ObjectMapper.class)
 public class VideoReadRepositoryTest {
     @Autowired
     private TestEntityManager testEntityManager;

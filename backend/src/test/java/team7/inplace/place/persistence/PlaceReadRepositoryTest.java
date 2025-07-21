@@ -29,7 +29,6 @@ import team7.inplace.place.persistence.dto.PlaceQueryResult.Marker;
 @Import(ObjectMapper.class)
 @Sql(scripts = {"/sql/test-place.sql"}, executionPhase = ExecutionPhase.BEFORE_TEST_CLASS)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import(ObjectMapper.class)
 class PlaceReadRepositoryTest extends AbstractMySQLContainerTest {
 
     @Autowired
