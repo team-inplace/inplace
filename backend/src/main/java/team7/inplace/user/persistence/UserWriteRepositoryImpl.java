@@ -1,9 +1,11 @@
 package team7.inplace.user.persistence;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import java.sql.PreparedStatement;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
@@ -15,41 +17,49 @@ public class UserWriteRepositoryImpl implements UserWriteRepository {
     private final EntityManager em;
 
     public void updateBatchReceivedCommentCount(Map<Long, Long> counts) {
-        em.unwrap(Session.class)
-            .doWork(
-                conn -> {
-                    try (PreparedStatement ps = conn.prepareStatement(
-                        "update users u set u.received_comment_count = ? where u.id = ?")) {
-                        for (Entry<Long, Long> e : counts.entrySet()) {
-                            ps.setLong(1, e.getValue());
-                            ps.setLong(2, e.getKey());
-                            ps.addBatch();
-                        }
-                        ps.executeBatch();
-                    }
-                }
-            );
+        if (counts.isEmpty()) return;
 
+        StringBuilder queryBuilder = new StringBuilder("UPDATE User u SET u.receivedCommentCount = CASE u.id ");
+
+        for (Entry<Long, Long> entry : counts.entrySet()) {
+            queryBuilder.append("WHEN ")
+                .append(entry.getKey())
+                .append(" THEN ")
+                .append(entry.getValue())
+                .append(" ");
+        }
+
+        queryBuilder
+            .append("END WHERE u.id IN (")
+            .append(counts.keySet().stream().map(String::valueOf).collect(Collectors.joining(",")))
+            .append(")");
+
+        Query query = em.createQuery(queryBuilder.toString());
+        query.executeUpdate();
         // commentCount 는 조회 하는 로직이 존재하지 않기 때문에 em.clear() 하지 않음.
     }
 
     @Override
     public void updateBatchUserTiers(Map<Long, Long> tiers) {
-        em.unwrap(Session.class)
-            .doWork(
-                conn -> {
-                    try (PreparedStatement ps = conn.prepareStatement(
-                        "update users u set u.tier_id = ? where u.id = ?"
-                    )) {
-                        for (Entry<Long, Long> e : tiers.entrySet()) {
-                            ps.setLong(1, e.getValue());
-                            ps.setLong(2, e.getKey());
-                            ps.addBatch();
-                        }
-                        ps.executeBatch();
-                    }
-                }
-            );
+        if (tiers.isEmpty()) return;
+
+        StringBuilder queryBuilder = new StringBuilder("UPDATE User u SET u.tierId = CASE u.id ");
+
+        for (Entry<Long, Long> entry : tiers.entrySet()) {
+            queryBuilder.append("WHEN ")
+                .append(entry.getKey())
+                .append(" THEN ")
+                .append(entry.getValue())
+                .append(" ");
+        }
+
+        queryBuilder
+            .append("END WHERE u.id IN (")
+            .append(tiers.keySet().stream().map(String::valueOf).collect(Collectors.joining(",")))
+            .append(")");
+
+        Query query = em.createQuery(queryBuilder.toString());
+        query.executeUpdate();
 
         em.clear();
     }

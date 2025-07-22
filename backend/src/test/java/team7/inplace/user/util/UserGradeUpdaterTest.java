@@ -57,6 +57,7 @@ class UserGradeUpdaterTest {
         // then
         User actualUser1 = userJpaRepository.findById(userId1).get();
         User actualUser2 = userJpaRepository.findById(userId2).get();
+
         assertThat(actualUser1.getTierId()).isEqualTo(expected1);
         assertThat(actualUser2.getTierId()).isEqualTo(expected2);
     }
