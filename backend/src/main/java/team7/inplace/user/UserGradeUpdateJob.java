@@ -9,7 +9,7 @@ import team7.inplace.user.util.UserGradeUpdater;
 
 @Component
 @RequiredArgsConstructor
-public class userGradeUpdateJob {
+public class UserGradeUpdateJob {
 
     private final UserCommentCountFlusher userCommentCountFlusher;
     private final UserGradeUpdater userGradeUpdater;
