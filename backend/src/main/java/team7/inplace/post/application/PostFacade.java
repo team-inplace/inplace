@@ -44,7 +44,7 @@ public class PostFacade {
         userService.updateUserTier(userId);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void createComment(PostCommand.CreateComment command) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.createComment(command, userId);
