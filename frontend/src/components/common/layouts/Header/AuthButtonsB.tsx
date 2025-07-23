@@ -5,7 +5,6 @@ import { MdOutlineLogout } from 'react-icons/md';
 import { TiHome } from 'react-icons/ti';
 import { useRef, useState } from 'react';
 import { AiOutlineUser } from 'react-icons/ai';
-import { FaRegBell } from 'react-icons/fa';
 import useAuth from '@/hooks/useAuth';
 import useTheme from '@/hooks/useTheme';
 import LoginModal from '@/components/common/modals/LoginModal';
@@ -13,6 +12,7 @@ import { useGetUserInfo } from '@/api/hooks/useGetUserInfo';
 import FallbackImage from '../../Items/FallbackImage';
 import useClickOutside from '@/hooks/useClickOutside';
 import { requestNotificationPermission } from '@/libs/FCM';
+import AlarmButton from './Alarm/AlarmButton';
 
 export default function AuthButtons() {
   const { isAuthenticated, handleLogout } = useAuth();
@@ -43,7 +43,7 @@ export default function AuthButtons() {
 
   return (
     <Container>
-      <FaRegBell size={23} onClick={() => setIsOpen(!isOpen)} />
+      <AlarmButton />
       {isAuthenticated ? (
         <UserProfile ref={dropdownRef}>
           <Profile onClick={handleClickProfile}>

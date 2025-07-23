@@ -7,6 +7,7 @@ import { InfluencerHandlers } from './influencerHandlers';
 import { searchHandlers } from './searchHandlers';
 import { reviewHandlers } from './reviewHandlers';
 import { postHandlers } from './postHandlers';
+import { alarmHandlers } from './alarmHandler';
 
 export const worker = setupWorker(
   ...InfluencerHandlers,
@@ -17,5 +18,6 @@ export const worker = setupWorker(
   ...searchHandlers,
   ...reviewHandlers,
   ...postHandlers,
+  ...alarmHandlers,
 );
 export default worker;

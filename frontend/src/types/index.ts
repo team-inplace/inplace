@@ -361,4 +361,6 @@ export type AlarmData = {
   commentId: number;
   content: string;
   checked: boolean;
+  type: string;
+  createdAt: string;
 };

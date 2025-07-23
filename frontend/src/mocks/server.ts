@@ -6,6 +6,7 @@ import { myHandlers } from './myPageHandlers';
 import { searchHandlers } from './searchHandlers';
 import { reviewHandlers } from './reviewHandlers';
 import { postHandlers } from './postHandlers';
+import { alarmHandlers } from './alarmHandler';
 
 const server = setupServer(
   ...mainHandlers,
@@ -15,5 +16,6 @@ const server = setupServer(
   ...searchHandlers,
   ...reviewHandlers,
   ...postHandlers,
+  ...alarmHandlers,
 );
 export default server;
