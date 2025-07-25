@@ -7,7 +7,6 @@ async function registerServiceWorker() {
     const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
     return registration;
   } catch (error) {
-    console.log('Service Worker 등록 실패:', error);
     throw error;
   }
 }
@@ -17,7 +16,6 @@ async function getDeviceToken() {
   const token = await getToken(messaging, {
     vapidKey: import.meta.env.VITE_VAPID_KEY,
   });
-  console.log('토큰: ', token);
   return token;
 }
 
@@ -31,7 +29,6 @@ export async function requestNotificationPermission() {
     if (currentPermission === 'granted') {
       return true;
     }
-    console.log('알림 권한이 거부되었습니다.');
     return false;
   } catch (error) {
     console.error('알림 권한 요청 중 오류 발생:', error);
@@ -42,7 +39,6 @@ export async function requestNotificationPermission() {
 export async function setupFCMToken(postDeviceToken: (token: string) => Promise<void>) {
   try {
     if (Notification.permission !== 'granted') {
-      console.log('알림 권한이 허용되지 않았습니다.');
       return null;
     }
     await registerServiceWorker();
