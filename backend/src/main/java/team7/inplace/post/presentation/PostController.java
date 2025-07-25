@@ -52,6 +52,7 @@ public class PostController implements PostControllerApiSpec {
     }
 
     @Override
+    @PostMapping("/{postId}/likes")
     public ResponseEntity<Void> likePost(Long postId) {
         postFacade.likePost(postId);
 
@@ -113,7 +114,7 @@ public class PostController implements PostControllerApiSpec {
     }
 
     @Override
-    @PostMapping("/{postId}/comments/{commentId}/like")
+    @PostMapping("/{postId}/comments/{commentId}/likes")
     public ResponseEntity<Void> likeComment(
         @PathVariable Long postId,
         @PathVariable Long commentId
