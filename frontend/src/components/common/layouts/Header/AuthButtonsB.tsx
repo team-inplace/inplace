@@ -23,12 +23,13 @@ export default function AuthButtons() {
   const location = useLocation();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const [isOpen, setIsOpen] = useState(isAuthenticated);
+  const [isOpen, setIsOpen] = useState(false);
   const handleClickProfile = () => {
     setIsOpen(!isOpen);
   };
   const handleMyPage = () => {
     navigate('/my');
+    setIsOpen(false);
   };
 
   useClickOutside([dropdownRef], () => setIsOpen(false));
@@ -44,46 +45,63 @@ export default function AuthButtons() {
   return (
     <Container>
       <AlarmButton />
-      {isAuthenticated ? (
-        <UserProfile ref={dropdownRef}>
-          <Profile onClick={handleClickProfile}>
+      <UserProfile ref={dropdownRef}>
+        <Profile onClick={handleClickProfile}>
+          {isAuthenticated ? (
             <FallbackImage src={imgSrc?.imgUrl} alt="profile" />
-          </Profile>
-          {isOpen && (
-            <UserDropdown>
-              {location.pathname !== '/my' && (
-                <DropdownItem onClick={handleMyPage}>
-                  <TiHome size={16} />
-                  마이페이지
-                </DropdownItem>
-              )}
-              <DropdownItem onClick={toggleTheme} $isDarkMode={isDarkMode}>
-                <ThemeButton $isDarkMode={isDarkMode}>
-                  {isDarkMode ? <FiSun size={16} color="white" /> : <FiMoon size={16} color="black" />}
-                </ThemeButton>
-                테마 변경
-              </DropdownItem>
-              <DropdownItem onClick={handleLogout}>
-                <MdOutlineLogout size={16} />
-                로그아웃
-              </DropdownItem>
-            </UserDropdown>
-          )}
-        </UserProfile>
-      ) : (
-        <LoginModal currentPath={location.pathname}>
-          {(openModal: () => void) => (
-            <IconButton
-              onClick={async () => {
-                await handleLoginIconClick(); // 권한 요청 후 모달 열기
-                openModal();
-              }}
-            >
+          ) : (
+            <IconButton>
               <AiOutlineUser size={26} />
             </IconButton>
           )}
-        </LoginModal>
-      )}
+        </Profile>
+        {isOpen && (
+          <UserDropdown>
+            {isAuthenticated ? (
+              <>
+                {location.pathname !== '/my' && (
+                  <DropdownItem onClick={handleMyPage}>
+                    <TiHome size={16} />
+                    마이페이지
+                  </DropdownItem>
+                )}
+                <DropdownItem onClick={toggleTheme} $isDarkMode={isDarkMode}>
+                  <ThemeButton $isDarkMode={isDarkMode}>
+                    {isDarkMode ? <FiSun size={16} color="white" /> : <FiMoon size={16} color="black" />}
+                  </ThemeButton>
+                  테마 변경
+                </DropdownItem>
+                <DropdownItem onClick={handleLogout}>
+                  <MdOutlineLogout size={16} />
+                  로그아웃
+                </DropdownItem>
+              </>
+            ) : (
+              <>
+                <LoginModal currentPath={location.pathname}>
+                  {(openModal: () => void) => (
+                    <DropdownItem
+                      onClick={async () => {
+                        await handleLoginIconClick(); // 권한 요청 후 모달 열기
+                        openModal();
+                      }}
+                    >
+                      <AiOutlineUser size={16} />
+                      로그인
+                    </DropdownItem>
+                  )}
+                </LoginModal>
+                <DropdownItem onClick={toggleTheme} $isDarkMode={isDarkMode}>
+                  <ThemeButton $isDarkMode={isDarkMode}>
+                    {isDarkMode ? <FiSun size={16} color="white" /> : <FiMoon size={16} color="black" />}
+                  </ThemeButton>
+                  테마 변경
+                </DropdownItem>
+              </>
+            )}
+          </UserDropdown>
+        )}
+      </UserProfile>
     </Container>
   );
 }
@@ -122,6 +140,8 @@ const Profile = styled.div`
   border-radius: 50%;
   display: flex;
   cursor: pointer;
+  align-items: center;
+  justify-content: center;
 `;
 
 const UserDropdown = styled.div`
@@ -143,9 +163,9 @@ const UserDropdown = styled.div`
 `;
 
 const DropdownItem = styled.div<{ $isDarkMode?: boolean }>`
-  padding: 12px 10px;
+  padding: 12px 12px;
   display: flex;
-  justify-content: space-around;
+  gap: 8px;
   align-items: end;
   cursor: pointer;
   font-size: 14px;
