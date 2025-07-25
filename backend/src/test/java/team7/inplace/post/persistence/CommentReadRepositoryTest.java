@@ -96,4 +96,21 @@ class CommentReadRepositoryTest extends AbstractMySQLContainerTest {
         assertThat(comments.getContent().get(expectedMyCommentIndex).isMine()).isTrue();
     }
 
+    @Test
+    @DisplayName("Soft delete된 댓글이 조회되지 않는지 테스트")
+    void findCommentsByPostIdWithSoftDelete() {
+        // given
+        final Long postId = 2L;
+        final Long userId = null;
+        final Pageable pageable = Pageable.ofSize(5);
+
+        final int expectedCommentSize = 3; // Soft deleted comment should not be included
+
+        // when
+        var comments = commentReadRepository.findCommentsByPostId(postId, userId,
+            pageable);
+
+        // then
+        assertThat(comments).hasSize(expectedCommentSize);
+    }
 }

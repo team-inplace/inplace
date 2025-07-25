@@ -13,6 +13,8 @@ import team7.inplace.global.exception.code.VideoErrorCode;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.video.application.command.VideoCommand;
 import team7.inplace.video.application.command.VideoCommand.Create;
+import team7.inplace.video.domain.CoolVideo;
+import team7.inplace.video.domain.RecentVideo;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.CoolVideoRepository;
 import team7.inplace.video.persistence.RecentVideoRepository;
@@ -59,17 +61,13 @@ public class VideoService {
     }
 
     @Transactional(readOnly = true)
-    public List<VideoQueryResult.DetailedVideo> getRecentVideos() {
-        var top10Videos = recentVideoRepository.findAll();
-
-        return top10Videos.stream().map(DetailedVideo::from).toList();
+    public List<RecentVideo> getRecentVideos() {
+        return recentVideoRepository.findAll();
     }
 
     @Transactional(readOnly = true)
-    public List<VideoQueryResult.DetailedVideo> getCoolVideo(String parentCategoryName) {
-        var top10Videos = coolVideoRepository.findByPlaceCategoryParentName(parentCategoryName);
-
-        return top10Videos.stream().map(DetailedVideo::from).toList();
+    public List<CoolVideo> getCoolVideo(String parentCategoryName) {
+        return coolVideoRepository.findByPlaceCategoryParentName(parentCategoryName);
     }
 
     @Transactional(readOnly = true)

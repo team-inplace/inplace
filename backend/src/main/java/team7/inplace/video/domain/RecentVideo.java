@@ -93,4 +93,7 @@ public class RecentVideo {
         );
     }
 
+    public String getVideoUrl() {
+        return "https://www.youtube.com/watch?v=" + videoUUID;
+    }
 }

@@ -86,6 +86,6 @@ public class CommentReadRepositoryImpl implements CommentReadRepository {
             .leftJoin(QBadge.badge).on(QUser.user.mainBadgeId.eq(QBadge.badge.id))
             .leftJoin(QLikedComment.likedComment)
             .on(userId == null ? Expressions.FALSE : likedJoinCondition)
-            .where(QComment.comment.postId.eq(postId));
+            .where(QComment.comment.postId.eq(postId).and(QComment.comment.deleteAt.isNull()));
     }
 }

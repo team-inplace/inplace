@@ -41,10 +41,10 @@ class PostReadRepositoryImplTest extends AbstractMySQLContainerTest {
     @DisplayName("게시글 조회 테스트 / 커서기반 페이징 / 다음페이지 있음")
     void findPostsOrderBy_withNextPage() {
         // given
-        Long userId = 1L;
-        Long cursorId = null;
-        int size = 5;
-
+        final Long userId = 1L;
+        final Long cursorId = null;
+        final int size = 5;
+        final long expectedCursorId = 2L;
         // when
         var posts = postReadRepository.findPostsOrderBy(
             userId,
@@ -56,16 +56,17 @@ class PostReadRepositoryImplTest extends AbstractMySQLContainerTest {
         // then
         assertThat(posts.value().size()).isEqualTo(size);
         assertThat(posts.hasNext()).isTrue();
-        assertThat(posts.nextCursorId()).isEqualTo(4L);
+        assertThat(posts.nextCursorId()).isEqualTo(expectedCursorId);
     }
 
     @Test
     @DisplayName("게시글 조회 테스트 / 커서기반 페이징 / 다음페이지 없음")
     void findPostsOrderBy_withoutNextPage() {
         // given
-        Long userId = null;
-        Long cursorId = 4L;
-        int size = 5;
+        final Long userId = null;
+        final Long cursorId = 2L;
+        final int size = 5;
+        final int expectedSize = 1;
 
         // when
         var posts = postReadRepository.findPostsOrderBy(
@@ -76,7 +77,7 @@ class PostReadRepositoryImplTest extends AbstractMySQLContainerTest {
         );
 
         // then
-        assertThat(posts.value().size()).isEqualTo(3);
+        assertThat(posts.value().size()).isEqualTo(expectedSize);
         assertThat(posts.hasNext()).isFalse();
         assertThat(posts.nextCursorId()).isNull();
     }
