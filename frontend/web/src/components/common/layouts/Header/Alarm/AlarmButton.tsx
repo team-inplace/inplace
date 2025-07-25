@@ -23,7 +23,7 @@ export default function AlarmButton({ iconSize = 20 }: AlarmButtonProps) {
   const alarmRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
 
-  const { data: alarms = [] } = useGetAlarms(isAuthenticated);
+  const { data: alarms = [] } = useGetAlarms(isAuthenticated && isAlarmOpen);
   const unreadCount = alarms.filter((alarm: AlarmData) => !alarm.checked).length;
 
   // 알림 토글
