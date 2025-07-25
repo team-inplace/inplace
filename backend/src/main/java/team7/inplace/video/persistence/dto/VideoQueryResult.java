@@ -42,36 +42,6 @@ public class VideoQueryResult {
         public DetailedVideo {
         }
 
-        public static DetailedVideo from(CoolVideo coolVideo) {
-            return new DetailedVideo(
-                coolVideo.getVideoId(),
-                coolVideo.getVideoUUID(),
-                coolVideo.getInfluencerName(),
-                coolVideo.getPlaceId(),
-                coolVideo.getPlaceName(),
-                coolVideo.getPlaceCategoryParentName(),
-                coolVideo.getPlaceCategoryParentId(),
-                coolVideo.getAddress1(),
-                coolVideo.getAddress2(),
-                coolVideo.getAddress3()
-            );
-        }
-
-        public static DetailedVideo from(RecentVideo recentVideo) {
-            return new DetailedVideo(
-                recentVideo.getVideoId(),
-                recentVideo.getVideoUUID(),
-                recentVideo.getInfluencerName(),
-                recentVideo.getPlaceId(),
-                recentVideo.getPlaceName(),
-                recentVideo.getPlaceCategoryParentName(),
-                null,
-                recentVideo.getAddress1(),
-                recentVideo.getAddress2(),
-                recentVideo.getAddress3()
-            );
-        }
-
         public String videoUrl() {
             return "https://www.youtube.com/watch?v=" + videoUUID;
         }

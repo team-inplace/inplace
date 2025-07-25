@@ -85,7 +85,8 @@ public class PostReadRepositoryImpl implements PostReadRepository {
             )
             .from(QPost.post)
             .innerJoin(QUser.user).on(QPost.post.authorId.eq(QUser.user.id))
-            .leftJoin(QLikedPost.likedPost).on(likedJoinCondition);
+            .leftJoin(QLikedPost.likedPost).on(likedJoinCondition)
+            .where(QPost.post.deleteAt.isNull());
     }
 
     private JPAQuery<DetailedPost> buildDetailedPostsQuery(Long postId, Long userId) {
@@ -112,7 +113,9 @@ public class PostReadRepositoryImpl implements PostReadRepository {
             .from(QPost.post)
             .innerJoin(QUser.user).on(QPost.post.authorId.eq(QUser.user.id))
             .leftJoin(QLikedPost.likedPost).on(likedJoinCondition)
-            .where(QPost.post.id.eq(postId));
+            .where(QPost.post.id.eq(postId)
+                .and(QPost.post.deleteAt.isNull())
+            );
     }
 
     /*

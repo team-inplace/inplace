@@ -100,4 +100,7 @@ public class CoolVideo {
         );
     }
 
+    public String getVideoUrl() {
+        return "https://www.youtube.com/watch?v=" + videoUUID;
+    }
 }

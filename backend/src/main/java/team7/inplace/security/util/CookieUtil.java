@@ -6,7 +6,7 @@ public class CookieUtil {
 
     public static ResponseCookie createHttpOnlyCookie(String key, String value, String domain) {
         return ResponseCookie.from(key, value)
-            .sameSite("Lax")
+            .sameSite("None")
             .secure(true)
             .path("/")
             .httpOnly(true)
@@ -17,7 +17,7 @@ public class CookieUtil {
 
     public static ResponseCookie createCookie(String key, String value, String domain) {
         return ResponseCookie.from(key, value)
-            .sameSite("Lax")
+            .sameSite("None")
             .secure(true)
             .path("/")
             .httpOnly(false)

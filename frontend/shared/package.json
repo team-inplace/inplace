@@ -1,0 +1,10 @@
+{
+  "name": "@inplace-frontend-monorepo/shared",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "echo 'No build step needed for simple constants, or add Babel/TypeScript build here'"
+  }
+}

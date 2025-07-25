@@ -87,4 +87,10 @@ public class Post extends BaseEntity {
             this.isReported = true;
         }
     }
+
+    public void unreport() {
+        if (Boolean.TRUE.equals(this.isReported)) {
+            this.isReported = false;
+        }
+    }
 }

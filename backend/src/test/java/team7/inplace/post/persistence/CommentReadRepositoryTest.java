@@ -40,7 +40,7 @@ class CommentReadRepositoryTest extends AbstractMySQLContainerTest {
         // given
         final Long postId = 1L;
         final Long userId = null;
-        final Pageable pageable = Pageable.ofSize(10);
+        final Pageable pageable = Pageable.ofSize(5);
 
         final int expectedCommentSize = 5;
         final int expectedTotalPages = 2;
@@ -72,5 +72,45 @@ class CommentReadRepositoryTest extends AbstractMySQLContainerTest {
         assertThat(comments).hasSize(expectedCommentSize);
         assertThat(comments.getTotalPages()).isEqualTo(expectedTotalPages);
         assertThat(comments.getContent().get(0).selfLike()).isTrue();
+    }
+
+    @Test
+    @DisplayName("나의 댓글 포함 조회 테스트")
+    void findCommentsByPostIdWithUserIdAndMine() {
+        // given
+        final Long postId = 1L;
+        final Long userId = 1L;
+        final Pageable pageable = Pageable.ofSize(5);
+
+        final int expectedMyCommentIndex = 0;
+        final int expectedCommentSize = 5;
+        final int expectedTotalPages = 2;
+
+        // when
+        var comments = commentReadRepository.findCommentsByPostId(postId, userId,
+            pageable);
+
+        // then
+        assertThat(comments).hasSize(expectedCommentSize);
+        assertThat(comments.getTotalPages()).isEqualTo(expectedTotalPages);
+        assertThat(comments.getContent().get(expectedMyCommentIndex).isMine()).isTrue();
+    }
+
+    @Test
+    @DisplayName("Soft delete된 댓글이 조회되지 않는지 테스트")
+    void findCommentsByPostIdWithSoftDelete() {
+        // given
+        final Long postId = 2L;
+        final Long userId = null;
+        final Pageable pageable = Pageable.ofSize(5);
+
+        final int expectedCommentSize = 3; // Soft deleted comment should not be included
+
+        // when
+        var comments = commentReadRepository.findCommentsByPostId(postId, userId,
+            pageable);
+
+        // then
+        assertThat(comments).hasSize(expectedCommentSize);
     }
 }
