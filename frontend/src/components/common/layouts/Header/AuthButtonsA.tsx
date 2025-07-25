@@ -5,6 +5,7 @@ import useAuth from '@/hooks/useAuth';
 import useTheme from '@/hooks/useTheme';
 import LoginModal from '@/components/common/modals/LoginModal';
 import { Text } from '../../typography/Text';
+import AlarmButton from './Alarm/AlarmButton';
 
 export default function AuthButtons() {
   const { isAuthenticated, handleLogout } = useAuth();
@@ -34,6 +35,7 @@ export default function AuthButtons() {
       <ThemeButton onClick={toggleTheme} aria-label="테마 변경 버튼_A" $isDarkMode={isDarkMode}>
         {isDarkMode ? <FiSun size={20} color="white" /> : <FiMoon size={20} color="black" />}
       </ThemeButton>
+      <AlarmButton />
     </Container>
   );
 }

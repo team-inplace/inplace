@@ -44,7 +44,7 @@ export default function AuthButtons() {
 
   return (
     <Container>
-      <AlarmButton />
+      <AlarmButton iconSize={22} />
       <UserProfile ref={dropdownRef}>
         <Profile onClick={handleClickProfile}>
           {isAuthenticated ? (

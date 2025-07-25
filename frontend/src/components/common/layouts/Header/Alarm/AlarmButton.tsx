@@ -10,7 +10,11 @@ import useTheme from '@/hooks/useTheme';
 import useAuth from '@/hooks/useAuth';
 import LoginModal from '@/components/common/modals/LoginModal';
 
-export default function AlarmButton() {
+interface AlarmButtonProps {
+  iconSize?: number;
+}
+
+export default function AlarmButton({ iconSize = 20 }: AlarmButtonProps) {
   const { isAuthenticated } = useAuth();
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
@@ -38,7 +42,7 @@ export default function AlarmButton() {
     <>
       <AlarmContainer ref={alarmRef}>
         <BellButton onClick={toggleAlarm} $isDarkMode={isDarkMode} $isActive={isAlarmOpen}>
-          <FaRegBell size={23} />
+          <FaRegBell size={iconSize} />
           {isAuthenticated && unreadCount > 0 && <UnreadBadge>{unreadCount > 99 ? '99+' : unreadCount}</UnreadBadge>}
         </BellButton>
         {isAuthenticated && <AlarmList alarms={alarms} isVisible={isAlarmOpen} />}
