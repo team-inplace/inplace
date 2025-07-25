@@ -6,12 +6,21 @@ import useTheme from '@/hooks/useTheme';
 import LoginModal from '@/components/common/modals/LoginModal';
 import { Text } from '../../typography/Text';
 import AlarmButton from './Alarm/AlarmButton';
+import { requestNotificationPermission } from '@/libs/FCM';
 
 export default function AuthButtons() {
   const { isAuthenticated, handleLogout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const isDarkMode = theme === 'dark';
   const location = useLocation();
+
+  const handleLoginIconClick = async () => {
+    try {
+      await requestNotificationPermission();
+    } catch (error) {
+      console.log('알림 권한 요청 실패:', error);
+    }
+  };
 
   return (
     <Container>
@@ -24,7 +33,12 @@ export default function AuthButtons() {
       ) : (
         <LoginModal currentPath={location.pathname}>
           {(openModal: () => void) => (
-            <IconButton onClick={openModal}>
+            <IconButton
+              onClick={async () => {
+                await handleLoginIconClick(); // 권한 요청 후 모달 열기
+                openModal();
+              }}
+            >
               <Text size="xs" weight="normal">
                 로그인
               </Text>
