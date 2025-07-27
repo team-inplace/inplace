@@ -13,6 +13,8 @@ import team7.inplace.post.application.dto.PostInfo;
 import team7.inplace.post.persistence.dto.CommentQueryResult;
 import team7.inplace.post.persistence.dto.PostQueryResult;
 import team7.inplace.user.presentation.dto.UserResponse;
+import team7.inplace.user.presentation.dto.UserResponse.Badge;
+import team7.inplace.user.presentation.dto.UserResponse.Tier;
 
 public class PostResponse {
 
@@ -57,7 +59,7 @@ public class PostResponse {
 
     public record SimplePost(
         Long postId,
-        UserResponse.Info author,
+        UserResponse.Simple author,
         String title,
         String content,
         @JsonInclude(NON_NULL)
@@ -72,8 +74,12 @@ public class PostResponse {
         public static SimplePost from(PostQueryResult.DetailedPost postQueryResult) {
             return new SimplePost(
                 postQueryResult.postId(),
-                new UserResponse.Info(postQueryResult.userNickname(),
-                    postQueryResult.userImageUrl()),
+                new UserResponse.Simple(
+                    postQueryResult.userNickname(),
+                    postQueryResult.userImageUrl(),
+                    postQueryResult.tierImageUrl(),
+                    postQueryResult.mainBadgeImageUrl()
+                ),
                 postQueryResult.title(),
                 postQueryResult.content(),
                 postQueryResult.getImageUrls().isEmpty()
@@ -90,7 +96,7 @@ public class PostResponse {
 
     public record DetailedPost(
         Long postId,
-        UserResponse.Info author,
+        UserResponse.Simple author,
         String title,
         String content,
         List<SimplePostImage> imageUrls,
@@ -107,9 +113,11 @@ public class PostResponse {
                 .toList();
             return new DetailedPost(
                 postQueryResult.postId(),
-                new UserResponse.Info(
+                new UserResponse.Simple(
                     postQueryResult.userNickname(),
-                    postQueryResult.userImageUrl()
+                    postQueryResult.userImageUrl(),
+                    postQueryResult.tierImageUrl(),
+                    postQueryResult.mainBadgeImageUrl()
                 ),
                 postQueryResult.title(),
                 postQueryResult.content(),
@@ -150,7 +158,7 @@ public class PostResponse {
 
     public record DetailedComment(
         Long commentId,
-        UserResponse.Info author,
+        UserResponse.Simple author,
         String content,
         Boolean selfLike,
         Integer totalLikeCount,
@@ -161,8 +169,10 @@ public class PostResponse {
         public static DetailedComment from(CommentQueryResult.DetailedComment commentQueryResult) {
             return new DetailedComment(
                 commentQueryResult.commentId(),
-                new UserResponse.Info(commentQueryResult.userNickname(),
-                    commentQueryResult.userImageUrl()),
+                new UserResponse.Simple(commentQueryResult.userNickname(),
+                    commentQueryResult.userImageUrl(),
+                    commentQueryResult.tierImageUrl(),
+                    commentQueryResult.mainBadgeImageUrl()),
                 commentQueryResult.content(),
                 commentQueryResult.selfLike(),
                 commentQueryResult.totalLikeCount(),

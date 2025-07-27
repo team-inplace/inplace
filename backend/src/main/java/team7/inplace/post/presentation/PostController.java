@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.post.application.PostFacade;
+import team7.inplace.post.presentation.dto.PostRequest;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertComment;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertPost;
 import team7.inplace.post.presentation.dto.PostResponse.DetailedComment;
@@ -52,8 +53,11 @@ public class PostController implements PostControllerApiSpec {
     }
 
     @Override
-    public ResponseEntity<Void> likePost(Long postId) {
-        postFacade.likePost(postId);
+    @PostMapping("/likes")
+    public ResponseEntity<Void> likePost(
+        @RequestBody PostRequest.PostLike request
+    ) {
+        postFacade.likePost(request.toCommand());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -113,12 +117,12 @@ public class PostController implements PostControllerApiSpec {
     }
 
     @Override
-    @PostMapping("/{postId}/comments/{commentId}/like")
+    @PostMapping("/{postId}/comments/likes")
     public ResponseEntity<Void> likeComment(
-        @PathVariable Long postId,
-        @PathVariable Long commentId
+        @PathVariable("postId") Long postId,
+        @RequestBody PostRequest.CommentLike request
     ) {
-        postFacade.likeComment(postId, commentId);
+        postFacade.likeComment(request.toCommand(postId));
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

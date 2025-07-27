@@ -9,6 +9,8 @@ public class CommentQueryResult {
         Long commentId,
         String userNickname,
         String userImageUrl,
+        String tierImageUrl,
+        String mainBadgeImageUrl,
         String content,
         Boolean selfLike,
         Integer totalLikeCount,

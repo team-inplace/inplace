@@ -1,17 +1,60 @@
 package team7.inplace.user.application.dto;
 
-import team7.inplace.review.persistence.dto.ReviewQueryResult;
-import team7.inplace.user.domain.User;
-
 import java.time.LocalDate;
+import java.util.List;
+import team7.inplace.review.persistence.dto.ReviewQueryResult;
+import team7.inplace.user.persistence.dto.UserQueryResult;
 
-public class UserInfo{
-    public record Profile(
-            String nickname,
-            String profileImageUrl
+public class UserInfo {
+
+    public record Simple(
+        String nickname,
+        String profileImageUrl,
+        String mainBadgeName,
+        String mainBadgeImageUrl,
+        String tierName,
+        String tierImageUrl
     ) {
-        public static Profile from(User user) {
-            return new Profile(user.getNickname(), user.getProfileImageUrl());
+
+        public static Simple from(UserQueryResult.Simple user) {
+            return new Simple(
+                user.nickname(),
+                user.imgUrl(),
+                user.mainBadgeName(),
+                user.mainBadgeImgUrl(),
+                user.tierName(),
+                user.tierImgUrl()
+            );
+        }
+    }
+
+    public record Detail(
+        String nickname,
+        String profileImageUrl,
+        String tierName,
+        String tierImageUrl,
+        List<Badge> badges
+    ) {
+        public static Detail from(UserQueryResult.Simple user, List<UserQueryResult.Badge> badgeQueryResults) {
+            List<Badge> badges = badgeQueryResults.stream().map(Badge::from).toList();
+            return new Detail(
+                user.nickname(),
+                user.imgUrl(),
+                user.tierName(),
+                user.tierImgUrl(),
+                badges
+            );
+        }
+    }
+
+    public record Badge(
+        Long id,
+        String name,
+        String img_url,
+        String condition
+    ) {
+        public static Badge from(UserQueryResult.Badge badge) {
+            return new Badge(badge.id(), badge.name(), badge.imgUrl(), badge.condition());
         }
     }
 
@@ -46,6 +89,7 @@ public class UserInfo{
             );
         }
     }
+
     public record ReviewPlace(
             Long placeId,
             String placeName,

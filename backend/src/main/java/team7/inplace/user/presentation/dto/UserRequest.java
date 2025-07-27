@@ -7,4 +7,10 @@ public class UserRequest {
     ) {
 
     }
+
+    public record UpdateMainBadge(
+        Long id
+    ) {
+
+    }
 }

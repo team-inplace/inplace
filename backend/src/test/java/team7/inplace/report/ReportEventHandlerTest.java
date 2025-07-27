@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.test.context.ActiveProfiles;
 import team7.inplace.post.application.PostService;
 import team7.inplace.report.application.ModerationService;
 import team7.inplace.report.event.ReportEvent.CommentReportEvent;
@@ -19,6 +20,7 @@ import team7.inplace.report.event.ReportEvent.PostReportEvent;
 
 @SpringBootTest
 @EnableAsync
+@ActiveProfiles("test")
 public class ReportEventHandlerTest {
 
     @Autowired

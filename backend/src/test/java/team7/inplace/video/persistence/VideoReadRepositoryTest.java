@@ -23,9 +23,9 @@ import team7.inplace.video.persistence.dto.VideoFilterCondition;
 import team7.inplace.video.persistence.dto.VideoQueryResult;
 
 @DataJpaTest
+@Import(ObjectMapper.class)
 @ActiveProfiles("test")
 @Sql("/sql/test-video.sql")
-@Import(ObjectMapper.class)
 public class VideoReadRepositoryTest {
     @Autowired
     private TestEntityManager testEntityManager;

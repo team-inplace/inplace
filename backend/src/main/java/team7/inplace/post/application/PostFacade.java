@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.global.annotation.Facade;
 import team7.inplace.global.cursor.CursorResult;
 import team7.inplace.post.application.dto.PostCommand;
@@ -14,21 +15,26 @@ import team7.inplace.post.persistence.dto.CommentQueryResult;
 import team7.inplace.post.persistence.dto.PostQueryResult.DetailedPost;
 import team7.inplace.post.persistence.dto.PostQueryResult.UserSuggestion;
 import team7.inplace.security.util.AuthorizationUtil;
+import team7.inplace.user.application.UserService;
 
 @Facade
 @RequiredArgsConstructor
 public class PostFacade {
 
     private final PostService postService;
+    private final UserService userService;
 
+    @Transactional
     public void createPost(CreatePost command) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.createPost(command, userId);
+        userService.addToPostCount(userId, 1);
+        userService.updateUserTier(userId);
     }
 
-    public void likePost(Long postId) {
+    public void likePost(PostCommand.PostLike command) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
-        postService.likePost(postId, userId);
+        postService.likePost(command, userId);
     }
 
     public void updatePost(UpdatePost updateCommand) {
@@ -36,19 +42,25 @@ public class PostFacade {
         postService.updatePost(updateCommand, userId);
     }
 
+    @Transactional
     public void deletePost(Long postId) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.deletePost(postId, userId);
+        userService.addToPostCount(userId, -1);
+        userService.updateUserTier(userId);
     }
 
+    @Transactional
     public void createComment(PostCommand.CreateComment command) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.createComment(command, userId);
+        Long authorId = postService.getAuthorIdByPostId(command.postId());
+        userService.addToReceivedCommentByUserId(authorId, 1);
     }
 
-    public void likeComment(Long postId, Long commentId) {
+    public void likeComment(PostCommand.CommentLike command) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
-        postService.likeComment(postId, commentId, userId);
+        postService.likeComment(command, userId);
     }
 
     public void updateComment(PostCommand.UpdateComment updateCommand) {
@@ -56,9 +68,12 @@ public class PostFacade {
         postService.updateComment(updateCommand, userId);
     }
 
+    @Transactional
     public void deleteComment(Long postId, Long commentId) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.deleteComment(postId, commentId, userId);
+        Long authorId = postService.getAuthorIdByPostId(postId);
+        userService.addToReceivedCommentByUserId(authorId, -1);
     }
 
     public CursorResult<DetailedPost> getPosts(Long cursorId, int size, String orderBy) {
