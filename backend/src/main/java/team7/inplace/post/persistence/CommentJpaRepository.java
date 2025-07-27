@@ -24,4 +24,6 @@ public interface CommentJpaRepository extends JpaRepository<Comment, Long> {
     Optional<String> findContentById(@Param("commentId") Long commentId);
 
     List<Comment> findAllByIsReportedTrueAndDeleteAtIsNull();
+
+    Boolean existsCommentByPostIdAndId(Long postId, Long commentId);
 }

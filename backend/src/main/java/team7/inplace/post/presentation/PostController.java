@@ -17,11 +17,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.post.application.PostFacade;
+import team7.inplace.post.presentation.dto.PostRequest;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertComment;
 import team7.inplace.post.presentation.dto.PostRequest.UpsertPost;
 import team7.inplace.post.presentation.dto.PostResponse.DetailedComment;
+import team7.inplace.post.presentation.dto.PostResponse.DetailedPost;
+import team7.inplace.post.presentation.dto.PostResponse.DetailedPostImages;
 import team7.inplace.post.presentation.dto.PostResponse.SimpleList;
-import team7.inplace.post.presentation.dto.PostResponse.SimplePost;
 import team7.inplace.post.presentation.dto.PostResponse.UserSuggestion;
 
 @RestController
@@ -51,6 +53,16 @@ public class PostController implements PostControllerApiSpec {
     }
 
     @Override
+    @PostMapping("/likes")
+    public ResponseEntity<Void> likePost(
+        @RequestBody PostRequest.PostLike request
+    ) {
+        postFacade.likePost(request.toCommand());
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> deletePost(
         @PathVariable Long postId
@@ -75,10 +87,21 @@ public class PostController implements PostControllerApiSpec {
 
     @Override
     @GetMapping("/{postId}")
-    public ResponseEntity<SimplePost> getPostById(@PathVariable Long postId) {
+    public ResponseEntity<DetailedPost> getPostById(@PathVariable Long postId) {
         var post = postFacade.getPostById(postId);
 
-        var response = SimplePost.from(post);
+        var response = DetailedPost.from(post);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Override
+    @GetMapping("/{postId}/images/details")
+    public ResponseEntity<DetailedPostImages> getPostImageDetails(
+        @PathVariable Long postId
+    ) {
+        var postImage = postFacade.getPostImageDetails(postId);
+
+        var response = DetailedPostImages.from(postImage);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -91,6 +114,17 @@ public class PostController implements PostControllerApiSpec {
         postFacade.createComment(commentRequest.toCommand(postId));
 
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @Override
+    @PostMapping("/{postId}/comments/likes")
+    public ResponseEntity<Void> likeComment(
+        @PathVariable("postId") Long postId,
+        @RequestBody PostRequest.CommentLike request
+    ) {
+        postFacade.likeComment(request.toCommand(postId));
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Override

@@ -10,6 +10,7 @@ import team7.inplace.global.cursor.CursorResult;
 import team7.inplace.post.application.dto.PostCommand;
 import team7.inplace.post.application.dto.PostCommand.CreatePost;
 import team7.inplace.post.application.dto.PostCommand.UpdatePost;
+import team7.inplace.post.application.dto.PostInfo;
 import team7.inplace.post.persistence.dto.CommentQueryResult;
 import team7.inplace.post.persistence.dto.PostQueryResult.DetailedPost;
 import team7.inplace.post.persistence.dto.PostQueryResult.UserSuggestion;
@@ -31,6 +32,11 @@ public class PostFacade {
         userService.updateUserTier(userId);
     }
 
+    public void likePost(PostCommand.PostLike command) {
+        var userId = AuthorizationUtil.getUserIdOrThrow();
+        postService.likePost(command, userId);
+    }
+
     public void updatePost(UpdatePost updateCommand) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.updatePost(updateCommand, userId);
@@ -50,6 +56,11 @@ public class PostFacade {
         postService.createComment(command, userId);
         Long authorId = postService.getAuthorIdByPostId(command.postId());
         userService.addToReceivedCommentByUserId(authorId, 1);
+    }
+
+    public void likeComment(PostCommand.CommentLike command) {
+        var userId = AuthorizationUtil.getUserIdOrThrow();
+        postService.likeComment(command, userId);
     }
 
     public void updateComment(PostCommand.UpdateComment updateCommand) {
@@ -74,6 +85,11 @@ public class PostFacade {
     public DetailedPost getPostById(Long postId) {
         var userId = AuthorizationUtil.getUserIdOrNull();
         return postService.getPostById(postId, userId);
+    }
+
+    public PostInfo.PostImages getPostImageDetails(Long postId) {
+        var userId = AuthorizationUtil.getUserIdOrThrow();
+        return postService.getPostImageDetails(postId, userId);
     }
 
     public Page<CommentQueryResult.DetailedComment> getCommentsByPostId(

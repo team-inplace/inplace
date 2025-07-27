@@ -25,8 +25,7 @@ public class LikedPost extends BaseEntity {
         return new LikedPost(userId, postId);
     }
 
-    public boolean updateLike() {
-        this.isLiked = !this.isLiked;
-        return this.isLiked;
+    public boolean updateLike(Boolean like) {
+        return this.isLiked = like;
     }
 }
