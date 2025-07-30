@@ -38,6 +38,12 @@ jobs:
       - name: Run chmod to make gradlew executable
         working-directory: ./backend
         run: chmod +x ./gradlew
+        
+      - name: Create FCM key file
+        working-directory: ./backend
+        run: |
+          mkdir -p src/main/resources/key
+          echo "${{ secrets.FCM_KEY_JSON }}" > src/main/resources/key/firebase-admin-sdk.json
 
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
