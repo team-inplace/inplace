@@ -11,8 +11,8 @@ import team7.inplace.global.baseEntity.BaseEntity;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.PostErrorCode;
 
-@Entity
 @Getter
+@Entity
 @Table(name = "posts")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseEntity {
@@ -88,9 +88,17 @@ public class Post extends BaseEntity {
         }
     }
 
-    public void unreport() {
+    public void unreported() {
         if (Boolean.TRUE.equals(this.isReported)) {
             this.isReported = false;
         }
+    }
+
+    public void checkAuthor(Long userId) {
+        if (this.authorId.equals(userId)) {
+            return;
+        }
+
+        throw InplaceException.of(PostErrorCode.POST_CAN_NOT_BE_MODIFIED);
     }
 }

@@ -58,4 +58,24 @@ public class PostRequest {
             return new PostCommand.UpdateComment(commentId, postId, comment);
         }
     }
+
+    public record PostLike(
+        Long postId,
+        Boolean likes
+    ) {
+
+        public PostCommand.PostLike toCommand() {
+            return new PostCommand.PostLike(postId, likes);
+        }
+    }
+
+    public record CommentLike(
+        Long commentId,
+        Boolean likes
+    ) {
+
+        public PostCommand.CommentLike toCommand(Long postId) {
+            return new PostCommand.CommentLike(postId, commentId, likes);
+        }
+    }
 }

@@ -6,13 +6,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import team7.inplace.global.cursor.CursorResponse;
 import team7.inplace.global.cursor.CursorResult;
+import team7.inplace.post.application.dto.PostInfo;
 import team7.inplace.post.persistence.dto.CommentQueryResult;
 import team7.inplace.post.persistence.dto.PostQueryResult;
 import team7.inplace.user.presentation.dto.UserResponse;
+import team7.inplace.user.presentation.dto.UserResponse.Badge;
+import team7.inplace.user.presentation.dto.UserResponse.Tier;
 
 public class PostResponse {
 
@@ -57,7 +59,7 @@ public class PostResponse {
 
     public record SimplePost(
         Long postId,
-        UserResponse.Info author,
+        UserResponse.Simple author,
         String title,
         String content,
         @JsonInclude(NON_NULL)
@@ -72,8 +74,12 @@ public class PostResponse {
         public static SimplePost from(PostQueryResult.DetailedPost postQueryResult) {
             return new SimplePost(
                 postQueryResult.postId(),
-                new UserResponse.Info(postQueryResult.userNickname(),
-                    postQueryResult.userImageUrl()),
+                new UserResponse.Simple(
+                    postQueryResult.userNickname(),
+                    postQueryResult.userImageUrl(),
+                    postQueryResult.tierImageUrl(),
+                    postQueryResult.mainBadgeImageUrl()
+                ),
                 postQueryResult.title(),
                 postQueryResult.content(),
                 postQueryResult.getImageUrls().isEmpty()
@@ -90,10 +96,10 @@ public class PostResponse {
 
     public record DetailedPost(
         Long postId,
-        UserResponse.Info author,
+        UserResponse.Simple author,
         String title,
         String content,
-        List<PostImage> imageUrls,
+        List<SimplePostImage> imageUrls,
         Boolean selfLike,
         Integer totalLikeCount,
         Integer totalCommentCount,
@@ -102,19 +108,16 @@ public class PostResponse {
     ) {
 
         public static DetailedPost from(PostQueryResult.DetailedPost postQueryResult) {
-            List<PostImage> images = new ArrayList<>();
-            for (int i = 0; i < postQueryResult.getImageUrls().size(); i++) {
-                images.add(
-                    new PostImage(postQueryResult.getImageUrls().get(i),
-                        postQueryResult.getImgHashes().get(i)
-                    )
-                );
-            }
+            List<SimplePostImage> images = postQueryResult.getImageUrls().stream()
+                .map(SimplePostImage::new)
+                .toList();
             return new DetailedPost(
                 postQueryResult.postId(),
-                new UserResponse.Info(
+                new UserResponse.Simple(
                     postQueryResult.userNickname(),
-                    postQueryResult.userImageUrl()
+                    postQueryResult.userImageUrl(),
+                    postQueryResult.tierImageUrl(),
+                    postQueryResult.mainBadgeImageUrl()
                 ),
                 postQueryResult.title(),
                 postQueryResult.content(),
@@ -128,7 +131,25 @@ public class PostResponse {
         }
     }
 
-    public record PostImage(
+    public record SimplePostImage(
+        String imageUrl
+    ) {
+
+    }
+
+    public record DetailedPostImages(
+        List<DetailedPostImage> images
+    ) {
+
+        public static DetailedPostImages from(PostInfo.PostImages images) {
+            List<DetailedPostImage> detailedImages = images.images().stream()
+                .map(image -> new DetailedPostImage(image.imageUrl(), image.imageHash()))
+                .toList();
+            return new DetailedPostImages(detailedImages);
+        }
+    }
+
+    public record DetailedPostImage(
         String imageUrl,
         String imageHash
     ) {
@@ -137,7 +158,7 @@ public class PostResponse {
 
     public record DetailedComment(
         Long commentId,
-        UserResponse.Info author,
+        UserResponse.Simple author,
         String content,
         Boolean selfLike,
         Integer totalLikeCount,
@@ -148,8 +169,10 @@ public class PostResponse {
         public static DetailedComment from(CommentQueryResult.DetailedComment commentQueryResult) {
             return new DetailedComment(
                 commentQueryResult.commentId(),
-                new UserResponse.Info(commentQueryResult.userNickname(),
-                    commentQueryResult.userImageUrl()),
+                new UserResponse.Simple(commentQueryResult.userNickname(),
+                    commentQueryResult.userImageUrl(),
+                    commentQueryResult.tierImageUrl(),
+                    commentQueryResult.mainBadgeImageUrl()),
                 commentQueryResult.content(),
                 commentQueryResult.selfLike(),
                 commentQueryResult.totalLikeCount(),

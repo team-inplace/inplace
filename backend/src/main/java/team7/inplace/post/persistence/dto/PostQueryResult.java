@@ -12,6 +12,8 @@ public class PostQueryResult {
         Long postId,
         String userNickname,
         String userImageUrl,
+        String tierImageUrl,
+        String mainBadgeImageUrl,
         String title,
         String content,
         JsonNode imageInfos,

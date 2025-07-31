@@ -45,4 +45,19 @@ public class PostCommand {
     ) {
 
     }
+
+    public record PostLike(
+        Long postId,
+        Boolean likes
+    ) {
+
+    }
+
+    public record CommentLike(
+        Long postId,
+        Long commentId,
+        Boolean likes
+    ) {
+
+    }
 }

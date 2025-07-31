@@ -1,0 +1,3 @@
+fcm:
+  service-account-file: ${FCM_SERVICE_ACCOUNT_FILE}
+  project-id: ${FCM_PROJECT_ID}

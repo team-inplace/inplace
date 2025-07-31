@@ -63,10 +63,10 @@ public class UserController implements UserControllerApiSpec {
     }
 
     @GetMapping("/info")
-    public ResponseEntity<UserResponse.Info> getUserInfo() {
-        var userInfo = userFacade.getUserInfo();
+    public ResponseEntity<UserResponse.Detail> getUserDetail() {
+        var userInfo = userFacade.getUserDetail();
 
-        var response = UserResponse.Info.from(userInfo);
+        var response = UserResponse.Detail.from(userInfo);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -76,4 +76,11 @@ public class UserController implements UserControllerApiSpec {
         userFacade.deleteUser();
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
+    @PatchMapping("/main-badge")
+    public ResponseEntity<Void> updateMainBadge(UserRequest.UpdateMainBadge request) {
+        userFacade.updateMainBadge(request.id());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 }
