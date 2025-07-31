@@ -6,7 +6,6 @@ import AlarmList from './AlarmList';
 import { useGetAlarms } from '@/api/hooks/useGetAlarms';
 import { AlarmData } from '@/types';
 import useClickOutside from '@/hooks/useClickOutside';
-import useTheme from '@/hooks/useTheme';
 import useAuth from '@/hooks/useAuth';
 import LoginModal from '@/components/common/modals/LoginModal';
 
@@ -16,8 +15,6 @@ interface AlarmButtonProps {
 
 export default function AlarmButton({ iconSize = 20 }: AlarmButtonProps) {
   const { isAuthenticated } = useAuth();
-  const { theme } = useTheme();
-  const isDarkMode = theme === 'dark';
   const [isAlarmOpen, setIsAlarmOpen] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const alarmRef = useRef<HTMLDivElement>(null);
@@ -41,7 +38,7 @@ export default function AlarmButton({ iconSize = 20 }: AlarmButtonProps) {
   return (
     <>
       <AlarmContainer ref={alarmRef}>
-        <BellButton onClick={toggleAlarm} $isDarkMode={isDarkMode} $isActive={isAlarmOpen}>
+        <BellButton onClick={toggleAlarm} $isActive={isAlarmOpen}>
           <FaRegBell size={iconSize} />
           {isAuthenticated && unreadCount > 0 && <UnreadBadge>{unreadCount > 99 ? '99+' : unreadCount}</UnreadBadge>}
         </BellButton>
@@ -60,7 +57,6 @@ const AlarmContainer = styled.div`
 `;
 
 const BellButton = styled.button<{
-  $isDarkMode: boolean;
   $isActive: boolean;
 }>`
   background: none;
@@ -70,7 +66,7 @@ const BellButton = styled.button<{
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${(props) => (props.$isDarkMode ? '#ffffff' : '#292929')};
+  color: ${(props) => props.theme.textColor};
   transition: transform 0.3s ease;
   position: relative;
 
