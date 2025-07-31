@@ -5,23 +5,38 @@ import useTheme from '@/hooks/useTheme';
 import { Text } from '@/components/common/typography/Text';
 import { AlarmData } from '@/types';
 
+const getIcon = (type: string) => {
+  switch (type) {
+    case 'MENTION':
+      return <AiFillMessage size={20} />;
+    case 'REPORT':
+      return <RiErrorWarningFill size={20} />;
+    default:
+      return null;
+  }
+};
+
+const getTitle = (type: string) => {
+  switch (type) {
+    case 'MENTION':
+      return '[멘션]';
+    case 'REPORT':
+      return '[신고]';
+    default:
+      return null;
+  }
+};
+
 export default function AlarmItem({ content, checked, type, createdAt }: AlarmData) {
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
 
   const renderIcon = () => {
-    if (type === 'MENTION') {
+    const icon = getIcon(type);
+    if (icon) {
       return (
         <IconContainer>
-          <AiFillMessage size={20} />
-          {!checked && <RedDot />}
-        </IconContainer>
-      );
-    }
-    if (type === 'REPORT') {
-      return (
-        <IconContainer>
-          <RiErrorWarningFill size={20} />
+          {icon}
           {!checked && <RedDot />}
         </IconContainer>
       );
@@ -30,21 +45,12 @@ export default function AlarmItem({ content, checked, type, createdAt }: AlarmDa
   };
 
   const renderTitle = () => {
-    if (type === 'MENTION') {
-      return (
-        <StyledText size="xxs" weight="bold">
-          [멘션]
-        </StyledText>
-      );
-    }
-    if (type === 'REPORT') {
-      return (
-        <StyledText size="xxs" weight="bold">
-          [신고]
-        </StyledText>
-      );
-    }
-    return null;
+    const title = getTitle(type);
+    return title ? (
+      <StyledText size="xxs" weight="bold">
+        {title}
+      </StyledText>
+    ) : null;
   };
 
   return (
