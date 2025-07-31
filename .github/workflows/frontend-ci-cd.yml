@@ -74,6 +74,7 @@ jobs:
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
           VITE_GOOGLE_TAG: ${{ secrets.VITE_GOOGLE_TAG }}
           VITE_KAKAO_REST_KEY: ${{ secrets.VITE_KAKAO_REST_KEY }}
+          VITE_VAPID_KEY: ${{ secrets.VITE_VAPID_KEY }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
