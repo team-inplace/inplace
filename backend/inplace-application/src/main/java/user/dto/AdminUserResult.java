@@ -1,17 +1,17 @@
-package team7.inplace.admin.user.application.dto;
+package user.dto;
 
 import user.AdminUser;
 import user.Role;
 
-public record AdminUserInfo(
+public record AdminUserResult(
     Long id,
     String username,
     String password,
     Role role
 ) {
 
-    public static AdminUserInfo of(AdminUser adminUser) {
-        return new AdminUserInfo(
+    public static AdminUserResult of(AdminUser adminUser) {
+        return new AdminUserResult(
             adminUser.getId(),
             adminUser.getUsername(),
             adminUser.getPassword(),
