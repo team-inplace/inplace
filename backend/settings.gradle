@@ -6,5 +6,6 @@ include(
         'inplace-api',
         'inplace-domain',
         'inplace-application',
-        'inplace-infra'
+        'inplace-infra',
+        'inplace-security'
 )
