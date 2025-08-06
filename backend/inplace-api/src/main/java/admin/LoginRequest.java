@@ -1,13 +1,13 @@
 package admin;
 
-import team7.inplace.admin.user.application.command.RegisterCommand;
+import user.dto.AdminUserCommand;
 
 public record LoginRequest(
     String username,
     String password
 ) {
 
-    public static RegisterCommand toRegisterCommand(LoginRequest loginRequest) {
-        return new RegisterCommand(loginRequest.username, loginRequest.password);
+    public static AdminUserCommand toRegisterCommand(LoginRequest loginRequest) {
+        return new AdminUserCommand(loginRequest.username, loginRequest.password);
     }
 }

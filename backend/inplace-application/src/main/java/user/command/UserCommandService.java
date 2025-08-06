@@ -10,8 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import user.User;
 import user.UserBadge;
 import user.dto.TierConditions;
-import user.dto.UserCommand.Create;
-import user.dto.UserCommand.Info;
 import user.jpa.UserBadgeJpaRepository;
 import user.jpa.UserJpaRepository;
 import user.jpa.UserTierJpaRepository;
@@ -20,17 +18,11 @@ import user.query.UserReadRepository;
 @Service
 @RequiredArgsConstructor
 public class UserCommandService {
+
     private final UserJpaRepository userJpaRepository;
     private final UserReadRepository userReadRepository;
     private final UserBadgeJpaRepository userBadgeJpaRepository;
     private final UserTierJpaRepository userTierJpaRepository;
-
-    @Transactional
-    public Info registerUser(Create userCreate) {
-        User user = userCreate.toEntity();
-        userJpaRepository.save(user);
-        return Info.of(user);
-    }
 
     @Transactional
     public void updateNickname(Long userId, String nickname) {
@@ -40,7 +32,7 @@ public class UserCommandService {
         user.updateNickname(nickname);
     }
 
-    @Transactional()
+    @Transactional
     public void deleteUser(Long userId) {
         User user = userJpaRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));

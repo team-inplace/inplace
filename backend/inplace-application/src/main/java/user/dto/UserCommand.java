@@ -28,14 +28,4 @@ public class UserCommand {
         }
     }
 
-    public record Info(
-        Long id,
-        String username,
-        Role role
-    ) {
-
-        public static Info of(User user) {
-            return new Info(user.getId(), user.getUsername(), user.getRole());
-        }
-    }
 }

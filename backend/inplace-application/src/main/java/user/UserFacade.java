@@ -15,7 +15,9 @@ import review.ReviewService;
 import review.query.ReviewQueryResult;
 import team7.inplace.security.util.AuthorizationUtil;
 import token.OauthTokenService;
+import user.command.UserCommandService;
 import user.dto.UserResult;
+import user.query.UserQueryService;
 import video.VideoService;
 
 @Facade
@@ -26,7 +28,8 @@ public class UserFacade {
     private final PlaceService placeService;
     private final ReviewService reviewService;
     private final VideoService videoService;
-    private final UserService userService;
+    private final UserQueryService userQueryService;
+    private final UserCommandService userCommandService;
     private final OauthTokenService oauthTokenService;
 
     //TODO: Return 클래스 변경 필요
@@ -68,22 +71,22 @@ public class UserFacade {
 
     public void updateNickname(String nickname) {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
-        userService.updateNickname(userId, nickname);
+        userCommandService.updateNickname(userId, nickname);
     }
 
     public void deleteUser() {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
         oauthTokenService.unlinkOauthToken(userId);
-        userService.deleteUser(userId);
+        userCommandService.deleteUser(userId);
     }
 
     public UserResult.Detail getUserDetail() {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
-        return userService.getUserDetail(userId);
+        return userQueryService.getUserDetail(userId);
     }
 
     public void updateMainBadge(Long badgeId) {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
-        userService.updateBadge(userId, badgeId);
+        userCommandService.updateBadge(userId, badgeId);
     }
 }
