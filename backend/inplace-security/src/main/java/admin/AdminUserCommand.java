@@ -1,4 +1,4 @@
-package user.dto;
+package admin;
 
 public record AdminUserCommand(
     String username,

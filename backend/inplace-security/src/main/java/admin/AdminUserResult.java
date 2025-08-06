@@ -1,4 +1,4 @@
-package user.dto;
+package admin;
 
 import user.AdminUser;
 import user.Role;
@@ -10,7 +10,7 @@ public record AdminUserResult(
     Role role
 ) {
 
-    public static AdminUserResult of(AdminUser adminUser) {
+    public static AdminUserResult from(AdminUser adminUser) {
         return new AdminUserResult(
             adminUser.getId(),
             adminUser.getUsername(),

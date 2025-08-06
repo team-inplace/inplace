@@ -1,13 +1,12 @@
 package application;
 
+import admin.AdminUserResult;
+import admin.AdminUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import team7.inplace.admin.user.application.AdminUserService;
-import team7.inplace.admin.user.application.dto.AdminUserInfo;
 import application.dto.CustomUserDetails;
-import team7.inplace.user.application.UserService;
 
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
@@ -16,9 +15,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AdminUserInfo adminUserInfo = adminUserService.findAdminUserByUsername(username)
+        AdminUserResult adminUserresult = adminUserService.findAdminUserByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("User is not found"));
 
-        return CustomUserDetails.makeUser(adminUserInfo);
+        return CustomUserDetails.makeUser(adminUserresult);
     }
 }

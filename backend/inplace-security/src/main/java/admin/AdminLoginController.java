@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import user.AdminUserService;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +31,7 @@ public class AdminLoginController {
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@RequestBody LoginRequest loginRequest) {
-        adminUserService.registerAdminUser(LoginRequest.toRegisterCommand(loginRequest));
+        adminUserService.registerAdminUser(LoginRequest.toAdminUserCommand(loginRequest));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

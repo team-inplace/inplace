@@ -1,5 +1,6 @@
 package filter;
 
+import exception.InplaceException;
 import io.micrometer.common.util.StringUtils;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,7 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.filter.OncePerRequestFilter;
-import team7.inplace.global.exception.InplaceException;
 import application.dto.CustomOAuth2User;
 import util.JwtUtil;
 

@@ -1,6 +1,7 @@
 package filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import exception.InplaceException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.filter.OncePerRequestFilter;
-import team7.inplace.global.exception.InplaceException;
 
 @Slf4j
 public class ExceptionHandlingFilter extends OncePerRequestFilter {

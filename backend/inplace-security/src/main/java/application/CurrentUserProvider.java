@@ -1,9 +1,9 @@
 package application;
 
+import exception.InplaceException;
+import exception.code.UserErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.UserErrorCode;
 import util.AuthorizationUtil;
 import user.User;
 import user.jpa.UserJpaRepository;

@@ -1,5 +1,6 @@
 package application.dto;
 
+import admin.AdminUserResult;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -48,8 +49,8 @@ public record CustomUserDetails(
         return this.username;
     }
 
-    public static CustomUserDetails makeUser(AdminUserInfo adminUserInfo) {
-        return new CustomUserDetails(adminUserInfo.id(), adminUserInfo.username(), adminUserInfo.password(),
-            adminUserInfo.role().getRoles());
+    public static CustomUserDetails makeUser(AdminUserResult adminUserResult) {
+        return new CustomUserDetails(adminUserResult.id(), adminUserResult.username(), adminUserResult.password(),
+            adminUserResult.role().getRoles());
     }
 }

@@ -1,14 +1,11 @@
-package user;
+package admin;
 
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import team7.inplace.admin.user.application.command.RegisterCommand;
-import team7.inplace.admin.user.application.dto.AdminUserInfo;
-import user.dto.AdminUserCommand;
-import user.dto.AdminUserResult;
+import user.AdminUser;
 import user.jpa.AdminUserJpaRepository;
 
 @Service
@@ -21,13 +18,15 @@ public class AdminUserService {
     @Transactional(readOnly = true)
     public Optional<AdminUserResult> findAdminUserByUsername(String username) {
         return adminUserRepository.findByUsername(username)
-            .map(AdminUserInfo::of);
+            .map(AdminUserResult::from);
     }
 
     @Transactional
     public void registerAdminUser(AdminUserCommand registerCommand) {
-        AdminUser adminUser = new AdminUser(registerCommand.username(),
-            passwordEncoder.encode(registerCommand.password()));
+        AdminUser adminUser = new AdminUser(
+            registerCommand.username(),
+            passwordEncoder.encode(registerCommand.password())
+        );
         adminUserRepository.save(adminUser);
     }
 }
