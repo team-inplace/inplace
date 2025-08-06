@@ -1,5 +1,7 @@
 package util;
 
+import exception.InplaceException;
+import exception.code.AuthorizationErrorCode;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
@@ -11,8 +13,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import config.JwtProperties;
 
 @Slf4j

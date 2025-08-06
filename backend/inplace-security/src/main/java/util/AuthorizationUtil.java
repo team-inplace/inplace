@@ -1,11 +1,11 @@
 package util;
 
+import exception.InplaceException;
+import exception.code.AuthorizationErrorCode;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import application.dto.CustomOAuth2User;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
