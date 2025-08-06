@@ -1,4 +1,4 @@
-package team7.inplace.admin.user.application;
+package user;
 
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.admin.user.application.command.RegisterCommand;
 import team7.inplace.admin.user.application.dto.AdminUserInfo;
-import user.AdminUser;
 import user.jpa.AdminUserJpaRepository;
 
 @Service
