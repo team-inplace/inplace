@@ -42,14 +42,6 @@ public class UserCommandService {
     }
 
     @Transactional
-    public void updateProfileImageUrl(Long userId, String profileImageUrl) {
-        User user = userJpaRepository.findById(userId)
-            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
-
-        user.updateProfileImageUrl(profileImageUrl);
-    }
-
-    @Transactional
     public void updateBadge(Long userId, Long badgeId) {
         User user = userJpaRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));

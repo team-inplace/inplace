@@ -7,8 +7,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.StringUtils;
-import team7.inplace.user.application.dto.UserCommand;
 import user.Role;
+import user.UserSecurityResult;
 
 public record CustomOAuth2User(
     String username,
@@ -33,11 +33,11 @@ public record CustomOAuth2User(
         return authorities;
     }
 
-    public static CustomOAuth2User makeExistUser(UserCommand.Info user) {
+    public static CustomOAuth2User makeExistUser(UserSecurityResult.Info user) {
         return new CustomOAuth2User(user.username(), user.id(), user.role().getRoles());
     }
 
-    public static CustomOAuth2User makeNewUser(UserCommand.Info user) {
+    public static CustomOAuth2User makeNewUser(UserSecurityResult.Info user) {
         return new CustomOAuth2User(user.username(), user.id(),
             Role.addRole(Role.USER, Role.FIRST_USER));
     }

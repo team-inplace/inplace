@@ -1,12 +1,8 @@
-package user.dto;
+package user;
 
-import team7.inplace.security.application.dto.KakaoOAuthResponse;
-import user.Role;
-import user.User;
-import user.UserType;
+import application.dto.KakaoOAuthResponse;
 
-
-public class UserCommand {
+public class UserSecurityCommand {
 
     public record Create(
         String username,
@@ -16,8 +12,8 @@ public class UserCommand {
         Role role
     ) {
 
-        public static UserCommand.Create of(KakaoOAuthResponse kakaoOAuthResponse) {
-            return new UserCommand.Create(kakaoOAuthResponse.getEmail(),
+        public static UserSecurityCommand.Create of(KakaoOAuthResponse kakaoOAuthResponse) {
+            return new UserSecurityCommand.Create(kakaoOAuthResponse.getEmail(),
                 kakaoOAuthResponse.getNickname(), kakaoOAuthResponse.getProfileImageUrl(),
                 UserType.KAKAO, Role.USER);
         }
