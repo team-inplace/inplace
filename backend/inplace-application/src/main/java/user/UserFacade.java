@@ -1,23 +1,22 @@
 package user;
 
+import annotation.Facade;
+import influencer.InfluencerService;
+import influencer.dto.InfluencerResult;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import place.PlaceService;
+import place.dto.PlaceResult;
 import place.query.PlaceQueryResult;
+import review.ReviewService;
 import review.query.ReviewQueryResult;
-import team7.inplace.global.annotation.Facade;
-import team7.inplace.influencer.application.InfluencerService;
-import team7.inplace.influencer.application.dto.InfluencerInfo;
-import team7.inplace.place.application.PlaceService;
-import team7.inplace.place.application.dto.PlaceInfo;
-import team7.inplace.review.application.ReviewService;
 import team7.inplace.security.util.AuthorizationUtil;
-import team7.inplace.token.application.OauthTokenService;
-import team7.inplace.user.application.dto.UserInfo;
-import team7.inplace.user.application.dto.UserInfo.Detail;
-import team7.inplace.video.application.VideoService;
+import token.OauthTokenService;
+import user.dto.UserResult;
+import video.VideoService;
 
 @Facade
 @RequiredArgsConstructor
@@ -31,13 +30,13 @@ public class UserFacade {
     private final OauthTokenService oauthTokenService;
 
     //TODO: Return 클래스 변경 필요
-    public Page<InfluencerInfo> getMyFavoriteInfluencers(Pageable pageable) {
+    public Page<InfluencerResult> getMyFavoriteInfluencers(Pageable pageable) {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
         return influencerService.getFavoriteInfluencers(userId, pageable);
     }
 
     //TODO: Return 클래스 변경 필요
-    public Page<PlaceInfo.Simple> getMyFavoritePlaces(Pageable pageable) {
+    public Page<PlaceResult.Simple> getMyFavoritePlaces(Pageable pageable) {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
 
         var likedPlaces = placeService.getLikedPlaceInfo(userId, pageable);
@@ -49,10 +48,10 @@ public class UserFacade {
         var videoInfos = videoService.getVideosByPlaceId(placeIds);
 
         return likedPlaces.map(
-            place -> PlaceInfo.Simple.of(place, videoInfos.get(place.placeId())));
+            place -> PlaceResult.Simple.of(place, videoInfos.get(place.placeId())));
     }
 
-    public Page<UserInfo.Review> getMyReviews(Pageable pageable) {
+    public Page<UserResult.Review> getMyReviews(Pageable pageable) {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
         var details = reviewService.getUserReviews(userId, pageable);
         var placeIds = details.stream().map(ReviewQueryResult.Detail::placeId).toList();
@@ -64,7 +63,7 @@ public class UserFacade {
             );
 
         return details
-            .map((detail) -> UserInfo.Review.from(detail, videoUrls.get(detail.placeId())));
+            .map((detail) -> UserResult.Review.from(detail, videoUrls.get(detail.placeId())));
     }
 
     public void updateNickname(String nickname) {
@@ -78,7 +77,7 @@ public class UserFacade {
         userService.deleteUser(userId);
     }
 
-    public Detail getUserDetail() {
+    public UserResult.Detail getUserDetail() {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
         return userService.getUserDetail(userId);
     }

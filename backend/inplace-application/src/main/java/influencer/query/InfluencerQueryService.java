@@ -7,7 +7,7 @@ import exception.code.InfluencerErrorCode;
 import influencer.Influencer;
 import influencer.InfluencerReadQueryDslRepository;
 import influencer.LikedInfluencer;
-import influencer.dto.InfluencerInfo;
+import influencer.dto.InfluencerResult;
 import influencer.dto.InfluencerNameInfo;
 import influencer.jpa.InfluencerJpaRepository;
 import influencer.jpa.LikedInfluencerJpaRepository;
@@ -45,7 +45,7 @@ public class InfluencerQueryService {
 
     //TODO: 추후 쿼리 한번으로 변경
     @Transactional(readOnly = true)
-    public Page<InfluencerInfo> getFavoriteInfluencers(Long userId, Pageable pageable) {
+    public Page<InfluencerResult> getFavoriteInfluencers(Long userId, Pageable pageable) {
         Page<LikedInfluencer> influencerPage = likedInfluencerJpaRepository.findByUserIdAndIsLikedTrue(
             userId, pageable);
         var influencerIds = influencerPage.map(LikedInfluencer::getInfluencerId).toList();
@@ -55,7 +55,7 @@ public class InfluencerQueryService {
         var infos = influencerPage.stream()
             .map(likedInfluencer -> {
                 var influencer = influencers.get(likedInfluencer.getInfluencerId());
-                return InfluencerInfo.from(influencer, true);
+                return InfluencerResult.from(influencer, true);
             })
             .toList();
         return new PageImpl<>(infos, pageable, influencerPage.getTotalElements());

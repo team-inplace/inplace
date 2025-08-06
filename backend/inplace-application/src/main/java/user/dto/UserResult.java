@@ -5,7 +5,7 @@ import java.util.List;
 import review.query.ReviewQueryResult;
 import user.query.UserQueryResult;
 
-public class UserInfo {
+public class UserResult {
 
     public record Simple(
         String nickname,
@@ -66,23 +66,23 @@ public class UserInfo {
         boolean likes,
         String comment,
         LocalDate createdDate,
-        UserInfo.ReviewPlace place,
+        UserResult.ReviewPlace place,
         String videoUrl
     ) {
 
-        public static UserInfo.Review from(ReviewQueryResult.Detail review, String videoUrl) {
-            var reviewPlaceAddress = new UserInfo.ReviewPlaceAddress(
+        public static UserResult.Review from(ReviewQueryResult.Detail review, String videoUrl) {
+            var reviewPlaceAddress = new UserResult.ReviewPlaceAddress(
                 review.placeAddress1(),
                 review.placeAddress2(),
                 review.placeAddress3()
             );
-            var reviewPlace = new UserInfo.ReviewPlace(
+            var reviewPlace = new UserResult.ReviewPlace(
                 review.placeId(),
                 review.placeName(),
                 "",
                 reviewPlaceAddress
             );
-            return new UserInfo.Review(
+            return new UserResult.Review(
                 review.reviewId(),
                 review.likes(),
                 review.comment(),
@@ -97,7 +97,7 @@ public class UserInfo {
         Long placeId,
         String placeName,
         String imgUrl,
-        UserInfo.ReviewPlaceAddress address
+        UserResult.ReviewPlaceAddress address
     ) {
 
     }

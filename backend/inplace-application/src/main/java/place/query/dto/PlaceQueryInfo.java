@@ -2,7 +2,7 @@ package place.query.dto;
 
 import java.util.List;
 import place.client.GooglePlaceClientResponse;
-import place.dto.PlaceInfo;
+import place.dto.PlaceResult;
 import place.query.PlaceQueryResult;
 import place.query.PlaceQueryResult.MarkerDetail;
 import review.query.ReviewQueryResult;
@@ -19,14 +19,14 @@ public class PlaceQueryInfo {
         List<VideoQueryResult.DetailedVideo> surroundVideos
     ) {
 
-        public static PlaceInfo.Detail of(
+        public static PlaceResult.Detail of(
             PlaceQueryResult.DetailedPlace place,
             GooglePlaceClientResponse.Place googlePlace,
             List<VideoQueryResult.SimpleVideo> videos,
             ReviewQueryResult.LikeRate reviewLikeRate,
             List<VideoQueryResult.DetailedVideo> surroundVideos
         ) {
-            return new PlaceInfo.Detail(
+            return new PlaceResult.Detail(
                 place,
                 googlePlace,
                 videos,
@@ -41,11 +41,11 @@ public class PlaceQueryInfo {
         List<SimpleVideo> video
     ) {
 
-        public static PlaceInfo.Simple of(
+        public static PlaceResult.Simple of(
             PlaceQueryResult.DetailedPlace place,
             List<VideoQueryResult.SimpleVideo> video
         ) {
-            return new PlaceInfo.Simple(place, video);
+            return new PlaceResult.Simple(place, video);
         }
     }
 
@@ -54,9 +54,9 @@ public class PlaceQueryInfo {
         List<VideoQueryResult.SimpleVideo> videos
     ) {
 
-        public static PlaceInfo.Marker of(
+        public static PlaceResult.Marker of(
             MarkerDetail markerDetail, List<VideoQueryResult.SimpleVideo> videos) {
-            return new PlaceInfo.Marker(markerDetail, videos);
+            return new PlaceResult.Marker(markerDetail, videos);
         }
     }
 
@@ -67,8 +67,8 @@ public class PlaceQueryInfo {
         String engName
     ) {
 
-        public static PlaceInfo.Category from(place.Category category) {
-            return new PlaceInfo.Category(
+        public static PlaceResult.Category from(place.Category category) {
+            return new PlaceResult.Category(
                 category.getId(),
                 category.getParentId(),
                 category.getName(),

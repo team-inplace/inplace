@@ -2,7 +2,7 @@ package influencer.dto;
 
 import influencer.Influencer;
 
-public record InfluencerInfo(
+public record InfluencerResult(
     Long influencerId,
     String influencerName,
     String influencerImgUrl,
@@ -10,8 +10,8 @@ public record InfluencerInfo(
     boolean likes
 ) {
 
-    public static InfluencerInfo from(Influencer influencer, boolean isLiked) {
-        return new InfluencerInfo(
+    public static InfluencerResult from(Influencer influencer, boolean isLiked) {
+        return new InfluencerResult(
             influencer.getId(),
             influencer.getName(),
             influencer.getImgUrl(),

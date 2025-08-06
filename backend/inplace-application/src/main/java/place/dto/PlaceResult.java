@@ -8,7 +8,7 @@ import review.query.ReviewQueryResult;
 import video.query.VideoQueryResult;
 import video.query.VideoQueryResult.SimpleVideo;
 
-public class PlaceInfo {
+public class PlaceResult {
 
     public record Detail(
         PlaceQueryResult.DetailedPlace place,
@@ -40,11 +40,11 @@ public class PlaceInfo {
         List<SimpleVideo> video
     ) {
 
-        public static PlaceInfo.Simple of(
+        public static PlaceResult.Simple of(
             PlaceQueryResult.DetailedPlace place,
             List<VideoQueryResult.SimpleVideo> video
         ) {
-            return new PlaceInfo.Simple(place, video);
+            return new PlaceResult.Simple(place, video);
         }
     }
 
@@ -53,9 +53,9 @@ public class PlaceInfo {
         List<VideoQueryResult.SimpleVideo> videos
     ) {
 
-        public static PlaceInfo.Marker of(
+        public static PlaceResult.Marker of(
             MarkerDetail markerDetail, List<VideoQueryResult.SimpleVideo> videos) {
-            return new PlaceInfo.Marker(markerDetail, videos);
+            return new PlaceResult.Marker(markerDetail, videos);
         }
     }
 

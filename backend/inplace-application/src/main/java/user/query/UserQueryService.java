@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import user.User;
 import user.dto.UserCommand.Info;
-import user.dto.UserInfo.Detail;
-import user.dto.UserInfo.Simple;
+import user.dto.UserResult.Detail;
+import user.dto.UserResult.Simple;
 import user.jpa.UserJpaRepository;
 import user.query.UserQueryResult.Badge;
 
