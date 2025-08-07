@@ -13,11 +13,11 @@ import place.dto.PlaceResult;
 import place.query.PlaceQueryResult;
 import review.ReviewService;
 import review.query.ReviewQueryResult;
-import team7.inplace.security.util.AuthorizationUtil;
 import token.OauthTokenService;
 import user.command.UserCommandService;
 import user.dto.UserResult;
 import user.query.UserQueryService;
+import util.AuthorizationUtil;
 import video.VideoService;
 
 @Facade
