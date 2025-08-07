@@ -1,4 +1,4 @@
-package team7.inplace.global.aop;
+package aop;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

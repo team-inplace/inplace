@@ -4,7 +4,7 @@ import java.util.concurrent.Executor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import team7.inplace.global.aop.ThreadContextPropagatingDecorator;
+import aop.ThreadContextPropagatingDecorator;
 
 @Configuration
 public class AsyncConfig {

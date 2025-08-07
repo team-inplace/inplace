@@ -1,5 +1,6 @@
 package filter;
 
+import aop.ThreadExecutionContext;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micrometer.core.instrument.MeterRegistry;
@@ -16,7 +17,6 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.filter.OncePerRequestFilter;
-import team7.inplace.global.aop.ThreadExecutionContext;
 
 @Slf4j
 @RequiredArgsConstructor

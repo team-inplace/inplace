@@ -9,3 +9,5 @@ include(
         'inplace-infra',
         'inplace-security'
 )
+include 'inplace-aop'
+

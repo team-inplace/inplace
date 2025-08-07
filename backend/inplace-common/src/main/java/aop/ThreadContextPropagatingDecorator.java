@@ -1,4 +1,4 @@
-package team7.inplace.global.aop;
+package aop;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.task.TaskDecorator;
