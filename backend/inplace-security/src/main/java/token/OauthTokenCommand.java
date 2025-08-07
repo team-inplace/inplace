@@ -1,4 +1,4 @@
-package token.command;
+package token;
 
 import java.time.Instant;
 
