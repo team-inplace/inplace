@@ -1,17 +1,15 @@
 package token;
 
+import exception.InplaceException;
+import exception.code.UserErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import security.OauthToken;
 import security.jpa.OauthTokenJpaRepository;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.UserErrorCode;
-import team7.inplace.security.util.TokenEncryptionUtil;
-import team7.inplace.token.application.command.OauthTokenCommand;
-import team7.inplace.token.client.KakaoOauthClient;
-import team7.inplace.user.domain.User;
+import user.User;
 import user.jpa.UserJpaRepository;
+import util.TokenEncryptionUtil;
 
 @Service
 @RequiredArgsConstructor
@@ -31,11 +29,11 @@ public class OauthTokenService {
     }
 
     @Transactional
-    public void insertOauthToken(OauthTokenCommand oauthTokenCommand) {
-        User userProxy = userJpaRepository.getReferenceById(oauthTokenCommand.userId());
+    public void insertOauthToken(TokenCommand.UpsertOauthToken upsertOauthToken) {
+        User userProxy = userJpaRepository.getReferenceById(upsertOauthToken.userId());
         OauthToken oauthToken = OauthToken.of(
-            tokenEncryptionUtil.encrypt(oauthTokenCommand.oauthToken()),
-            oauthTokenCommand.expiresAt(),
+            tokenEncryptionUtil.encrypt(upsertOauthToken.oauthToken()),
+            upsertOauthToken.expiresAt(),
             userProxy
         );
 
@@ -43,13 +41,13 @@ public class OauthTokenService {
     }
 
     @Transactional
-    public void updateOauthToken(OauthTokenCommand oauthTokenCommand) {
-        OauthToken oauthToken = oauthTokenJpaRepository.findByUserId(oauthTokenCommand.userId())
+    public void updateOauthToken(TokenCommand.UpsertOauthToken upsertOauthToken) {
+        OauthToken oauthToken = oauthTokenJpaRepository.findByUserId(upsertOauthToken.userId())
             .orElseThrow(() -> InplaceException.of(UserErrorCode.OAUTH_TOKEN_NOT_FOUND));
 
         oauthToken.updateInfo(
-            tokenEncryptionUtil.encrypt(oauthTokenCommand.oauthToken()),
-            oauthTokenCommand.expiresAt()
+            tokenEncryptionUtil.encrypt(upsertOauthToken.oauthToken()),
+            upsertOauthToken.expiresAt()
         );
     }
 

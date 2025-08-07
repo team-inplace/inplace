@@ -14,7 +14,6 @@ import user.query.UserReadRepository;
 public class UserSecurityService {
 
     private final UserJpaRepository userJpaRepository;
-    private final UserReadRepository userReadRepository;
 
     @Transactional(readOnly = true)
     public Optional<UserSecurityResult.Info> findUserByUsername(String username) {

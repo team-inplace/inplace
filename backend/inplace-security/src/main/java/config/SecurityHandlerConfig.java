@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import handler.CustomAccessDeniedHandler;
 import handler.CustomFailureHandler;
 import handler.CustomSuccessHandler;
+import token.RefreshTokenService;
 import util.JwtUtil;
-import team7.inplace.token.application.RefreshTokenService;
 
 @Configuration
 public class SecurityHandlerConfig {

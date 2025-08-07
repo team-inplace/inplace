@@ -1,14 +1,14 @@
 package token;
 
+import exception.InplaceException;
+import exception.code.UserErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.security.util.JwtUtil;
-import team7.inplace.token.application.command.TokenCommand;
-import team7.inplace.token.application.command.TokenCommand.ReIssued;
-import team7.inplace.user.application.UserService;
-import team7.inplace.user.application.dto.UserCommand;
+import token.TokenResult.ReIssued;
+import user.UserSecurityResult;
+import user.UserSecurityService;
+import util.JwtUtil;
 
 @Component
 @RequiredArgsConstructor
@@ -16,20 +16,21 @@ public class RefreshTokenFacade {
 
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
-    private final UserService userService;
+    private final UserSecurityService userSecurityService;
 
     @Transactional
     public ReIssued getReIssuedRefreshTokenCookie(String username, String refreshToken) throws InplaceException {
         refreshTokenService.checkInvalidToken(refreshToken);
 
-        UserCommand.Info userInfo = userService.getUserByUsername(username);
+        UserSecurityResult.Info userInfo = userSecurityService.findUserByUsername(username)
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
         String reIssuedRefreshToken = jwtUtil
-                .createRefreshToken(userInfo.username(), userInfo.id(), userInfo.role().getRoles());
+            .createRefreshToken(userInfo.username(), userInfo.id(), userInfo.role().getRoles());
         String reIssuedAccessToken = jwtUtil
-                .createAccessToken(userInfo.username(), userInfo.id(), userInfo.role().getRoles());
+            .createAccessToken(userInfo.username(), userInfo.id(), userInfo.role().getRoles());
         refreshTokenService.saveRefreshToken(username, reIssuedRefreshToken);
 
-        return TokenCommand.ReIssued.of(reIssuedAccessToken, reIssuedRefreshToken);
+        return TokenResult.ReIssued.of(reIssuedAccessToken, reIssuedRefreshToken);
     }
 
     @Transactional

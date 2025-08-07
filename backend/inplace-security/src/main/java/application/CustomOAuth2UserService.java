@@ -7,11 +7,11 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import team7.inplace.token.application.OauthTokenService;
-import team7.inplace.token.application.command.OauthTokenCommand;
 import application.dto.CustomOAuth2User;
 import application.dto.KakaoOAuthResponse;
 import java.util.Optional;
+import token.OauthTokenService;
+import token.TokenCommand;
 import user.UserSecurityCommand;
 import user.UserSecurityResult;
 import user.UserSecurityService;
@@ -44,19 +44,19 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     private void updateOauthToken(OAuth2AccessToken oAuth2AccessToken, UserSecurityResult.Info userInfo) {
         oauthTokenService.updateOauthToken(
-                OauthTokenCommand.of(
-                        oAuth2AccessToken.getTokenValue(),
-                        oAuth2AccessToken.getExpiresAt(),
-                        userInfo.id()
+                TokenCommand.UpsertOauthToken.of(
+                    userInfo.id(),
+                    oAuth2AccessToken.getTokenValue(),
+                    oAuth2AccessToken.getExpiresAt()
                 ));
     }
 
     private void insertOauthToken(OAuth2AccessToken oAuth2AccessToken, UserSecurityResult.Info newUser) {
         oauthTokenService.insertOauthToken(
-                OauthTokenCommand.of(
-                        oAuth2AccessToken.getTokenValue(),
-                        oAuth2AccessToken.getExpiresAt(),
-                        newUser.id()
+                TokenCommand.UpsertOauthToken.of(
+                    newUser.id(),
+                    oAuth2AccessToken.getTokenValue(),
+                    oAuth2AccessToken.getExpiresAt()
                 )
         );
     }

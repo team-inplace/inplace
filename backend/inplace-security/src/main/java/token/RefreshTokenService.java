@@ -1,13 +1,13 @@
 package token;
 
+import exception.InplaceException;
+import exception.code.AuthorizationErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import security.RefreshToken;
 import security.RefreshTokenRedisRepository;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.AuthorizationErrorCode;
-import team7.inplace.security.util.JwtUtil;
+import util.JwtUtil;
 
 @Service
 @Slf4j

@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import application.CustomOAuth2UserService;
 import application.CustomUserDetailsService;
-import team7.inplace.token.application.OauthTokenService;
+import token.OauthTokenService;
 import user.UserSecurityService;
 
 @Configuration

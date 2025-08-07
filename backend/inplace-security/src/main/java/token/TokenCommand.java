@@ -1,14 +1,16 @@
 package token;
 
+import java.time.Instant;
+
 public class TokenCommand {
 
-    public record ReIssued(
-        String accessToken,
-        String refreshToken
+    public record UpsertOauthToken(
+        Long userId,
+        String oauthToken,
+        Instant expiresAt
     ) {
-
-        public static ReIssued of(String reIssuedAccessToken, String reIssuedRefreshToken) {
-            return new ReIssued(reIssuedAccessToken, reIssuedRefreshToken);
+        public static UpsertOauthToken of(Long userId, String oauthToken, Instant expiresAt) {
+            return new UpsertOauthToken(userId, oauthToken, expiresAt);
         }
     }
 }

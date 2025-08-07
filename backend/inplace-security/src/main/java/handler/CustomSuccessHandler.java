@@ -12,9 +12,9 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import application.dto.CustomOAuth2User;
 import application.dto.CustomUserDetails;
 import filter.TokenType;
+import token.RefreshTokenService;
 import util.CookieUtil;
 import util.JwtUtil;
-import team7.inplace.token.application.RefreshTokenService;
 
 @Slf4j
 public class CustomSuccessHandler implements AuthenticationSuccessHandler {

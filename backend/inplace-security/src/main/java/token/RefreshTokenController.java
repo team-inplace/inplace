@@ -1,5 +1,6 @@
 package token;
 
+import filter.TokenType;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,11 +14,8 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import team7.inplace.security.filter.TokenType;
-import team7.inplace.security.util.CookieUtil;
-import team7.inplace.security.util.JwtUtil;
-import team7.inplace.token.application.RefreshTokenFacade;
-import team7.inplace.token.application.command.TokenCommand.ReIssued;
+import util.CookieUtil;
+import util.JwtUtil;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,14 +35,14 @@ public class RefreshTokenController implements RefreshTokenControllerApiSpec {
     ) {
 
         String refreshToken = cookie.getValue();
-        ReIssued reIssuedToken = refreshTokenFacade.getReIssuedRefreshTokenCookie(
+        TokenResult.ReIssued reIssuedToken = refreshTokenFacade.getReIssuedRefreshTokenCookie(
             jwtUtil.getUsername(refreshToken), refreshToken);
         addTokenToCookie(response, reIssuedToken);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    private void addTokenToCookie(HttpServletResponse response, ReIssued reIssuedToken) {
+    private void addTokenToCookie(HttpServletResponse response, TokenResult.ReIssued reIssuedToken) {
         var accessTokenCookie = CookieUtil.createHttpOnlyCookie(TokenType.ACCESS_TOKEN.getValue(),
             reIssuedToken.accessToken(), domain);
         var refreshTokenCookie = CookieUtil.createHttpOnlyCookie(TokenType.REFRESH_TOKEN.getValue(),
