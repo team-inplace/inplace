@@ -1,6 +1,6 @@
 package post;
 
-import alarm.dto.AlarmEvent;
+import alarm.event.dto.AlarmEvent;
 import base.CursorResult;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;

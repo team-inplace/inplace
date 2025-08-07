@@ -1,4 +1,4 @@
-package alarm.dto;
+package alarm.event.dto;
 
 public class AlarmEvent {
     

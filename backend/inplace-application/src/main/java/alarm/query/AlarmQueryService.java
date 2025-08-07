@@ -1,6 +1,6 @@
 package alarm.query;
 
-import alarm.dto.AlarmInfo;
+import alarm.query.dto.AlarmResult;
 import alarm.jpa.AlarmJpaRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +14,9 @@ public class AlarmQueryService {
     private final AlarmJpaRepository alarmJpaRepository;
 
     @Transactional(readOnly = true)
-    public List<AlarmInfo> getAlarmInfos(Long userId) {
+    public List<AlarmResult> getAlarmInfos(Long userId) {
         return alarmJpaRepository.findByUserId(userId).stream()
-            .map(AlarmInfo::from)
+            .map(AlarmResult::from)
             .toList();
     }
 }

@@ -1,6 +1,8 @@
-package alarm.dto;
+package alarm.query.dto;
 
-public record AlarmInfo(
+import alarm.Alarm;
+
+public record AlarmResult(
     Long alarmId,
     Long postId,
     Long commentId,
@@ -10,8 +12,8 @@ public record AlarmInfo(
     String createdAt
 ) {
 
-    public static AlarmInfo from(Alarm alarm) { // TODO
-        return new AlarmInfo(
+    public static AlarmResult from(Alarm alarm) { // TODO
+        return new AlarmResult(
             alarm.getId(),
             alarm.getPostId(),
             alarm.getCommentId(),
