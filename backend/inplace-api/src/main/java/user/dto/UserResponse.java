@@ -1,12 +1,10 @@
 package user.dto;
 
+import influencer.dto.InfluencerResult;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-import team7.inplace.influencer.application.dto.InfluencerInfo;
-import team7.inplace.place.application.dto.PlaceInfo;
-import team7.inplace.user.application.dto.UserInfo;
-import video.query.VideoQueryResult;
+import place.dto.PlaceResult;
 
 public class UserResponse {
 
@@ -17,7 +15,7 @@ public class UserResponse {
         String mainBadgeImageUrl
     ) {
 
-        public static Simple from(UserInfo.Simple simple) {
+        public static Simple from(UserResult.Simple simple) {
             return new Simple(
                 simple.nickname(),
                 simple.profileImageUrl(),
@@ -34,7 +32,7 @@ public class UserResponse {
         List<Badge> badges
     ) {
 
-        public static Detail from(UserInfo.Detail detail) {
+        public static Detail from(UserResult.Detail detail) {
             return new Detail(
                 detail.nickname(),
                 detail.profileImageUrl(),
@@ -50,7 +48,7 @@ public class UserResponse {
         String imgUrl
     ) {
 
-        public static Badge from(UserInfo.Badge badge) {
+        public static Badge from(UserResult.Badge badge) {
             return new Badge(
                 badge.id(),
                 badge.name(),
@@ -76,7 +74,7 @@ public class UserResponse {
     ) {
 
         public static Review from(
-            UserInfo.Review review
+            UserResult.Review review
         ) {
             return new Review(
                 review.reviewId(),
@@ -96,7 +94,7 @@ public class UserResponse {
         ReviewPlaceAddress address
     ) {
 
-        public static ReviewPlace from(UserInfo.ReviewPlace reviewPlace) {
+        public static ReviewPlace from(UserResult.ReviewPlace reviewPlace) {
             return new ReviewPlace(
                 reviewPlace.placeId(),
                 reviewPlace.placeName(),
@@ -112,7 +110,7 @@ public class UserResponse {
         String address3
     ) {
 
-        public static ReviewPlaceAddress from(UserInfo.ReviewPlaceAddress reviewPlaceAddress) {
+        public static ReviewPlaceAddress from(UserResult.ReviewPlaceAddress reviewPlaceAddress) {
             return new ReviewPlaceAddress(
                 reviewPlaceAddress.address1(),
                 reviewPlaceAddress.address2(),
@@ -131,27 +129,27 @@ public class UserResponse {
         boolean likes
     ) {
 
-        public static LikedPlace from(PlaceInfo.Simple likedPlaceInfo) {
+        public static LikedPlace from(PlaceResult.Simple likedPlaceResult) {
             return new LikedPlace(
-                likedPlaceInfo.place().placeId(),
-                likedPlaceInfo.place().placeName(),
+                likedPlaceResult.place().placeId(),
+                likedPlaceResult.place().placeName(),
                 "",
-                likedPlaceInfo.video()
+                likedPlaceResult.video()
                     .stream()
                     .map(VideoQueryResult.SimpleVideo::influencerName)
                     .distinct()
                     .collect(Collectors.joining(", ")),
                 new ReviewPlaceAddress(
-                    likedPlaceInfo.place().address1(),
-                    likedPlaceInfo.place().address2(),
-                    likedPlaceInfo.place().address3()
+                    likedPlaceResult.place().address1(),
+                    likedPlaceResult.place().address2(),
+                    likedPlaceResult.place().address3()
                 ),
-                likedPlaceInfo.video()
+                likedPlaceResult.video()
                     .stream()
                     .map(VideoQueryResult.SimpleVideo::videoUrl)
                     .findFirst()
                     .orElse(""),
-                likedPlaceInfo.place().isLiked()
+                likedPlaceResult.place().isLiked()
             );
         }
     }
@@ -164,13 +162,13 @@ public class UserResponse {
         boolean likes
     ) {
 
-        public static LikedInfluencer from(InfluencerInfo influencerInfo) {
+        public static LikedInfluencer from(InfluencerResult influencerResult) {
             return new LikedInfluencer(
-                influencerInfo.influencerId(),
-                influencerInfo.influencerName(),
-                influencerInfo.influencerImgUrl(),
-                influencerInfo.influencerJob(),
-                influencerInfo.likes()
+                influencerResult.influencerId(),
+                influencerResult.influencerName(),
+                influencerResult.influencerImgUrl(),
+                influencerResult.influencerJob(),
+                influencerResult.likes()
             );
         }
     }

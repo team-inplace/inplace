@@ -8,6 +8,7 @@ import influencer.Influencer;
 import influencer.LikedInfluencer;
 import influencer.dto.InfluencerCommand;
 import influencer.dto.InfluencerNameInfo;
+import influencer.dto.InfluencerResult;
 import influencer.dto.LikedInfluencerCommand;
 import influencer.jpa.LikedInfluencerJpaRepository;
 import influencer.jpa.InfluencerJpaRepository;
@@ -126,7 +127,7 @@ public class InfluencerService {
 
     //TODO: 추후 쿼리 한번으로 변경
     @Transactional(readOnly = true)
-    public Page<InfluencerInfo> getFavoriteInfluencers(Long userId, Pageable pageable) {
+    public Page<InfluencerResult> getFavoriteInfluencers(Long userId, Pageable pageable) {
         Page<LikedInfluencer> influencerPage = likedInfluencerJpaRepository.findByUserIdAndIsLikedTrue(
             userId, pageable);
         var influencerIds = influencerPage.map(LikedInfluencer::getInfluencerId).toList();
@@ -136,7 +137,7 @@ public class InfluencerService {
         var infos = influencerPage.stream()
             .map(likedInfluencer -> {
                 var influencer = influencers.get(likedInfluencer.getInfluencerId());
-                return InfluencerInfo.from(influencer, true);
+                return InfluencerResult.from(influencer, true);
             })
             .toList();
         return new PageImpl<>(infos, pageable, influencerPage.getTotalElements());

@@ -1,0 +1,8 @@
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+    implementation project(':inplace-common')
+    implementation project(':inplace-application')
+    implementation project(':inplace-infra')
+}

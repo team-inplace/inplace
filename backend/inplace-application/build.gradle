@@ -3,6 +3,7 @@ dependencies {
     implementation project(':inplace-common')
     implementation project(':inplace-infra')
     implementation project(':inplace-domain')
+    implementation project(':inplace-security')
 
     // 롬복 의존성
     compileOnly 'org.projectlombok:lombok'

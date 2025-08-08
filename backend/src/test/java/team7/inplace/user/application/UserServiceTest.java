@@ -26,7 +26,7 @@ import team7.inplace.user.domain.User;
 import team7.inplace.user.domain.UserType;
 import user.jpa.UserBadgeJpaRepository;
 import user.jpa.UserJpaRepository;
-import user.jpa.UserTierJpaRepository;
+import user.jpa.TierJpaRepository;
 import user.query.UserReadRepository;
 
 @SpringJUnitConfig(classes = {
@@ -43,7 +43,7 @@ class UserServiceTest {
     @MockBean
     private UserBadgeJpaRepository userBadgeJpaRepository;
     @MockBean
-    private UserTierJpaRepository userTierJpaRepository;
+    private TierJpaRepository tierJpaRepository;
     @MockBean
     private PostJpaRepository postJpaRepository;
 

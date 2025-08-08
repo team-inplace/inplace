@@ -10,27 +10,19 @@ import org.springframework.transaction.annotation.Transactional;
 import user.User;
 import user.UserBadge;
 import user.dto.TierConditions;
-import user.dto.UserCommand.Create;
-import user.dto.UserCommand.Info;
 import user.jpa.UserBadgeJpaRepository;
 import user.jpa.UserJpaRepository;
-import user.jpa.UserTierJpaRepository;
+import user.jpa.TierJpaRepository;
 import user.query.UserReadRepository;
 
 @Service
 @RequiredArgsConstructor
 public class UserCommandService {
+
     private final UserJpaRepository userJpaRepository;
     private final UserReadRepository userReadRepository;
     private final UserBadgeJpaRepository userBadgeJpaRepository;
-    private final UserTierJpaRepository userTierJpaRepository;
-
-    @Transactional
-    public Info registerUser(Create userCreate) {
-        User user = userCreate.toEntity();
-        userJpaRepository.save(user);
-        return Info.of(user);
-    }
+    private final TierJpaRepository tierJpaRepository;
 
     @Transactional
     public void updateNickname(Long userId, String nickname) {
@@ -40,21 +32,13 @@ public class UserCommandService {
         user.updateNickname(nickname);
     }
 
-    @Transactional()
+    @Transactional
     public void deleteUser(Long userId) {
         User user = userJpaRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
         List<UserBadge> userBadges = userBadgeJpaRepository.findAllByUserId(userId);
         userBadgeJpaRepository.deleteAllInBatch(userBadges);
         userJpaRepository.delete(user);
-    }
-
-    @Transactional
-    public void updateProfileImageUrl(Long userId, String profileImageUrl) {
-        User user = userJpaRepository.findById(userId)
-            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
-
-        user.updateProfileImageUrl(profileImageUrl);
     }
 
     @Transactional
@@ -70,7 +54,7 @@ public class UserCommandService {
         User user = userJpaRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
 
-        TierConditions tierConditions = TierConditions.of(userTierJpaRepository.findAll());
+        TierConditions tierConditions = TierConditions.of(tierJpaRepository.findAll());
         Long calculatedTierId = tierConditions.getCurrentTierId(
             user.getPostCount(),
             user.getReceivedCommentCount(),

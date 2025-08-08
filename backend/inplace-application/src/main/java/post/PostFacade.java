@@ -20,21 +20,23 @@ import team7.inplace.post.application.dto.PostCommand.CreatePost;
 import team7.inplace.post.application.dto.PostCommand.UpdatePost;
 import team7.inplace.post.application.dto.PostInfo;
 import team7.inplace.security.util.AuthorizationUtil;
-import team7.inplace.user.application.UserService;
+import user.command.UserCommandService;
+import user.query.UserQueryService;
 
 @Facade
 @RequiredArgsConstructor
 public class PostFacade {
 
     private final ApplicationEventPublisher eventPublisher;
-    private final UserService userService;
+    private final UserQueryService userQueryService;
+    private final UserCommandService userCommandService;
     private final PostService postService;
 
     public void createPost(CreatePost command) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.createPost(command, userId);
-        userService.addToPostCount(userId, 1);
-        userService.updateUserTier(userId);
+        userCommandService.addToPostCount(userId, 1);
+        userCommandService.updateUserTier(userId);
     }
 
     public void likePost(PostCommand.PostLike command) {
@@ -51,8 +53,8 @@ public class PostFacade {
     public void deletePost(Long postId) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.deletePost(postId, userId);
-        userService.addToPostCount(userId, -1);
-        userService.updateUserTier(userId);
+        userCommandService.addToPostCount(userId, -1);
+        userCommandService.updateUserTier(userId);
     }
 
     @Transactional
@@ -60,9 +62,9 @@ public class PostFacade {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         var commentId = postService.createComment(command, userId);
         Long authorId = postService.getAuthorIdByPostId(command.postId());
-        userService.addToReceivedCommentByUserId(authorId, 1);
+        userCommandService.addToReceivedCommentByUserId(authorId, 1);
 
-        String mentioningUser = userService.getUserInfo(userId).nickname();
+        String mentioningUser = userQueryService.getUserInfo(userId).nickname();
         List<String> mentionedUsers = parseMentionedUser(command.comment());
         processMentionAlarm(command.postId(), commentId, mentioningUser, mentionedUsers);
     }
@@ -76,7 +78,7 @@ public class PostFacade {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.updateComment(updateCommand, userId);
 
-        String mentioningUser = userService.getUserInfo(userId).nickname();
+        String mentioningUser = userQueryService.getUserInfo(userId).nickname();
         List<String> mentionedUsers = parseMentionedUser(updateCommand.comment());
         processMentionAlarm(updateCommand.postId(), updateCommand.commentId(), mentioningUser,
             mentionedUsers);
@@ -92,7 +94,7 @@ public class PostFacade {
         }
 
         return mentions.stream()
-            .filter(userService::isExistUserName)
+            .filter(userQueryService::isExistUserName)
             .toList();
     }
 
@@ -109,7 +111,7 @@ public class PostFacade {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postService.deleteComment(postId, commentId, userId);
         Long authorId = postService.getAuthorIdByPostId(postId);
-        userService.addToReceivedCommentByUserId(authorId, -1);
+        userQueryService.addToReceivedCommentByUserId(authorId, -1);
     }
 
     public CursorResult<DetailedPost> getPosts(Long cursorId, int size, String orderBy) {
