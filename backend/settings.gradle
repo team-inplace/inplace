@@ -7,7 +7,7 @@ include(
         'inplace-domain',
         'inplace-application',
         'inplace-infra',
-        'inplace-security'
+        'inplace-security',
+        'inplace-aop'
 )
-include 'inplace-aop'
 

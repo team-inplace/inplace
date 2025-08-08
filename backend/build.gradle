@@ -119,5 +119,6 @@ dependencies {
     implementation project(':inplace-domain')
 //    implementation project(':inplace-application')
     implementation project(':inplace-infra')
+    implementation project(':inplace-security')
 //    implementation project(':inplace-api')
 }
