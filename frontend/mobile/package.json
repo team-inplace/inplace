@@ -11,6 +11,7 @@
   "dependencies": {
     "@babel/runtime": "^7.28.2",
     "@inplace-frontend-monorepo/shared": "workspace:*",
+    "eas-cli": "^16.17.4",
     "expo": "~52.0.47",
     "expo-status-bar": "~2.0.1",
     "react": "19.0.0",
