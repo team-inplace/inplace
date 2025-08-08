@@ -1,5 +1,6 @@
 package admin;
 
+import admin.dto.AdminRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,18 +21,17 @@ public class AdminLoginController {
     private final AdminUserService adminUserService;
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<Void> login(@RequestBody AdminRequest.Login loginRequest) {
         Authentication authenticationRequest = UsernamePasswordAuthenticationToken.unauthenticated(
             loginRequest.username(),
             loginRequest.password());
-        Authentication authenticationResponse = authenticationManager.authenticate(
-            authenticationRequest);
+        authenticationManager.authenticate(authenticationRequest);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody LoginRequest loginRequest) {
-        adminUserService.registerAdminUser(LoginRequest.toAdminUserCommand(loginRequest));
+    public ResponseEntity<Void> register(@RequestBody AdminRequest.Login loginRequest) {
+        adminUserService.registerAdminUser(AdminRequest.Login.toRegisterCommand(loginRequest));
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

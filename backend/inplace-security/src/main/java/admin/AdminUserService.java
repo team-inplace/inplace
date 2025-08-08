@@ -1,5 +1,7 @@
 package admin;
 
+import admin.dto.AdminCommand;
+import admin.dto.AdminResult;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,13 +18,13 @@ public class AdminUserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
-    public Optional<AdminUserResult> findAdminUserByUsername(String username) {
+    public Optional<AdminResult.AuthInfo> findAdminUserByUsername(String username) {
         return adminUserRepository.findByUsername(username)
-            .map(AdminUserResult::from);
+            .map(AdminResult.AuthInfo::from);
     }
 
     @Transactional
-    public void registerAdminUser(AdminUserCommand registerCommand) {
+    public void registerAdminUser(AdminCommand.Register registerCommand) {
         AdminUser adminUser = new AdminUser(
             registerCommand.username(),
             passwordEncoder.encode(registerCommand.password())
