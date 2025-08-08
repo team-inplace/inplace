@@ -12,7 +12,7 @@ import user.UserBadge;
 import user.dto.TierConditions;
 import user.jpa.UserBadgeJpaRepository;
 import user.jpa.UserJpaRepository;
-import user.jpa.UserTierJpaRepository;
+import user.jpa.TierJpaRepository;
 import user.query.UserReadRepository;
 
 @Service
@@ -22,7 +22,7 @@ public class UserCommandService {
     private final UserJpaRepository userJpaRepository;
     private final UserReadRepository userReadRepository;
     private final UserBadgeJpaRepository userBadgeJpaRepository;
-    private final UserTierJpaRepository userTierJpaRepository;
+    private final TierJpaRepository tierJpaRepository;
 
     @Transactional
     public void updateNickname(Long userId, String nickname) {
@@ -54,7 +54,7 @@ public class UserCommandService {
         User user = userJpaRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
 
-        TierConditions tierConditions = TierConditions.of(userTierJpaRepository.findAll());
+        TierConditions tierConditions = TierConditions.of(tierJpaRepository.findAll());
         Long calculatedTierId = tierConditions.getCurrentTierId(
             user.getPostCount(),
             user.getReceivedCommentCount(),

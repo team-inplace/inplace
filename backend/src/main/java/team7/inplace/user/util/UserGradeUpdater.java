@@ -14,13 +14,13 @@ import team7.inplace.user.application.dto.TierConditions;
 import team7.inplace.user.domain.User;
 import user.UserWriteRepository;
 import user.jpa.UserJpaRepository;
-import user.jpa.UserTierJpaRepository;
+import user.jpa.TierJpaRepository;
 
 @Service
 @RequiredArgsConstructor
 public class UserGradeUpdater {
 
-    private final UserTierJpaRepository userTierJpaRepository;
+    private final TierJpaRepository tierJpaRepository;
     private final UserJpaRepository userJpaRepository;
     private final UserWriteRepository userWriteRepository;
 
@@ -36,7 +36,7 @@ public class UserGradeUpdater {
                 .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND)))
             .toList();
 
-        TierConditions tierConditions = TierConditions.of(userTierJpaRepository.findAll());
+        TierConditions tierConditions = TierConditions.of(tierJpaRepository.findAll());
 
         Map<Long, Long> usersToUpdate = new HashMap<>();
         for (User user : usersToCheck) {
