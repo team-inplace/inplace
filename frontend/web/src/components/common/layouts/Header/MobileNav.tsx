@@ -4,6 +4,7 @@ import { motion, Variants } from 'framer-motion';
 import { Text } from '@/components/common/typography/Text';
 import useAuth from '@/hooks/useAuth';
 import LoginModal from '@/components/common/modals/LoginModal';
+import { requestNotificationPermission } from '@/libs/FCM';
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -31,6 +32,11 @@ const itemVariants: Variants = {
 export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
   const { isAuthenticated, handleLogout } = useAuth();
   const location = useLocation();
+
+  // 모바일은 Notification.requestPermission() 함수는 사용자 상호작용에 의해 직접 호출되어야 함
+  const handleLoginClick = () => {
+    requestNotificationPermission();
+  };
 
   const commonLinks = [
     { to: '/map', label: '지도' },
@@ -94,6 +100,7 @@ export default function MobileNav({ isOpen, onClose }: MobileNavProps) {
             {(openModal: () => void) => (
               <LogoutButton
                 onClick={() => {
+                  handleLoginClick();
                   openModal();
                   onClose();
                 }}
