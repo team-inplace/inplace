@@ -8,7 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.util.StringUtils;
 import user.Role;
-import user.UserSecurityResult;
+import user.dto.UserSecurityResult;
 
 public record CustomOAuth2User(
     String username,

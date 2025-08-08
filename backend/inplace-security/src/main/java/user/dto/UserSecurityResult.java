@@ -1,4 +1,7 @@
-package user;
+package user.dto;
+
+import user.Role;
+import user.User;
 
 public class UserSecurityResult {
 

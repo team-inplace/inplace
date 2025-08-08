@@ -1,4 +1,4 @@
-package token;
+package token.dto;
 
 import java.time.Instant;
 

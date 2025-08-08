@@ -5,8 +5,9 @@ import exception.code.UserErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import token.TokenResult.ReIssued;
-import user.UserSecurityResult;
+import token.dto.TokenResult;
+import token.dto.TokenResult.ReIssued;
+import user.dto.UserSecurityResult;
 import user.UserSecurityService;
 import util.JwtUtil;
 

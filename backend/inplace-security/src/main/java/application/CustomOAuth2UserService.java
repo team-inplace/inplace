@@ -11,9 +11,9 @@ import application.dto.CustomOAuth2User;
 import application.dto.KakaoOAuthResponse;
 import java.util.Optional;
 import token.OauthTokenService;
-import token.TokenCommand;
-import user.UserSecurityCommand;
-import user.UserSecurityResult;
+import token.dto.TokenCommand;
+import user.dto.UserSecurityCommand;
+import user.dto.UserSecurityResult;
 import user.UserSecurityService;
 
 @RequiredArgsConstructor

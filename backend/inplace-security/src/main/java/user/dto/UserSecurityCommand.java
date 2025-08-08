@@ -1,6 +1,9 @@
-package user;
+package user.dto;
 
 import application.dto.KakaoOAuthResponse;
+import user.Role;
+import user.User;
+import user.UserType;
 
 public class UserSecurityCommand {
 

@@ -6,8 +6,9 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import user.dto.UserSecurityCommand;
+import user.dto.UserSecurityResult;
 import user.jpa.UserJpaRepository;
-import user.query.UserReadRepository;
 
 @Service
 @RequiredArgsConstructor
