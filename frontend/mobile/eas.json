@@ -1,0 +1,32 @@
+{
+  "cli": {
+    "version": ">= 16.17.4",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "API_URL": "https://a7b2c3d4-dev.inplace.my:444"
+      }
+    },
+    "preview": {
+      "env": {
+        "API_URL": "https://a7b2c3d4-dev.inplace.my:444"
+      },
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "env": {
+        "API_URL": "https://api.inplace.my"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
