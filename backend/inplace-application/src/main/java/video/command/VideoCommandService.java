@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import video.Video;
-import video.dto.VideoCommand;
-import video.dto.VideoCommand.Create;
+import video.command.dto.VideoCommand.Create;
+import video.command.dto.VideoCommand.UpdateViewCount;
 import video.jpa.CoolVideoJpaRepository;
 import video.jpa.RecentVideoJpaRepository;
 import video.jpa.VideoJpaRepository;
@@ -21,24 +21,24 @@ import video.query.VideoReadRepository;
 public class VideoCommandService {
 
     private final VideoReadRepository videoReadRepository;
-    private final VideoJpaRepository videoRepository;
+    private final VideoJpaRepository videoJpaRepository;
     private final CoolVideoJpaRepository coolVideoRepository;
     private final RecentVideoJpaRepository recentVideoRepository;
 
     @Transactional
     public void createVideos(List<Create> videoCommands) {
         var videos = videoCommands.stream()
-            .filter(command -> !videoRepository.existsByUuid(command.videoId()))
+            .filter(command -> !videoJpaRepository.existsByUuid(command.videoId()))
             .map(Create::toEntity)
             .toList();
 
-        videoRepository.saveAll(videos);
+        videoJpaRepository.saveAll(videos);
     }
 
     @Transactional
-    public void updateVideoViews(List<VideoCommand.UpdateViewCount> videoCommands) {
-        for (VideoCommand.UpdateViewCount videoCommand : videoCommands) {
-            Video video = videoRepository.findById(videoCommand.videoId())
+    public void updateVideoViews(List<UpdateViewCount> videoCommands) {
+        for (UpdateViewCount videoCommand : videoCommands) {
+            Video video = videoJpaRepository.findById(videoCommand.videoId())
                 .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
             video.updateViewCount(videoCommand.viewCount());
         }
@@ -46,7 +46,7 @@ public class VideoCommandService {
 
     @Transactional
     public void deleteVideo(Long videoId) {
-        Video video = videoRepository.findById(videoId)
+        Video video = videoJpaRepository.findById(videoId)
             .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
 
         video.deleteSoftly();

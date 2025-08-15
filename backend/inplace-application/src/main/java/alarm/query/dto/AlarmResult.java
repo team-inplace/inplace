@@ -1,6 +1,7 @@
 package alarm.query.dto;
 
 import alarm.Alarm;
+import alarm.util.TimeUtil;
 
 public record AlarmResult(
     Long alarmId,

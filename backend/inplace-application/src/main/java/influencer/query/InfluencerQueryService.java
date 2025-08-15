@@ -20,22 +20,22 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import util.AuthorizationUtil;
 
 @RequiredArgsConstructor
 @Service
+@Transactional(readOnly = true)
 public class InfluencerQueryService {
 
     private final InfluencerJpaRepository influencerRepository;
     private final LikedInfluencerJpaRepository likedInfluencerJpaRepository;
-    private final InfluencerReadQueryDslRepository influencerReadRepositoryImpl;
+    private final InfluencerReadRepository influencerReadRepository;
 
-    @Transactional(readOnly = true)
     public Page<Simple> getAllInfluencers(Pageable pageable) {
         var userId = AuthorizationUtil.getUserIdOrNull();
-        return influencerReadRepositoryImpl.getInfluencerSortedByLikes(userId, pageable);
+        return influencerReadRepository.getInfluencerSortedByLikes(userId, pageable);
     }
 
-    @Transactional(readOnly = true)
     public List<Name> getAllInfluencerNames() {
         List<String> names = influencerRepository.findAllInfluencerNames();
         return names.stream()
@@ -44,7 +44,6 @@ public class InfluencerQueryService {
     }
 
     //TODO: 추후 쿼리 한번으로 변경
-    @Transactional(readOnly = true)
     public Page<Detail> getFavoriteInfluencers(Long userId, Pageable pageable) {
         Page<LikedInfluencer> influencerPage = likedInfluencerJpaRepository.findByUserIdAndIsLikedTrue(
             userId, pageable);
@@ -61,16 +60,14 @@ public class InfluencerQueryService {
         return new PageImpl<>(infos, pageable, influencerPage.getTotalElements());
     }
 
-    @Transactional(readOnly = true)
     public InfluencerQueryResult.Detail getInfluencerDetail(Long influencerId) {
         Long userId = AuthorizationUtil.getUserIdOrNull();
 
-        return influencerReadRepositoryImpl.getInfluencerDetail(influencerId, userId)
+        return influencerReadRepository.getInfluencerDetail(influencerId, userId)
             .orElseThrow(() -> InplaceException.of(InfluencerErrorCode.NOT_FOUND));
     }
 
-    @Transactional(readOnly = true)
     public List<String> getInfluencerNamesByPlaceId(Long placeId) {
-        return influencerReadRepositoryImpl.getInfluencerNamesByPlaceId(placeId);
+        return influencerReadRepository.getInfluencerNamesByPlaceId(placeId);
     }
 }

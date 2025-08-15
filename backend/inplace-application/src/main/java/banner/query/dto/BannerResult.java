@@ -1,7 +1,9 @@
-package banner.dto;
+package banner.query.dto;
 
 
-public class BannerInfo {
+import banner.Banner;
+
+public class BannerResult {
 
     public record Detail(
         Long id,

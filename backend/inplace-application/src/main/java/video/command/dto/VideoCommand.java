@@ -1,10 +1,10 @@
-package video.dto;
+package video.command.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import lombok.extern.slf4j.Slf4j;
-import team7.inplace.video.domain.Video;
+import video.Video;
 
 @Slf4j
 public class VideoCommand {

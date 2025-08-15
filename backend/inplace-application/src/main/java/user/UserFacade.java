@@ -18,7 +18,7 @@ import user.command.UserCommandService;
 import user.dto.UserResult;
 import user.query.UserQueryService;
 import util.AuthorizationUtil;
-import video.VideoService;
+import video.query.VideoQueryService;
 
 @Facade
 @RequiredArgsConstructor
@@ -27,7 +27,7 @@ public class UserFacade {
     private final InfluencerQueryService influencerQueryService;
     private final PlaceService placeService;
     private final ReviewService reviewService;
-    private final VideoService videoService;
+    private final VideoQueryService videoQueryService;
     private final UserQueryService userQueryService;
     private final UserCommandService userCommandService;
     private final OauthTokenService oauthTokenService;
@@ -48,7 +48,7 @@ public class UserFacade {
             .map(PlaceQueryResult.DetailedPlace::placeId)
             .toList();
 
-        var videoInfos = videoService.getVideosByPlaceId(placeIds);
+        var videoInfos = videoQueryService.getVideosByPlaceId(placeIds);
 
         return likedPlaces.map(
             place -> PlaceResult.Simple.of(place, videoInfos.get(place.placeId())));
@@ -58,7 +58,7 @@ public class UserFacade {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
         var details = reviewService.getUserReviews(userId, pageable);
         var placeIds = details.stream().map(ReviewQueryResult.Detail::placeId).toList();
-        var videoUrls = videoService.getVideosByPlaceId(placeIds).entrySet()
+        var videoUrls = videoQueryService.getVideosByPlaceId(placeIds).entrySet()
             .stream()
             .collect(Collectors.toMap(
                 Map.Entry::getKey,

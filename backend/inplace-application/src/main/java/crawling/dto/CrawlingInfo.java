@@ -2,7 +2,7 @@ package crawling.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import java.util.List;
-import video.dto.VideoCommand;
+import video.command.dto.VideoCommand;
 
 public class CrawlingInfo {
 

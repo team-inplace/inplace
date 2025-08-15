@@ -1,4 +1,4 @@
-package banner.dto;
+package banner.command.dto;
 
 import banner.Banner;
 import java.time.LocalDateTime;

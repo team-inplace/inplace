@@ -1,7 +1,7 @@
 package banner.command;
 
 import banner.BannerS3Repository;
-import banner.dto.BannerCommand;
+import banner.command.dto.BannerCommand;
 import banner.jpa.BannerJpaRepository;
 import exception.InplaceException;
 import exception.code.BannerErrorCode;

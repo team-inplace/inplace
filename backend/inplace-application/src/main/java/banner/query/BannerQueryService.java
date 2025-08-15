@@ -1,7 +1,7 @@
 package banner.query;
 
-import banner.dto.BannerInfo;
-import banner.dto.BannerInfo.Detail;
+import banner.query.dto.BannerResult;
+import banner.query.dto.BannerResult.Detail;
 import banner.jpa.BannerJpaRepository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,7 +20,7 @@ public class BannerQueryService {
 
         return banners.stream()
             .sorted((a, b) -> Boolean.compare(b.getIsFixed(), a.getIsFixed()))
-            .map(BannerInfo.Detail::from)
+            .map(BannerResult.Detail::from)
             .toList();
     }
 }

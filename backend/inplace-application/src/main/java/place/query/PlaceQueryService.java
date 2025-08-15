@@ -15,6 +15,7 @@ import place.jpa.CategoryJpaRepository;
 import place.jpa.PlaceJpaRepository;
 import place.query.PlaceQueryResult.Marker;
 import place.query.dto.PlaceParam;
+import place.query.dto.PlaceResult;
 import video.query.VideoReadRepository;
 
 @Service
@@ -24,10 +25,7 @@ public class PlaceQueryService {
 
     private final PlaceReadRepository placeReadRepository;
     private final PlaceJpaRepository placeJpaRepository;
-
     private final CategoryJpaRepository categoryRepository;
-
-    // 로직 부
     private final VideoReadRepository videoReadRepository;
 
     public PlaceQueryResult.DetailedPlace getPlaceInfo(final Long userId, final Long placeId) {
@@ -130,7 +128,7 @@ public class PlaceQueryService {
         );
     }
 
-    public List<Marker> getPlaceLocationsByName(
+    public List<PlaceQueryResult.Marker> getPlaceLocationsByName(
         String name,
         PlaceParam.Filter filterParams
     ) {
@@ -143,13 +141,8 @@ public class PlaceQueryService {
 
 
     @Transactional(readOnly = true)
-    public List<Long> getParentCategoryIds() {
-        return categoryRepository.findParentCategoryIds();
-    }
-
-    @Transactional(readOnly = true)
-    public List<PlaceInfo.Category> getSubCategoriesByParentId(Long parentId) {
+    public List<PlaceResult.Category> getSubCategoriesByParentId(Long parentId) {
         return categoryRepository.findSubCategoriesByParentId(parentId)
-            .stream().map(PlaceInfo.Category::from).toList();
+            .stream().map(PlaceResult.Category::from).toList();
     }
 }

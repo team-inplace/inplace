@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
 @Configuration
-public class WebClientConfig {
+public class WebClientConfig { // TODO - 지워도 될거같음
 
     @Bean
     public WebClient webClient() {

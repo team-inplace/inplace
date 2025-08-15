@@ -7,7 +7,7 @@ import crawling.dto.CrawlingInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
-import video.VideoFacade;
+import video.command.VideoCommandFacade;
 
 @Facade
 @Slf4j
@@ -15,7 +15,7 @@ import video.VideoFacade;
 public class CrawlingFacade {
 
     private final YoutubeCrawlingService youtubeCrawlingService;
-    private final VideoFacade videoFacade;
+    private final VideoCommandFacade videoCommandFacade;
 
     @Scheduled(cron = "${crawling.updateVideoTimeCron}", zone = "Asia/Seoul")
     public void updateVideos() {
@@ -30,7 +30,7 @@ public class CrawlingFacade {
             if (mediumVideoCommands.isEmpty()) {
                 continue;
             }
-            videoFacade.createMediumVideos(mediumVideoCommands, crawlingInfo.influencerId());
+            videoCommandFacade.createMediumVideos(mediumVideoCommands, crawlingInfo.influencerId());
 
             var longVideoCommands = crawlingInfo.toLongVideoCommands()
                 .stream()
@@ -40,7 +40,7 @@ public class CrawlingFacade {
             if (longVideoCommands.isEmpty()) {
                 continue;
             }
-            videoFacade.createLongVideos(longVideoCommands, crawlingInfo.influencerId());
+            videoCommandFacade.createLongVideos(longVideoCommands, crawlingInfo.influencerId());
         }
     }
 
@@ -51,6 +51,6 @@ public class CrawlingFacade {
             .map(CrawlingInfo.ViewInfo::toVideoCommand)
             .toList();
 
-        videoFacade.updateVideoViews(videoCommands);
+        videoCommandFacade.updateVideoViews(videoCommands);
     }
 }

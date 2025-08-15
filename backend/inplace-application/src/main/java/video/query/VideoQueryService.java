@@ -7,12 +7,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import util.AuthorizationUtil;
+import video.CoolVideo;
+import video.RecentVideo;
 import video.jpa.CoolVideoJpaRepository;
 import video.jpa.RecentVideoJpaRepository;
 import video.jpa.VideoJpaRepository;
 import video.query.VideoQueryResult.AdminVideo;
 import video.query.VideoQueryResult.DetailedVideo;
 import video.query.VideoQueryResult.SimpleVideo;
+import video.query.dto.VideoParam;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +30,7 @@ public class VideoQueryService {
     //TODO: Facade에서 호출로 변경해야함.
     @Transactional(readOnly = true)
     public List<DetailedVideo> getVideosBySurround(
-        VideoSearchParams videoSearchParams,
+        VideoParam videoSearchParams,
         Pageable pageable,
         boolean authorizationRequired
     ) {
@@ -86,5 +90,10 @@ public class VideoQueryService {
     public Page<AdminVideo> getAdminVideosByCondition(
         VideoQueryParam videoQueryParam, Pageable pageable) {
         return videoReadRepository.findAdminVideoByCondition(videoQueryParam, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<SimpleVideo> getVideoWithNoPlace(Pageable pageable) {
+        return videoReadRepository.findVideoWithNoPlace(pageable);
     }
 }

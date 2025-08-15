@@ -14,6 +14,7 @@ import place.jpa.CategoryJpaRepository;
 import place.jpa.LikedPlaceJpaRepository;
 import place.jpa.PlaceJpaRepository;
 import place.jpa.PlaceVideoJpaRepository;
+import util.AuthorizationUtil;
 
 @Service
 @Transactional

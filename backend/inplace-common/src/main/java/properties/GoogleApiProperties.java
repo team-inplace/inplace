@@ -1,4 +1,4 @@
-package team7.inplace.global.properties;
+package properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

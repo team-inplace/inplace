@@ -1,4 +1,4 @@
-package team7.inplace.global.cursor;
+package global;
 
 public record CursorResponse(
     boolean hasNext,

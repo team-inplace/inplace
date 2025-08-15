@@ -1,4 +1,4 @@
-package team7.inplace.global.config;
+package config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import java.util.List;

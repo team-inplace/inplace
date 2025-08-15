@@ -1,4 +1,4 @@
-package team7.inplace.alarm.util;
+package alarm.util;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
