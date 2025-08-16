@@ -1,4 +1,4 @@
-package team7.inplace.admin.crawling.application.command;
+package crawling.command;
 
 public record PlaceRegistrationCommand(
     Long videoId,

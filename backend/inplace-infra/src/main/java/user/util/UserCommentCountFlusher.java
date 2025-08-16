@@ -1,4 +1,4 @@
-package team7.inplace.user.util;
+package user.util;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import java.util.Map;

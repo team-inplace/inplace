@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import team7.inplace.user.application.UserCommentCountFlusherTest.TestCacheConfig;
-import team7.inplace.user.util.UserCommentCountFlusher;
+import user.util.UserCommentCountFlusher;
 import user.UserWriteQueryDslRepository;
 import user.jpa.UserJpaRepository;
 

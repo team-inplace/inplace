@@ -1,4 +1,4 @@
-package team7.inplace.user.util;
+package user.job;
 
 import java.util.HashMap;
 import java.util.List;

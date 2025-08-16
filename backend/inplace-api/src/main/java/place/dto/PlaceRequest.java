@@ -98,4 +98,6 @@ public class PlaceRequest {
             );
         }
     }
+    먼말이징?
+
 }

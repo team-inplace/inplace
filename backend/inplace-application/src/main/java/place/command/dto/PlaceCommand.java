@@ -14,8 +14,8 @@ public class PlaceCommand {
         String googlePlaceId,
         Long kakaoPlaceId
     ) {
-
         public Place toEntity() {
+
             return new Place(
                 placeName,
                 category,
@@ -27,7 +27,7 @@ public class PlaceCommand {
             );
         }
     }
-
+ㄴㄴㄴㄴㄴㄴ 날리지말고 거기에 
     public record Update(
         Long placeId,
         String placeName,
@@ -58,7 +58,6 @@ public class PlaceCommand {
             return new place.Category(name, engName, parentId);
         }
     }
-
     public record CategoryUpdate(
         Long categoryId,
         String name,

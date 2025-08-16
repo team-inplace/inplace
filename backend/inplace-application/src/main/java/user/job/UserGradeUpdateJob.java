@@ -1,11 +1,10 @@
-package team7.inplace.user;
+package user.job;
 
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import team7.inplace.user.util.UserCommentCountFlusher;
-import team7.inplace.user.util.UserGradeUpdater;
 
 @Component
 @RequiredArgsConstructor
