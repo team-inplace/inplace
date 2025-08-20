@@ -1,11 +1,10 @@
 package admin;
 
 import banner.BannerResponse;
-import banner.jpa.BannerJpaRepository;
 import banner.query.BannerQueryService;
 import exception.InplaceException;
 import exception.code.CategoryErrorCode;
-import influencer.jpa.InfluencerJpaRepository;
+import influencer.query.InfluencerQueryService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,12 +29,8 @@ import properties.GoogleApiProperties;
 import properties.KakaoApiProperties;
 import team7.inplace.admin.dto.CategoryForm;
 import team7.inplace.place.application.PlaceService;
-import team7.inplace.post.application.PostService;
-import team7.inplace.video.application.VideoService;
-import team7.inplace.video.persistence.VideoRepository;
 import video.dto.VideoResponse;
 import video.query.VideoQueryFacade;
-import video.query.VideoQueryParam;
 import video.query.dto.VideoParam;
 
 @Controller
@@ -46,7 +41,7 @@ public class AdminPageController {
     private final KakaoApiProperties kakaoApiProperties;
     private final GoogleApiProperties googleApiProperties;
     private final BannerQueryService bannerQueryService;
-    private final InfluencerJpaRepository influencerRepository;
+    private final InfluencerQueryService influencerQueryService;
     private final CategoryRepository categoryRepository;
     private final PostJpaRepository postJpaRepository;
     private final CommentJpaRepository commentJpaRepository;
@@ -67,7 +62,7 @@ public class AdminPageController {
             .map(VideoResponse.Admin::from);
 
         model.addAttribute("videoPage", videoPage);
-        model.addAttribute("influencers", influencerRepository.findAll());
+        model.addAttribute("influencers", influencerQueryService.findAll());
         model.addAttribute("selectedInfluencerId", influencerId);
         model.addAttribute("videoRegistration", videoRegistration);
         model.addAttribute("kakaoApiKey", kakaoApiProperties.jsKey());
@@ -95,7 +90,7 @@ public class AdminPageController {
 
     @GetMapping("/influencer/list")
     public String getInfluencerList(Model model) {
-        model.addAttribute("influencers", influencerRepository.findAll());
+        model.addAttribute("influencers", influencerQueryService.findAll());
         return "admin/influencer/list.html";
     }
 

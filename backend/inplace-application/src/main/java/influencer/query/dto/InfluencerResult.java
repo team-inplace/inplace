@@ -64,4 +64,27 @@ public class InfluencerResult {
 
     }
 
+    public record Admin(
+        Long id,
+        String name,
+        String job,
+        Boolean hidden,
+        String imgUrl,
+        String channelId,
+        String channelTitle
+    ) {
+
+        public static Admin from(Influencer influencer) {
+            return new Admin(
+                influencer.getId(),
+                influencer.getName(),
+                influencer.getJob(),
+                influencer.getHidden(),
+                influencer.getImgUrl(),
+                influencer.getChannelId(),
+                influencer.getChannelTitle()
+            );
+        }
+
+    }
 }

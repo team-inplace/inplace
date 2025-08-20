@@ -8,6 +8,7 @@ import influencer.Influencer;
 import influencer.LikedInfluencer;
 import influencer.jpa.InfluencerJpaRepository;
 import influencer.jpa.LikedInfluencerJpaRepository;
+import influencer.query.dto.InfluencerResult;
 import influencer.query.dto.InfluencerResult.Detail;
 import influencer.query.dto.InfluencerResult.Name;
 import influencer.query.dto.InfluencerResult.Simple;
@@ -70,5 +71,12 @@ public class InfluencerQueryService {
 
     public List<String> getInfluencerNamesByPlaceId(Long placeId) {
         return influencerReadRepository.getInfluencerNamesByPlaceId(placeId);
+    }
+
+    public List<InfluencerResult.Admin> findAll() {
+        return influencerRepository.findAll()
+            .stream()
+            .map(InfluencerResult.Admin::from)
+            .toList();
     }
 }
