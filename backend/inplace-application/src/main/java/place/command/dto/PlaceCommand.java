@@ -58,6 +58,7 @@ public class PlaceCommand {
             return new place.Category(name, engName, parentId);
         }
     }
+
     public record CategoryUpdate(
         Long categoryId,
         String name,

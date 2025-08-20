@@ -2,6 +2,7 @@ package place.query;
 
 import annotation.Facade;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import lombok.RequiredArgsConstructor;
@@ -111,12 +112,24 @@ public class PlaceQueryFacade {
     * Category 관련
      */
 
+    public PlaceResult.Category findCategoryById(Long categoryId) {
+        return placeQueryService.findCategoryById(categoryId);
+    }
+
     public List<PlaceResult.Category> getCategories() {
         return placeQueryService.getCategories();
     }
 
     public List<PlaceResult.Category> getSubCategoriesByParentId(Long parentCategoryId) {
         return placeQueryService.getSubCategoriesByParentId(parentCategoryId);
+    }
+
+    public List<PlaceResult.Category> findSubCategories() {
+        return placeQueryService.getSubCategories();
+    }
+
+    public List<PlaceResult.Category> findParentCategories() {
+        return placeQueryService.getParentCategories();
     }
 
     // TODO - 어드민 전용 Place 조회 이므로 변경 필요

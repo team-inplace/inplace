@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import place.dto.PlaceRequest;
 import place.dto.PlaceRequest.Upsert;
-import place.dto.PlacesResponse;
-import place.dto.PlacesResponse.Admin;
-import place.dto.PlacesResponse.AdminCategory;
-import place.dto.PlacesResponse.Categories;
-import place.dto.PlacesResponse.Marker;
+import place.dto.PlaceResponse;
+import place.dto.PlaceResponse.Admin;
+import place.dto.PlaceResponse.AdminCategory;
+import place.dto.PlaceResponse.Categories;
+import place.dto.PlaceResponse.Marker;
 import place.dto.ReviewResponse;
 
 public interface PlaceControllerApiSpec {
@@ -28,14 +28,14 @@ public interface PlaceControllerApiSpec {
     );
 
     @Operation(summary = "장소 조회", description = "지도 반경 내 혹은 필터링 기준의 장소 페이지네이션 목록을 조회합니다.")
-    ResponseEntity<Page<PlacesResponse.Simple>> getPlaces(
+    ResponseEntity<Page<PlaceResponse.Simple>> getPlaces(
         @ModelAttribute @Validated PlaceRequest.Coordinate coordinateParams,
         @ModelAttribute PlaceRequest.Filter filterParams,
         @PageableDefault(page = 0, size = 10) Pageable pageable
     );
 
     @Operation(summary = "장소 조회(장소 이름으로 검색했을 때)", description = "장소 이름으로 검색한 장소 페이지네이션 목록을 조회합니다.")
-    ResponseEntity<Page<PlacesResponse.Simple>> getPlacesByName(
+    ResponseEntity<Page<PlaceResponse.Simple>> getPlacesByName(
         @RequestParam String placeName,
         @ModelAttribute PlaceRequest.Filter filterParams,
         @PageableDefault(page = 0, size = 10) Pageable pageable
@@ -57,7 +57,7 @@ public interface PlaceControllerApiSpec {
     ResponseEntity<Categories> getCategories();
 
     @Operation(summary = "장소 상세 조회", description = "장소 ID를 통해 특정 장소의 상세 정보를 조회합니다.")
-    ResponseEntity<PlacesResponse.Detail> getPlaceDetail(
+    ResponseEntity<PlaceResponse.Detail> getPlaceDetail(
         @PathVariable("id") Long placeId
     );
 
@@ -73,7 +73,7 @@ public interface PlaceControllerApiSpec {
     );
 
     @Operation(summary = "마커 상세 정보 조회", description = "장소 ID를 통해 특정 장소의 마커 상세 정보를 조회합니다.")
-    ResponseEntity<PlacesResponse.MarkerDetail> getMarkerDetail(
+    ResponseEntity<PlaceResponse.MarkerDetail> getMarkerDetail(
         @PathVariable("id") Long placeId
     );
 

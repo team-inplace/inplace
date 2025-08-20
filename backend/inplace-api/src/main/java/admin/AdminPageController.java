@@ -2,8 +2,6 @@ package admin;
 
 import banner.BannerResponse;
 import banner.query.BannerQueryService;
-import exception.InplaceException;
-import exception.code.CategoryErrorCode;
 import influencer.query.InfluencerQueryService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -18,17 +16,17 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import place.Category;
-import place.jpa.CategoryRepository;
+import place.command.PlaceCommandService;
+import place.dto.PlaceRequest;
+import place.dto.PlaceRequest.CategoryUpdate;
+import place.dto.PlaceResponse;
+import place.query.PlaceQueryFacade;
+import place.query.dto.PlaceResult;
 import post.command.PostCommandFacade;
 import post.dto.PostResponse;
-import post.jpa.CommentJpaRepository;
-import post.jpa.PostJpaRepository;
 import post.query.PostQueryFacade;
 import properties.GoogleApiProperties;
 import properties.KakaoApiProperties;
-import team7.inplace.admin.dto.CategoryForm;
-import team7.inplace.place.application.PlaceService;
 import video.dto.VideoResponse;
 import video.query.VideoQueryFacade;
 import video.query.dto.VideoParam;
@@ -42,11 +40,9 @@ public class AdminPageController {
     private final GoogleApiProperties googleApiProperties;
     private final BannerQueryService bannerQueryService;
     private final InfluencerQueryService influencerQueryService;
-    private final CategoryRepository categoryRepository;
-    private final PostJpaRepository postJpaRepository;
-    private final CommentJpaRepository commentJpaRepository;
     private final VideoQueryFacade videoQueryFacade;
-    private final PlaceService placeService;
+    private final PlaceQueryFacade placeQueryFacade;
+    private final PlaceCommandService placeCommandService;
     private final PostCommandFacade postCommandFacade;
     private final PostQueryFacade postQueryFacade;
 
@@ -67,7 +63,7 @@ public class AdminPageController {
         model.addAttribute("videoRegistration", videoRegistration);
         model.addAttribute("kakaoApiKey", kakaoApiProperties.jsKey());
         model.addAttribute("googleApiKey", googleApiProperties.placeKey1());
-        model.addAttribute("categories", categoryRepository.findSubCategories());
+        model.addAttribute("categories", placeQueryFacade.findSubCategories());
         return "admin/video.html";
     }
 
@@ -106,35 +102,34 @@ public class AdminPageController {
 
     @GetMapping("/category")
     public String getCategoryPage(Model model) {
-        model.addAttribute("parentCategories", categoryRepository.findParentCategories());
+        model.addAttribute("parentCategories", placeQueryFacade.findParentCategories());
         return "admin/category/list.html";
     }
 
     @GetMapping("/category/{categoryId}/edit")
     public String getCategoryEditForm(@PathVariable Long categoryId, Model model) {
-        Category category = categoryRepository.findById(categoryId)
-            .orElseThrow(() -> InplaceException.of(CategoryErrorCode.NOT_FOUND));
-        CategoryForm categoryForm = CategoryForm.of(category);
+        PlaceResult.Category category = placeQueryFacade.findCategoryById(categoryId);
+        PlaceResponse.AdminCategory categoryForm = PlaceResponse.AdminCategory.of(category);
         model.addAttribute("categoryForm", categoryForm);
         return "admin/category/edit.html";
     }
 
     @PostMapping("/category/{categoryId}/edit")
     public String editCategory(
-        @PathVariable Long categoryId, @ModelAttribute CategoryForm categoryForm) {
-        placeService.updateCategory(categoryId, categoryForm);
+        @PathVariable Long categoryId, @ModelAttribute CategoryUpdate categoryUpdate) { // Warning : 오류 날 가능성 존재
+        placeCommandService.updateCategory(categoryUpdate.toCommand(categoryId));
         return "redirect:/admin/category";
     }
 
     @GetMapping("/category/add")
     public String getCategoryAddForm(Model model) {
-        model.addAttribute("categoryForm", new CategoryForm());
+        model.addAttribute("categoryForm", new PlaceRequest.CategoryCreate());
         return "admin/category/add.html";
     }
 
-    @PostMapping("/category/add") // TODO - place controller 로 옮기는게 어떨까
-    public String saveCategory(@ModelAttribute CategoryForm categoryForm) {
-        categoryRepository.save(categoryForm.toEntity());
+    @PostMapping("/category/add")
+    public String saveCategory(@ModelAttribute PlaceRequest.CategoryCreate categoryCreate) { // Warning : 오류 날 가능성 존재
+        placeCommandService.createCategory(categoryCreate.toCommand());
         return "redirect:/admin/category";
     }
 

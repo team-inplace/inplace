@@ -1,7 +1,9 @@
 package place.query;
 
 import exception.InplaceException;
+import exception.code.CategoryErrorCode;
 import exception.code.PlaceErrorCode;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import place.jpa.PlaceJpaRepository;
 import place.query.PlaceQueryResult.Marker;
 import place.query.dto.PlaceParam;
 import place.query.dto.PlaceResult;
+import place.query.dto.PlaceResult.Category;
 import video.query.VideoReadRepository;
 
 @Service
@@ -144,5 +147,21 @@ public class PlaceQueryService {
     public List<PlaceResult.Category> getSubCategoriesByParentId(Long parentId) {
         return categoryRepository.findSubCategoriesByParentId(parentId)
             .stream().map(PlaceResult.Category::from).toList();
+    }
+
+    public List<PlaceResult.Category> getSubCategories() {
+        return categoryRepository.findSubCategories()
+            .stream().map(PlaceResult.Category::from).toList();
+    }
+
+    public List<PlaceResult.Category> getParentCategories() {
+        return categoryRepository.findParentCategories()
+            .stream().map(PlaceResult.Category::from).toList();
+    }
+
+    public PlaceResult.Category findCategoryById(Long categoryId) {
+        return categoryRepository.findById(categoryId)
+            .map(PlaceResult.Category::from)
+            .orElseThrow(() -> InplaceException.of(CategoryErrorCode.NOT_FOUND));
     }
 }

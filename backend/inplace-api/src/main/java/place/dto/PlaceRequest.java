@@ -4,7 +4,11 @@ import io.micrometer.common.util.StringUtils;
 import jakarta.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.List;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import place.command.dto.PlaceCommand;
+import place.command.dto.PlaceCommand.CategoryCreate;
 import team7.inplace.place.application.command.PlacesCommand;
 import team7.inplace.place.application.command.PlacesCommand.FilterParams;
 import team7.inplace.place.application.command.PlacesCommand.RegionParam;
@@ -99,6 +103,37 @@ public class PlaceRequest {
             );
         }
     }
-    먼말이징?
+
+    public record CategoryUpdate(
+        String name,
+        String engName,
+        Long parentId
+    ) {
+
+        public PlaceCommand.CategoryUpdate toCommand(Long categoryId) {
+            return new PlaceCommand.CategoryUpdate(
+                categoryId,
+                this.name,
+                this.engName,
+                this.parentId
+            );
+        }
+    }
+
+    @NoArgsConstructor
+    @Getter @Setter
+    public static final class CategoryCreate {
+        private String name;
+        private String engName;
+        private Long parentId;
+
+        public PlaceCommand.CategoryCreate toCommand() {
+            return new PlaceCommand.CategoryCreate(
+                this.name,
+                this.engName,
+                this.parentId
+            );
+        }
+    }
 
 }

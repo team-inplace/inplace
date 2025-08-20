@@ -15,13 +15,13 @@ import place.command.PlaceCommandService;
 import place.command.dto.PlaceCommand;
 import place.dto.PlaceRequest;
 import place.dto.PlaceRequest.Upsert;
-import place.dto.PlacesResponse;
-import place.dto.PlacesResponse.Admin;
-import place.dto.PlacesResponse.AdminCategory;
-import place.dto.PlacesResponse.Categories;
-import place.dto.PlacesResponse.Marker;
-import place.dto.PlacesResponse.MarkerDetail;
-import place.dto.PlacesResponse.Simple;
+import place.dto.PlaceResponse;
+import place.dto.PlaceResponse.Admin;
+import place.dto.PlaceResponse.AdminCategory;
+import place.dto.PlaceResponse.Categories;
+import place.dto.PlaceResponse.Marker;
+import place.dto.PlaceResponse.MarkerDetail;
+import place.dto.PlaceResponse.Simple;
 import place.dto.ReviewResponse;
 import place.query.PlaceQueryFacade;
 import review.ReviewService;
@@ -48,7 +48,7 @@ public class PlaceController implements PlaceControllerApiSpec {
 
     @Override
     @GetMapping
-    public ResponseEntity<Page<PlacesResponse.Simple>> getPlaces(
+    public ResponseEntity<Page<PlaceResponse.Simple>> getPlaces(
         @ModelAttribute @Validated PlaceRequest.Coordinate coordinateParams,
         @ModelAttribute PlaceRequest.Filter filterParams,
         @PageableDefault(page = 0, size = 10) Pageable pageable
@@ -59,7 +59,7 @@ public class PlaceController implements PlaceControllerApiSpec {
             pageable
         );
 
-        var responses = PlacesResponse.Simple.from(placeSimpleInfos.getContent());
+        var responses = PlaceResponse.Simple.from(placeSimpleInfos.getContent());
         return new ResponseEntity<>(
             new PageImpl<>(responses, pageable, placeSimpleInfos.getTotalElements()),
             HttpStatus.OK
@@ -75,7 +75,7 @@ public class PlaceController implements PlaceControllerApiSpec {
     ) {
         var placeSimpleInfos = placeQueryFacade.getPlacesByName(placeName, filterParams.toCommand(),
             pageable);
-        var responses = PlacesResponse.Simple.from(placeSimpleInfos.getContent());
+        var responses = PlaceResponse.Simple.from(placeSimpleInfos.getContent());
         return new ResponseEntity<>(
             new PageImpl<>(responses, pageable, placeSimpleInfos.getTotalElements()),
             HttpStatus.OK
@@ -118,12 +118,12 @@ public class PlaceController implements PlaceControllerApiSpec {
 
     @Override
     @GetMapping("/{id}")
-    public ResponseEntity<PlacesResponse.Detail> getPlaceDetail(
+    public ResponseEntity<PlaceResponse.Detail> getPlaceDetail(
         @PathVariable("id") Long placeId
     ) {
         var placeDetail = placeQueryFacade.getDetailedPlaces(placeId);
 
-        var response = PlacesResponse.Detail.from(placeDetail);
+        var response = PlaceResponse.Detail.from(placeDetail);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

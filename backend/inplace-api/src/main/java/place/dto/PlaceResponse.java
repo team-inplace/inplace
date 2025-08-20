@@ -15,10 +15,11 @@ import place.client.GooglePlaceClientResponse.ParkingOptions;
 import place.client.GooglePlaceClientResponse.PaymentOptions;
 import place.client.GooglePlaceClientResponse.RegularOpeningHours;
 import place.query.PlaceQueryResult;
+import place.query.dto.PlaceResult;
 import review.query.ReviewQueryResult;
 import video.query.VideoQueryResult;
 
-public class PlacesResponse {
+public class PlaceResponse {
 
     public record Simple(
         Long placeId,
@@ -30,7 +31,7 @@ public class PlacesResponse {
         String latitude,
         Long likeCount,
         Boolean likes,
-        List<PlacesResponse.Video> videos
+        List<PlaceResponse.Video> videos
     ) {
 
         public static List<Simple> from(List<PlaceInfo.Simple> placeInfos) {
@@ -55,7 +56,7 @@ public class PlacesResponse {
                 placeInfo.place().likeCount(),
                 placeInfo.place().isLiked(),
                 placeInfo.video().stream()
-                    .map(PlacesResponse.Video::from)
+                    .map(PlaceResponse.Video::from)
                     .collect(Collectors.toList())
             );
         }
@@ -64,14 +65,14 @@ public class PlacesResponse {
     public record Detail(
         Long placeId,
         String placeName,
-        PlacesResponse.Address address,
+        PlaceResponse.Address address,
         String category,
         Double longitude,
         Double latitude,
-        PlacesResponse.Facility facility,
-        List<PlacesResponse.Video> videos,
-        List<PlacesResponse.SurroundVideo> surroundVideos,
-        List<PlacesResponse.GoogleReview> googleReviews,
+        PlaceResponse.Facility facility,
+        List<PlaceResponse.Video> videos,
+        List<PlaceResponse.SurroundVideo> surroundVideos,
+        List<PlaceResponse.GoogleReview> googleReviews,
         Double rating,
         String kakaoPlaceUrl,
         String googlePlaceUrl,
@@ -82,20 +83,20 @@ public class PlacesResponse {
         Boolean likes
     ) {
 
-        public static PlacesResponse.Detail from(PlaceInfo.Detail place) {
+        public static PlaceResponse.Detail from(PlaceInfo.Detail place) {
             if (place.googlePlace() == null) {
                 return createDetailWithoutGooglePlace(place);
             }
             return createDetailWithGooglePlace(place);
         }
 
-        private static PlacesResponse.Detail createDetailWithoutGooglePlace(
+        private static PlaceResponse.Detail createDetailWithoutGooglePlace(
             PlaceInfo.Detail place
         ) {
-            return new PlacesResponse.Detail(
+            return new PlaceResponse.Detail(
                 place.place().placeId(),
                 place.place().placeName(),
-                new PlacesResponse.Address(
+                new PlaceResponse.Address(
                     place.place().address1(),
                     place.place().address2(),
                     place.place().address3()
@@ -105,10 +106,10 @@ public class PlacesResponse {
                 place.place().latitude(),
                 null,
                 place.videos().stream()
-                    .map(PlacesResponse.Video::from)
+                    .map(PlaceResponse.Video::from)
                     .toList(),
                 place.surroundVideos().stream()
-                    .map(PlacesResponse.SurroundVideo::from)
+                    .map(PlaceResponse.SurroundVideo::from)
                     .toList(),
                 List.of(),
                 null,
@@ -128,11 +129,11 @@ public class PlacesResponse {
             );
         }
 
-        private static PlacesResponse.Detail createDetailWithGooglePlace(PlaceInfo.Detail place) {
-            return new PlacesResponse.Detail(
+        private static PlaceResponse.Detail createDetailWithGooglePlace(PlaceInfo.Detail place) {
+            return new PlaceResponse.Detail(
                 place.place().placeId(),
                 place.place().placeName(),
-                new PlacesResponse.Address(
+                new PlaceResponse.Address(
                     place.place().address1(),
                     place.place().address2(),
                     place.place().address3()
@@ -140,20 +141,20 @@ public class PlacesResponse {
                 place.place().category(),
                 place.place().longitude(),
                 place.place().latitude(),
-                PlacesResponse.Facility.of(
+                PlaceResponse.Facility.of(
                     place.googlePlace().accessibilityOptions().orElse(null),
                     place.googlePlace().parkingOptions().orElse(null),
                     place.googlePlace().paymentOptions().orElse(null)
                 ),
                 place.videos().stream()
-                    .map(PlacesResponse.Video::from)
+                    .map(PlaceResponse.Video::from)
                     .toList(),
                 place.surroundVideos().stream()
-                    .map(PlacesResponse.SurroundVideo::from)
+                    .map(PlaceResponse.SurroundVideo::from)
                     .toList(),
                 place.googlePlace().reviews().orElse(List.of())
                     .stream()
-                    .map(PlacesResponse.GoogleReview::from)
+                    .map(PlaceResponse.GoogleReview::from)
                     .toList(),
                 place.googlePlace().rating(),
                 "http://place.map.kakao.com/" + place.place().kakaoPlaceId(),
@@ -196,12 +197,12 @@ public class PlacesResponse {
         Boolean acceptsCashOnly
     ) {
 
-        public static PlacesResponse.Facility of(
+        public static PlaceResponse.Facility of(
             GooglePlaceClientResponse.AccessibilityOptions accessibilityOptions,
             GooglePlaceClientResponse.ParkingOptions parkingOptions,
             GooglePlaceClientResponse.PaymentOptions paymentOptions
         ) {
-            return new PlacesResponse.Facility(
+            return new PlaceResponse.Facility(
                 Optional.ofNullable(accessibilityOptions)
                     .flatMap(AccessibilityOptions::wheelchairAccessibleSeating)
                     .orElse(null),
@@ -228,8 +229,8 @@ public class PlacesResponse {
         String publishTime
     ) {
 
-        public static PlacesResponse.GoogleReview from(GooglePlaceClientResponse.Review review) {
-            return new PlacesResponse.GoogleReview(
+        public static PlaceResponse.GoogleReview from(GooglePlaceClientResponse.Review review) {
+            return new PlaceResponse.GoogleReview(
                 review.rating() >= 4,
                 review.text().isEmpty() ? "" : review.text().get().text().orElse(""),
                 review.authorAttribution().displayName(),
@@ -264,8 +265,8 @@ public class PlacesResponse {
         String influencerName
     ) {
 
-        public static PlacesResponse.Video from(VideoQueryResult.SimpleVideo video) {
-            return new PlacesResponse.Video(video.videoUrl(), video.influencerName());
+        public static PlaceResponse.Video from(VideoQueryResult.SimpleVideo video) {
+            return new PlaceResponse.Video(video.videoUrl(), video.influencerName());
         }
     }
 
@@ -273,14 +274,14 @@ public class PlacesResponse {
         Long videoId,
         String influencerName,
         String videoUrl,
-        PlacesResponse.PlaceDetail place
+        PlaceResponse.PlaceDetail place
     ) {
 
         public static SurroundVideo from(VideoQueryResult.DetailedVideo videoInfo) {
-            var place = new PlacesResponse.PlaceDetail(
+            var place = new PlaceResponse.PlaceDetail(
                 videoInfo.placeId(),
                 videoInfo.placeName(),
-                new PlacesResponse.Address(
+                new PlaceResponse.Address(
                     videoInfo.address1(),
                     videoInfo.address2(),
                     videoInfo.address3()
@@ -298,7 +299,7 @@ public class PlacesResponse {
     public record PlaceDetail(
         Long placeId,
         String placeName,
-        PlacesResponse.Address address
+        PlaceResponse.Address address
     ) {
 
     }
@@ -348,7 +349,7 @@ public class PlacesResponse {
                 ),
                 "",
                 marker.videos().stream()
-                    .map(PlacesResponse.Video::from)
+                    .map(PlaceResponse.Video::from)
                     .toList()
             );
         }
@@ -401,7 +402,7 @@ public class PlacesResponse {
     ) {
 
         public static Admin of(PlaceInfo.Simple simple) {
-            return new PlacesResponse.Admin(
+            return new PlaceResponse.Admin(
                 simple.place().placeId(),
                 simple.place().placeName(),
                 simple.place().category(),
@@ -422,7 +423,7 @@ public class PlacesResponse {
         Long parentId
     ) {
 
-        public static AdminCategory of(PlaceInfo.Category category) {
+        public static AdminCategory of(PlaceResult.Category category) {
             return new AdminCategory(
                 category.id(),
                 category.name(),
@@ -431,4 +432,5 @@ public class PlacesResponse {
             );
         }
     }
+
 }
