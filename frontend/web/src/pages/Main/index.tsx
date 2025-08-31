@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import BaseLayout from '@/components/common/BaseLayout';
 import MainBanner from '@/components/Main/MainBanner';
+import PermissionModal from '@/components/common/modals/PermissionModal';
 import ResearchModal from '@/components/common/modals/ResearchModal';
 
 import { useGetMain } from '@/api/hooks/useGetMain';
@@ -12,11 +14,19 @@ import useGetLocation from '@/hooks/useGetLocation';
 import { useGetAroundVideo } from '@/api/hooks/useGetAroundVideo';
 import MapSection from '@/components/Main/MapSection';
 import { useABTest } from '@/provider/ABTest';
+import { requestNotificationPermission } from '@/libs/FCM';
+import usePermissions from '@/hooks/usePermissions';
 
 export default function MainPage() {
   const { isAuthenticated } = useAuth();
   const location = useGetLocation();
   const testGroup = useABTest('map_ui_test');
+  const { hasUndecidedPermissions, isLoading } = usePermissions();
+
+  const [showPermissionModal, setShowPermissionModal] = useState(false);
+  // 세션 동안 모달 표시 상태를 관리하는 state
+  const [permissionModalShown, setPermissionModalShown] = useState(false);
+  const [permissionModalClosed, setPermissionModalClosed] = useState(false);
 
   const [{ data: bannerData }, { data: influencersData }] = useGetMain();
   const [{ data: coolEatsVideoData }, { data: coolPlaysVideoData }, { data: newVideoData }] =
@@ -28,9 +38,37 @@ export default function MainPage() {
     !!isAuthenticated && !!location?.lat && !!location?.lng,
   );
 
+  useEffect(() => {
+    if (!isLoading && !permissionModalShown) {
+      if (hasUndecidedPermissions()) {
+        setShowPermissionModal(true);
+        setPermissionModalShown(true);
+      }
+    }
+  }, [isLoading, hasUndecidedPermissions, permissionModalShown]);
+
+  useEffect(() => {
+    const requestNotification = async () => {
+      try {
+        await requestNotificationPermission();
+      } catch (error) {
+        console.error('알림 권한 요청 실패:', error);
+      }
+    };
+    requestNotification();
+  }, []);
+
+  const handlePermissionModalClose = () => {
+    setShowPermissionModal(false);
+    setPermissionModalClosed(true);
+  };
+
+  const shouldShowResearchModal = !showPermissionModal && !permissionModalShown && !permissionModalClosed;
+
   return (
     <>
-      <ResearchModal />
+      {showPermissionModal && <PermissionModal onClose={handlePermissionModalClose} />}
+      {shouldShowResearchModal && <ResearchModal />}
       <Wrapper>
         {testGroup === 'A' && <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" />}
         <MainBanner items={bannerData} />
