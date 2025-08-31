@@ -6,7 +6,6 @@ import { Text } from '@/components/common/typography/Text';
 
 export default function PermissionModal({ onClose }: { onClose: () => void }) {
   const handleClose = () => {
-    console.log('PermissionModal closed');
     onClose();
   };
 

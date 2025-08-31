@@ -19,14 +19,14 @@ import usePermissions from '@/hooks/usePermissions';
 
 export default function MainPage() {
   const { isAuthenticated } = useAuth();
-  const location = useGetLocation();
   const testGroup = useABTest('map_ui_test');
-  const { hasUndecidedPermissions, isLoading } = usePermissions();
+  const { permissions, hasUndecidedPermissions, isLoading } = usePermissions();
 
   const [showPermissionModal, setShowPermissionModal] = useState(false);
   // 세션 동안 모달 표시 상태를 관리하는 state
   const [permissionModalShown, setPermissionModalShown] = useState(false);
   const [permissionModalClosed, setPermissionModalClosed] = useState(false);
+  const location = useGetLocation(!isLoading && (permissions.location === 'granted' || permissionModalClosed));
 
   const [{ data: bannerData }, { data: influencersData }] = useGetMain();
   const [{ data: coolEatsVideoData }, { data: coolPlaysVideoData }, { data: newVideoData }] =
@@ -47,20 +47,13 @@ export default function MainPage() {
     }
   }, [isLoading, hasUndecidedPermissions, permissionModalShown]);
 
-  useEffect(() => {
-    const requestNotification = async () => {
-      try {
-        await requestNotificationPermission();
-      } catch (error) {
-        console.error('알림 권한 요청 실패:', error);
-      }
-    };
-    requestNotification();
-  }, []);
-
   const handlePermissionModalClose = () => {
     setShowPermissionModal(false);
     setPermissionModalClosed(true);
+
+    requestNotificationPermission().catch((error) => {
+      console.error('알림 권한 요청 실패:', error);
+    });
   };
 
   const shouldShowResearchModal = !showPermissionModal && !permissionModalShown && !permissionModalClosed;
