@@ -50,6 +50,7 @@ export default function InfluencerMapWindow({
   savedCenter,
 }: MapWindowProps) {
   const mapRef = useRef<kakao.maps.Map | null>(null);
+  const isReactNativeWebView = typeof window !== 'undefined' && window.ReactNativeWebView != null;
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [isMapReady, setIsMapReady] = useState(false);
   const [isRestored, setIsRestored] = useState(false);
@@ -127,6 +128,28 @@ export default function InfluencerMapWindow({
   }, [isRestoredFromDetail, isMapReady, isRestored, hasInitialLoad]);
 
   useEffect(() => {
+    if (isReactNativeWebView) {
+      window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'GPS_PERMISSIONS' }));
+      window.addEventListener('message', (event) => {
+        const message = JSON.parse(event.data);
+        if (message.latitude && message.longitude) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const newCenter = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+              };
+              setUserLocation(newCenter);
+            },
+            (error) => {
+              console.error('Error fetching location', error);
+            },
+          );
+        }
+      });
+
+      return;
+    }
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
