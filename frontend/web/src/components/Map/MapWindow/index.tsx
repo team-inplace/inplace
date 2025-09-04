@@ -171,24 +171,6 @@ export default function MapWindow({
       setIsInitialLoad(false);
       return;
     }
-    if (isReactNativeWebView) {
-      window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'GPS_PERMISSIONS' }));
-
-      window.addEventListener('message', (event) => {
-        const message = JSON.parse(event.data);
-
-        if (message.latitude && message.longitude) {
-          const newLocation = {
-            lat: message.latitude,
-            lng: message.longitude,
-          };
-          setUserLocation(newLocation);
-        }
-      });
-
-      return;
-    }
-
     const getUserLocation = async () => {
       try {
         const position: GeolocationPosition = await new Promise((resolve, reject) => {
@@ -228,7 +210,25 @@ export default function MapWindow({
         }
       }
     };
-    getUserLocation();
+    if (isReactNativeWebView) {
+      window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'GPS_PERMISSIONS' }));
+
+      console.log('isReactNativeWebView:', isReactNativeWebView);
+      console.log('window.ReactNativeWebView:', window.ReactNativeWebView);
+      window.addEventListener('message', (event) => {
+        const message = JSON.parse(event.data);
+
+        if (message.latitude && message.longitude) {
+          const newLocation = {
+            lat: message.latitude,
+            lng: message.longitude,
+          };
+          setUserLocation(newLocation);
+        }
+      });
+    } else {
+      getUserLocation();
+    }
   }, [isInitialLoad, isMapReady, isRestoredFromDetail, center, isReactNativeWebView]);
 
   useEffect(() => {
