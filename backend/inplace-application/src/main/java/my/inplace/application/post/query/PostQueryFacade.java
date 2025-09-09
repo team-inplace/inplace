@@ -1,15 +1,15 @@
 package my.inplace.application.post.query;
 
-import my.inplace.application.annotation.Facade;
-import my.inplace.common.cursor.CursorResult;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import my.inplace.application.annotation.Facade;
+import my.inplace.application.post.query.dto.CommentResult;
+import my.inplace.application.post.query.dto.PostResult;
+import my.inplace.common.cursor.CursorResult;
+import my.inplace.security.util.AuthorizationUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-import my.inplace.application.post.query.dto.CommentResult;
-import my.inplace.application.post.query.dto.PostResult;
-import my.inplace.security.util.AuthorizationUtil;
 
 @Facade
 @RequiredArgsConstructor
@@ -30,7 +30,7 @@ public class PostQueryFacade {
 
     public PostResult.DetailedPost getPostById(Long postId) {
         var userId = AuthorizationUtil.getUserIdOrNull();
-        var queryResult = postQueryService.getPostById(userId, postId);
+        var queryResult = postQueryService.getPostById(postId, userId);
         return PostResult.DetailedPost.from(queryResult);
     }
 
