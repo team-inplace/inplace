@@ -18,7 +18,6 @@ import useMarkerData from '@/hooks/Map/useMarkerData';
 import useIsMobile from '@/hooks/useIsMobile';
 import { useGetSearchPlaceMarkers } from '@/api/hooks/useGetSearchPlaceMarker';
 
-
 interface MapWindowProps {
   center: { lat: number; lng: number };
   setCenter: React.Dispatch<React.SetStateAction<{ lat: number; lng: number }>>;
@@ -161,13 +160,13 @@ export default function MapWindow({
   useEffect(() => {
     if (isReactNativeWebView) {
       window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'GPS_PERMISSIONS' }));
-      
+
       // Alert 표시 후 바로 지도 로딩 완료 처리
       setIsLoading(false);
       updateMapBounds();
       setIsInitialLoad(false);
       setHasInitialLoad(true);
-      
+
       return;
     }
 

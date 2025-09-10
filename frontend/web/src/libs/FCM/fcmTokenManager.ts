@@ -46,7 +46,7 @@ export async function setupFCMToken(postDeviceToken: (token: string) => Promise<
       console.log('FCM not available in this environment');
       return null;
     }
-    
+
     if (Notification.permission !== 'granted') {
       return null;
     }
