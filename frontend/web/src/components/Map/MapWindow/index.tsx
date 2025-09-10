@@ -18,6 +18,7 @@ import useMarkerData from '@/hooks/Map/useMarkerData';
 import useIsMobile from '@/hooks/useIsMobile';
 import { useGetSearchPlaceMarkers } from '@/api/hooks/useGetSearchPlaceMarker';
 
+
 interface MapWindowProps {
   center: { lat: number; lng: number };
   setCenter: React.Dispatch<React.SetStateAction<{ lat: number; lng: number }>>;
@@ -158,6 +159,18 @@ export default function MapWindow({
 
   // 초기 접속 시
   useEffect(() => {
+    if (isReactNativeWebView) {
+      window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'GPS_PERMISSIONS' }));
+      
+      // Alert 표시 후 바로 지도 로딩 완료 처리
+      setIsLoading(false);
+      updateMapBounds();
+      setIsInitialLoad(false);
+      setHasInitialLoad(true);
+      
+      return;
+    }
+
     if (!isInitialLoad || !isMapReady) {
       return;
     }
@@ -171,6 +184,7 @@ export default function MapWindow({
       setIsInitialLoad(false);
       return;
     }
+
     const getUserLocation = async () => {
       try {
         const position: GeolocationPosition = await new Promise((resolve, reject) => {
@@ -210,25 +224,7 @@ export default function MapWindow({
         }
       }
     };
-    if (isReactNativeWebView) {
-      window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'GPS_PERMISSIONS' }));
-
-      console.log('isReactNativeWebView:', isReactNativeWebView);
-      console.log('window.ReactNativeWebView:', window.ReactNativeWebView);
-      window.addEventListener('message', (event) => {
-        const message = JSON.parse(event.data);
-
-        if (message.latitude && message.longitude) {
-          const newLocation = {
-            lat: message.latitude,
-            lng: message.longitude,
-          };
-          setUserLocation(newLocation);
-        }
-      });
-    } else {
-      getUserLocation();
-    }
+    getUserLocation();
   }, [isInitialLoad, isMapReady, isRestoredFromDetail, center, isReactNativeWebView]);
 
   useEffect(() => {
