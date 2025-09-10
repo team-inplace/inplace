@@ -18,4 +18,16 @@ const firebaseConfig = {
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
-export const messaging = getMessaging(app);
+
+let messaging: any = null;
+
+try {
+  if (typeof window !== 'undefined' && !window.ReactNativeWebView) {
+    messaging = getMessaging(app);
+  }
+} catch (error) {
+  console.warn('Firebase messaging not supported in this environment:', error);
+  messaging = null;
+}
+
+export { messaging };

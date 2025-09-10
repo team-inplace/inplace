@@ -13,6 +13,9 @@ async function registerServiceWorker() {
 }
 
 async function getDeviceToken() {
+  if (!messaging) {
+    throw new Error('Firebase messaging is not initialized');
+  }
   // 권한이 허용된 후에 토큰 발급
   const token = await getToken(messaging, {
     vapidKey: import.meta.env.VITE_VAPID_KEY,
@@ -39,6 +42,11 @@ export async function requestNotificationPermission() {
 
 export async function setupFCMToken(postDeviceToken: (token: string) => Promise<void>) {
   try {
+    if (!messaging || (typeof window !== 'undefined' && window.ReactNativeWebView)) {
+      console.log('FCM not available in this environment');
+      return null;
+    }
+    
     if (Notification.permission !== 'granted') {
       return null;
     }
