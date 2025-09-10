@@ -209,4 +209,4 @@ gradle-app.setting
 !messages.properties
 # End of https://www.toptal.com/developers/gitignore/api/macos,java,intellij,gradle
 
-/src/main/resources/key/*
+/inplace-api/src/main/resources/key/*
