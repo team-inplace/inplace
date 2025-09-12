@@ -1,36 +1,31 @@
 import * as Location from "expo-location";
-import React from "react";
-import WebView from "react-native-webview";
+import { WebView } from "react-native-webview";
 
 const getLocation = async (
-  webViewRef: React.RefObject<WebView>,
+  webView: WebView,
   setGpsLoading: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
+  setGpsLoading(true);
   try {
-    setGpsLoading(true);
+    const { coords } = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.High,
+    });
 
-    const locationSubscription = await Location.watchPositionAsync(
-      {
-        distanceInterval: 1,
-        accuracy: Location.Accuracy.High,
-      },
-      (location) => {
-        const { latitude, longitude } = location.coords;
+    const location = {
+      latitude: coords.latitude,
+      longitude: coords.longitude,
+    };
 
-        // WebView로 좌표 정보 전송
-        if (webViewRef.current) {
-          webViewRef.current.postMessage(
-            JSON.stringify({ latitude, longitude })
-          );
-        }
-      }
+    console.log("위치 정보를 웹으로 전송합니다:", location);
+
+    webView.postMessage(
+      JSON.stringify({ type: "NATIVE_LOCATION", payload: location })
     );
-    // 위치 추적을 취소할 수 있는 객체 반환
-    return locationSubscription;
   } catch (error) {
-    console.error("Error getting location:", error);
+    console.error("위치 정보를 가져오는 데 실패했습니다:", error);
   } finally {
     setGpsLoading(false);
   }
 };
+
 export default getLocation;
