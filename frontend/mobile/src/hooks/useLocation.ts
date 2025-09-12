@@ -15,8 +15,14 @@ interface ModalContent {
 export const useLocation = (webViewRef: React.RefObject<WebView | null>) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [modalContent, setModalContent] = useState<ModalContent | null>(null);
+  const [permissionRequested, setPermissionRequested] = useState(false);
 
   const showLocationModal = async () => {
+    if (permissionRequested) {
+      return;
+    }
+    setPermissionRequested(true);
+
     const servicesEnabled = await checkLocation();
     if (!servicesEnabled) {
       setModalContent({

@@ -16,8 +16,6 @@ const getLocation = async (
       longitude: coords.longitude,
     };
 
-    console.log("위치 정보를 웹으로 전송합니다:", location);
-
     webView.postMessage(
       JSON.stringify({ type: "NATIVE_LOCATION", payload: location })
     );
