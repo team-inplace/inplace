@@ -156,11 +156,16 @@ export default function MapWindow({
     setShowSearchButton(false);
   }, [placeNameMarkers, filtersWithPlaceName.placeName]);
 
-  // 초기 접속 시
+  // 1번만 postMessage 보내도록
   useEffect(() => {
     if (isReactNativeWebView) {
       window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'GPS_PERMISSIONS' }));
+    }
+  }, [isReactNativeWebView]);
 
+  // 초기 접속 시
+  useEffect(() => {
+    if (isReactNativeWebView) {
       // Alert 표시 후 바로 지도 로딩 완료 처리
       setIsLoading(false);
       updateMapBounds();
