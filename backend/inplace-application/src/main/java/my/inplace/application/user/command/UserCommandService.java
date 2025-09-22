@@ -72,7 +72,7 @@ public class UserCommandService {
     }
 
     // TODO: 캐시 적용을 infra에서 처리하도록 관심사 분리
-    @CachePut(cacheNames = {"receivedCommentCache"}, key = "#userId")
+    @CachePut(cacheNames = {"receivedCommentCache"}, key = "#p0") // p0 = userId
     public Long addToReceivedCommentByUserId(Long userId, Integer delta) {
         User user = userJpaRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
@@ -81,7 +81,7 @@ public class UserCommandService {
     }
 
     // TODO: 캐시 적용을 infra에서 처리하도록 관심사 분리
-    @CachePut(cacheNames = {"receivedLikeCache"}, key = "#userId")
+    @CachePut(cacheNames = {"receivedLikeCache"}, key = "#p0") // p0 = userId
     public Long addToReceivedLikeByUserId(Long userId, Integer delta) {
         User user = userJpaRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
