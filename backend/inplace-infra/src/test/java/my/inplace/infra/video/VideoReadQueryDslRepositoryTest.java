@@ -118,7 +118,7 @@ class VideoReadQueryDslRepositoryTest {
             new VideoQueryResult.DetailedVideo(2L, "Video2", "influencer1", 2L, "testPlace2", "eats", 1L, "add1", "add2", "add3"),
             new VideoQueryResult.DetailedVideo(2L, "Video2", "influencer1", 3L, "testPlace3", "eats", 1L, "add1", "add2", "add3"),
             new VideoQueryResult.DetailedVideo(1L, "Video1", "influencer1", 1L, "testPlace1", "eats", 1L, "add1", "add2", "add3"),
-            new VideoQueryResult.DetailedVideo(1L, "Video1", "influencer1", 3L, "testPlace3", "eats", 1L, "add1", "add2", "add3")
+            new VideoQueryResult.DetailedVideo(1L, "Video1", "influencer1", 2L, "testPlace2", "eats", 1L, "add1", "add2", "add3")
         );
 
         // when

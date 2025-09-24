@@ -101,7 +101,7 @@ public class VideoReadQueryDslRepository implements VideoReadRepository {
                         .where(QLikedInfluencer.likedInfluencer.userId.eq(userId)
                             .and(QLikedInfluencer.likedInfluencer.isLiked.isTrue()))),
                 commonWhere())
-            .orderBy(QVideo.video.publishTime.desc())
+            .orderBy(QVideo.video.publishTime.desc(), QPlace.place.id.asc())
             .limit(10)
             .fetch();
     }
