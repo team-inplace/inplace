@@ -84,6 +84,9 @@ jobs:
           echo "EAS CLI version:"
           eas --version
 
+          # 누락된 패키지 수동 설치
+          npx expo install expo-modules-autolinking expo-modules-core expo-asset
+
           # Expo 의존성 정리 및 재설치
           npx expo install --fix
 
