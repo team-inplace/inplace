@@ -84,6 +84,9 @@ jobs:
           echo "EAS CLI version:"
           eas --version
 
+          # Expo 의존성 정리 및 재설치
+          npx expo install --fix
+
       - name: 📋 Update metro.config.js for SVG support
         run: |
           if [ -f ./metro.config.js ]; then
