@@ -6,6 +6,8 @@ import my.inplace.common.exception.code.PostErrorCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import my.inplace.domain.post.Post;
+import my.inplace.domain.post.PostTitle;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.util.Pair;
@@ -84,7 +86,7 @@ public class PostQueryService {
     }
 
     @Transactional(readOnly = true)
-    public String getPostTitleById(Long postId) {
+    public PostTitle getPostTitleById(Long postId) {
         return postJpaRepository.findTitleById(postId)
             .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
     }

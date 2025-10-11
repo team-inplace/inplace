@@ -29,7 +29,7 @@ public class AlarmEventHandler {
     @EventListener
     public void processMentionAlarm(MentionAlarmEvent mentionAlarmEvent) {
         Long userId = mentionAlarmEvent.receiverId();
-        String title = postQueryService.getPostTitleById(mentionAlarmEvent.postId());
+        String title = postQueryService.getPostTitleById(mentionAlarmEvent.postId()).getTitle();
 
         String content = title + " 게시글에서 " + mentionAlarmEvent.sender() + " 님이 언급했습니다.";
         
@@ -59,7 +59,7 @@ public class AlarmEventHandler {
     public void processPostReportAlarm(PostReportAlarmEvent postReportAlarmEvent) {
         Long postId = postReportAlarmEvent.postId();
         Long userId = postQueryService.getPostAuthorIdById(postId);
-        String title = postQueryService.getPostTitleById(postId);
+        String title = postQueryService.getPostTitleById(postId).getTitle();
 
         String content = title + " 게시글이 신고로 인하여 삭제되었습니다.";
 
@@ -84,7 +84,7 @@ public class AlarmEventHandler {
         Long commentId = commentReportAlarmEvent.commentId();
         Long postId = postQueryService.getPostIdById(commentId);
         Long userId = postQueryService.getCommentAuthorIdById(commentId);
-        String title = postQueryService.getPostTitleById(postId);
+        String title = postQueryService.getPostTitleById(postId).getTitle();
 
         String content = title + " 게시글에 작성한 댓글이 신고로 인하여 삭제되었습니다";
     
