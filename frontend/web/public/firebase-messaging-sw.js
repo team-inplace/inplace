@@ -18,3 +18,16 @@ const firebaseConfig = {
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+
+messaging.onBackgroundMessage((payload) => {
+  const { title, body, icon } = payload.notification || {};
+  self.registration.showNotification(title || '알림', { body, icon });
+});
+
+self.addEventListener('push', (event) => {
+  const data = event.data?.json() || {};
+  const { title, body, icon } = data.notification || {};
+  event.waitUntil(
+    self.registration.showNotification(title || '알림', { body, icon })
+  );
+});
