@@ -103,7 +103,8 @@ public class AlarmEventHandler {
         );
     }
 
-    private void sendFcmMessage(String title, String content, String fcmToken) {
+    public void sendFcmMessage(String title, String content, String fcmToken) {
+        log.info("alarm 보내기 시도");
         try {
             fcmClient.sendMessageByToken(title, content, fcmToken);
         } catch (FirebaseMessagingException e) {
