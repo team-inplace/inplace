@@ -1,0 +1,77 @@
+spring:
+  application:
+    name: ${APP_NAME}
+    domain: ${DOMAIN}
+  profiles:
+    include: db, redis, s3, monitoring, security, google, kakao, crawling, fcm
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      enabled: true
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+logging:
+  level:
+    root: INFO
+    #    team7.inplace: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+springdoc:
+  swagger-ui:
+    enabled: true
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+logging:
+  level:
+    root: INFO
+    #    team7.inplace: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.web: DEBUG
+    org.springframework.security: DEBUG
+springdoc:
+  swagger-ui:
+    enabled: true
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  jpa:
+    properties:
+      hibernate:
+        format_sql: false
+        show_sql: false
+logging:
+  level:
+    root: ERROR
+    #    team7.inplace: INFO
+    org.springframework.web: ERROR
+    org.springframework.security: ERROR
+springdoc:
+  swagger-ui:
+    enabled: false
+---
+spring:
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}

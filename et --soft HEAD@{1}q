@@ -1,0 +1,81 @@
+[33m8d9c3f8a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeat/INPLACE-285-domain-multimodule[m[33m, [m[1;31morigin/feat/INPLACE-285-domain-multimodule[m[33m)[m HEAD@{0}: reset: moving to HEAD
+[33m8d9c3f8a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeat/INPLACE-285-domain-multimodule[m[33m, [m[1;31morigin/feat/INPLACE-285-domain-multimodule[m[33m)[m HEAD@{1}: checkout: moving from dev to feat/INPLACE-285-domain-multimodule
+[33me96d425c[m[33m ([m[1;31morigin/dev[m[33m, [m[1;32mls[m[33m, [m[1;32mdev[m[33m)[m HEAD@{2}: pull origin dev: Fast-forward
+[33mbfc495d6[m HEAD@{3}: checkout: moving from refactor/INPLACE-283-fcm-env to dev
+[33m350ebf37[m[33m ([m[1;31morigin/refactor/INPLACE-283-fcm-env[m[33m, [m[1;32mrefactor/INPLACE-283-fcm-env[m[33m)[m HEAD@{4}: commit: [INPLACE-258] 사용하지 않는 import문 제거
+[33m675d9567[m HEAD@{5}: commit (merge): [INPLACE-258] 최신 개발 반영
+[33me5674e1f[m HEAD@{6}: commit: [INPLACE-258] 환경변수 처리 방법 변경
+[33m1619d491[m[33m ([m[1;31morigin/feat/INPLACE-258-real-time-alarm[m[33m, [m[1;32mfeat/INPLACE-258-real-time-alarm[m[33m)[m HEAD@{7}: checkout: moving from feat/INPLACE-258-real-time-alarm to refactor/INPLACE-283-fcm-env
+[33m1619d491[m[33m ([m[1;31morigin/feat/INPLACE-258-real-time-alarm[m[33m, [m[1;32mfeat/INPLACE-258-real-time-alarm[m[33m)[m HEAD@{8}: commit: [INPLACE-258] 테스트 완료 조건 변경
+[33m04dcd6bd[m HEAD@{9}: commit (merge): [INPLACE-258] 진행사항 반영
+[33mb733d908[m HEAD@{10}: commit: [INPLACE-258] 제목 탬플릿 변경
+[33mc7b31456[m HEAD@{11}: commit: [INPLACE-258] 작성 시간 계산 로직 추가 및 반환값에 포함
+[33m0f9c94ce[m HEAD@{12}: commit: [INPLACE-258] 반환 타입 명시적으로 변경
+[33m4cc3c248[m HEAD@{13}: commit: [INPLACE-258] 오타 수정
+[33m2b1b160a[m HEAD@{14}: commit: [INPLACE-258] 알림 메세지 ENUM 타입 내부로 이전
+[33m3a290793[m HEAD@{15}: commit: [INPLACE-258] properties 분리
+[33m081dee47[m HEAD@{16}: commit: [INPLACE-258] 필요 없는 주석 및 로그 메세지 삭제
+[33m5ea3cd7c[m HEAD@{17}: commit: [INPLACE-258] 필요 없는 주석 삭제
+[33m0a52fe1a[m HEAD@{18}: pull origin dev: Merge made by the 'ort' strategy.
+[33m99d99d36[m HEAD@{19}: commit: [INPLACE-258] 테스트 작성
+[33md8116565[m HEAD@{20}: commit: [INPLACE-258] 쓰레드 풀 할당
+[33mc6ecf334[m HEAD@{21}: commit: [INPLACE-258] reading -> checked
+[33m62b43d3e[m HEAD@{22}: commit: [INPLACE-258] reading -> checked
+[33m340e4d6a[m HEAD@{23}: commit: [INPLACE-258] 리펙토링에 의한 테스트 변경
+[33m39c84df1[m HEAD@{24}: commit: [INPLACE-258] 핸들링 로직 구현
+[33m9cfdb84d[m HEAD@{25}: commit: [INPLACE-258] 메서드 리펙토링 (매개변수 String -> Long)
+[33m17e5fa41[m HEAD@{26}: commit: [INPLACE-258] 신고로 인한 삭제가 트리거가 되도록 설정
+[33mb0b69129[m HEAD@{27}: commit: [INPLACE-258] 이벤트 형식 변경
+[33mbb1de499[m HEAD@{28}: commit: [INPLACE-258] 테스트 작성
+[33m5e0028c1[m HEAD@{29}: commit: [INPLACE-258] commentId 추가
+[33mb13c8571[m HEAD@{30}: commit: [INPLACE-258] @Repository 추가
+[33me471bfb9[m HEAD@{31}: commit: [INPLACE-258] javadoc 문제로 테스트 오류 발생, 버전 변경
+[33m950a20e8[m HEAD@{32}: pull origin dev: Merge made by the 'ort' strategy.
+[33meb365637[m HEAD@{33}: commit: [INPLACE-258] 알림 도메인 구현
+[33m510fbf66[m HEAD@{34}: commit: [INPLACE-258] FCM 토큰을 이용한 푸시 알림 로직 구현
+[33m26d96d3a[m HEAD@{35}: commit: [INPLACE-258] FCM 토큰 저장 추가
+[33m068864b1[m HEAD@{36}: commit: [INPLACE-258] FCM 사용을 위한 프로퍼티 추가
+[33m13093c40[m HEAD@{37}: pull origin dev: updating HEAD
+[33m13093c40[m HEAD@{38}: commit: [INPLACE-258] 종속성 추가
+[33mcc3ab4cb[m HEAD@{39}: commit: [INPLACE-258] eventListener 틀 구현
+[33m1480c3a5[m HEAD@{40}: commit: [INPLACE-258] 멘션 사용자 이름 파싱, event publishing
+[33m1fb6e655[m HEAD@{41}: commit: [INPLACE-258] 유저 이름이 진짜 존재하는 지 확인하기 위한 로직 추가
+[33mbfc495d6[m HEAD@{42}: checkout: moving from dev to feat/INPLACE-258-real-time-alarm
+[33mbfc495d6[m HEAD@{43}: pull origin dev: Fast-forward
+[33m744aa34a[m HEAD@{44}: pull origin dev: Fast-forward
+[33mf157801c[m HEAD@{45}: checkout: moving from main to dev
+[33m56209523[m[33m ([m[1;32mmain[m[33m)[m HEAD@{46}: checkout: moving from feat/INPLACE-251-surroud-place to main
+[33m40be1f0a[m[33m ([m[1;31morigin/feat/INPLACE-251-surroud-place[m[33m, [m[1;32mfeat/INPLACE-251-surroud-place[m[33m)[m HEAD@{47}: commit: [INPLACE-251] 장소 디테일 반환 값에 주변 장소의 비디오 정보 추가 ( 메인 화면 내 주변 비디오와 반환 형식 동일 )
+[33md9adf529[m HEAD@{48}: pull origin dev: Fast-forward
+[33mf157801c[m HEAD@{49}: checkout: moving from dev to feat/INPLACE-251-surroud-place
+[33mf157801c[m HEAD@{50}: pull origin dev: Fast-forward
+[33md9c6a100[m[33m ([m[1;32mfeat/INPLACE-176-admin-google-search[m[33m)[m HEAD@{51}: checkout: moving from refactor/INPLACE-217-my-page-video-info to dev
+[33mfa0e3a86[m[33m ([m[1;31morigin/refactor/INPLACE-217-my-page-video-info[m[33m, [m[1;32mrefactor/INPLACE-217-my-page-video-info[m[33m)[m HEAD@{52}: commit: [INPLACE-217] DTO 분리
+[33m56bdbb12[m HEAD@{53}: commit: [INPLACE-217] url 포함 로직 수정
+[33m956ec8b6[m HEAD@{54}: commit: [INPLACE-217] 테스트 sql 수정
+[33md3321353[m HEAD@{55}: commit: [INPLACE-217] 쿼리문 수정
+[33m4d8539c1[m HEAD@{56}: commit: [INPLACE-217] 쿼리문 수정
+[33m342352b6[m HEAD@{57}: commit: [INPLACE-217] videoUUID -> videoUrl 로직 추가
+[33m59215a74[m HEAD@{58}: commit: [INPLACE-217] Review에 VideoUrl 포함
+[33mc4421794[m HEAD@{59}: commit: [INPLACE-217] 변수 인라인화
+[33ma38059c1[m HEAD@{60}: pull origin dev: Merge made by the 'ort' strategy.
+[33m587b8499[m[33m ([m[1;31morigin/refactor/INPLACE-226-delete-video-alias[m[33m, [m[1;32mrefactor/INPLACE-226-delete-video-alias[m[33m)[m HEAD@{61}: checkout: moving from refactor/INPLACE-226-delete-video-alias to refactor/INPLACE-217-my-page-video-info
+[33m587b8499[m[33m ([m[1;31morigin/refactor/INPLACE-226-delete-video-alias[m[33m, [m[1;32mrefactor/INPLACE-226-delete-video-alias[m[33m)[m HEAD@{62}: commit: [INPLACE-226] 테스트 코드 수정
+[33m71eb64d1[m HEAD@{63}: commit: [INPLACE-226] address, influencerName 필드 추가
+[33mfec611d8[m HEAD@{64}: pull origin dev: Merge made by the 'ort' strategy.
+[33m355c6cfc[m HEAD@{65}: commit: [INPLACE-226] alias 필드 삭제
+[33m6c4a3e8c[m HEAD@{66}: commit: [INPLACE-226] 줄바꿈 및 추가 적용
+[33m185d4b77[m HEAD@{67}: commit: [INPLACE-226] videoAlias 삭제 및 사이드 이펙트 정리
+[33m28fe596c[m HEAD@{68}: commit: [INPLACE-226] 컨벤션에 맞게 수정
+[33m4962b23b[m HEAD@{69}: commit: [INPLACE-226] 영어로 된 에러 코드 한글로 변경
+[33m03baed14[m HEAD@{70}: commit: [INPLACE-226] Exception 명시 안된 orElseThrow 수정
+[33m2e48fb0b[m HEAD@{71}: commit: [INPLACE-226] 가독성을 위해 공백 추가
+[33md9c6a100[m[33m ([m[1;32mfeat/INPLACE-176-admin-google-search[m[33m)[m HEAD@{72}: checkout: moving from dev to refactor/INPLACE-226-delete-video-alias
+[33md9c6a100[m[33m ([m[1;32mfeat/INPLACE-176-admin-google-search[m[33m)[m HEAD@{73}: pull origin dev: Fast-forward
+[33mf187e251[m HEAD@{74}: checkout: moving from feat/INPLACE-176-admin-google-search to dev
+[33md9c6a100[m[33m ([m[1;32mfeat/INPLACE-176-admin-google-search[m[33m)[m HEAD@{75}: pull origin dev: Fast-forward
+[33mbde67120[m[33m ([m[1;31morigin/feat/INPLACE-176-admin-google-search[m[33m)[m HEAD@{76}: commit (amend): [INPLACE-176] 개발 내용 반영
+[33md2139b71[m HEAD@{77}: commit (merge): [INPLACE-176] : 개발 내용 반영
+[33mca2c563d[m HEAD@{78}: checkout: moving from dev to feat/INPLACE-176-admin-google-search
+[33mf187e251[m HEAD@{79}: checkout: moving from main to dev
+[33m56209523[m[33m ([m[1;32mmain[m[33m)[m HEAD@{80}: clone: from https://github.com/team-inplace/inplace.git

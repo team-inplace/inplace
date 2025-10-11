@@ -16,12 +16,11 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "my.inplace.mobile",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true,
-      "package": "my.inplace.mobile"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"

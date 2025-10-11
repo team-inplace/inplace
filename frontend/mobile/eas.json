@@ -1,32 +1,21 @@
 {
   "cli": {
-    "version": ">= 16.17.4",
-    "appVersionSource": "remote"
+    "version": ">= 3.14.0"
   },
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal",
-      "env": {
-        "API_URL": "https://a7b2c3d4-dev.inplace.my:444"
-      }
+      "distribution": "internal"
     },
-    "preview": {
-      "env": {
-        "API_URL": "https://a7b2c3d4-dev.inplace.my:444"
-      },
+    "production-apk": {
       "android": {
         "buildType": "apk"
       }
     },
     "production": {
-      "autoIncrement": true,
-      "env": {
-        "API_URL": "https://api.inplace.my"
+      "android": {
+        "buildType": "app-bundle"
       }
     }
-  },
-  "submit": {
-    "production": {}
   }
 }

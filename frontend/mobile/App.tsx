@@ -1,27 +1,52 @@
-import { StatusBar } from "expo-status-bar";
-import { Platform, SafeAreaView, StyleSheet } from "react-native";
+import { useEffect, useRef } from "react";
+import { SafeAreaView, StyleSheet } from "react-native";
 import WebView from "react-native-webview";
+import { WEB_VIEW_URL } from "./src/utils/constants/webURL";
+import CustomWebView from "./src/components/common/CustomWebview";
+import { useLocation } from "./src/hooks/useLocation";
+import LocationPermissionModal from "./src/components/location/LocationPermissionModal";
 
-export default function App() {
-  const webViewUrl = "https://www.inplace.my";
+export default function WebViewScreen() {
+  const webViewRef = useRef<WebView | null>(null);
+  const { modalVisible, modalContent, showLocationModal, hideModal } =
+    useLocation(webViewRef);
+
+  const handleMessage = (event: any) => {
+    const message = JSON.parse(event.nativeEvent.data);
+    switch (message.type) {
+      case "GPS_PERMISSIONS":
+        showLocationModal();
+        break;
+      // case "AUTH_TOKEN":
+      //   saveToken(message.payload);
+      //   break;
+      // case "LOGOUT":
+      //   removeToken();
+      //   break;
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <WebView
-        source={{ uri: webViewUrl }}
-        allowsbackforwardnavigationgestures={true}
-        style={styles.webview}
+      <CustomWebView
+        ref={webViewRef}
+        url={WEB_VIEW_URL}
+        onMessage={handleMessage}
       />
+      {modalContent && (
+        <LocationPermissionModal
+          visible={modalVisible}
+          title={modalContent.title}
+          message={modalContent.message}
+          onConfirm={() => {
+            modalContent.onConfirm();
+            hideModal();
+          }}
+          onClose={hideModal}
+        />
+      )}
     </SafeAreaView>
   );
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    // iOS에서 Safe Area를 처리 (노치 디자인 고려)
-    paddingTop: Platform.OS === "android" ? 25 : 0,
-  },
-  webview: {
-    flex: 1,
-  },
-});
+
+const styles = StyleSheet.create({ container: { flex: 1 } });

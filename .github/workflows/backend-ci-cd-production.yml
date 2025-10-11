@@ -34,14 +34,14 @@ jobs:
       - name: Create FCM key file
         working-directory: ./backend
         run: |
-          mkdir -p src/main/resources/key
-          echo "${{ secrets.FCM_KEY_JSON }}" | base64 --decode > src/main/resources/key/firebase-admin-sdk.json
+          mkdir -p inplace-api/src/main/resources/key
+          echo "${{ secrets.FCM_KEY_JSON }}" | base64 --decode > inplace-api/src/main/resources/key/firebase-admin-sdk.json
           
       # Spring Boot 애플리케이션 빌드
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
         with:
-          arguments: clean bootJar
+          arguments: clean :inplace-api:bootJar
           build-root-directory: ./backend
 
       # 테스트 실행
@@ -65,117 +65,117 @@ jobs:
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/inplace
 
   run-docker-image-on-ec2:
-      needs: build-docker-image
-      runs-on: ubuntu-latest
-      if: startsWith(github.ref, 'refs/heads/main')
-      steps:
-        # AWS 자격증명 설정
-        - name: Configure AWS credentials
-          uses: aws-actions/configure-aws-credentials@v4
-          with:
-            role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-            aws-region: ${{ secrets.AWS_REGION }}
+    needs: build-docker-image
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/heads/main')
+    steps:
+      # AWS 자격증명 설정
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
-        # 현재 active 인스턴스 확인 & 타겟 인스턴스 결정
-        - name: Determine Target Instance
-          run: |
-            ACTIVE_INSTANCE=$(aws ec2 describe-instances \
-              --filters "Name=tag:DeploymentStatus,Values=active" \
-              --query "Reservations[0].Instances[0].InstanceId" \
-              --output text)
-            
-            echo "Active Instance ID: $ACTIVE_INSTANCE"
-                    
-            TARGET_INSTANCE=""
-            if [[ "$ACTIVE_INSTANCE" == "${{ secrets.EC2_BLUE_INSTANCE_ID }}" ]]; then
-              TARGET_INSTANCE="${{ secrets.EC2_GREEN_INSTANCE_ID }}"
-              echo "TARGET_INSTANCE=$TARGET_INSTANCE" >> $GITHUB_ENV
-              echo "INACTIVE_INSTANCE=${{ secrets.EC2_BLUE_INSTANCE_ID }}" >> $GITHUB_ENV
-              echo "TARGET_GROUP_ARN=${{ secrets.EC2_TARGET_GROUP_ARN_GREEN }}" >> $GITHUB_ENV
-            else
-              TARGET_INSTANCE="${{ secrets.EC2_BLUE_INSTANCE_ID }}"
-              echo "TARGET_INSTANCE=$TARGET_INSTANCE" >> $GITHUB_ENV
-              echo "INACTIVE_INSTANCE=${{ secrets.EC2_GREEN_INSTANCE_ID }}" >> $GITHUB_ENV
-              echo "TARGET_GROUP_ARN=${{ secrets.EC2_TARGET_GROUP_ARN_BLUE }}" >> $GITHUB_ENV
+      # 현재 active 인스턴스 확인 & 타겟 인스턴스 결정
+      - name: Determine Target Instance
+        run: |
+          ACTIVE_INSTANCE=$(aws ec2 describe-instances \
+            --filters "Name=tag:DeploymentStatus,Values=active" \
+            --query "Reservations[0].Instances[0].InstanceId" \
+            --output text)
+          
+          echo "Active Instance ID: $ACTIVE_INSTANCE"
+          
+          TARGET_INSTANCE=""
+          if [[ "$ACTIVE_INSTANCE" == "${{ secrets.EC2_BLUE_INSTANCE_ID }}" ]]; then
+            TARGET_INSTANCE="${{ secrets.EC2_GREEN_INSTANCE_ID }}"
+            echo "TARGET_INSTANCE=$TARGET_INSTANCE" >> $GITHUB_ENV
+            echo "INACTIVE_INSTANCE=${{ secrets.EC2_BLUE_INSTANCE_ID }}" >> $GITHUB_ENV
+            echo "TARGET_GROUP_ARN=${{ secrets.EC2_TARGET_GROUP_ARN_GREEN }}" >> $GITHUB_ENV
+          else
+            TARGET_INSTANCE="${{ secrets.EC2_BLUE_INSTANCE_ID }}"
+            echo "TARGET_INSTANCE=$TARGET_INSTANCE" >> $GITHUB_ENV
+            echo "INACTIVE_INSTANCE=${{ secrets.EC2_GREEN_INSTANCE_ID }}" >> $GITHUB_ENV
+            echo "TARGET_GROUP_ARN=${{ secrets.EC2_TARGET_GROUP_ARN_BLUE }}" >> $GITHUB_ENV
+          fi
+          
+          echo "Selected Target Instance: $TARGET_INSTANCE"
+          
+          EC2_HOST=$(aws ec2 describe-instances \
+            --instance-ids "$TARGET_INSTANCE" \
+            --query "Reservations[0].Instances[0].PublicIpAddress" \
+            --output text)
+          echo "EC2_HOST=${EC2_HOST}" >> $GITHUB_ENV
+
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.SSH_PRODUCTION_SERVER_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ env.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Docker Pull
+        run: |
+          ssh ubuntu@${{ env.EC2_HOST }} "sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/inplace"
+
+      - name: Create and Copy .env file
+        run: |
+          echo "${{ secrets.ENV_PRODUCTION_SERVER }}" > .env
+          scp .env ubuntu@${{ env.EC2_HOST }}:/home/ubuntu/.env
+
+      - name: Run New Container
+        run: |
+          ssh ubuntu@${{ env.EC2_HOST }} "sudo docker run --name inplace --rm -d -p 8080:8080 -p ${{ secrets.EC2_MONITORING_PORT }}:${{ secrets.EC2_MONITORING_PORT }} --env-file /home/ubuntu/.env ${{ secrets.DOCKERHUB_USERNAME }}/inplace"
+
+      - name: Health Check
+        run: |
+          for i in {1..40}; do
+            if ssh ubuntu@${{ env.EC2_HOST }} "curl -s http://localhost:${{ secrets.EC2_HEALTH_CHECK_PATH }} | grep '\"status\":\"UP\"' > /dev/null"; then
+              echo "Application is healthy"
+              break
             fi
-            
-            echo "Selected Target Instance: $TARGET_INSTANCE"
-            
-            EC2_HOST=$(aws ec2 describe-instances \
-              --instance-ids "$TARGET_INSTANCE" \
-              --query "Reservations[0].Instances[0].PublicIpAddress" \
-              --output text)
-            echo "EC2_HOST=${EC2_HOST}" >> $GITHUB_ENV
+            echo "Waiting for new application to start... $i"
+            sleep 5
+          done
+          if [ $i -eq 40 ]; then
+            echo "Application failed to start after 40 attempts."
+            exit 1
+          fi
 
+      - name: Update Load Balancer
+        if: success()
+        run: |
+          ssh ubuntu@${{ env.EC2_HOST }} "
+            aws elbv2 modify-listener --listener-arn ${{ secrets.EC2_LISTENER_ARN_443 }} --default-actions Type=forward,TargetGroupArn=${{ env.TARGET_GROUP_ARN }}
+          "
 
-        - name: Configure SSH
-          run: |
-            mkdir -p ~/.ssh/
-            echo "${{ secrets.SSH_PRODUCTION_SERVER_KEY }}" > ~/.ssh/id_rsa
-            chmod 600 ~/.ssh/id_rsa
-            ssh-keyscan -H ${{ env.EC2_HOST }} >> ~/.ssh/known_hosts
+      - name: Wait for Draining
+        run: sleep 30
 
-        - name: Docker Pull
-          run: |
-            ssh ubuntu@${{ env.EC2_HOST }} "sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/inplace"
-
-        - name: Create and Copy .env file
-          run: |
-            echo "${{ secrets.ENV_PRODUCTION_SERVER }}" > .env
-            scp .env ubuntu@${{ env.EC2_HOST }}:/home/ubuntu/.env
-
-        - name: Run New Container
-          run: |
-            ssh ubuntu@${{ env.EC2_HOST }} "sudo docker run --name inplace --rm -d -p 8080:8080 -p ${{ secrets.EC2_MONITORING_PORT }}:${{ secrets.EC2_MONITORING_PORT }} --env-file /home/ubuntu/.env ${{ secrets.DOCKERHUB_USERNAME }}/inplace"
-
-        - name: Health Check
-          run: |
-            for i in {1..40}; do
-              if ssh ubuntu@${{ env.EC2_HOST }} "curl -s http://localhost:${{ secrets.EC2_HEALTH_CHECK_PATH }} | grep '\"status\":\"UP\"' > /dev/null"; then
-                echo "Application is healthy"
-                break
-              fi
-              echo "Waiting for new application to start... $i"
-              sleep 5
-            done
-            if [ $i -eq 40 ]; then
-              echo "Application failed to start after 40 attempts."
-              exit 1
-            fi
-
-        - name: Update Load Balancer
-          if: success()
-          run: |
-            ssh ubuntu@${{ env.EC2_HOST }} "
-              aws elbv2 modify-listener --listener-arn ${{ secrets.EC2_LISTENER_ARN_443 }} --default-actions Type=forward,TargetGroupArn=${{ env.TARGET_GROUP_ARN }}
+      - name: Cleanup Old Container
+        run: |
+          INACTIVE_HOST=$(aws ec2 describe-instances \
+            --instance-ids "${{ env.INACTIVE_INSTANCE }}" \
+            --query "Reservations[0].Instances[0].PublicIpAddress" \
+            --output text)
+          
+          if [[ -n "$INACTIVE_HOST" ]]; then
+            ssh-keyscan -H ${INACTIVE_HOST} >> ~/.ssh/known_hosts
+            ssh ubuntu@${INACTIVE_HOST} "
+              sudo docker stop inplace || true 
+              sudo docker rm inplace || true
+              sudo docker system prune -f
             "
+          fi
 
-        - name: Wait for Draining
-          run: sleep 30
-
-        - name: Cleanup Old Container
-          run: |
-            INACTIVE_HOST=$(aws ec2 describe-instances \
-              --instance-ids "${{ env.INACTIVE_INSTANCE }}" \
-              --query "Reservations[0].Instances[0].PublicIpAddress" \
-              --output text)
-            
-            if [[ -n "$INACTIVE_HOST" ]]; then
-              ssh-keyscan -H ${INACTIVE_HOST} >> ~/.ssh/known_hosts
-              ssh ubuntu@${INACTIVE_HOST} "
-                sudo docker stop inplace || true 
-                sudo docker rm inplace || true
-                sudo docker system prune -f
-              "
-            fi
-
-        # 인스턴스 태그 업데이트
-        - name: Update Instance Tags
-          run: |
-            aws ec2 create-tags \
-              --resources ${{ env.TARGET_INSTANCE }} \
-              --tags Key=DeploymentStatus,Value=active
-                   
-            aws ec2 create-tags \
-              --resources ${{ env.INACTIVE_INSTANCE }} \
-              --tags Key=DeploymentStatus,Value=inactive
+      # 인스턴스 태그 업데이트
+      - name: Update Instance Tags
+        run: |
+          aws ec2 create-tags \
+            --resources ${{ env.TARGET_INSTANCE }} \
+            --tags Key=DeploymentStatus,Value=active
+          
+          aws ec2 create-tags \
+            --resources ${{ env.INACTIVE_INSTANCE }} \
+            --tags Key=DeploymentStatus,Value=inactive

@@ -70,6 +70,8 @@ export default function MapWindow({
   };
   const DEFAULT_MAP_ZOOM_LEVEL = 4;
 
+  const isReactNativeWebView = typeof window !== 'undefined' && window.ReactNativeWebView != null;
+
   const mapRef = useRef<kakao.maps.Map | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isMapReady, setIsMapReady] = useState(false);
@@ -154,8 +156,25 @@ export default function MapWindow({
     setShowSearchButton(false);
   }, [placeNameMarkers, filtersWithPlaceName.placeName]);
 
+  // 1번만 postMessage 보내도록
+  useEffect(() => {
+    if (isReactNativeWebView) {
+      window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'GPS_PERMISSIONS' }));
+    }
+  }, [isReactNativeWebView]);
+
   // 초기 접속 시
   useEffect(() => {
+    if (isReactNativeWebView) {
+      // Alert 표시 후 바로 지도 로딩 완료 처리
+      setIsLoading(false);
+      updateMapBounds();
+      setIsInitialLoad(false);
+      setHasInitialLoad(true);
+
+      return;
+    }
+
     if (!isInitialLoad || !isMapReady) {
       return;
     }
@@ -169,6 +188,7 @@ export default function MapWindow({
       setIsInitialLoad(false);
       return;
     }
+
     const getUserLocation = async () => {
       try {
         const position: GeolocationPosition = await new Promise((resolve, reject) => {
@@ -208,9 +228,8 @@ export default function MapWindow({
         }
       }
     };
-
     getUserLocation();
-  }, [isInitialLoad, isMapReady, isRestoredFromDetail, center]);
+  }, [isInitialLoad, isMapReady, isRestoredFromDetail, center, isReactNativeWebView]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {

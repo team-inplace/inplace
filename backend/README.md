@@ -465,7 +465,7 @@
  ┃ ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜VideoSearchParams.java
  ┃ ┃ ┃ ┃ ┃ ┃ ┣ 📜VideoController.java
  ┃ ┃ ┃ ┃ ┃ ┃ ┗ 📜VideoControllerApiSpec.java
- ┃ ┃ ┃ ┃ ┗ 📜InplaceApplication.java
+ ┃ ┃ ┃ ┃ ┗ 📜my.inplace.api.InplaceApplication.java
  ┃ ┗ 📂resources
  ┃ ┃ ┣ 📂META-INF
  ┃ ┃ ┃ ┗ 📂services
@@ -622,7 +622,8 @@
 > [**Commit Convention
 **](https://github.com/kakao-tech-campus-2nd-step3/Team7_BE/wiki/Commit-%EC%BB%A8%EB%B2%A4%EC%85%98)
 >
-> [**PR Convention**](https://github.com/kakao-tech-campus-2nd-step3/Team7_BE/wiki/PR-%EC%BB%A8%EB%B2%A4%EC%85%98)
+> [**PR Convention
+**](https://github.com/kakao-tech-campus-2nd-step3/Team7_BE/wiki/PR-%EC%BB%A8%EB%B2%A4%EC%85%98)
 >
 > [**Issue Convention
 **](https://github.com/kakao-tech-campus-2nd-step3/Team7_BE/wiki/%EC%9D%B4%EC%8A%88-%EC%BB%A8%EB%B2%A4%EC%85%98)
