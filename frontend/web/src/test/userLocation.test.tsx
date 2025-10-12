@@ -9,6 +9,10 @@ import ABTestProvider from '@/provider/ABTest';
 
 jest.mock('@/api/hooks/useGetAroundVideo');
 jest.mock('@/hooks/useGetLocation');
+jest.mock('@/libs/FCM/firebaseSetting', () => ({
+  app: {},
+  messaging: {},
+}));
 
 const queryClient = new QueryClient();
 
