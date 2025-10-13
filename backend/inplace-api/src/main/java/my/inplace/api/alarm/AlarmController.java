@@ -44,6 +44,16 @@ public class AlarmController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
+    // 알림 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAlarm(
+        @PathVariable Long id
+    ) {
+        alarmQueryFacade.deleteAlarm(id);
+        
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
     @PostMapping("/{id}")
     public ResponseEntity<Void> processOneAlarm(

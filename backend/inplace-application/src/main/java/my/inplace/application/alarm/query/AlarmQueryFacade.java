@@ -17,4 +17,8 @@ public class AlarmQueryFacade {
         
         return alarmQueryService.getAlarmInfos(userId);
     }
+    
+    public void deleteAlarm(Long alarmId) {
+        alarmQueryService.deleteAlarm(alarmId);
+    }
 }

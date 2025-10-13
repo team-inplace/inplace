@@ -19,4 +19,9 @@ public class AlarmQueryService {
             .map(AlarmResult::from)
             .toList();
     }
+    
+    @Transactional
+    public void deleteAlarm(Long alarmId) {
+        alarmJpaRepository.deleteById(alarmId);
+    }
 }
