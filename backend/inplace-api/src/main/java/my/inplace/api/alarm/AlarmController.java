@@ -45,7 +45,6 @@ public class AlarmController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
-    // 알림 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAlarm(
         @PathVariable Long id
