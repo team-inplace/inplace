@@ -1,32 +1,28 @@
 package my.inplace.infra.influencer;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import my.inplace.domain.influencer.query.InfluencerQueryResult;
+import my.inplace.infra.config.AbstractMySQLContainer;
+import my.inplace.infra.global.MySQLContainerJpaTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
-import my.inplace.domain.influencer.query.InfluencerQueryResult;
-import my.inplace.infra.config.TestQueryDslConfig;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.ComponentScan.Filter;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.jdbc.Sql;
 
-@DataJpaTest(
+import static org.assertj.core.api.Assertions.assertThat;
+
+@MySQLContainerJpaTest(
     includeFilters = @Filter(
         type = FilterType.ASSIGNABLE_TYPE,
         value = InfluencerReadQueryDslRepository.class
-    )
+    ),
+    scripts = "/sql/test-influencer.sql"
 )
-@Sql(scripts = "/sql/test-influencer.sql")
-@Import(TestQueryDslConfig.class)
-@EntityScan("my.inplace.domain")
-class InfluencerReadQueryDslRepositoryTest {
+class InfluencerReadQueryDslRepositoryTest extends AbstractMySQLContainer {
 
     @Autowired
     InfluencerReadQueryDslRepository influencerRepository;
