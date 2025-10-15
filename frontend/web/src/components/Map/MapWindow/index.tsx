@@ -156,8 +156,25 @@ export default function MapWindow({
     setShowSearchButton(false);
   }, [placeNameMarkers, filtersWithPlaceName.placeName]);
 
+  // 1번만 postMessage 보내도록
+  useEffect(() => {
+    if (isReactNativeWebView) {
+      window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'GPS_PERMISSIONS' }));
+    }
+  }, [isReactNativeWebView]);
+
   // 초기 접속 시
   useEffect(() => {
+    if (isReactNativeWebView) {
+      // Alert 표시 후 바로 지도 로딩 완료 처리
+      setIsLoading(false);
+      updateMapBounds();
+      setIsInitialLoad(false);
+      setHasInitialLoad(true);
+
+      return;
+    }
+
     if (!isInitialLoad || !isMapReady) {
       return;
     }
@@ -169,23 +186,6 @@ export default function MapWindow({
     if (center.lat !== 37.5665 || center.lng !== 126.978) {
       setIsLoading(false);
       setIsInitialLoad(false);
-      return;
-    }
-    if (isReactNativeWebView) {
-      window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'GPS_PERMISSIONS' }));
-
-      window.addEventListener('message', (event) => {
-        const message = JSON.parse(event.data);
-
-        if (message.latitude && message.longitude) {
-          const newLocation = {
-            lat: message.latitude,
-            lng: message.longitude,
-          };
-          setUserLocation(newLocation);
-        }
-      });
-
       return;
     }
 

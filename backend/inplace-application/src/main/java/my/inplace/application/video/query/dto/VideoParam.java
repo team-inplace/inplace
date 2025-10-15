@@ -24,6 +24,17 @@ public class VideoParam {
             );
         }
 
+        public VideoQueryParam.SquareBound toQueryParam() {
+            return new VideoQueryParam.SquareBound(
+                Double.valueOf(this.topLeftLongitude),
+                Double.valueOf(this.topLeftLatitude),
+                Double.valueOf(this.bottomRightLongitude),
+                Double.valueOf(this.bottomRightLatitude),
+                Double.valueOf(this.longitude),
+                Double.valueOf(this.latitude)
+            );
+        }
+
         public static SquareBound from(String longitude, String latitude) {
             return new SquareBound(longitude, latitude);
         }

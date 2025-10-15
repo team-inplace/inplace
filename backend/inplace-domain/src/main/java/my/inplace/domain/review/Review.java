@@ -25,8 +25,6 @@ public class Review extends BaseEntity {
     @Column(length = 100)
     private String comment;
 
-    private LocalDate createdDate;
-
     private Long userId;
 
     private Long placeId;
@@ -36,7 +34,6 @@ public class Review extends BaseEntity {
         this.placeId = placeId;
         this.isLiked = isLiked;
         this.comment = comment;
-        this.createdDate = LocalDate.now();
     }
 
     public Boolean isLiked() {

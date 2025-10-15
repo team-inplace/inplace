@@ -7,14 +7,27 @@ importScripts('https://www.gstatic.com/firebasejs/8.10.0/firebase-messaging.js')
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDhN1r3xw82OiadDuKxv4i2c7JOLIseOiw",
-  authDomain: "inplace-70c36.firebaseapp.com",
-  projectId: "inplace-70c36",
-  storageBucket: "inplace-70c36.firebasestorage.app",
-  messagingSenderId: "799415377379",
-  appId: "1:799415377379:web:142590452f3452073114d6",
-  measurementId: "G-E5J7MJJV9P"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+
+messaging.onBackgroundMessage((payload) => {
+  const { title, body, icon } = payload.notification || {};
+  self.registration.showNotification(title || '알림', { body, icon });
+});
+
+self.addEventListener('push', (event) => {
+  const data = event.data?.json() || {};
+  const { title, body, icon } = data.notification || {};
+  event.waitUntil(
+    self.registration.showNotification(title || '알림', { body, icon })
+  );
+});

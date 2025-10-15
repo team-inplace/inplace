@@ -8,9 +8,7 @@ public class PlaceQueryParam {
         Double topLeftLongitude,
         Double topLeftLatitude,
         Double bottomRightLongitude,
-        Double bottomRightLatitude,
-        Double longitude,
-        Double latitude
+        Double bottomRightLatitude
     ) {
 
     }

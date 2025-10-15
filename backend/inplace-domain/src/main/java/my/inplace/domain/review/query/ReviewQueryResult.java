@@ -1,6 +1,7 @@
 package my.inplace.domain.review.query;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class ReviewQueryResult {
 
@@ -13,6 +14,9 @@ public class ReviewQueryResult {
         Boolean mine
     ) {
 
+        public Simple(Long reviewId, Boolean likes, String comment, String userNickname, LocalDateTime createdAt, Boolean mine) {
+            this(reviewId, likes, comment, userNickname, createdAt.toLocalDate(), mine);
+        }
     }
 
     public record Detail(
@@ -27,6 +31,10 @@ public class ReviewQueryResult {
         String placeAddress3
     ) {
 
+        public Detail(Long reviewId, Boolean likes, String comment, LocalDateTime createdAt, Long placeId, String placeName,
+            String placeAddress1, String placeAddress2, String placeAddress3) {
+            this(reviewId, likes, comment, createdAt.toLocalDate(), placeId, placeName, placeAddress1, placeAddress2, placeAddress3);
+        }
     }
 
     public record LikeRate(

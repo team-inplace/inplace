@@ -21,6 +21,10 @@ dependencies {
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
+    // TestContainer 설정
+    testImplementation "org.testcontainers:junit-jupiter:1.17.2"
+    testImplementation "org.testcontainers:mysql:1.17.2"
+
     // 공통 모듈 의존성
     implementation project(':inplace-common')
 }

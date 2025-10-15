@@ -1,1 +1,1 @@
-export const WEB_VIEW_URL = "https://www.inplace.my";
+export const WEB_VIEW_URL = "https://ecalpni-dev.inplace.my/";

@@ -30,7 +30,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class PlaceReadQueryDslRepositoryImpl implements PlaceReadRepository {
+public class PlaceReadQueryDslRepository implements PlaceReadRepository {
 
     private final JPAQueryFactory jpaQueryFactory;
 
@@ -214,8 +214,8 @@ public class PlaceReadQueryDslRepositoryImpl implements PlaceReadRepository {
                 QCategory.category.name,
                 QPlace.place.googlePlaceId,
                 QPlace.place.kakaoPlaceId,
-                Expressions.nullExpression(),
-                Expressions.nullExpression()
+                Expressions.nullExpression(Long.class),
+                Expressions.nullExpression(Boolean.class)
             ))
             .from(QPlace.place)
             .where(QPlace.place.id.in(placeIds))

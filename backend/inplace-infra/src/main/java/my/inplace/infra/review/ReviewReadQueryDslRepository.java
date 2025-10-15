@@ -44,7 +44,7 @@ public class ReviewReadQueryDslRepository implements ReviewReadRepository {
                 QReview.review.id,
                 QReview.review.isLiked,
                 QReview.review.comment,
-                QReview.review.createdDate,
+                QReview.review.createdAt,
                 QPlace.place.id,
                 QPlace.place.name,
                 QPlace.place.address.address1,
@@ -86,7 +86,7 @@ public class ReviewReadQueryDslRepository implements ReviewReadRepository {
                 QReview.review.isLiked,
                 QReview.review.comment,
                 QUser.user.nickname,
-                QReview.review.createdDate,
+                QReview.review.createdAt,
                 userId == null ? Expressions.FALSE : QReview.review.userId.eq(userId)
             ))
             .from(QReview.review)

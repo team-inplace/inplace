@@ -1,11 +1,13 @@
 package my.inplace.domain.post;
 
+import lombok.Getter;
 import my.inplace.domain.base.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+@Getter
 @Entity
 @Table(name = "liked_posts")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
