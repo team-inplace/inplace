@@ -131,7 +131,11 @@ public class PostQueryService {
             .toList();
     }
     
-    public Long getCommentIndexByPostIdAndCommentId(Long postId, Long commentId) {
-        return postJpaRepository.findIndexOfComment(postId, commentId);
+    public Pair<Integer, Integer> getCommentIndexByPostIdAndCommentId(Long postId, Long commentId) {
+        long indexOfComment = postJpaRepository.findIndexOfComment(postId, commentId);
+        int pageNumber = (int) indexOfComment / 10;
+        int offset = (int) indexOfComment % 10;
+        
+        return Pair.of(pageNumber, offset);
     }
 }
