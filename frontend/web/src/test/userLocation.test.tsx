@@ -22,6 +22,11 @@ jest.mock('@/libs/FCM/firebaseSetting', () => ({
   messaging: {},
 }));
 
+jest.mock('@/libs/FCM/fcmTokenManager', () => ({
+  requestNotificationPermission: jest.fn(),
+  setupFCMToken: jest.fn(),
+}));
+
 const queryClient = new QueryClient();
 
 test('사용자 위치 기반 내주변 비디오 호출 확인', async () => {
