@@ -7,6 +7,14 @@ import * as locationHook from '@/hooks/useGetLocation';
 import * as api from '@/api/hooks/useGetAroundVideo';
 import ABTestProvider from '@/provider/ABTest';
 
+jest.mock('@inplace-frontend-monorepo/shared/api/config', () => ({
+  initializeConfig: jest.fn(),
+  getConfig: jest.fn(() => ({
+    baseURL: 'https://a7b2c3d4-dev.inplace.my:444',
+    environment: 'development',
+  })),
+}));
+
 jest.mock('@/api/hooks/useGetAroundVideo');
 jest.mock('@/hooks/useGetLocation');
 jest.mock('@/libs/FCM/firebaseSetting', () => ({
