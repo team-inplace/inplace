@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export default function useGetLocation() {
+export default function useGetLocation(enable: boolean) {
   const GEOLOCATION_CONFIG = {
     maximumAge: 500000,
     timeout: 50000,
@@ -33,6 +33,9 @@ export default function useGetLocation() {
 
       return;
     }
+    if (!enable) {
+      return;
+    }
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -47,9 +50,10 @@ export default function useGetLocation() {
         },
         GEOLOCATION_CONFIG,
       );
+    } else {
+      console.error('Geolocation is not supported by this browser.');
     }
-    console.error('Geolocation is not supported by this browser.');
-  }, []);
+  }, [enable]);
 
   return location;
 }

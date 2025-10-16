@@ -40,11 +40,12 @@ public class VideoReadQueryDslRepository implements VideoReadRepository {
 
     @Override
     public Page<DetailedVideo> findSimpleVideosInSurround(
-        Double topLeftLongitude, Double topLeftLatitude,
-        Double bottomRightLongitude, Double bottomRightLatitude,
-        Double longitude, Double latitude,
+        VideoQueryParam.SquareBound squareBound,
         Pageable pageable
     ) {
+        var longitude = squareBound.longitude();
+        var latitude = squareBound.latitude();
+
         Long total = queryFactory
             .select(QVideo.video.count())
             .from(QVideo.video)
@@ -100,7 +101,7 @@ public class VideoReadQueryDslRepository implements VideoReadRepository {
                         .where(QLikedInfluencer.likedInfluencer.userId.eq(userId)
                             .and(QLikedInfluencer.likedInfluencer.isLiked.isTrue()))),
                 commonWhere())
-            .orderBy(QVideo.video.publishTime.desc())
+            .orderBy(QVideo.video.publishTime.desc(), QPlace.place.id.asc())
             .limit(10)
             .fetch();
     }

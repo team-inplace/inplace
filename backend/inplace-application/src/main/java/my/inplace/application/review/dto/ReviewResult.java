@@ -26,7 +26,7 @@ public class ReviewResult {
                 review.getIsLiked(),
                 review.getComment(),
                 review.getUserId(),
-                review.getCreatedDate(),
+                review.getCreatedAt().toLocalDate(),
                 isMine
             );
         }

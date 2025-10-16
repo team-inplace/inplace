@@ -82,7 +82,7 @@ public class CommentReadQueryDslRepository implements CommentReadRepository {
                 )
             )
             .from(QComment.comment)
-            .join(QUser.user).on(QComment.comment.authorId.eq(QUser.user.id))
+            .innerJoin(QUser.user).on(QComment.comment.authorId.eq(QUser.user.id))
             .innerJoin(QTier.tier).on(QUser.user.tierId.eq(QTier.tier.id))
             .leftJoin(QBadge.badge).on(QUser.user.mainBadgeId.eq(QBadge.badge.id))
             .leftJoin(QLikedComment.likedComment)

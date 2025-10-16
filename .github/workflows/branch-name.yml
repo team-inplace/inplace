@@ -21,7 +21,7 @@ jobs:
           fi
           
           # 브랜치 이름 패턴 검사
-          if ! [[ "$BRANCH_NAME" =~ ^(feat|fix|hotfix|refactor)/INPLACE-[0-9]+(-[a-zA-Z0-9-]+)*$ ]]; then
+          if ! [[ "$BRANCH_NAME" =~ ^(feat|fix|hotfix|refactor|test)/INPLACE-[0-9]+(-[a-zA-Z0-9-]+)*$ ]]; then
             echo "Error: 브랜치 이름이 형식에 맞지 않습니다: $BRANCH_NAME"
             echo "올바른 형식: <type>/<JIRA-ID>-<description>"
             echo "예시: feat/INPLACE-1-login-page"

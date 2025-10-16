@@ -11,4 +11,14 @@ public class VideoQueryParam {
         }
     }
 
+    public record SquareBound(
+        Double topLeftLongitude,
+        Double topLeftLatitude,
+        Double bottomRightLongitude,
+        Double bottomRightLatitude,
+        Double longitude,
+        Double latitude
+    ) {
+
+    }
 }

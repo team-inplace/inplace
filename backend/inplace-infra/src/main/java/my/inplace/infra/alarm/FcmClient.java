@@ -15,6 +15,7 @@ import org.springframework.core.io.ClassPathResource;
 import my.inplace.infra.properties.FcmProperties;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 @Slf4j
 @Client
@@ -24,22 +25,36 @@ public class FcmClient {
     
     @PostConstruct
     public void initialize() throws IOException {
-        FirebaseOptions options = FirebaseOptions.builder()
-            .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(fcmProperties.serviceAccountFile()).getInputStream()))
-            .setProjectId(fcmProperties.projectId())
-            .build();
+        InputStream serviceAccount = new ClassPathResource(fcmProperties.serviceAccountFile()).getInputStream();
+        GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
         
-        FirebaseApp.initializeApp(options);
+        if(credentials == null || fcmProperties.projectId() == null) {
+            throw new IllegalStateException("Firebase 초기화 정보가 올바르지 않습니다.");
+        }
+        
+        FirebaseOptions options = FirebaseOptions.builder()
+                                      .setCredentials(credentials)
+                                      .setProjectId(fcmProperties.projectId())
+                                      .build();
+        
+        if(FirebaseApp.getApps().isEmpty()) {
+            FirebaseApp.initializeApp(options);
+        }
     }
     
-    public void sendMessageByToken(String title, String body, String token) throws FirebaseMessagingException{
-        FirebaseMessaging.getInstance().send(Message.builder()
-            .setNotification(Notification.builder()
-                .setTitle(title)
-                .setBody(body)
-                .build())
-            .setToken(token)
-            .build());
+    public void sendMessageByToken(String title, String body, String token) throws FirebaseMessagingException {
+        try {
+            String response = FirebaseMessaging.getInstance().send(Message.builder()
+                .setNotification(Notification.builder()
+                    .setTitle(title)
+                    .setBody(body)
+                    .build())
+                .setToken(token)
+                .build());
+            log.info("메시지 전송 성공, response={}", response);
+        } catch (FirebaseMessagingException e) {
+            log.error("FCM 전송 실패 code={} msg={}", e.getErrorCode(), e.getMessage());
+        }
     }
     
 }

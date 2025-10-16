@@ -19,6 +19,7 @@
       }
     },
     "android": {
+      "package": "my.inplace.mobile",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -36,6 +37,11 @@
         }
       ]
     ],
-    "scheme": "my.inplace"
+    "scheme": "my.inplace",
+    "extra": {
+      "eas": {
+        "projectId": "1f938aec-ae98-4f0c-ab7a-c4c37114e2a7"
+      }
+    }
   }
 }

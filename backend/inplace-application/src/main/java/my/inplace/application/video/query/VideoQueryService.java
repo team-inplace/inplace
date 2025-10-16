@@ -39,12 +39,7 @@ public class VideoQueryService {
             AuthorizationUtil.checkLoginUser();
         }
         var surroundVideos = videoReadRepository.findSimpleVideosInSurround(
-            Double.valueOf(videoSearchParams.topLeftLongitude()),
-            Double.valueOf(videoSearchParams.topLeftLatitude()),
-            Double.valueOf(videoSearchParams.bottomRightLongitude()),
-            Double.valueOf(videoSearchParams.bottomRightLatitude()),
-            Double.valueOf(videoSearchParams.longitude()),
-            Double.valueOf(videoSearchParams.latitude()),
+            videoSearchParams.toQueryParam(),
             pageable
         );
 

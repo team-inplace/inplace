@@ -44,7 +44,7 @@ public class PlaceRequest {
     }
 
     public record Coordinate(
-        @NotNull(message = "longitude 값이 없습니다.") Double longitude,
+        @NotNull(message = "longitude 값이 없습니다.") Double longitude, // frontend 에서 문제 없으면 지워도 됨.
         @NotNull(message = "latitude 값이 없습니다.") Double latitude,
         @NotNull(message = "topLeftLongitude 값이 없습니다.") Double topLeftLongitude,
         @NotNull(message = "topLeftLatitude 값이 없습니다. ") Double topLeftLatitude,
@@ -54,8 +54,7 @@ public class PlaceRequest {
 
         public PlaceParam.Coordinate toParam() {
             return new PlaceParam.Coordinate(
-                topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude,
-                longitude, latitude
+                topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude
             );
         }
     }
