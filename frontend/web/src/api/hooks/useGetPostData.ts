@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { PostData } from '@/types';
 import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { PostData } from '@/types';
 
 export const getPostDataPath = (id: string) => `/posts/${id}`;
 export const getPostData = async (id: string) => {

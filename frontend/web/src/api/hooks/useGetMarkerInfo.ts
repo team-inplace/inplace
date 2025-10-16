@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
+import { fetchInstance } from '@inplace-frontend-monorepo/shared/src/api/instance';
 import { MarkerInfo } from '@/types';
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
 
 export const getMarkerInfoPath = (id: string) => `/places/${id}/marker`;
 export const getMarkerInfo = async (id: string) => {
