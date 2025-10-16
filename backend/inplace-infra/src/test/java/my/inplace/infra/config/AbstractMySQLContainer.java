@@ -1,7 +1,8 @@
 package my.inplace.infra.config;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -10,6 +11,9 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
+@ActiveProfiles("test-mysql")
+@EntityScan("my.inplace.domain")
+@Import(TestQueryDslConfig.class)
 public abstract class AbstractMySQLContainer {
 
     @Container

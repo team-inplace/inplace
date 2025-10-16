@@ -1,32 +1,28 @@
 package my.inplace.infra.review;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import my.inplace.domain.review.query.ReviewQueryResult;
+import my.inplace.infra.config.AbstractMySQLContainer;
+import my.inplace.infra.global.MySQLContainerJpaTest;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan.Filter;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
-import my.inplace.domain.review.query.ReviewQueryResult;
-import my.inplace.infra.config.TestQueryDslConfig;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.ComponentScan.Filter;
-import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.test.context.jdbc.Sql;
 
-@DataJpaTest(
+import static org.assertj.core.api.Assertions.assertThat;
+
+@MySQLContainerJpaTest(
     includeFilters = @Filter(
         type = FilterType.ASSIGNABLE_TYPE,
         value = ReviewReadQueryDslRepository.class
-    )
+    ),
+    scripts = "/sql/test-review.sql"
 )
-@Import(TestQueryDslConfig.class)
-@Sql("/sql/test-review.sql")
-@EntityScan("my.inplace.domain")
-class ReviewReadQueryDslRepositoryTest {
+class ReviewReadQueryDslRepositoryTest extends AbstractMySQLContainer {
 
     @Autowired
     ReviewReadQueryDslRepository reviewReadRepository;

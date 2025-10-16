@@ -1,35 +1,26 @@
 package my.inplace.infra.user;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import my.inplace.domain.user.query.UserQueryResult;
-import my.inplace.domain.user.query.UserQueryResult.Badge;
-import my.inplace.domain.user.query.UserQueryResult.Simple;
-import my.inplace.infra.config.TestQueryDslConfig;
-import my.inplace.infra.influencer.InfluencerReadQueryDslRepository;
+import my.inplace.infra.config.AbstractMySQLContainer;
+import my.inplace.infra.global.MySQLContainerJpaTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.jdbc.Sql;
 
-@DataJpaTest(
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@MySQLContainerJpaTest(
     includeFilters = @Filter(
         type = FilterType.ASSIGNABLE_TYPE,
         value = UserReadQueryDslRepository.class
-    )
+    ),
+    scripts = "/sql/test-user.sql"
 )
-@Sql(scripts = "/sql/test-user.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
-@Import(TestQueryDslConfig.class)
-@EntityScan("my.inplace.domain")
-class UserReadQueryDslRepositoryTest {
+class UserReadQueryDslRepositoryTest extends AbstractMySQLContainer {
 
     @Autowired
     UserReadQueryDslRepository userReadRepository;

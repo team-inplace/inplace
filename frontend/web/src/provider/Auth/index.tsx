@@ -2,6 +2,7 @@ import { createContext, useCallback, useEffect, useMemo, useState } from 'react'
 import { useGetRefreshToken } from '@/api/hooks/useGetRefreshToken';
 import { useDeleteToken } from '@/api/hooks/useDeleteToken';
 import { UserInfoData } from '@/types';
+import { useDeleteFCMToken } from '@/api/hooks/useDeleteFCMToken';
 
 type AuthInfo = {
   isAuthenticated: boolean;
@@ -24,9 +25,11 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const { mutateAsync: refreshToken } = useGetRefreshToken();
   const { mutateAsync: logout } = useDeleteToken();
+  const { mutateAsync: deleteFCMToken } = useDeleteFCMToken();
 
   const handleLogout = useCallback(async () => {
     try {
+      await deleteFCMToken();
       await logout();
     } catch (error) {
       console.error('로그아웃 요청 실패:', error);

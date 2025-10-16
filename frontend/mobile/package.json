@@ -13,8 +13,6 @@
     "@inplace-frontend-monorepo/shared": "workspace:*",
     "eas-cli": "^16.17.4",
     "expo": "~52.0.47",
-    "expo-dev-client": "~5.0.20",
-    "expo-notifications": "^0.31.4",
     "expo-location": "^18.1.6",
     "expo-dev-client": "~5.0.20",
     "expo-notifications": "^0.31.4",
