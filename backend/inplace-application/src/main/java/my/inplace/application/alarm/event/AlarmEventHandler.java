@@ -3,13 +3,9 @@ package my.inplace.application.alarm.event;
 import my.inplace.domain.alarm.AlarmType;
 import my.inplace.infra.alarm.FcmClient;
 import my.inplace.application.alarm.command.AlarmCommandService;
-import my.inplace.application.alarm.event.dto.AlarmEvent.CommentReportAlarmEvent;
-import my.inplace.application.alarm.event.dto.AlarmEvent.MentionAlarmEvent;
-import my.inplace.application.alarm.event.dto.AlarmEvent.PostReportAlarmEvent;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import my.inplace.application.post.query.PostQueryService;
@@ -26,27 +22,26 @@ public class AlarmEventHandler {
     private final PostQueryService postQueryService;
 
     @Async("fcmExecutor")
-    @EventListener
-    public void processMentionAlarm(MentionAlarmEvent mentionAlarmEvent) {
-        Long userId = mentionAlarmEvent.receiverId();
-        String title = postQueryService.getPostTitleById(mentionAlarmEvent.postId()).getTitle();
+    public void processMentionAlarm(AlarmEvent mentionEvent) {
+        Long receiverId = userQueryService.getUserIdByNickname(mentionEvent.receiver());
+        String title = postQueryService.getPostTitleById(mentionEvent.postId()).getTitle();
 
-        String content = title + " 게시글에서 " + mentionAlarmEvent.sender() + " 님이 언급했습니다.";
+        String content = title + " 게시글에서 " + mentionEvent.sender() + " 님이 언급했습니다.";
         
         Long index = postQueryService.getCommentIndexByPostIdAndCommentId(
-            mentionAlarmEvent.postId(), mentionAlarmEvent.commentId());
+            mentionEvent.postId(), mentionEvent.commentId());
         
         int pageNumber = index.intValue() / 10;
         int offset = index.intValue() % 10;
         
-        if(userQueryService.isMentionResented(userId)) {
-            sendFcmMessage("새로운 언급 알림", content, userQueryService.getFcmTokenByUser(userId));
+        if(userQueryService.isMentionResented(receiverId)) {
+            sendFcmMessage("새로운 언급 알림", content, userQueryService.getFcmTokenByUser(receiverId));
         }
         
         alarmCommandService.saveAlarm(
-            userId,
-            mentionAlarmEvent.postId(),
-            mentionAlarmEvent.commentId(),
+            receiverId,
+            mentionEvent.postId(),
+            mentionEvent.commentId(),
             pageNumber,
             offset,
             content,
@@ -55,8 +50,7 @@ public class AlarmEventHandler {
     }
 
     @Async("fcmExecutor")
-    @EventListener
-    public void processPostReportAlarm(PostReportAlarmEvent postReportAlarmEvent) {
+    public void processPostReportAlarm(AlarmEvent postReportAlarmEvent) {
         Long postId = postReportAlarmEvent.postId();
         Long userId = postQueryService.getPostAuthorIdById(postId);
         String title = postQueryService.getPostTitleById(postId).getTitle();
@@ -79,8 +73,7 @@ public class AlarmEventHandler {
     }
 
     @Async("fcmExecutor")
-    @EventListener
-    public void processPostReportAlarm(CommentReportAlarmEvent commentReportAlarmEvent) {
+    public void processCommentReportAlarm(AlarmEvent commentReportAlarmEvent) {
         Long commentId = commentReportAlarmEvent.commentId();
         Long postId = postQueryService.getPostIdById(commentId);
         Long userId = postQueryService.getCommentAuthorIdById(commentId);
