@@ -1,34 +1,27 @@
 package my.inplace.application.post.command;
 
-import my.inplace.application.alarm.event.dto.AlarmEvent;
 import my.inplace.application.annotation.Facade;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
+import my.inplace.application.post.event.MentionPublisher;
 import my.inplace.application.post.command.dto.PostCommand;
 import my.inplace.application.post.query.PostQueryService;
 import my.inplace.application.user.command.UserCommandService;
 import my.inplace.application.user.query.UserQueryService;
 import my.inplace.security.util.AuthorizationUtil;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Facade
 @RequiredArgsConstructor
 @Transactional
 public class PostCommandFacade {
-
-    private final ApplicationEventPublisher eventPublisher;
-
+    
     private final UserCommandService userCommandService;
     private final UserQueryService userQueryService;
 
     private final PostCommandService postCommandService;
     private final PostQueryService postQueryService;
+    
+    private final MentionPublisher mentionPublisher;
 
     public void createPost(PostCommand.CreatePost command) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
@@ -59,50 +52,28 @@ public class PostCommandFacade {
         var commentId = postCommandService.createComment(command, userId);
         Long authorId = postQueryService.getAuthorIdByPostId(command.postId());
         userCommandService.addToReceivedCommentByUserId(authorId, 1);
-
-        String mentioningUser = userQueryService.getUserInfo(userId).nickname();
-        Map<Long, String> mentionedUsers = parseMentionedUser(command.comment());
-        processMentionAlarm(command.postId(), commentId, mentioningUser, mentionedUsers);
+        String sender = userQueryService.getUserInfo(userId).nickname();
+        
+        mention(command.postId(), commentId, sender, command.comment());
+    }
+    
+    public void updateComment(PostCommand.UpdateComment updateCommand) {
+        var userId = AuthorizationUtil.getUserIdOrThrow();
+        postCommandService.updateComment(updateCommand, userId);
+        String sender = userQueryService.getUserInfo(userId).nickname();
+        
+        mention(updateCommand.postId(), updateCommand.commentId(), sender, updateCommand.comment());
+    }
+    
+    private void mention(Long postId, Long commentId, String sender, String commentContent) {
+        mentionPublisher.processMention(postId, commentId, sender, commentContent);
     }
 
     public void likeComment(PostCommand.CommentLike command) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postCommandService.likeComment(command, userId);
     }
-
-    public void updateComment(PostCommand.UpdateComment updateCommand) {
-        var userId = AuthorizationUtil.getUserIdOrThrow();
-        postCommandService.updateComment(updateCommand, userId);
-
-        String mentioningUser = userQueryService.getUserInfo(userId).nickname();
-        var mentionedUsers = parseMentionedUser(updateCommand.comment());
-        processMentionAlarm(updateCommand.postId(), updateCommand.commentId(), mentioningUser, mentionedUsers);
-    }
-
-    private Map<Long, String> parseMentionedUser(String comment) {
-        Map<Long, String> mentions = new HashMap<>();
-        
-
-        Pattern pattern = Pattern.compile("<<@([^:>]+):([^>]+)>>");
-        Matcher matcher = pattern.matcher(comment);
-        while (matcher.find()) {
-            mentions.put(
-                Long.parseLong(matcher.group(1)), matcher.group(2));
-        }
-
-        return mentions;
-    }
-
-    private void processMentionAlarm(
-        Long postId, Long commentId, String mentioningUser, Map<Long, String> mentionedUsers) {
-        for (Map.Entry<Long, String> entry : mentionedUsers.entrySet()) {
-            eventPublisher.publishEvent(
-                new AlarmEvent.MentionAlarmEvent(
-                    postId, commentId, mentioningUser, entry.getKey(), entry.getValue())
-            );
-        }
-    }
-
+    
     public void deleteComment(Long postId, Long commentId) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postCommandService.deleteComment(postId, commentId, userId);
