@@ -20,6 +20,7 @@ public class AlarmEventListener {
     private void processReportEventHandler(AlarmEvent alarmEvent) {
         if(alarmEvent.commentId() == null) {
             alarmEventHandler.processPostReportAlarm(alarmEvent);
+            return;
         }
         
         alarmEventHandler.processCommentReportAlarm(alarmEvent);
