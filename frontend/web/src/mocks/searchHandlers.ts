@@ -1,5 +1,5 @@
 import { rest } from 'msw';
-import { BASE_URL } from '@/api/instance';
+import { BASE_URL } from '@inplace-frontend-monorepo/shared/api/instance';
 import { getSearchInfluencerPath, getSearchPlacePath, getSearchVideoPath } from '@/api/hooks/useGetSearchData';
 import { getSearchKeywordPath } from '@/api/hooks/useGetSearchKeyword';
 import { getSearchUserCompletePath } from '@/api/hooks/useGetSearchUserComplete';

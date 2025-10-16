@@ -1,5 +1,5 @@
 import { rest } from 'msw';
-import { BASE_URL } from '@/api/instance';
+import { BASE_URL } from '@inplace-frontend-monorepo/shared/api/instance';
 import { MarkerInfo, PlaceData } from '@/types';
 import { getAllMarkersPath } from '@/api/hooks/useGetAllMarkers';
 import { getSearchPlaceMarkersPath } from '@/api/hooks/useGetSearchPlaceMarker';

@@ -1,6 +1,6 @@
 import { rest } from 'msw';
+import { BASE_URL } from '@inplace-frontend-monorepo/shared/api/instance';
 import { getBannerPath, getInfluencerPath } from '@/api/hooks/useGetMain';
-import { BASE_URL } from '@/api/instance';
 import { getMyInfluencerVideoPath } from '@/api/hooks/useGetMyInfluencerVideo';
 import { getAroundVideoPath } from '@/api/hooks/useGetAroundVideo';
 import { getCoolEatsVideoPath, getCoolPlaysVideoPath, getNewVideoPath } from '@/api/hooks/useGetLogoutVideo';

@@ -1,5 +1,5 @@
 import { rest } from 'msw';
-import { BASE_URL } from '@/api/instance';
+import { BASE_URL } from '@inplace-frontend-monorepo/shared/api/instance';
 import { getPlaceInfoPath } from '@/api/hooks/useGetPlaceInfo';
 import { getReviewPath } from '@/api/hooks/useGetReview';
 import { getSendInfoPath } from '@/api/hooks/useGetSendInfo';

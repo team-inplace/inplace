@@ -1,5 +1,5 @@
 import { rest } from 'msw';
-import { BASE_URL } from '@/api/instance';
+import { BASE_URL } from '@inplace-frontend-monorepo/shared/api/instance';
 import { postCommentPath } from '@/api/hooks/usePostComment';
 import { PostingData } from '@/types';
 import { getPostDataPath } from '@/api/hooks/useGetPostData';
