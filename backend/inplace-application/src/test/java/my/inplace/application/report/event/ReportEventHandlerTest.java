@@ -5,8 +5,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-import my.inplace.application.alarm.event.dto.AlarmEvent.CommentReportAlarmEvent;
-import my.inplace.application.alarm.event.dto.AlarmEvent.PostReportAlarmEvent;
+import my.inplace.application.alarm.event.AlarmEvent;
 import my.inplace.application.post.command.PostCommandService;
 import my.inplace.application.post.query.PostQueryService;
 import my.inplace.application.report.event.dto.ReportEvent.CommentReportEvent;
@@ -73,7 +72,7 @@ class ReportEventHandlerTest {
 
         // then
         verify(postCommandService).deletePostSoftly(postId);
-        verify(eventPublisher).publishEvent(any(PostReportAlarmEvent.class));
+        verify(eventPublisher).publishEvent(any(AlarmEvent.class));
     }
 
     @Test
@@ -92,7 +91,7 @@ class ReportEventHandlerTest {
 
         // then
         verify(postCommandService).deleteCommentSoftly(commentId);
-        verify(eventPublisher).publishEvent(any(CommentReportAlarmEvent.class));
+        verify(eventPublisher).publishEvent(any(AlarmEvent.class));
     }
 
 }

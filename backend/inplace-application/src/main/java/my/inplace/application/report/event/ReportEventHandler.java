@@ -1,8 +1,7 @@
 package my.inplace.application.report.event;
 
-import my.inplace.application.alarm.event.dto.AlarmEvent.CommentReportAlarmEvent;
-import my.inplace.application.alarm.event.dto.AlarmEvent.PostReportAlarmEvent;
 import lombok.RequiredArgsConstructor;
+import my.inplace.application.alarm.event.AlarmEventBuilder;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -30,7 +29,7 @@ public class ReportEventHandler {
         boolean flag = moderationService.isContentFlagged(content);
         if (flag) {
             postCommandService.deletePostSoftly(event.postId());
-            eventPublisher.publishEvent(new PostReportAlarmEvent(event.postId()));
+            processReportAlarm(event.postId(), null);
         }
     }
 
@@ -41,7 +40,18 @@ public class ReportEventHandler {
         boolean flag = moderationService.isContentFlagged(content);
         if (flag) {
             postCommandService.deleteCommentSoftly(event.commentId());
-            eventPublisher.publishEvent(new CommentReportAlarmEvent(event.commentId()));
+            processReportAlarm(null, event.commentId());
         }
+    }
+    
+    private void processReportAlarm(Long postId, Long commentId) {
+        AlarmEventBuilder builder = AlarmEventBuilder.create();
+        
+        if(commentId == null) {
+            builder.postId(postId).publish(eventPublisher);
+            return;
+        }
+        
+        builder.commentId(commentId).publish(eventPublisher);
     }
 }
