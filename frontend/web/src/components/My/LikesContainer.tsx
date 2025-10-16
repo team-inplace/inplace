@@ -32,6 +32,7 @@ const Wrapper = styled.div`
   gap: 60px;
 
   @media screen and (max-width: 768px) {
-    width: 90%;
+    align-items: center;
+    width: 100%;
   }
 `;
