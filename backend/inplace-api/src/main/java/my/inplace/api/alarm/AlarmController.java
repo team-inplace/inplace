@@ -13,12 +13,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/alarms")
-public class AlarmController {
+public class AlarmController implements AlarmControllerApiSpec {
 
     private final AlarmCommandFacade alarmCommandFacade;
     private final AlarmQueryFacade alarmQueryFacade;
 
-    // 로그인 순간에 FCM 토큰 받기
     @PostMapping
     public ResponseEntity<Void> upsertFcmToken(
         @RequestBody AlarmRequest alarmRequest
@@ -28,7 +27,6 @@ public class AlarmController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     
-    // 로그아웃 순간에 FCM 토큰 삭제
     @DeleteMapping
     public ResponseEntity<Void> deleteFcmToken() {
         alarmCommandFacade.deleteFcmToken();
@@ -45,6 +43,15 @@ public class AlarmController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     
+    @PostMapping("/{id}")
+    public ResponseEntity<Void> processOneAlarm(
+        @PathVariable Long id
+    ) {
+        alarmCommandFacade.processAlarm(id);
+        
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+    
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAlarm(
         @PathVariable Long id
@@ -52,14 +59,5 @@ public class AlarmController {
         alarmQueryFacade.deleteAlarm(id);
         
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    @PostMapping("/{id}")
-    public ResponseEntity<Void> processOneAlarm(
-        @PathVariable Long id
-    ) {
-        alarmCommandFacade.processAlarm(id);
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
