@@ -1,5 +1,6 @@
 package my.inplace.application.alarm.event;
 
+import my.inplace.application.alarm.event.dto.AlarmEvent;
 import my.inplace.domain.alarm.AlarmType;
 import my.inplace.infra.alarm.FcmClient;
 import my.inplace.application.alarm.command.AlarmCommandService;

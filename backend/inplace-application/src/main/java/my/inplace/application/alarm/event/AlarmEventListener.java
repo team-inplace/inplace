@@ -1,6 +1,7 @@
 package my.inplace.application.alarm.event;
 
 import lombok.RequiredArgsConstructor;
+import my.inplace.application.alarm.event.dto.AlarmEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 

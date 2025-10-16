@@ -5,7 +5,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-import my.inplace.application.alarm.event.AlarmEvent;
+import my.inplace.application.alarm.event.dto.AlarmEvent;
 import my.inplace.application.post.command.PostCommandService;
 import my.inplace.application.post.query.PostQueryService;
 import my.inplace.application.report.event.dto.ReportEvent.CommentReportEvent;

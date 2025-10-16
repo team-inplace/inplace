@@ -1,4 +1,4 @@
-package my.inplace.application.alarm.event;
+package my.inplace.application.alarm.event.dto;
 
 import my.inplace.domain.alarm.AlarmType;
 
