@@ -1,6 +1,7 @@
 import { rest } from 'msw';
 import { BASE_URL } from '@/api/instance';
 import { getAlarmsPath } from '@/api/hooks/useGetAlarms';
+import { postAlarmPermissionPath } from '@/api/hooks/usePostAlarmPermission';
 
 const dummyAlarm = [
   {
@@ -80,6 +81,14 @@ export const alarmHandlers = [
       ctx.status(200),
       ctx.json({
         alarmId,
+      }),
+    );
+  }),
+  rest.post(`${BASE_URL}${postAlarmPermissionPath()}`, (_, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        permission: true,
       }),
     );
   }),

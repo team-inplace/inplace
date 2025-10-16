@@ -2,6 +2,8 @@ package my.inplace.infra.post.jpa;
 
 import java.util.List;
 import java.util.Optional;
+
+import my.inplace.domain.post.PostTitle;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -35,7 +37,7 @@ public interface PostJpaRepository extends JpaRepository<Post, Long> {
     Optional<Long> findUserIdById(@Param("postId") Long postId);
 
     @Query("SELECT p.title FROM Post p WHERE p.id = :postId")
-    Optional<String> findTitleById(@Param("postId") Long postId);
+    Optional<PostTitle> findTitleById(@Param("postId") Long postId);
 
     List<Post> findAllByIsReportedTrueAndDeleteAtIsNull();
 

@@ -1,0 +1,34 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;MODE=MySQL
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MySQL8Dialect
+      hibernate:
+        format_sql: true
+        globally_quoted_identifiers: true
+    show-sql: true
+    generate-ddl: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    database: h2
+
+  h2:
+    console:
+      enabled: true
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG  # SQL 문 로깅
+    org.hibernate.orm.jdbc.bind: TRACE  # SQL 파라미터 바인딩 로깅
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE  # SQL 파라미터 값 로깅
+    org.hibernate.type.descriptor.sql.BasicExtractor: TRACE  # 결과 로깅
+    org.springframework.transaction: DEBUG  # 트랜잭션 로깅

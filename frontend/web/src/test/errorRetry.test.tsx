@@ -9,6 +9,13 @@ jest.mock('@/libs/FCM/firebaseSetting', () => ({
   messaging: {},
 }));
 
+jest.mock('@/hooks/usePermissions', () => ({
+  __esModule: true,
+  default: () => ({
+    permissions: { location: 'granted', notifications: 'granted' },
+  }),
+}));
+
 beforeAll(() => {
   jest.clearAllMocks();
   jest.spyOn(console, 'error').mockImplementation(() => {});

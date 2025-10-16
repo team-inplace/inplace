@@ -9,9 +9,7 @@ public class PlaceParam {
         Double topLeftLongitude,
         Double topLeftLatitude,
         Double bottomRightLongitude,
-        Double bottomRightLatitude,
-        Double longitude,
-        Double latitude
+        Double bottomRightLatitude
     ) {
 
         public PlaceQueryParam.Coordinate toQueryParam() {
@@ -19,9 +17,7 @@ public class PlaceParam {
                 topLeftLongitude,
                 topLeftLatitude,
                 bottomRightLongitude,
-                bottomRightLatitude,
-                longitude,
-                latitude
+                bottomRightLatitude
             );
         }
     }

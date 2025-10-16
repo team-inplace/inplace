@@ -8,12 +8,7 @@ import org.springframework.data.domain.Pageable;
 public interface VideoReadRepository {
 
     Page<VideoQueryResult.DetailedVideo> findSimpleVideosInSurround(
-        Double topLeftLongitude,
-        Double topLeftLatitude,
-        Double bottomRightLongitude,
-        Double bottomRightLatitude,
-        Double longitude,
-        Double latitude,
+        VideoQueryParam.SquareBound squareBound,
         Pageable pageable
     );
 

@@ -11,7 +11,9 @@ import my.inplace.application.user.command.UserCommandService;
 import my.inplace.application.user.query.UserQueryService;
 import my.inplace.security.util.AuthorizationUtil;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,7 +61,7 @@ public class PostCommandFacade {
         userCommandService.addToReceivedCommentByUserId(authorId, 1);
 
         String mentioningUser = userQueryService.getUserInfo(userId).nickname();
-        List<String> mentionedUsers = parseMentionedUser(command.comment());
+        Map<Long, String> mentionedUsers = parseMentionedUser(command.comment());
         processMentionAlarm(command.postId(), commentId, mentioningUser, mentionedUsers);
     }
 
@@ -73,30 +75,31 @@ public class PostCommandFacade {
         postCommandService.updateComment(updateCommand, userId);
 
         String mentioningUser = userQueryService.getUserInfo(userId).nickname();
-        List<String> mentionedUsers = parseMentionedUser(updateCommand.comment());
-        processMentionAlarm(updateCommand.postId(), updateCommand.commentId(), mentioningUser,
-            mentionedUsers);
+        var mentionedUsers = parseMentionedUser(updateCommand.comment());
+        processMentionAlarm(updateCommand.postId(), updateCommand.commentId(), mentioningUser, mentionedUsers);
     }
 
-    private List<String> parseMentionedUser(String comment) {
-        List<String> mentions = new ArrayList<>();
+    private Map<Long, String> parseMentionedUser(String comment) {
+        Map<Long, String> mentions = new HashMap<>();
+        
 
-        Pattern pattern = Pattern.compile("@([가-힣A-Za-z0-9_]+)");
+        Pattern pattern = Pattern.compile("<<@([^:>]+):([^>]+)>>");
         Matcher matcher = pattern.matcher(comment);
         while (matcher.find()) {
-            mentions.add(matcher.group(1));
+            mentions.put(
+                Long.parseLong(matcher.group(1)), matcher.group(2));
         }
 
-        return mentions.stream()
-                   .filter(userQueryService::isExistUserName)
-                   .toList();
+        return mentions;
     }
 
     private void processMentionAlarm(
-        Long postId, Long commentId, String mentioningUser, List<String> mentionedUsers) {
-        for (String mentionedUser : mentionedUsers) {
+        Long postId, Long commentId, String mentioningUser, Map<Long, String> mentionedUsers) {
+        for (Map.Entry<Long, String> entry : mentionedUsers.entrySet()) {
             eventPublisher.publishEvent(
-                new AlarmEvent.MentionAlarmEvent(postId, commentId, mentioningUser, mentionedUser));
+                new AlarmEvent.MentionAlarmEvent(
+                    postId, commentId, mentioningUser, entry.getKey(), entry.getValue())
+            );
         }
     }
 
