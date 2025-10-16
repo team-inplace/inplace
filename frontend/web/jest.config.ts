@@ -13,7 +13,9 @@ const config: Config = {
   coverageProvider: 'v8',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '^@inplace-frontend-monorepo/shared/(.*)$': '<rootDir>/../shared/src/$1',
   },
+  setupFiles: ['<rootDir>/jest.init.ts'],
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
   transform: {
     '^.+\\.tsx?$': [
