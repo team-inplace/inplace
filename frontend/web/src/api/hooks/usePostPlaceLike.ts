@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { fetchInstance } from '../instance';
+import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
 import { RequestPlaceLike } from '@/types';
 
 export const postPlaceLikePath = () => `/places/likes`;

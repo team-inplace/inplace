@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchInstance } from '../instance';
+import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
 import { PageableData, SpotData } from '@/types';
 
 export const getInfluencerVideoPath = (id: string) => `/influencers/${id}/videos`;

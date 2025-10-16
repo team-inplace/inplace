@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { fetchInstance } from '../instance';
+import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
 import { PostCommentProps } from '@/types';
 
 export const postCommentPath = (postId: string) => `/posts/${postId}/comments`;

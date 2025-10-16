@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchInstance } from '../instance';
+import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
 import { SearchUserComplete } from '@/types';
 
 export const getSearchUserCompletePath = (postId: string) => `/posts/${postId}/comments/complete`;

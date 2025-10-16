@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { fetchInstance } from '../instance';
+import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
 import { RequestCommentLike } from '@/types';
 
 export const postCommentLikePath = (postId: string) => `/posts/${postId}/comments/likes`;

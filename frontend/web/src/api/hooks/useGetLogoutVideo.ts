@@ -1,6 +1,6 @@
 import { useQueries } from '@tanstack/react-query';
 
-import { fetchInstance } from '../instance';
+import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
 import { SpotData } from '@/types';
 
 export const getCoolEatsVideoPath = () => `/videos/cool/eats`;
