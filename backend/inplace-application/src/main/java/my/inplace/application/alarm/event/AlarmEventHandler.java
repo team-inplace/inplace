@@ -1,13 +1,13 @@
 package my.inplace.application.alarm.event;
 
 import my.inplace.application.alarm.event.dto.AlarmEvent;
+import my.inplace.application.post.query.dto.CommentResult;
 import my.inplace.domain.alarm.AlarmType;
 import my.inplace.infra.alarm.FcmClient;
 import my.inplace.application.alarm.command.AlarmCommandService;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.util.Pair;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import my.inplace.application.post.query.PostQueryService;
@@ -34,15 +34,15 @@ public class AlarmEventHandler {
         String postTitle = postQueryService.getPostTitleById(mentionEvent.postId()).getTitle();
         String content = String.format(MENTION_CONTENT, postTitle, mentionEvent.sender());
         
-        Pair<Integer, Integer> index = postQueryService.getCommentIndexByPostIdAndCommentId(
+        CommentResult.CommentIndex index = postQueryService.getCommentIndexByPostIdAndCommentId(
             mentionEvent.postId(), mentionEvent.commentId());
         
         alarmCommandService.saveAlarm(
             receiverId,
             mentionEvent.postId(),
             mentionEvent.commentId(),
-            index.getFirst(),
-            index.getSecond(),
+            index.pageNumber(),
+            index.offset(),
             content,
             AlarmType.MENTION
         );
