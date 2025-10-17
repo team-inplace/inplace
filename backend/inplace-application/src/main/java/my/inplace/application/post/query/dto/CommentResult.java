@@ -34,4 +34,13 @@ public class CommentResult {
         }
 
     }
+    
+    public record CommentIndex(
+        int pageNumber,
+        int offset
+    ) {
+        public static CommentIndex of(int pageNumber, int offset) {
+            return new CommentIndex(pageNumber, offset);
+        }
+    }
 }

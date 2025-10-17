@@ -1,5 +1,6 @@
 package my.inplace.application.post.query;
 
+import my.inplace.application.post.query.dto.CommentResult;
 import my.inplace.common.cursor.CursorResult;
 import my.inplace.common.exception.InplaceException;
 import my.inplace.common.exception.code.PostErrorCode;
@@ -131,11 +132,11 @@ public class PostQueryService {
             .toList();
     }
     
-    public Pair<Integer, Integer> getCommentIndexByPostIdAndCommentId(Long postId, Long commentId) {
+    public CommentResult.CommentIndex getCommentIndexByPostIdAndCommentId(Long postId, Long commentId) {
         long indexOfComment = postJpaRepository.findIndexOfComment(postId, commentId);
         int pageNumber = (int) indexOfComment / 10;
         int offset = (int) indexOfComment % 10;
         
-        return Pair.of(pageNumber, offset);
+        return CommentResult.CommentIndex.of(pageNumber, offset);
     }
 }
