@@ -13,6 +13,8 @@ import java.util.regex.Pattern;
 @Component
 @RequiredArgsConstructor
 public class MentionPublisher {
+    private static final String PARSING_REGEX = "<<@([^:>]+):([^>]+)>>";
+    
     private final ApplicationEventPublisher eventPublisher;
     
     public void processMention(Long postId, Long commentId, String sender, String commentContent) {
@@ -28,7 +30,7 @@ public class MentionPublisher {
     
     private List<String> parseMentionedUser(String content) {
         List<String> mentions = new ArrayList<>();
-        Pattern pattern = Pattern.compile("<<@([^:>]+):([^>]+)>>");
+        Pattern pattern = Pattern.compile(PARSING_REGEX);
         Matcher matcher = pattern.matcher(content);
         while (matcher.find()) {
             mentions.add(matcher.group(2));
