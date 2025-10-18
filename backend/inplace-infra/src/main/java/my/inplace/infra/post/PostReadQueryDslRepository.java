@@ -63,11 +63,7 @@ public class PostReadQueryDslRepository implements PostReadRepository {
         Long userId,
         String orderBy
     ) {
-        var likedJoinCondition = QLikedPost.likedPost.postId.eq(QPost.post.id);
-        if (userId != null) {
-            likedJoinCondition = likedJoinCondition.and(QLikedPost.likedPost.userId.eq(userId));
-        }
-        return queryFactory
+        var query = queryFactory
             .select(Projections.constructor(PostQueryResult.CursorDetailedPost.class,
                     Projections.constructor(PostQueryResult.DetailedPost.class,
                         QPost.post.id,
@@ -78,7 +74,9 @@ public class PostReadQueryDslRepository implements PostReadRepository {
                         QPost.post.title.title,
                         QPost.post.content.content.substring(0, 120),
                         QPost.post.photos.imageInfos,
-                        QLikedPost.likedPost.isLiked.coalesce(false),
+                        userId == null
+                            ? Expressions.FALSE
+                            : QLikedPost.likedPost.isLiked.coalesce(false),
                         QPost.post.totalLikeCount,
                         QPost.post.totalCommentCount,
                         userId == null ? Expressions.FALSE : QPost.post.authorId.eq(userId),
@@ -91,16 +89,19 @@ public class PostReadQueryDslRepository implements PostReadRepository {
             .innerJoin(QUser.user).on(QPost.post.authorId.eq(QUser.user.id))
             .innerJoin(QTier.tier).on(QUser.user.tierId.eq(QTier.tier.id))
             .leftJoin(QBadge.badge).on(QUser.user.mainBadgeId.eq(QBadge.badge.id))
-            .leftJoin(QLikedPost.likedPost).on(likedJoinCondition)
             .where(QPost.post.deleteAt.isNull());
+
+        if (userId != null) {
+            query.leftJoin(QLikedPost.likedPost)
+                .on(QLikedPost.likedPost.postId.eq(QPost.post.id)
+                    .and(QLikedPost.likedPost.userId.eq(userId)));
+        }
+
+        return query;
     }
 
     private JPAQuery<DetailedPost> buildDetailedPostsQuery(Long postId, Long userId) {
-        var likedJoinCondition = QLikedPost.likedPost.postId.eq(QPost.post.id);
-        if (userId != null) {
-            likedJoinCondition = likedJoinCondition.and(QLikedPost.likedPost.userId.eq(userId));
-        }
-        return queryFactory
+        var query = queryFactory
             .select(
                 Projections.constructor(PostQueryResult.DetailedPost.class,
                     QPost.post.id,
@@ -111,7 +112,9 @@ public class PostReadQueryDslRepository implements PostReadRepository {
                     QPost.post.title.title,
                     QPost.post.content.content,
                     QPost.post.photos.imageInfos,
-                    QLikedPost.likedPost.isLiked.coalesce(false),
+                    userId == null
+                        ? Expressions.FALSE
+                        : QLikedPost.likedPost.isLiked.coalesce(false),
                     QPost.post.totalLikeCount,
                     QPost.post.totalCommentCount,
                     userId == null ? Expressions.FALSE : QPost.post.authorId.eq(userId),
@@ -122,10 +125,17 @@ public class PostReadQueryDslRepository implements PostReadRepository {
             .innerJoin(QUser.user).on(QPost.post.authorId.eq(QUser.user.id))
             .innerJoin(QTier.tier).on(QUser.user.tierId.eq(QTier.tier.id))
             .leftJoin(QBadge.badge).on(QUser.user.mainBadgeId.eq(QBadge.badge.id))
-            .leftJoin(QLikedPost.likedPost).on(likedJoinCondition)
             .where(QPost.post.id.eq(postId)
                 .and(QPost.post.deleteAt.isNull())
             );
+
+        if (userId != null) {
+            query.leftJoin(QLikedPost.likedPost)
+                .on(QLikedPost.likedPost.postId.eq(QPost.post.id)
+                    .and(QLikedPost.likedPost.userId.eq(userId)));
+        }
+
+        return query;
     }
 
     /*
