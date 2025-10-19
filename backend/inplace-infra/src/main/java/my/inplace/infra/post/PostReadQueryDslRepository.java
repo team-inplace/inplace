@@ -4,7 +4,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -34,24 +34,26 @@ public class PostReadQueryDslRepository implements PostReadRepository {
     @Override
     public CursorResult<PostQueryResult.DetailedPost> findPostsOrderBy(
         Long userId,
+        Long cursorValue,
         Long cursorId,
         int size,
         String orderBy
     ) {
         var cursorPosts = buildCursorDetailedPostsQuery(userId, orderBy)
-            .where(cursorId == null ? null : getCursorWhere(cursorId, orderBy))
+            .where(cursorId == null ? null : getCursorWhere(cursorValue, cursorId, orderBy))
             .orderBy(getOrderSpecifier(orderBy))
             .limit(size + 1)
             .fetch();
 
         boolean hasNext = cursorPosts.size() > size;
         var posts = cursorPosts.stream().map(CursorDetailedPost::detailedPost).toList();
+
         return new CursorResult<>(
             posts.subList(0, Math.min(size, posts.size())),
             hasNext,
+            hasNext ? cursorPosts.get(size - 1).cursorValue() : null,
             hasNext ? cursorPosts.get(size - 1).cursorId() : null
         );
-
     }
 
     @Override
@@ -82,7 +84,8 @@ public class PostReadQueryDslRepository implements PostReadRepository {
                         userId == null ? Expressions.FALSE : QPost.post.authorId.eq(userId),
                         QPost.post.createdAt
                     ),
-                    getCursorPath(orderBy)
+                    getCursorPath(orderBy),
+                    QPost.post.id
                 )
             )
             .from(QPost.post)
@@ -138,24 +141,28 @@ public class PostReadQueryDslRepository implements PostReadRepository {
         return query;
     }
 
-    /*
-     * 추천수 기준 정렬 추가 예정입니다.
-     */
 
-    private OrderSpecifier<?> getOrderSpecifier(String orderBy) {
+    private OrderSpecifier<?>[] getOrderSpecifier(String orderBy) {
         return switch (orderBy) {
-            default -> QPost.post.id.desc();
+            case "popularity" -> new OrderSpecifier<?>[]{
+                QPost.post.totalLikeCount.desc(),
+                QPost.post.id.desc()
+            };
+            default -> new OrderSpecifier<?>[]{ QPost.post.id.desc() };
         };
     }
 
-    private NumberPath<Long> getCursorPath(String orderBy) {
+    private NumberExpression<Long> getCursorPath(String orderBy) {
         return switch (orderBy) {
+            case "popularity" -> QPost.post.totalLikeCount.longValue();
             default -> QPost.post.id;
         };
     }
 
-    private BooleanExpression getCursorWhere(Long cursorId, String orderBy) {
+    private BooleanExpression getCursorWhere(Long cursorValue, Long cursorId, String orderBy) {
         return switch (orderBy) {
+            case "popularity" -> QPost.post.totalLikeCount.longValue().lt(cursorValue)
+                .or(QPost.post.totalLikeCount.longValue().eq(cursorValue).and(QPost.post.id.lt(cursorId)));
             default -> QPost.post.id.lt(cursorId);
         };
     }

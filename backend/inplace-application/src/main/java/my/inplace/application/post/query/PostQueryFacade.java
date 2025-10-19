@@ -18,14 +18,19 @@ public class PostQueryFacade {
 
     private final PostQueryService postQueryService;
 
-    public CursorResult<PostResult.DetailedPost> getPosts(Long cursorId, int size, String orderBy) {
+    public CursorResult<PostResult.DetailedPost> getPosts(Long cursorValue, Long cursorId, int size, String orderBy) {
         var userId = AuthorizationUtil.getUserIdOrNull();
-        var queryResult = postQueryService.getPosts(userId, cursorId, size, orderBy);
-        var result = postQueryService.getPosts(userId, cursorId, size, orderBy).value().stream()
+        var queryResult = postQueryService.getPosts(userId, cursorValue, cursorId, size, orderBy);
+        var result = queryResult.value().stream()
             .map(PostResult.DetailedPost::from)
             .toList();
 
-        return new CursorResult<>(result, queryResult.hasNext(), queryResult.nextCursorId());
+        return new CursorResult<>(
+            result,
+            queryResult.hasNext(),
+            queryResult.nextCursorValue(),
+            queryResult.nextCursorId()
+        );
     }
 
     public PostResult.DetailedPost getPostById(Long postId) {

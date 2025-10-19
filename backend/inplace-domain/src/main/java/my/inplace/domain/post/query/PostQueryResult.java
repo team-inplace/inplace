@@ -72,6 +72,7 @@ public class PostQueryResult {
 
     public record CursorDetailedPost(
         DetailedPost detailedPost,
+        Long cursorValue,
         Long cursorId
     ) {
 
