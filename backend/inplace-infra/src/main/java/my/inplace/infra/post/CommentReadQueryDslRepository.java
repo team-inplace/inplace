@@ -1,7 +1,6 @@
 package my.inplace.infra.post;
 
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -37,6 +36,7 @@ public class CommentReadQueryDslRepository implements CommentReadRepository {
             return Page.empty(pageable);
         }
         var query = buildDetailedCommentQuery(postId, userId)
+            .orderBy(QComment.comment.id.asc()) // 오래된 순
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();
@@ -49,15 +49,7 @@ public class CommentReadQueryDslRepository implements CommentReadRepository {
         Long postId,
         Long userId
     ) {
-        BooleanExpression likedJoinCondition = QComment.comment.id.eq(
-            QLikedComment.likedComment.commentId);
-
-        if (userId != null) {
-            likedJoinCondition = likedJoinCondition.and(
-                QLikedComment.likedComment.userId.eq(userId));
-        }
-
-        return jpaQueryFactory.select(
+        var query = jpaQueryFactory.select(
                 Projections.constructor(CommentQueryResult.DetailedComment.class,
                     QComment.comment.id,
                     QUser.user.nickname,
@@ -65,19 +57,13 @@ public class CommentReadQueryDslRepository implements CommentReadRepository {
                     QTier.tier.imgUrl,
                     QBadge.badge.imgUrl,
                     QComment.comment.content,
-                    userId == null ?
-                        Expressions.constant(false) :
-                        Expressions.cases()
-                            .when(QLikedComment.likedComment.userId.eq(userId))
-                            .then(true)
-                            .otherwise(false),
+                    userId == null
+                        ? Expressions.FALSE
+                        : QLikedComment.likedComment.isLiked.coalesce(false),
                     QComment.comment.totalLikeCount,
-                    userId == null ?
-                        Expressions.constant(false) :
-                        Expressions.cases()
-                            .when(QComment.comment.authorId.eq(userId))
-                            .then(true)
-                            .otherwise(false),
+                    userId == null
+                        ? Expressions.FALSE
+                        : QComment.comment.authorId.eq(userId),
                     QComment.comment.createdAt
                 )
             )
@@ -85,8 +71,14 @@ public class CommentReadQueryDslRepository implements CommentReadRepository {
             .innerJoin(QUser.user).on(QComment.comment.authorId.eq(QUser.user.id))
             .innerJoin(QTier.tier).on(QUser.user.tierId.eq(QTier.tier.id))
             .leftJoin(QBadge.badge).on(QUser.user.mainBadgeId.eq(QBadge.badge.id))
-            .leftJoin(QLikedComment.likedComment)
-            .on(userId == null ? Expressions.FALSE : likedJoinCondition)
             .where(QComment.comment.postId.eq(postId).and(QComment.comment.deleteAt.isNull()));
+
+        if (userId != null) {
+            query.leftJoin(QLikedComment.likedComment)
+                .on(QLikedComment.likedComment.commentId.eq(QComment.comment.id)
+                    .and(QLikedComment.likedComment.userId.eq(userId)));
+        }
+
+        return query;
     }
 }
