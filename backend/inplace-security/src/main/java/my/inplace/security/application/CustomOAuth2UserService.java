@@ -1,6 +1,7 @@
 package my.inplace.security.application;
 
 import lombok.RequiredArgsConstructor;
+import my.inplace.domain.security.OAuthSecurityClient;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -17,6 +18,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     private final DefaultOAuth2UserService defaultOAuth2UserService;
     private final UserSecurityService userSecurityService;
+    private final OAuthSecurityClient oauthSecurityClient;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest)
@@ -24,6 +26,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         
         OAuth2User oAuth2User = defaultOAuth2UserService.loadUser(oAuth2UserRequest);
         KakaoOAuthResponse kakaoOAuthResponse = new KakaoOAuthResponse(oAuth2User.getAttributes());
+        unlinkKakaoAccessToken(oAuth2UserRequest.getAccessToken().getTokenValue());
         
         return userSecurityService.findUserByUsername(kakaoOAuthResponse.getEmail())
             .map(userInfo -> handleExistingUser(userInfo, kakaoOAuthResponse))
@@ -40,5 +43,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             UserSecurityCommand.Create.of(kakaoOAuthResponse)
         );
         return CustomOAuth2User.makeNewUser(newUser);
+    }
+    
+    private void unlinkKakaoAccessToken(String accessToken) {
+        oauthSecurityClient.unLink(accessToken);
     }
 }
