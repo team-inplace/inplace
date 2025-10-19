@@ -13,7 +13,6 @@ import my.inplace.application.place.query.PlaceQueryService;
 import my.inplace.application.place.query.dto.PlaceResult;
 import my.inplace.application.review.ReviewService;
 import my.inplace.domain.review.query.ReviewQueryResult;
-import my.inplace.security.token.OauthTokenService;
 import my.inplace.application.user.command.UserCommandService;
 import my.inplace.application.user.dto.UserResult;
 import my.inplace.application.user.query.UserQueryService;
@@ -31,7 +30,6 @@ public class UserFacade {
     private final UserQueryService userQueryService;
 
     private final UserCommandService userCommandService;
-    private final OauthTokenService oauthTokenService;
 
     //TODO: Return 클래스 변경 필요
     public Page<InfluencerResult.Simple> getMyFavoriteInfluencers(Pageable pageable) {
@@ -78,7 +76,6 @@ public class UserFacade {
 
     public void deleteUser() {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
-        oauthTokenService.unlinkOauthToken(userId);
         userCommandService.deleteUser(userId);
     }
 
