@@ -1,6 +1,6 @@
 package my.inplace.domain.security;
 
-public interface OauthSecurityClient {
+public interface OAuthSecurityClient {
 
     void unLink(String accessToken);
 }
