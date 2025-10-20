@@ -121,6 +121,10 @@ const AlarmContainer = styled.div`
   &:last-child {
     border-bottom: none;
   }
+
+  @media screen and (max-width: 768px) {
+    padding: 16px 8px;
+  }
 `;
 
 const StyledText = styled(Text)`
@@ -131,6 +135,10 @@ const StyledText = styled(Text)`
 const CreatedAtText = styled(Text)`
   color: #b0b0b0;
   white-space: nowrap;
+
+  @media screen and (max-width: 768px) {
+    font-size: 12px;
+  }
 `;
 
 const IconContainer = styled.div`

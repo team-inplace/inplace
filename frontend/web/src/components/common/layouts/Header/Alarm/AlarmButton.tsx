@@ -42,7 +42,7 @@ export default function AlarmButton({ iconSize = 20 }: AlarmButtonProps) {
           <FaRegBell size={iconSize} />
           {isAuthenticated && unreadCount > 0 && <UnreadBadge>{unreadCount > 99 ? '99+' : unreadCount}</UnreadBadge>}
         </BellButton>
-        {isAuthenticated && <AlarmList alarms={alarms} isVisible={isAlarmOpen} />}
+        {isAuthenticated && <AlarmList alarms={alarms} isVisible={isAlarmOpen} onClose={() => setIsAlarmOpen(false)} />}
       </AlarmContainer>
       {showLoginModal && (
         <LoginModal immediateOpen currentPath={location.pathname} onClose={() => setShowLoginModal(false)} />
