@@ -1,6 +1,7 @@
-package my.inplace.security.admin;
+package my.inplace.api.security;
 
-import my.inplace.security.admin.dto.AdminRequest;
+import my.inplace.application.security.admin.AdminUserService;
+import my.inplace.api.security.dto.AdminRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

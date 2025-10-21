@@ -1,13 +1,13 @@
 package my.inplace.security.config;
 
+import my.inplace.application.security.admin.AdminUserService;
 import my.inplace.domain.security.OAuthSecurityClient;
 import my.inplace.infra.security.KakaoOAuthClient;
-import my.inplace.security.admin.AdminUserService;
+import my.inplace.security.application.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import my.inplace.security.application.CustomOAuth2UserService;
-import my.inplace.security.application.CustomUserDetailsService;
 import my.inplace.security.user.UserSecurityService;
 import org.springframework.web.client.RestTemplate;
 
@@ -34,7 +34,7 @@ public class SecurityServiceConfig {
     ) {
         return new CustomOAuth2UserService(defaultOAuth2UserService, userSecurityService, oauthSecurityClient);
     }
-
+    
     @Bean
     public CustomUserDetailsService customUserDetailsService(AdminUserService adminUserService) {
         return new CustomUserDetailsService(adminUserService);

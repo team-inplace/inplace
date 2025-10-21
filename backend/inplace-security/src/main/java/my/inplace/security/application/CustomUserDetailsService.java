@@ -1,8 +1,8 @@
 package my.inplace.security.application;
 
-import my.inplace.security.admin.dto.AdminResult;
-import my.inplace.security.admin.AdminUserService;
 import lombok.RequiredArgsConstructor;
+import my.inplace.application.security.admin.AdminUserService;
+import my.inplace.application.security.admin.dto.AdminResult;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
