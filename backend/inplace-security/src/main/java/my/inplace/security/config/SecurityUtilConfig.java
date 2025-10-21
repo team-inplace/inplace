@@ -36,6 +36,7 @@ public class SecurityUtilConfig {
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
+    
     @Bean
     public AuthenticationManager authenticationManager(
         CustomUserDetailsService customUserDetailsService,
