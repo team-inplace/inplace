@@ -20,6 +20,9 @@ import my.inplace.security.util.JwtUtil;
 public class CustomSuccessHandler implements AuthenticationSuccessHandler {
 
     private static final String IS_FIRST_USER = "is_first_user";
+    private static final String FIRST_USER_SUFFIX = "/choice";
+    private static final String NOT_FIRST_USER_SUFFIX = "/auth";
+    
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
 
@@ -45,30 +48,34 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
     ) throws IOException {
         Object principal = authentication.getPrincipal();
         if (principal instanceof CustomOAuth2User customOAuth2User) {
-            String accessToken = jwtUtil.createAccessToken(customOAuth2User.username(),
-                customOAuth2User.id(), customOAuth2User.roles());
-            String refreshToken = jwtUtil.createRefreshToken(customOAuth2User.username(),
-                customOAuth2User.id(), customOAuth2User.roles());
-            refreshTokenService.saveRefreshToken(customOAuth2User.username(), refreshToken);
-            setCookie(response, TokenType.ACCESS_TOKEN.getValue(), accessToken);
-            setCookie(response, TokenType.REFRESH_TOKEN.getValue(), refreshToken);
-            setFirstUserToResponse(response, customOAuth2User.isFirstUser());
-            if (customOAuth2User.isFirstUser()) {
-                response.sendRedirect(frontEndUrl + "/choice");
-                return;
-            }
-            response.sendRedirect(frontEndUrl + "/auth");
-            return;
+            setTokenToCookie(response, customOAuth2User);
+            setFirstUserToCookie(response, customOAuth2User.isFirstUser());
+            
+            String redirectUrl = frontEndUrl;
+            redirectUrl += customOAuth2User.isFirstUser()
+                ? FIRST_USER_SUFFIX
+                : NOT_FIRST_USER_SUFFIX;
+            response.sendRedirect(redirectUrl);
         }
+        
         CustomUserDetails customUserDetails = (CustomUserDetails) principal;
         String accessToken = jwtUtil.createAccessToken(customUserDetails.username(),
             customUserDetails.id(), customUserDetails.roles());
         setCookie(response, TokenType.ACCESS_TOKEN.getValue(), accessToken);
         response.sendRedirect("/admin/main");
     }
+    
+    private void setTokenToCookie(HttpServletResponse response, CustomOAuth2User user) {
+        String accessToken = jwtUtil.createAccessToken(user.username(), user.id(), user.roles());
+        setCookie(response, TokenType.ACCESS_TOKEN.getValue(), accessToken);
+        
+        String refreshToken = jwtUtil.createRefreshToken(user.username(), user.id(), user.roles());
+        setCookie(response, TokenType.REFRESH_TOKEN.getValue(), refreshToken);
+        refreshTokenService.saveRefreshToken(user.username(), refreshToken);
+    }
 
-    private void setFirstUserToResponse(HttpServletResponse response, Boolean isFirstUser) {
-        response.addHeader(HttpHeaders.SET_COOKIE, CookieUtil.createCookie(IS_FIRST_USER, isFirstUser.toString(), domain).toString());
+    private void setFirstUserToCookie(HttpServletResponse response, Boolean isFirstUser) {
+        setCookie(response, IS_FIRST_USER, isFirstUser.toString());
     }
 
     private void setCookie(HttpServletResponse response, String key, String value) {
