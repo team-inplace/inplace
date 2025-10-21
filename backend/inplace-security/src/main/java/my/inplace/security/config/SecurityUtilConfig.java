@@ -2,7 +2,6 @@ package my.inplace.security.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,12 +16,6 @@ import my.inplace.security.util.JwtUtil;
 @Configuration
 @EnableConfigurationProperties(JwtProperties.class)
 public class SecurityUtilConfig {
-
-    @Value("${spring.oauth.password}")
-    private String oauthPassword;
-
-    @Value("${spring.oauth.salt}")
-    private String oauthSalt;
 
     @Bean
     public ObjectMapper objectMapper() {
