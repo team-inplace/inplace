@@ -13,7 +13,6 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import my.inplace.security.application.CustomUserDetailsService;
 import my.inplace.security.util.JwtUtil;
-import my.inplace.security.util.TokenEncryptionUtil;
 
 @Configuration
 @EnableConfigurationProperties(JwtProperties.class)
@@ -52,10 +51,5 @@ public class SecurityUtilConfig {
     @Bean
     public JwtUtil jwtUtil(JwtProperties jwtProperties) {
         return new JwtUtil(jwtProperties);
-    }
-
-    @Bean
-    public TokenEncryptionUtil tokenEncryptionUtil() {
-        return new TokenEncryptionUtil(oauthPassword, oauthSalt);
     }
 }
