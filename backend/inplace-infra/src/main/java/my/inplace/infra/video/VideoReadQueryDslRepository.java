@@ -131,11 +131,16 @@ public class VideoReadQueryDslRepository implements VideoReadRepository {
     @Override
     public Page<SimpleVideo> findVideoWithNoPlace(Pageable pageable) {
         List<Long> videoIds = queryFactory
-            .select(QVideo.video.id).distinct()
+            .select(QVideo.video.id)
             .from(QVideo.video)
-            .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
-            .where(QPlaceVideo.placeVideo.isNull(),
-                QVideo.video.deleteAt.isNull())
+            .where(
+                JPAExpressions
+                    .selectOne()
+                    .from(QPlaceVideo.placeVideo)
+                    .where(QPlaceVideo.placeVideo.videoId.eq(QVideo.video.id))
+                    .notExists(),
+                QVideo.video.deleteAt.isNull()
+            )
             .fetch();
 
         if (videoIds.isEmpty()) {
