@@ -13,7 +13,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import my.inplace.security.config.JwtProperties;
+import my.inplace.infra.security.properties.JwtProperties;
 
 @Slf4j
 public class JwtUtil {
@@ -67,16 +67,7 @@ public class JwtUtil {
             throw InplaceException.of(AuthorizationErrorCode.INVALID_TOKEN);
         }
     }
-
-    public boolean isRefreshToken(String token) throws InplaceException {
-        try {
-            return jwtParser.parseSignedClaims(token).getPayload().get("tokenType", String.class)
-                    .equals("refreshToken");
-        } catch (JwtException | IllegalArgumentException e) {
-            throw InplaceException.of(AuthorizationErrorCode.INVALID_TOKEN);
-        }
-    }
-
+    
     public Long getId(String token) throws InplaceException {
         try {
             return jwtParser.parseSignedClaims(token).getPayload().get("id", Long.class);
