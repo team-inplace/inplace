@@ -1,6 +1,7 @@
 package my.inplace.security.config;
 
 import lombok.RequiredArgsConstructor;
+import my.inplace.security.handler.FormLoginSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -16,7 +17,7 @@ import my.inplace.security.filter.AuthorizationFilter;
 import my.inplace.security.filter.ExceptionHandlingFilter;
 import my.inplace.security.handler.CustomAccessDeniedHandler;
 import my.inplace.security.handler.CustomFailureHandler;
-import my.inplace.security.handler.CustomSuccessHandler;
+import my.inplace.security.handler.OAuth2SuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -25,7 +26,8 @@ import my.inplace.security.handler.CustomSuccessHandler;
 public class SecurityConfig {
 
     private final CustomOAuth2UserService customOauth2UserService;
-    private final CustomSuccessHandler customSuccessHandler;
+    private final OAuth2SuccessHandler OAuth2SuccessHandler;
+    private final FormLoginSuccessHandler formLoginSuccessHandler;
     private final CustomFailureHandler customFailureHandler;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final ExceptionHandlingFilter exceptionHandlingFilter;
@@ -33,7 +35,7 @@ public class SecurityConfig {
     private final CorsFilter corsFilter;
     
     /**
-     * Spring Security Filter Chain Definition
+     *   Spring Security Filter Chain Definition
      * - csrf 설정 해제
      * - http basic 설정 해제
      * - 어드인 페이지 접근 권한 설정
@@ -60,12 +62,12 @@ public class SecurityConfig {
             
             .formLogin((form) -> form
                 .loginPage("/admin/login")
-                .successHandler(customSuccessHandler))
+                .successHandler(formLoginSuccessHandler))
             
             .oauth2Login((oauth2) -> oauth2
                 .userInfoEndpoint((userInfoEndPointConfig) -> userInfoEndPointConfig
                     .userService(customOauth2UserService))
-                .successHandler(customSuccessHandler)
+                .successHandler(OAuth2SuccessHandler)
                 .failureHandler(customFailureHandler))
             
             .exceptionHandling((auth) -> auth
