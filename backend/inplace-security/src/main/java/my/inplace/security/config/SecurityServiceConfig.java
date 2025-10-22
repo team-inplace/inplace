@@ -1,8 +1,8 @@
 package my.inplace.security.config;
 
-import my.inplace.application.security.admin.AdminUserService;
 import my.inplace.domain.security.OAuthSecurityClient;
 import my.inplace.infra.security.KakaoOAuthClient;
+import my.inplace.security.application.AdminUserService;
 import my.inplace.security.application.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

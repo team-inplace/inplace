@@ -1,6 +1,6 @@
 package my.inplace.api.security.dto;
 
-import my.inplace.application.security.admin.dto.AdminCommand.Register;
+import my.inplace.security.application.dto.AdminCommand.Register;
 
 public class AdminRequest {
     public record Login(

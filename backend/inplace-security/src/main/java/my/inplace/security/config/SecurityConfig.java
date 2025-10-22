@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import my.inplace.security.handler.FormLoginSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -28,6 +29,7 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOauth2UserService;
     private final OAuth2SuccessHandler OAuth2SuccessHandler;
     private final FormLoginSuccessHandler formLoginSuccessHandler;
+    private final AuthenticationManager authenticationManager;
     private final CustomFailureHandler customFailureHandler;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final ExceptionHandlingFilter exceptionHandlingFilter;
@@ -40,6 +42,7 @@ public class SecurityConfig {
      * - http basic 설정 해제
      * - 어드인 페이지 접근 권한 설정
      * - 어드민 로그인 핸들러 정의
+     * - 어드민 로그인 처리를 위한 매니저 설정
      * - Oauth2 로그인 핸들러 정의
      * - 인가 실패 핸들러 정의
      * - 인증 필터 추가
@@ -57,12 +60,15 @@ public class SecurityConfig {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             
             .authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/admin/login", "/admin/register").permitAll()
+                .requestMatchers("/admin/register", "/admin/login").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN").anyRequest().permitAll())
             
             .formLogin((form) -> form
                 .loginPage("/admin/login")
+                .loginProcessingUrl("/admin/login")
                 .successHandler(formLoginSuccessHandler))
+            
+            .authenticationManager(authenticationManager)
             
             .oauth2Login((oauth2) -> oauth2
                 .userInfoEndpoint((userInfoEndPointConfig) -> userInfoEndPointConfig
