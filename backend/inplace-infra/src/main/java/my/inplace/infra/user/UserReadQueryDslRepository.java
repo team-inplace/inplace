@@ -1,6 +1,8 @@
 package my.inplace.infra.user;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -57,7 +59,7 @@ public class UserReadQueryDslRepository implements UserReadRepository {
             QBadge.badge.imgUrl,
             QBadge.badge.condition,
             QUserBadge.userBadge.id.isNotNull(),
-            QBadge.badge.id.eq(mainBadgeId)
+            mainBadgeId != null ? QBadge.badge.id.eq(mainBadgeId) : Expressions.FALSE
             ))
             .from(QBadge.badge)
             .leftJoin(QUserBadge.userBadge).on(QUserBadge.userBadge.badgeId.eq(QBadge.badge.id)
