@@ -68,7 +68,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     }
 
     private void setFirstUserToCookie(HttpServletResponse response, Boolean isFirstUser) {
-        setCookie(response, IS_FIRST_USER, isFirstUser.toString());
+        ResponseCookie cookie = CookieUtil.createCookie(IS_FIRST_USER, isFirstUser.toString(), domain);
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     private void setCookie(HttpServletResponse response, String key, String value) {
