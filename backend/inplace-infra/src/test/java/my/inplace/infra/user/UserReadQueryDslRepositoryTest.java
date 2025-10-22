@@ -1,6 +1,7 @@
 package my.inplace.infra.user;
 
 import my.inplace.domain.user.query.UserQueryResult;
+import my.inplace.domain.user.query.UserQueryResult.Info;
 import my.inplace.infra.config.AbstractMySQLContainer;
 import my.inplace.infra.global.MySQLContainerJpaTest;
 import org.junit.jupiter.api.Test;
@@ -29,10 +30,10 @@ class UserReadQueryDslRepositoryTest extends AbstractMySQLContainer {
     void findUserInfoById() {
         // given
         Long userId = 1L;
-        UserQueryResult.Simple expected = new UserQueryResult.Simple("유저1", "img1.png", "브론즈", "bronze.png", "글쟁이", "badge1.png");
+        Info expected = new Info("유저1", "img1.png", "브론즈", "bronze.png", "글쟁이", "badge1.png");
 
         // when
-        Optional<UserQueryResult.Simple> actual = userReadRepository.findUserInfoById(userId);
+        Optional<Info> actual = userReadRepository.findUserInfoById(userId);
 
         // then
         assertThat(actual.isPresent()).isTrue();

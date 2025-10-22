@@ -1,7 +1,6 @@
 package my.inplace.api.user.dto;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.stream.Collectors;
 import my.inplace.application.influencer.query.dto.InfluencerResult;
 import my.inplace.application.place.query.dto.PlaceResult;
@@ -17,29 +16,27 @@ public class UserResponse {
         String mainBadgeImageUrl
     ) {
 
-        public static Simple from(UserResult.Simple simple) {
+        public static Simple from(UserResult.Info info) {
             return new Simple(
-                simple.nickname(),
-                simple.profileImageUrl(),
-                simple.tierImageUrl(),
-                simple.mainBadgeImageUrl()
+                info.nickname(),
+                info.profileImageUrl(),
+                info.tierImageUrl(),
+                info.mainBadgeImageUrl()
             );
         }
     }
 
-    public record Detail(
+    public record Info(
         String nickname,
         String imgUrl,
-        Tier tier,
-        List<Badge> badges
+        Tier tier
     ) {
 
-        public static Detail from(UserResult.Detail detail) {
-            return new Detail(
-                detail.nickname(),
-                detail.profileImageUrl(),
-                new Tier(detail.tierName(), detail.tierImageUrl()),
-                detail.badges().stream().map(Badge::from).toList()
+        public static Info from(UserResult.Info info) {
+            return new Info(
+                info.nickname(),
+                info.profileImageUrl(),
+                new Tier(info.tierName(), info.tierImageUrl())
             );
         }
     }

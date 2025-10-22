@@ -37,7 +37,7 @@ public interface UserControllerApiSpec {
     );
 
     @Operation(summary = "유저 정보 반환", description = "유저 정보를 반환합니다.")
-    ResponseEntity<UserResponse.Detail> getUserDetail();
+    ResponseEntity<UserResponse.Info> getUserDetail();
 
     @Operation(summary = "모든 칭호 반환", description = "모든 칭호를 user 소유 여부, user 대표 칭호 여부와 함께 반환합니다.")
     ResponseEntity<List<BadgeWithOwnerShip>> getAllBadgesWithOwnerShip();

@@ -2,7 +2,7 @@ package my.inplace.domain.user.query;
 
 public class UserQueryResult {
 
-    public record Simple(
+    public record Info(
         String nickname,
         String imgUrl,
         String tierName,

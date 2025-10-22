@@ -1,13 +1,12 @@
 package my.inplace.application.user.dto;
 
 import java.time.LocalDate;
-import java.util.List;
 import my.inplace.domain.review.query.ReviewQueryResult;
 import my.inplace.domain.user.query.UserQueryResult;
 
 public class UserResult {
 
-    public record Simple(
+    public record Info(
         String nickname,
         String profileImageUrl,
         String mainBadgeName,
@@ -16,35 +15,14 @@ public class UserResult {
         String tierImageUrl
     ) {
 
-        public static Simple from(UserQueryResult.Simple user) {
-            return new Simple(
+        public static Info from(UserQueryResult.Info user) {
+            return new Info(
                 user.nickname(),
                 user.imgUrl(),
                 user.mainBadgeName(),
                 user.mainBadgeImgUrl(),
                 user.tierName(),
                 user.tierImgUrl()
-            );
-        }
-    }
-
-    public record Detail(
-        String nickname,
-        String profileImageUrl,
-        String tierName,
-        String tierImageUrl,
-        List<Badge> badges
-    ) {
-
-        public static Detail from(
-            UserQueryResult.Simple user, List<UserQueryResult.Badge> badgeQueryResults) {
-            List<Badge> badges = badgeQueryResults.stream().map(Badge::from).toList();
-            return new Detail(
-                user.nickname(),
-                user.imgUrl(),
-                user.tierName(),
-                user.tierImgUrl(),
-                badges
             );
         }
     }
