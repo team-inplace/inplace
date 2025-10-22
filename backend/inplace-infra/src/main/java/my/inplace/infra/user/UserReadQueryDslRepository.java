@@ -43,21 +43,6 @@ public class UserReadQueryDslRepository implements UserReadRepository {
     }
 
     @Override
-    public List<Badge> findAllBadgeByUserId(Long userId) {
-        return queryFactory
-            .select(Projections.constructor(UserQueryResult.Badge.class,
-                QBadge.badge.id,
-                QBadge.badge.name,
-                QBadge.badge.imgUrl,
-                QBadge.badge.condition
-            ))
-            .from(QBadge.badge)
-            .leftJoin(QUserBadge.userBadge).on(QUserBadge.userBadge.badgeId.eq(QBadge.badge.id))
-            .where(QUserBadge.userBadge.userId.eq(userId))
-            .fetch();
-    }
-
-    @Override
     public List<BadgeWithOwnerShip> getAllBadgesWithOwnerShip(Long userId) {
         Long mainBadgeId = queryFactory
             .select(QUser.user.mainBadgeId)

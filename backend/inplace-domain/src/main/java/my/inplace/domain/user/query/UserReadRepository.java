@@ -10,7 +10,5 @@ public interface UserReadRepository {
 
     Optional<Info> findUserInfoById(Long id);
 
-    List<Badge> findAllBadgeByUserId(Long userId);
-
     List<BadgeWithOwnerShip> getAllBadgesWithOwnerShip(Long userId);
 }
