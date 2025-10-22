@@ -21,4 +21,15 @@ public class UserQueryResult {
     ) {
 
     }
+
+    public record BadgeWithOwnerShip(
+        Long id,
+        String name,
+        String imgUrl,
+        String description,
+        Boolean isOwned,
+        Boolean isSelected
+    ) {
+
+    }
 }

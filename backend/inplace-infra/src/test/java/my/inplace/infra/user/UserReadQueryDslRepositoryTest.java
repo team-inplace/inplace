@@ -55,4 +55,21 @@ class UserReadQueryDslRepositoryTest extends AbstractMySQLContainer {
         assertThat(actual.size()).isEqualTo(expected.size());
         assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
     }
+
+    @Test
+    void getAllBadgesWithOwnerShip() {
+        // given
+        Long userId = 1L;
+        List<UserQueryResult.BadgeWithOwnerShip> expected = List.of(
+            new UserQueryResult.BadgeWithOwnerShip(1L, "글쟁이", "badge1.png", "5개 글 작성", true, true),
+            new UserQueryResult.BadgeWithOwnerShip(2L, "수다쟁이", "badge2.png", "10개 댓글 작성", true, false),
+            new UserQueryResult.BadgeWithOwnerShip(3L, "인기인", "badge3.png", "50개 좋아요", false, false)
+        );
+
+        // when
+        List<UserQueryResult.BadgeWithOwnerShip> actual = userReadRepository.getAllBadgesWithOwnerShip(userId);
+
+        // then
+        assertThat(actual).containsExactlyElementsOf(expected);
+    }
 }

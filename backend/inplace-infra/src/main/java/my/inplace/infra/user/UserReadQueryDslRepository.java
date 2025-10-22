@@ -1,6 +1,7 @@
 package my.inplace.infra.user;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +12,7 @@ import my.inplace.domain.user.QUser;
 import my.inplace.domain.user.QUserBadge;
 import my.inplace.domain.user.query.UserQueryResult;
 import my.inplace.domain.user.query.UserQueryResult.Badge;
+import my.inplace.domain.user.query.UserQueryResult.BadgeWithOwnerShip;
 import my.inplace.domain.user.query.UserQueryResult.Simple;
 import my.inplace.domain.user.query.UserReadRepository;
 import org.springframework.stereotype.Repository;
@@ -53,6 +55,29 @@ public class UserReadQueryDslRepository implements UserReadRepository {
             .from(QBadge.badge)
             .leftJoin(QUserBadge.userBadge).on(QUserBadge.userBadge.badgeId.eq(QBadge.badge.id))
             .where(QUserBadge.userBadge.userId.eq(userId))
+            .fetch();
+    }
+
+    @Override
+    public List<BadgeWithOwnerShip> getAllBadgesWithOwnerShip(Long userId) {
+        Long mainBadgeId = queryFactory
+            .select(QUser.user.mainBadgeId)
+            .from(QUser.user)
+            .where(QUser.user.id.eq(userId))
+            .fetchOne();
+
+        return queryFactory
+            .select(Projections.constructor(UserQueryResult.BadgeWithOwnerShip.class,
+            QBadge.badge.id,
+            QBadge.badge.name,
+            QBadge.badge.imgUrl,
+            QBadge.badge.condition,
+            QUserBadge.userBadge.id.isNotNull(),
+            QBadge.badge.id.eq(mainBadgeId)
+            ))
+            .from(QBadge.badge)
+            .leftJoin(QUserBadge.userBadge).on(QUserBadge.userBadge.badgeId.eq(QBadge.badge.id)
+                .and(QUserBadge.userBadge.userId.eq(userId)))
             .fetch();
     }
 
