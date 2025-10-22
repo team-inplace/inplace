@@ -1,4 +1,4 @@
-package my.inplace.api.security.dto;
+package my.inplace.security.admin.dto;
 
 import my.inplace.security.application.dto.AdminCommand.Register;
 
