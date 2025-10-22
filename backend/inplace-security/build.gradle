@@ -17,7 +17,6 @@ dependencies {
 
     // 공통 모듈 의존성
     implementation project(':inplace-common')
-    implementation project(':inplace-application')
-    implementation project(':inplace-infra')
     implementation project(':inplace-domain')
+    implementation project(':inplace-infra')
 }
