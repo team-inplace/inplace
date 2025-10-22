@@ -26,11 +26,11 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOauth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
+    private final CustomFailureHandler customFailureHandler;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final ExceptionHandlingFilter exceptionHandlingFilter;
     private final AuthorizationFilter authorizationFilter;
-    private final CustomFailureHandler customFailureHandler;
     private final CorsFilter corsFilter;
-    private final CustomAccessDeniedHandler customAccessDeniedHandler;
     
     /**
      * Spring Security Filter Chain Definition
