@@ -63,4 +63,9 @@ public class UserQueryService {
         
         return user.getMentionPushConsent();
     }
+
+    public List<UserResult.BadgeWithOwnerShip> getAllBadgesWithOwnerShip(Long userId) {
+        return userReadRepository.getAllBadgesWithOwnerShip(userId)
+            .stream().map(UserResult.BadgeWithOwnerShip::from).toList();
+    }
 }

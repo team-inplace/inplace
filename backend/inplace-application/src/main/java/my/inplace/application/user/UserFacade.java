@@ -1,5 +1,6 @@
 package my.inplace.application.user;
 
+import java.util.List;
 import my.inplace.application.annotation.Facade;
 import my.inplace.application.influencer.query.InfluencerQueryService;
 import my.inplace.application.influencer.query.dto.InfluencerResult;
@@ -85,6 +86,11 @@ public class UserFacade {
     public UserResult.Detail getUserDetail() {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
         return userQueryService.getUserDetail(userId);
+    }
+
+    public List<UserResult.BadgeWithOwnerShip> getAllBadges() {
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
+        return userQueryService.getAllBadgesWithOwnerShip(userId);
     }
 
     public void updateMainBadge(Long badgeId) {

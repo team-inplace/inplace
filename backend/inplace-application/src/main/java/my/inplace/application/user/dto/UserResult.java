@@ -49,6 +49,26 @@ public class UserResult {
         }
     }
 
+    public record BadgeWithOwnerShip(
+        Long id,
+        String name,
+        String imgUrl,
+        String description,
+        Boolean isOwned,
+        Boolean isSelected
+    ) {
+        public static BadgeWithOwnerShip from(UserQueryResult.BadgeWithOwnerShip badge) {
+            return new BadgeWithOwnerShip(
+                badge.id(),
+                badge.name(),
+                badge.imgUrl(),
+                badge.description(),
+                badge.isOwned(),
+                badge.isSelected()
+            );
+        }
+    }
+
     public record Badge(
         Long id,
         String name,
