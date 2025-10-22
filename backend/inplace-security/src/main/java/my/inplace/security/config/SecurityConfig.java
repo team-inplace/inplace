@@ -31,43 +31,50 @@ public class SecurityConfig {
     private final CustomFailureHandler customFailureHandler;
     private final CorsFilter corsFilter;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
-
+    
+    /**
+     * Spring Security Filter Chain Definition
+     * - csrf 설정 해제
+     * - http basic 설정 해제
+     * - 어드인 페이지 접근 권한 설정
+     * - 어드민 로그인 핸들러 정의
+     * - Oauth2 로그인 핸들러 정의
+     * - 인가 실패 핸들러 정의
+     * - 인증 필터 추가
+     * - 예외 처리용 필터 추가
+     * - CORS 설정 필터 추가
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
         throws Exception {
-
-        //http 설정
+        
         http.csrf(AbstractHttpConfigurer::disable)
+            .httpBasic(AbstractHttpConfigurer::disable)
+            
+            .sessionManagement((session) -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            
+            .authorizeHttpRequests((auth) -> auth
+                .requestMatchers("/admin/login", "/admin/register").permitAll()
+                .requestMatchers("/admin/**").hasRole("ADMIN").anyRequest().permitAll())
+            
             .formLogin((form) -> form
                 .loginPage("/admin/login")
                 .successHandler(customSuccessHandler))
-            .httpBasic(AbstractHttpConfigurer::disable)
-            //authentication Service, Handler 설정
+            
             .oauth2Login((oauth2) -> oauth2
                 .userInfoEndpoint((userInfoEndPointConfig) -> userInfoEndPointConfig
                     .userService(customOauth2UserService))
                 .successHandler(customSuccessHandler)
                 .failureHandler(customFailureHandler))
-
-            //authentication Filter 설정
-            .addFilterBefore(authorizationFilter,
-                UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(exceptionHandlingFilter, AuthorizationFilter.class)
-
+            
             .exceptionHandling((auth) -> auth
                 .accessDeniedHandler(customAccessDeniedHandler))
-            //authentication 경로 설정
-            .authorizeHttpRequests((auth) -> auth
-                    .requestMatchers("/admin/login", "/admin/register").permitAll()
-                    .requestMatchers("/admin/**").hasRole("ADMIN")
-                    .anyRequest().permitAll()
-            )
-            //cors 설정
-            .addFilter(corsFilter)
-            //session 설정
-            .sessionManagement((session) -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
+            
+            .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(exceptionHandlingFilter, AuthorizationFilter.class)
+            .addFilter(corsFilter);
+            
         return http.build();
     }
 }
