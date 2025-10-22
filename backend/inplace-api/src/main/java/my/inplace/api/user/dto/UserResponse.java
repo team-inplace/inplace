@@ -1,9 +1,9 @@
 package my.inplace.api.user.dto;
 
-import my.inplace.application.influencer.query.dto.InfluencerResult;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
+import my.inplace.application.influencer.query.dto.InfluencerResult;
 import my.inplace.application.place.query.dto.PlaceResult;
 import my.inplace.application.user.dto.UserResult;
 import my.inplace.application.video.query.dto.VideoResult;
@@ -40,6 +40,27 @@ public class UserResponse {
                 detail.profileImageUrl(),
                 new Tier(detail.tierName(), detail.tierImageUrl()),
                 detail.badges().stream().map(Badge::from).toList()
+            );
+        }
+    }
+
+    public record BadgeWithOwnerShip(
+        Long id,
+        String name,
+        String imgUrl,
+        String description,
+        Boolean isOwned,
+        Boolean isSelected
+    ) {
+
+        public static BadgeWithOwnerShip from(UserResult.BadgeWithOwnerShip badge) {
+            return new BadgeWithOwnerShip(
+                badge.id(),
+                badge.name(),
+                badge.imgUrl(),
+                badge.description(),
+                badge.isOwned(),
+                badge.isSelected()
             );
         }
     }
