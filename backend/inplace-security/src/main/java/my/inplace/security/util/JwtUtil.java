@@ -13,7 +13,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import my.inplace.infra.security.properties.JwtProperties;
+import my.inplace.security.config.JwtProperties;
 
 @Slf4j
 public class JwtUtil {
