@@ -8,6 +8,7 @@ public interface PostReadRepository {
 
     CursorResult<PostQueryResult.DetailedPost> findPostsOrderBy(
         Long userId,
+        Long cursorValue,
         Long cursorId,
         int size,
         String orderBy

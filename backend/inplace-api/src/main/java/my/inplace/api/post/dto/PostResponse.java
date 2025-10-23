@@ -49,8 +49,15 @@ public class PostResponse {
             List<SimplePost> posts = postResult.value().stream()
                 .map(SimplePost::from)
                 .toList();
-            return new SimpleList(posts,
-                new CursorResponse(postResult.hasNext(), postResult.nextCursorId()));
+
+            return new SimpleList(
+                posts,
+                new CursorResponse(
+                    postResult.hasNext(),
+                    postResult.nextCursorValue(),
+                    postResult.nextCursorId()
+                )
+            );
         }
     }
 

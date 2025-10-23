@@ -4,7 +4,7 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -34,24 +34,26 @@ public class PostReadQueryDslRepository implements PostReadRepository {
     @Override
     public CursorResult<PostQueryResult.DetailedPost> findPostsOrderBy(
         Long userId,
+        Long cursorValue,
         Long cursorId,
         int size,
         String orderBy
     ) {
         var cursorPosts = buildCursorDetailedPostsQuery(userId, orderBy)
-            .where(cursorId == null ? null : getCursorWhere(cursorId, orderBy))
+            .where(cursorId == null ? null : getCursorWhere(cursorValue, cursorId, orderBy))
             .orderBy(getOrderSpecifier(orderBy))
             .limit(size + 1)
             .fetch();
 
         boolean hasNext = cursorPosts.size() > size;
         var posts = cursorPosts.stream().map(CursorDetailedPost::detailedPost).toList();
+
         return new CursorResult<>(
             posts.subList(0, Math.min(size, posts.size())),
             hasNext,
+            hasNext ? cursorPosts.get(size - 1).cursorValue() : null,
             hasNext ? cursorPosts.get(size - 1).cursorId() : null
         );
-
     }
 
     @Override
@@ -63,11 +65,7 @@ public class PostReadQueryDslRepository implements PostReadRepository {
         Long userId,
         String orderBy
     ) {
-        var likedJoinCondition = QLikedPost.likedPost.postId.eq(QPost.post.id);
-        if (userId != null) {
-            likedJoinCondition = likedJoinCondition.and(QLikedPost.likedPost.userId.eq(userId));
-        }
-        return queryFactory
+        var query = queryFactory
             .select(Projections.constructor(PostQueryResult.CursorDetailedPost.class,
                     Projections.constructor(PostQueryResult.DetailedPost.class,
                         QPost.post.id,
@@ -78,29 +76,35 @@ public class PostReadQueryDslRepository implements PostReadRepository {
                         QPost.post.title.title,
                         QPost.post.content.content.substring(0, 120),
                         QPost.post.photos.imageInfos,
-                        QLikedPost.likedPost.isLiked.coalesce(false),
+                        userId == null
+                            ? Expressions.FALSE
+                            : QLikedPost.likedPost.isLiked.coalesce(false),
                         QPost.post.totalLikeCount,
                         QPost.post.totalCommentCount,
                         userId == null ? Expressions.FALSE : QPost.post.authorId.eq(userId),
                         QPost.post.createdAt
                     ),
-                    getCursorPath(orderBy)
+                    getCursorPath(orderBy),
+                    QPost.post.id
                 )
             )
             .from(QPost.post)
             .innerJoin(QUser.user).on(QPost.post.authorId.eq(QUser.user.id))
             .innerJoin(QTier.tier).on(QUser.user.tierId.eq(QTier.tier.id))
             .leftJoin(QBadge.badge).on(QUser.user.mainBadgeId.eq(QBadge.badge.id))
-            .leftJoin(QLikedPost.likedPost).on(likedJoinCondition)
             .where(QPost.post.deleteAt.isNull());
+
+        if (userId != null) {
+            query.leftJoin(QLikedPost.likedPost)
+                .on(QLikedPost.likedPost.postId.eq(QPost.post.id)
+                    .and(QLikedPost.likedPost.userId.eq(userId)));
+        }
+
+        return query;
     }
 
     private JPAQuery<DetailedPost> buildDetailedPostsQuery(Long postId, Long userId) {
-        var likedJoinCondition = QLikedPost.likedPost.postId.eq(QPost.post.id);
-        if (userId != null) {
-            likedJoinCondition = likedJoinCondition.and(QLikedPost.likedPost.userId.eq(userId));
-        }
-        return queryFactory
+        var query = queryFactory
             .select(
                 Projections.constructor(PostQueryResult.DetailedPost.class,
                     QPost.post.id,
@@ -111,7 +115,9 @@ public class PostReadQueryDslRepository implements PostReadRepository {
                     QPost.post.title.title,
                     QPost.post.content.content,
                     QPost.post.photos.imageInfos,
-                    QLikedPost.likedPost.isLiked.coalesce(false),
+                    userId == null
+                        ? Expressions.FALSE
+                        : QLikedPost.likedPost.isLiked.coalesce(false),
                     QPost.post.totalLikeCount,
                     QPost.post.totalCommentCount,
                     userId == null ? Expressions.FALSE : QPost.post.authorId.eq(userId),
@@ -122,30 +128,41 @@ public class PostReadQueryDslRepository implements PostReadRepository {
             .innerJoin(QUser.user).on(QPost.post.authorId.eq(QUser.user.id))
             .innerJoin(QTier.tier).on(QUser.user.tierId.eq(QTier.tier.id))
             .leftJoin(QBadge.badge).on(QUser.user.mainBadgeId.eq(QBadge.badge.id))
-            .leftJoin(QLikedPost.likedPost).on(likedJoinCondition)
             .where(QPost.post.id.eq(postId)
                 .and(QPost.post.deleteAt.isNull())
             );
+
+        if (userId != null) {
+            query.leftJoin(QLikedPost.likedPost)
+                .on(QLikedPost.likedPost.postId.eq(QPost.post.id)
+                    .and(QLikedPost.likedPost.userId.eq(userId)));
+        }
+
+        return query;
     }
 
-    /*
-     * 추천수 기준 정렬 추가 예정입니다.
-     */
 
-    private OrderSpecifier<?> getOrderSpecifier(String orderBy) {
+    private OrderSpecifier<?>[] getOrderSpecifier(String orderBy) {
         return switch (orderBy) {
-            default -> QPost.post.id.desc();
+            case "popularity" -> new OrderSpecifier<?>[]{
+                QPost.post.totalLikeCount.desc(),
+                QPost.post.id.desc()
+            };
+            default -> new OrderSpecifier<?>[]{ QPost.post.id.desc() };
         };
     }
 
-    private NumberPath<Long> getCursorPath(String orderBy) {
+    private NumberExpression<Long> getCursorPath(String orderBy) {
         return switch (orderBy) {
+            case "popularity" -> QPost.post.totalLikeCount.longValue();
             default -> QPost.post.id;
         };
     }
 
-    private BooleanExpression getCursorWhere(Long cursorId, String orderBy) {
+    private BooleanExpression getCursorWhere(Long cursorValue, Long cursorId, String orderBy) {
         return switch (orderBy) {
+            case "popularity" -> QPost.post.totalLikeCount.longValue().lt(cursorValue)
+                .or(QPost.post.totalLikeCount.longValue().eq(cursorValue).and(QPost.post.id.lt(cursorId)));
             default -> QPost.post.id.lt(cursorId);
         };
     }
