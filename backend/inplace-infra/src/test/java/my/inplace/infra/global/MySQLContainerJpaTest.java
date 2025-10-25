@@ -5,6 +5,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.core.annotation.AliasFor;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.lang.annotation.*;
@@ -19,6 +20,7 @@ import java.lang.annotation.*;
 )
 @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public @interface MySQLContainerJpaTest {
     @AliasFor(annotation = DataJpaTest.class, attribute = "includeFilters")
     ComponentScan.Filter[] includeFilters();
