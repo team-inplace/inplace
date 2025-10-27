@@ -140,6 +140,15 @@ export const alarmHandlers = [
       }),
     );
   }),
+  rest.delete(`${BASE_URL}/alarms/:alarmId`, (req, res, ctx) => {
+    const { alarmId } = req.params;
+    return res(
+      ctx.status(200),
+      ctx.json({
+        alarmId,
+      }),
+    );
+  }),
   rest.post(`${BASE_URL}${postAlarmPermissionPath()}`, (_, res, ctx) => {
     return res(
       ctx.status(200),

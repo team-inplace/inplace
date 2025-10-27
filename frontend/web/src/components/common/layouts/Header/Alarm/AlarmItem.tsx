@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import styled from 'styled-components';
 import { AiFillMessage } from 'react-icons/ai';
+import { IoClose } from 'react-icons/io5';
 import { RiErrorWarningFill } from 'react-icons/ri';
 import { Text } from '@/components/common/typography/Text';
 import { AlarmData } from '@/types';
 import { usePostAlarmCheck } from '@/api/hooks/usePostAlarmCheck';
+import { useDeleteAlarm } from '@/api/hooks/useDeleteAlarm';
 
 const getIcon = (type: string) => {
   switch (type) {
@@ -41,6 +43,7 @@ export default function AlarmItem({
   commentPage,
 }: AlarmData) {
   const { mutate: postAlarmCheck } = usePostAlarmCheck();
+  const { mutate: deleteAlarm } = useDeleteAlarm();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
@@ -92,6 +95,22 @@ export default function AlarmItem({
     }
   };
 
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const isConfirm = window.confirm('알림을 삭제하시겠습니까?');
+    if (!isConfirm) return;
+
+    deleteAlarm(alarmId.toString(), {
+      onSuccess: () => {
+        alert('알림이 삭제되었습니다.');
+        queryClient.invalidateQueries({ queryKey: ['alarms'] });
+      },
+      onError: () => {
+        alert('알림 삭제에 실패했습니다. 다시 시도해주세요.');
+      },
+    });
+  };
+
   return (
     <AlarmContainer onClick={handleAlarmClick}>
       {renderIcon()}
@@ -101,6 +120,11 @@ export default function AlarmItem({
           {createdAt}
         </CreatedAtText>
       </StyledText>
+      <ButtonWrapper>
+        <DeleteButton onClick={handleDelete}>
+          <IoClose size={16} />
+        </DeleteButton>
+      </ButtonWrapper>
     </AlarmContainer>
   );
 }
@@ -109,14 +133,10 @@ const AlarmContainer = styled.div`
   position: relative;
   display: flex;
   align-items: flex-start;
-  padding: 12px 10px;
+  padding: 12px 20px 12px 10px;
   background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#1a1a1a' : '#ffffff')};
   cursor: pointer;
   gap: 8px;
-
-  &:hover {
-    background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#2a2a2a' : '#f0f2f4')};
-  }
 
   &:last-child {
     border-bottom: none;
@@ -157,4 +177,23 @@ const RedDot = styled.div`
   height: 6px;
   background-color: #ff4747;
   border-radius: 50%;
+`;
+
+const ButtonWrapper = styled.div`
+  position: absolute;
+  top: 12px;
+  right: -6px;
+`;
+
+const DeleteButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  svg {
+    color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#b0b0b0' : '#666666')};
+  }
 `;

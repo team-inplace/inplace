@@ -162,10 +162,6 @@ const AlarmScrollContainer = styled.div`
     width: 6px;
   }
 
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
   &::-webkit-scrollbar-thumb {
     background-color: ${({ theme }) => (theme.backgroundColor === '#292929' ? '#525252' : '#8e8e8e')};
     border-radius: 3px;
