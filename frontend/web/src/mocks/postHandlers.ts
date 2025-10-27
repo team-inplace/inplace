@@ -335,6 +335,7 @@ export const postHandlers = [
         cursor: {
           hasNext,
           nextCursorId: nextCursor,
+          nextCursorValue: nextCursor,
         },
       }),
     );

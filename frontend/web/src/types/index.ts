@@ -268,6 +268,7 @@ export type CursorData<T> = {
   posts: T[];
   cursor: {
     hasNext: boolean;
+    nextCursorValue: number;
     nextCursorId: number;
   };
 };
