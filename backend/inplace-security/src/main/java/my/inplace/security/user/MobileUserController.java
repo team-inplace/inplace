@@ -23,7 +23,7 @@ public class MobileUserController {
         @RequestBody MobileUserRequest mobileUserRequest
     ) {
         MobileUserResponse.TokenResponse response = MobileUserResponse.TokenResponse.from(
-            mobileUserFacade.mobileLogin(mobileUserRequest.accessToken())
+            mobileUserFacade.mobileLogin(mobileUserRequest.kakaoAccessToken())
         );
         
         return new ResponseEntity<>(response, HttpStatus.OK);
