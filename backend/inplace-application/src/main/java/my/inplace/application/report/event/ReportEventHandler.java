@@ -2,6 +2,7 @@ package my.inplace.application.report.event;
 
 import lombok.RequiredArgsConstructor;
 import my.inplace.application.alarm.event.AlarmEventBuilder;
+import my.inplace.domain.alarm.AlarmType;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -48,10 +49,14 @@ public class ReportEventHandler {
         AlarmEventBuilder builder = AlarmEventBuilder.create();
         
         if(commentId == null) {
-            builder.postId(postId).publish(eventPublisher);
+            builder.postId(postId)
+                .type(AlarmType.REPORT)
+                .publish(eventPublisher);
             return;
         }
         
-        builder.commentId(commentId).publish(eventPublisher);
+        builder.commentId(commentId)
+            .type(AlarmType.REPORT)
+            .publish(eventPublisher);
     }
 }

@@ -2,6 +2,7 @@ package my.inplace.application.post.event;
 
 import lombok.RequiredArgsConstructor;
 import my.inplace.application.alarm.event.AlarmEventBuilder;
+import my.inplace.domain.alarm.AlarmType;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
@@ -22,8 +23,9 @@ public class MentionPublisher {
             AlarmEventBuilder.create()
                 .postId(postId)
                 .commentId(commentId)
-                .sender(sender)
                 .receiver(receiver)
+                .sender(sender)
+                .type(AlarmType.MENTION)
                 .publish(eventPublisher);
         }
     }

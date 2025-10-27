@@ -1,27 +1,25 @@
 package my.inplace.application.post.query;
 
-import my.inplace.application.post.query.dto.CommentResult;
-import my.inplace.common.cursor.CursorResult;
-import my.inplace.common.exception.InplaceException;
-import my.inplace.common.exception.code.PostErrorCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import my.inplace.domain.post.Post;
+import my.inplace.application.post.query.dto.CommentResult;
+import my.inplace.application.post.query.dto.PostResult;
+import my.inplace.common.cursor.CursorResult;
+import my.inplace.common.exception.InplaceException;
+import my.inplace.common.exception.code.PostErrorCode;
 import my.inplace.domain.post.PostTitle;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.util.Pair;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import my.inplace.domain.post.query.CommentQueryResult.DetailedComment;
+import my.inplace.domain.post.query.PostQueryResult.DetailedPost;
+import my.inplace.domain.post.query.PostQueryResult.UserSuggestion;
 import my.inplace.infra.post.CommentReadQueryDslRepository;
 import my.inplace.infra.post.PostReadQueryDslRepository;
 import my.inplace.infra.post.jpa.CommentJpaRepository;
 import my.inplace.infra.post.jpa.PostJpaRepository;
-import my.inplace.domain.post.query.CommentQueryResult.DetailedComment;
-import my.inplace.domain.post.query.PostQueryResult.DetailedPost;
-import my.inplace.domain.post.query.PostQueryResult.UserSuggestion;
-import my.inplace.application.post.query.dto.PostResult;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -36,9 +34,9 @@ public class PostQueryService {
 
     @Transactional(readOnly = true)
     public CursorResult<DetailedPost> getPosts(
-        Long userId, Long cursorId, int size, String orderBy
+        Long userId, Long cursorValue, Long cursorId, int size, String orderBy
     ) {
-        return postReadRepository.findPostsOrderBy(userId, cursorId, size, orderBy);
+        return postReadRepository.findPostsOrderBy(userId, cursorValue, cursorId, size, orderBy);
     }
 
     @Transactional(readOnly = true)

@@ -1,5 +1,6 @@
 package my.inplace.infra.video;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -131,11 +132,16 @@ public class VideoReadQueryDslRepository implements VideoReadRepository {
     @Override
     public Page<SimpleVideo> findVideoWithNoPlace(Pageable pageable) {
         List<Long> videoIds = queryFactory
-            .select(QVideo.video.id).distinct()
+            .select(QVideo.video.id)
             .from(QVideo.video)
-            .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
-            .where(QPlaceVideo.placeVideo.isNull(),
-                QVideo.video.deleteAt.isNull())
+            .where(
+                JPAExpressions
+                    .selectOne()
+                    .from(QPlaceVideo.placeVideo)
+                    .where(QPlaceVideo.placeVideo.videoId.eq(QVideo.video.id))
+                    .notExists(),
+                QVideo.video.deleteAt.isNull()
+            )
             .fetch();
 
         if (videoIds.isEmpty()) {
@@ -214,20 +220,37 @@ public class VideoReadQueryDslRepository implements VideoReadRepository {
             return new PageImpl<>(Collections.emptyList(), pageable, total);
         }
 
+        BooleanBuilder where = new BooleanBuilder().and(QVideo.video.deleteAt.isNull());
+
+        if (condition.influencerId() != null) {
+            where.and(QVideo.video.influencerId.eq(condition.influencerId()));
+        }
+
+        if (condition.placeRegistration()) {
+            where.and(
+                JPAExpressions.selectOne()
+                    .from(QPlaceVideo.placeVideo)
+                    .where(QPlaceVideo.placeVideo.videoId.eq(QVideo.video.id))
+                    .exists()
+            );
+        }
+        else {
+            where.and(
+                JPAExpressions.selectOne()
+                    .from(QPlaceVideo.placeVideo)
+                    .where(QPlaceVideo.placeVideo.videoId.eq(QVideo.video.id))
+                    .notExists()
+            );
+        }
+
         List<AdminVideo> videos = queryFactory
             .select(Projections.constructor(VideoQueryResult.AdminVideo.class,
                 QVideo.video.id,
                 QVideo.video.uuid,
                 Expressions.constant(Boolean.TRUE.equals(condition.placeRegistration()))
             ))
-            .distinct()
             .from(QVideo.video)
-            .leftJoin(QPlaceVideo.placeVideo).on(QVideo.video.id.eq(QPlaceVideo.placeVideo.videoId))
-            .where(
-                eqInfluencerId(condition.influencerId()),
-                registrationCondition(condition.placeRegistration()),
-                QVideo.video.deleteAt.isNull()
-            )
+            .where(where)
             .offset(pageable.getOffset())
             .limit(pageable.getPageSize())
             .fetch();

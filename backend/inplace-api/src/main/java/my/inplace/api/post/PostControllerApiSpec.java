@@ -55,6 +55,7 @@ public interface PostControllerApiSpec {
         )
     )
     ResponseEntity<SimpleList> getPosts(
+        @RequestParam(value = "cursorValue", required = false) Long cursorValue,
         @RequestParam(value = "cursorId", required = false) Long cursorId,
         @RequestParam(value = "size", defaultValue = "5") int size,
         @RequestParam(value = "sort", defaultValue = "createAt") String sort

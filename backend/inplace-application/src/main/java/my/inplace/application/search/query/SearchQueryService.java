@@ -5,6 +5,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import my.inplace.domain.search.SearchRepository;
+import my.inplace.domain.video.query.VideoQueryResult.DetailedVideo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,7 @@ public class SearchQueryService {
     private static final Integer MAX_COMPLETION_RESULTS = 5;
     private static final Integer SEARCH_LIMIT = 10;
 
-    private final VideoSearchQueryDslRepository videoSearchRepository;
+    private final SearchRepository<DetailedVideo> videoSearchRepository;
     private final InfluencerSearchQueryDslRepository influencerSearchRepository;
     private final PlaceSearchQueryDslRepository placeSearchRepository;
 

@@ -77,11 +77,12 @@ public class PostController implements PostControllerApiSpec {
     @Override
     @GetMapping
     public ResponseEntity<SimpleList> getPosts(
+        @RequestParam(required = false) Long cursorValue,
         @RequestParam(required = false) Long cursorId,
         @RequestParam(defaultValue = "5") int size,
-        @RequestParam(defaultValue = "createAt") String sort
+        @RequestParam(defaultValue = "createdAt") String sort
     ) {
-        var posts = postQueryFacade.getPosts(cursorId, size, sort);
+        var posts = postQueryFacade.getPosts(cursorValue, cursorId, size, sort);
 
         var response = SimpleList.from(posts);
         return new ResponseEntity<>(response, HttpStatus.OK);
