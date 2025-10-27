@@ -56,7 +56,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     private boolean hasTokenAuthorization(HttpServletRequest request) {
         String header = request.getHeader("Authorization");
         
-        return !(header != null && header.startsWith("Bearer "));
+        return header != null && header.startsWith("Bearer ");
     }
     
     private void doAuthorizationUser(HttpServletRequest request) {
