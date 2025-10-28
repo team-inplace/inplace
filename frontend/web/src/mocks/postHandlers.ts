@@ -7,6 +7,10 @@ import { postPostPath } from '@/api/hooks/usePostPost';
 import TestImg from '@/assets/images/titletest.png';
 import { postReportCommentPath } from '@/api/hooks/usePostReportComment';
 import { postReportPostPath } from '@/api/hooks/usePostReportPost';
+import bronze from '@/assets/images/tier_b.webp';
+import silver from '@/assets/images/tier_s.webp';
+import gold from '@/assets/images/tier_g.webp';
+import diamond from '@/assets/images/tier_d.webp';
 
 const postListDummy = [
   {
@@ -14,7 +18,7 @@ const postListDummy = [
     author: {
       nickname: '랄라스윗칩',
       imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
-      tierImageUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
+      tierImageUrl: bronze,
       badgeImageUrl: TestImg,
     },
     title: '성',
@@ -33,7 +37,7 @@ const postListDummy = [
     author: {
       nickname: '룰라스윗칩',
       imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
-      tierImageUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
+      tierImageUrl: gold,
       badgeImageUrl: TestImg,
     },
     title: '성시경 먹을텐데 질문',
@@ -51,7 +55,7 @@ const postListDummy = [
     author: {
       nickname: '라라스윗칩',
       imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
-      tierImageUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
+      tierImageUrl: silver,
       badgeImageUrl: TestImg,
     },
     title: '성시경 먹을텐데 질문',
@@ -70,7 +74,7 @@ const postListDummy = [
     author: {
       nickname: '리리라스윗칩',
       imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
-      tierImageUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
+      tierImageUrl: diamond,
       badgeImageUrl: TestImg,
     },
     title: '성시경 먹을텐데 질문',
@@ -340,7 +344,7 @@ export const postHandlers = [
         author: {
           nickname: '랄라스윗칩고구마',
           imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
-          tierImageUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
+          tierImageUrl: silver,
           badgeImageUrl: TestImg,
         },
         title: '성시경 먹을텐데 질문',

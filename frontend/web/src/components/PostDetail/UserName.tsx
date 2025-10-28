@@ -37,6 +37,12 @@ const UserTier = styled.img`
   height: 20px;
   width: auto;
   vertical-align: middle;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  @media screen and (max-width: 768px) {
+    height: 16px;
+    margin-bottom: 2px;
+  }
 `;
 const UserTitle = styled.img`
   height: 20px;

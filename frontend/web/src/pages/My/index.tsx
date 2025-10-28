@@ -1,61 +1,32 @@
 import { styled } from 'styled-components';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { MdOutlineDriveFileRenameOutline } from 'react-icons/md';
 import { useQueryClient } from '@tanstack/react-query';
 import { Paragraph } from '@/components/common/typography/Paragraph';
-import { useGetUserInfluencer } from '@/api/hooks/useGetUserInfluencer';
-import { useGetUserPlace } from '@/api/hooks/useGetUserPlace';
 import { Text } from '@/components/common/typography/Text';
-import { useGetUserReview } from '@/api/hooks/useGetUserReview';
-import MyReview from '@/components/My/UserReview';
-import InfiniteBaseLayout from '@/components/My/infiniteBaseLayout';
-import useInfiniteScroll from '@/hooks/useInfiniteScroll';
 import { usePatchNickname } from '@/api/hooks/usePatchNickname';
 import { useGetUserInfo } from '@/api/hooks/useGetUserInfo';
 import { useDeleteUser } from '@/api/hooks/useDeleteUser';
 import useAuth from '@/hooks/useAuth';
+import LikesContainer from '@/components/My/LikesContainer';
+import ActiveContainer from '@/components/My/ActiveContainer';
+import BadgeContainer from '@/components/My/BadgeContainer';
 
 export default function MyPage() {
-  const influencerRef = useRef<HTMLDivElement>(null);
-  const {
-    data: influencers,
-    fetchNextPage: influencerFetchNextPage,
-    hasNextPage: influencerHasNextPage,
-    isFetchingNextPage: influencerIsFetchingNextPage,
-  } = useGetUserInfluencer(10);
-  const influencerLoadMoreRef = useInfiniteScroll({
-    fetchNextPage: influencerFetchNextPage,
-    hasNextPage: influencerHasNextPage,
-    isFetchingNextPage: influencerIsFetchingNextPage,
-  });
-
-  const placeRef = useRef<HTMLDivElement>(null);
-  const {
-    data: places,
-    fetchNextPage: placeFetchNextPage,
-    hasNextPage: placeHasNextPage,
-    isFetchingNextPage: placeIsFetchingNextPage,
-  } = useGetUserPlace(10);
-  const placeLoadMoreRef = useInfiniteScroll({
-    fetchNextPage: placeFetchNextPage,
-    hasNextPage: placeHasNextPage,
-    isFetchingNextPage: placeIsFetchingNextPage,
-  });
-
-  const reviewRef = useRef<HTMLDivElement>(null);
-  const { data: reviews, fetchNextPage, hasNextPage, isFetchingNextPage } = useGetUserReview(10);
-  const reviewLoadMoreRef = useInfiniteScroll({
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  });
   const { data: userInfo } = useGetUserInfo();
   const [nickname, setNickname] = useState(userInfo?.nickname || '');
   const [isVisible, setIsVisible] = useState(true);
+  const [activeTab, setActiveTab] = useState<'active' | 'likes' | 'badges'>('active');
   const { mutate: patchNickname } = usePatchNickname();
   const { handleLogout } = useAuth();
   const { mutate: deleteUser } = useDeleteUser();
   const queryClient = useQueryClient();
+
+  const TAB_COMPONENTS = {
+    active: <ActiveContainer />,
+    likes: <LikesContainer />,
+    badges: <BadgeContainer baseBadge={userInfo?.badge.id ?? null} />,
+  };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -99,18 +70,24 @@ export default function MyPage() {
     <Wrapper>
       <TitleWrapper>
         {isVisible ? (
-          <NickNameWrapper>
-            {userInfo?.tier.imgUrl && <UserTier src={userInfo?.tier.imgUrl} alt={`${userInfo.nickname} Tier`} />}
-            <Text size="l" weight="bold">
-              <Text size="xl" weight="bold" style={{ color: '#47c8d9' }}>
-                {userInfo?.nickname}
+          <>
+            <InfoWrapper>
+              {userInfo?.badge.id && <UserTitle src={userInfo?.badge.imgUrl} alt={`${userInfo?.badge.name} Title`} />}
+            </InfoWrapper>
+            <NickNameWrapper>
+              <Text size="l" weight="bold">
+                <Text size="xl" weight="bold" style={{ color: '#47c8d9' }}>
+                  {userInfo?.tier.imgUrl && <UserTier src={userInfo?.tier.imgUrl} alt={`${userInfo.nickname} Tier`} />}
+
+                  {userInfo?.nickname}
+                </Text>
+                <CustomButton aria-label="닉네임 수정" onClick={() => setIsVisible(false)}>
+                  <MdOutlineDriveFileRenameOutline size={24} color="#47c8d9" />
+                </CustomButton>
+                님, 안녕하세요!
               </Text>
-              <CustomButton aria-label="닉네임 수정" onClick={() => setIsVisible(false)}>
-                <MdOutlineDriveFileRenameOutline size={24} color="#47c8d9" />
-              </CustomButton>
-              님, 안녕하세요!
-            </Text>
-          </NickNameWrapper>
+            </NickNameWrapper>
+          </>
         ) : (
           <EditWrapper>
             <Form onSubmit={handleSubmit}>
@@ -124,40 +101,27 @@ export default function MyPage() {
             </Text>
           </EditWrapper>
         )}
+        <div />
         <Paragraph size="m" weight="bold">
           인플레이스를 이용해주셔서 감사합니다.
         </Paragraph>
       </TitleWrapper>
-      <InfiniteBaseLayout
-        type="influencer"
-        mainText=""
-        SubText="나의 인플루언서"
-        items={influencers.pages.flatMap((page) => page.content)}
-        loadMoreRef={influencerLoadMoreRef}
-        sectionRef={influencerRef}
-        hasNextPage={influencerHasNextPage}
-        fetchNextPage={influencerFetchNextPage}
-        isFetchingNextPage={influencerIsFetchingNextPage}
-      />
-      <InfiniteBaseLayout
-        type="place"
-        mainText=""
-        SubText="나의 관심 장소"
-        items={places.pages.flatMap((page) => page.content)}
-        loadMoreRef={placeLoadMoreRef}
-        sectionRef={placeRef}
-        hasNextPage={placeHasNextPage}
-        fetchNextPage={placeFetchNextPage}
-        isFetchingNextPage={placeIsFetchingNextPage}
-      />
-      <MyReview
-        mainText="나의 리뷰"
-        items={reviews.pages.flatMap((page) => page.content)}
-        loadMoreRef={reviewLoadMoreRef}
-        sectionRef={reviewRef}
-        hasNextPage={hasNextPage}
-        isFetchingNextPage={isFetchingNextPage}
-      />
+      <TapContainer>
+        {(['active', 'likes', 'badges'] as const).map((tabKey) => (
+          <Tap
+            key={tabKey}
+            aria-label={`나의 ${tabKey} 탭`}
+            $active={activeTab === tabKey}
+            onClick={() => setActiveTab(tabKey)}
+          >
+            {tabKey === 'active' && '나의 활동'}
+            {tabKey === 'likes' && '나의 좋아요'}
+            {tabKey === 'badges' && '나의 칭호'}
+          </Tap>
+        ))}
+      </TapContainer>
+
+      {TAB_COMPONENTS[activeTab]}
       <Text size="xs" weight="normal" style={{ color: '#9e9e9e', width: '90%' }}>
         인플레이스 회원 탈퇴를 원하시면 <UnderlineText onClick={handleDeleteUser}>여기</UnderlineText>를 눌러주세요.
       </Text>
@@ -168,19 +132,20 @@ const Wrapper = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 60px;
+  gap: 50px;
   padding: 30px 0px 60px;
 
   @media screen and (max-width: 768px) {
     width: 100%;
-    gap: 40px;
+    gap: 30px;
     align-items: center;
   }
 `;
+const InfoWrapper = styled.div``;
 const TitleWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
 
   @media screen and (max-width: 768px) {
     width: 90%;
@@ -233,7 +198,53 @@ const UnderlineText = styled.span`
   color: inherit;
 `;
 const UserTier = styled.img`
-  height: 34px;
+  height: 30px;
   width: auto;
-  vertical-align: middle;
+  margin-right: 4px;
+`;
+
+const Tap = styled.button<{ $active: boolean }>`
+  width: 100%;
+  height: 60px;
+  font-size: 16px;
+  font-weight: bold;
+  color: ${(props) => {
+    if (!props.$active) return props.theme.textColor === '#ffffff' ? '#8c8c8c' : '#a8a8a8';
+    return '#47c8d9';
+  }};
+  border: none;
+  border-bottom: 3px solid
+    ${(props) => {
+      if (!props.$active) return props.theme.textColor === '#ffffff' ? '#8c8c8c' : '#a8a8a8';
+      return '#47c8d9';
+    }};
+  background: none;
+  cursor: pointer;
+  transition:
+    color 0.3s ease,
+    border-bottom 0.3s ease;
+
+  @media screen and (max-width: 768px) {
+    height: 50px;
+    font-size: 14px;
+    border-bottom: 2px solid
+      ${(props) => {
+        if (!props.$active) return props.theme.textColor === '#ffffff' ? '#8c8c8c' : '#a8a8a8';
+        return '#47c8d9';
+      }};
+  }
+`;
+
+const TapContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+
+  @media screen and (max-width: 768px) {
+    width: 90%;
+  }
+`;
+
+const UserTitle = styled.img`
+  height: 24px;
+  margin-bottom: 4px;
 `;
