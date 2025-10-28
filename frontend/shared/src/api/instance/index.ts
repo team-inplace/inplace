@@ -5,6 +5,7 @@ import captureErrorWithRetry from "../../libs/captureErrorWithRetry";
 import { getConfig } from "../config/index";
 
 let accessToken: string | null = null;
+let instance: AxiosInstance | null = null;
 
 const isWebView = (): boolean => {
   return (
@@ -83,11 +84,14 @@ const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
   return instance;
 };
 
-export const BASE_URL = getConfig().baseURL;
-export const fetchInstance = initInstance({
-  baseURL: BASE_URL,
-});
-
+export const getFetchInstance = (): AxiosInstance => {
+  if (!instance) {
+    instance = initInstance({
+      baseURL: getConfig().baseURL,
+    });
+  }
+  return instance;
+};
 if (isWebView()) {
   const storedToken = window.localStorage.getItem("authToken");
   if (storedToken) {

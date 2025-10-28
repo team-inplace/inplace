@@ -3,12 +3,15 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MemoryRouter } from 'react-router-dom';
 import { ErrorBoundary } from 'react-error-boundary';
 import { AxiosError } from 'axios';
-import { BASE_URL } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getConfig } from '@inplace-frontend-monorepo/shared/api/config';
 import { AuthContext } from '@/provider/Auth';
 import { PlaceInfo, SpotData } from '@/types';
 import ErrorComponent from '@/components/common/layouts/Error';
 import { ABTestContext } from '@/provider/ABTest';
 import { ABTestGroup } from './googleTestUtils';
+
+const config = getConfig();
+const BASE_URL = config.baseURL;
 
 export function renderWithQueryClient(children: React.ReactNode) {
   const queryClient = new QueryClient({

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { SearchComplete } from '@/types';
 
 export const getSearchCompletePath = () => `/search/complete`;
@@ -9,7 +9,7 @@ const getSearchComplete = async (value: string, type: string) => {
     value: value.toString(),
     type: type.toString(),
   });
-  const response = await fetchInstance.get<SearchComplete[]>(`${getSearchCompletePath()}?${params}`);
+  const response = await getFetchInstance().get<SearchComplete[]>(`${getSearchCompletePath()}?${params}`);
   return response.data;
 };
 

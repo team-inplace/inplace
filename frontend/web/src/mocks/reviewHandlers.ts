@@ -1,8 +1,11 @@
 import { rest } from 'msw';
-import { BASE_URL } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getConfig } from '@inplace-frontend-monorepo/shared/api/config';
 import { RequestPlaceReview } from '@/types';
 import { getReviewInfoPath } from '@/api/hooks/useGetReviewInfo';
 import { postPlaceReviewPath } from '@/api/hooks/usePostPlaceReview';
+
+const config = getConfig();
+const BASE_URL = config.baseURL;
 
 const mockReviewInfo = {
   placeName: '료코',

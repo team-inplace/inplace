@@ -1,11 +1,14 @@
 import { rest } from 'msw';
-import { BASE_URL } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getConfig } from '@inplace-frontend-monorepo/shared/api/config';
 import { getUserInfoPath } from '@/api/hooks/useGetUserInfo';
 import { getUserInfluencerPath } from '@/api/hooks/useGetUserInfluencer';
 import { getUserPlacePath } from '@/api/hooks/useGetUserPlace';
 import { getUserReviewPath } from '@/api/hooks/useGetUserReview';
 import { postPlaceReviewPath } from '@/api/hooks/usePostPlaceReview';
 import { patchNicknamePath } from '@/api/hooks/usePatchNickname';
+
+const config = getConfig();
+const BASE_URL = config.baseURL;
 
 const mockInfluencers = [
   {

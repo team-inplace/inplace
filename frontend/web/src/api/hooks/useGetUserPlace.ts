@@ -1,5 +1,5 @@
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { PageableData, UserPlaceData } from '@/types';
 
 export const getUserPlacePath = () => `/users/places`;
@@ -8,7 +8,7 @@ export const getUserPlace = async (page: number, size: number) => {
     page: page.toString(),
     size: size.toString(),
   });
-  const response = await fetchInstance.get<PageableData<UserPlaceData>>(`${getUserPlacePath()}?${params}`, {
+  const response = await getFetchInstance().get<PageableData<UserPlaceData>>(`${getUserPlacePath()}?${params}`, {
     withCredentials: true,
   });
   return response.data;

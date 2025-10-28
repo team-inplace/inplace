@@ -1,11 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { RequestReport } from '@/types';
 
 export const postReportCommentPath = () => `/reports/comment`;
 const postReportComment = async ({ id, reason }: RequestReport) => {
-  const response = await fetchInstance.post(
+  const response = await getFetchInstance().post(
     postReportCommentPath(),
     {
       id,

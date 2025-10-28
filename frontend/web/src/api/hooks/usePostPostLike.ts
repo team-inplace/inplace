@@ -1,11 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { RequestPostLike } from '@/types';
 
 export const postPostLikePath = () => `/posts/likes`;
 const postPostLike = async ({ postId, likes }: RequestPostLike) => {
-  const response = await fetchInstance.post(
+  const response = await getFetchInstance().post(
     postPostLikePath(),
     {
       postId,

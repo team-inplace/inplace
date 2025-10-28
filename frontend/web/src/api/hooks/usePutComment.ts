@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 
 interface PutCommentProps {
   postId: string;
@@ -9,7 +9,11 @@ interface PutCommentProps {
 export const putCommentPath = (postId: string, commentId: string) => `/posts/${postId}/comments/${commentId}`;
 
 const putComment = async ({ postId, commentId, comment }: PutCommentProps) => {
-  const response = await fetchInstance.put(putCommentPath(postId, commentId), { comment }, { withCredentials: true });
+  const response = await getFetchInstance().put(
+    putCommentPath(postId, commentId),
+    { comment },
+    { withCredentials: true },
+  );
   return response.data;
 };
 

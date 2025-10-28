@@ -1,10 +1,10 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { InfluencerInfoData } from '@/types';
 
 export const getInfluencerInfoPath = (id: string) => `/influencers/${id}`;
 export const getInfluencerInfo = async (id: string) => {
-  const response = await fetchInstance.get<InfluencerInfoData>(getInfluencerInfoPath(id), {
+  const response = await getFetchInstance().get<InfluencerInfoData>(getInfluencerInfoPath(id), {
     withCredentials: true,
   });
   return response.data;

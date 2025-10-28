@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { LocationData, FilterParams, PlaceData, PageableData } from '@/types';
 
 export const getPlaceList = async (
@@ -25,7 +25,7 @@ export const getPlaceList = async (
     influencers: influencers.join(','),
   });
 
-  const response = await fetchInstance.get<PageableData<PlaceData>>(`/places?${params}`);
+  const response = await getFetchInstance().get<PageableData<PlaceData>>(`/places?${params}`);
   return response.data;
 };
 

@@ -1,5 +1,5 @@
 import { useQueries } from '@tanstack/react-query';
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { InfluencerData, SpotData, UserPlaceData } from '@/types';
 
 export const getSearchInfluencerPath = () => `/search/influencer`;
@@ -11,7 +11,7 @@ export const getSearchInfluencers = async (value: string) => {
     value: value.toString(),
   });
 
-  const response = await fetchInstance.get<InfluencerData[]>(`${getSearchInfluencerPath()}?${params}`, {
+  const response = await getFetchInstance().get<InfluencerData[]>(`${getSearchInfluencerPath()}?${params}`, {
     withCredentials: true,
   });
   return response.data;
@@ -21,7 +21,7 @@ export const getSearchVideos = async (value: string) => {
     value: value.toString(),
   });
 
-  const response = await fetchInstance.get<SpotData[]>(`${getSearchVideoPath()}?${params}`);
+  const response = await getFetchInstance().get<SpotData[]>(`${getSearchVideoPath()}?${params}`);
   return response.data;
 };
 export const getSearchPlaces = async (value: string) => {
@@ -29,7 +29,7 @@ export const getSearchPlaces = async (value: string) => {
     value: value.toString(),
   });
 
-  const response = await fetchInstance.get<UserPlaceData[]>(`${getSearchPlacePath()}?${params}`, {
+  const response = await getFetchInstance().get<UserPlaceData[]>(`${getSearchPlacePath()}?${params}`, {
     withCredentials: true,
   });
   return response.data;

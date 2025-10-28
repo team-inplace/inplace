@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { SpotData } from '@/types';
 
 export const getAroundVideoPath = () => `/videos`;
@@ -10,7 +10,7 @@ export const getAroundVideo = async (lat: number, lng: number) => {
     longitude: lng.toString(),
     latitude: lat.toString(),
   });
-  const response = await fetchInstance.get<SpotData[]>(`${getAroundVideoPath()}?${params.toString()}`, {
+  const response = await getFetchInstance().get<SpotData[]>(`${getAroundVideoPath()}?${params.toString()}`, {
     withCredentials: true,
   });
   return response.data;

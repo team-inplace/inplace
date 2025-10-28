@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { PageableData, SpotData } from '@/types';
 
 export const getInfluencerVideoPath = (id: string) => `/influencers/${id}/videos`;
@@ -9,7 +9,7 @@ export const getInfluencerVideo = async (id: string, page: number, size: number,
     size: size.toString(),
     sort,
   });
-  const response = await fetchInstance.get<PageableData<SpotData>>(`${getInfluencerVideoPath(id)}?${params}`);
+  const response = await getFetchInstance().get<PageableData<SpotData>>(`${getInfluencerVideoPath(id)}?${params}`);
   return response.data;
 };
 export const useGetInfluencerVideo = (id: string, page: number, size: number, sort: string) => {

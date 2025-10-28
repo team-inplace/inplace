@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 
 export const deleteFCMTokenPath = () => '/alarms';
 
 export const deleteFCMToken = async () => {
-  await fetchInstance.delete(deleteFCMTokenPath(), { withCredentials: true });
+  await getFetchInstance().delete(deleteFCMTokenPath(), { withCredentials: true });
   return null;
 };
 

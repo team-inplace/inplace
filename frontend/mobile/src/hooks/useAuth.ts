@@ -1,5 +1,5 @@
 import { login } from "@react-native-seoul/kakao-login";
-import { useGetAccessToken } from "../api/useGetAccessToken";
+import { getAccessToken } from "../api/getAccessToken";
 import * as SecureStore from "expo-secure-store";
 import WebView from "react-native-webview";
 
@@ -8,7 +8,7 @@ export const useAuth = (webViewRef: React.RefObject<WebView | null>) => {
     try {
       const token = await login();
 
-      const jwt = await useGetAccessToken(token.accessToken);
+      const jwt = await getAccessToken(token.accessToken);
 
       if (jwt) {
         await SecureStore.setItemAsync("authToken", jwt);

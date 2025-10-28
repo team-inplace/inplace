@@ -10,10 +10,11 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#292929"
     },
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "my.inplace.mobile",
       "config": {
         "usesNonExemptEncryption": false
       }
@@ -22,7 +23,7 @@
       "package": "my.inplace.mobile",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#292929"
       }
     },
     "web": {

@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 
 export const deleteTokenPath = () => '/refresh-token';
 
 export const deleteRefreshToken = async () => {
-  await fetchInstance.delete(deleteTokenPath(), { withCredentials: true });
+  await getFetchInstance().delete(deleteTokenPath(), { withCredentials: true });
   return null;
 };
 

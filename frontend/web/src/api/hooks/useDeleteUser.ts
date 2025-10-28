@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 
 export const deleteUserPath = () => '/users';
 
 export const deleteUser = async () => {
-  await fetchInstance.delete(deleteUserPath(), { withCredentials: true });
+  await getFetchInstance().delete(deleteUserPath(), { withCredentials: true });
   return null;
 };
 

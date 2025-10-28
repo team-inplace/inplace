@@ -1,8 +1,11 @@
 import { rest } from 'msw';
-import { BASE_URL } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getConfig } from '@inplace-frontend-monorepo/shared';
 import { getSearchInfluencerPath, getSearchPlacePath, getSearchVideoPath } from '@/api/hooks/useGetSearchData';
 import { getSearchKeywordPath } from '@/api/hooks/useGetSearchKeyword';
 import { getSearchUserCompletePath } from '@/api/hooks/useGetSearchUserComplete';
+
+const config = getConfig();
+const BASE_URL = config.baseURL;
 
 export const searchHandlers = [
   rest.get(`${BASE_URL}/search/complete`, (req, res, ctx) => {

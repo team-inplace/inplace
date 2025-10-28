@@ -3,10 +3,12 @@ import * as ReactDOM from 'react-dom';
 import { FaComment } from 'react-icons/fa';
 import styled from 'styled-components';
 
-import { BASE_URL } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getConfig } from '@inplace-frontend-monorepo/shared/api/config';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import { Text } from '@/components/common/typography/Text';
 import Logo from '@/assets/images/InplaceLogo.png';
+
+const config = getConfig();
 
 type LoginModalProps = {
   children?: (openModal: () => void) => React.ReactNode;
@@ -52,7 +54,7 @@ export default function LoginModal({
     if (isReactNativeWebView) {
       window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'requestKakaoLogin' }));
     } else {
-      window.location.href = `${BASE_URL}/oauth2/authorization/kakao`;
+      window.location.href = `${config.baseURL}/oauth2/authorization/kakao`;
     }
   };
 

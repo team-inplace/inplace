@@ -1,12 +1,12 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { CategoryData, CategoryOption } from '@/types';
 
 const useGetDropdownCategory = () => {
   return useSuspenseQuery({
     queryKey: ['categoryName'],
     queryFn: async () => {
-      const { data } = await fetchInstance.get<CategoryData>('/places/categories');
+      const { data } = await getFetchInstance().get<CategoryData>('/places/categories');
       const options: CategoryOption[] = data.categories.flatMap((category) => {
         const mainOption: CategoryOption = {
           label: category.name,

@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import { QueryClientProvider } from '@tanstack/react-query';
 
-import { queryClient } from '@inplace-frontend-monorepo/shared/api/instance';
+import { queryClient } from '@inplace-frontend-monorepo/shared';
 import { initializeConfig, getConfig } from '@inplace-frontend-monorepo/shared/api/config';
 import App from './App';
 import { setSentryInitialized } from './libs/Sentry/sentry.js';

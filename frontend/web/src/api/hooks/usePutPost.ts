@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { PostingData } from '@/types';
 
 interface PutPostProps {
@@ -9,7 +9,7 @@ interface PutPostProps {
 export const putPostPath = (postId: string) => `/posts/${postId}`;
 
 const putPost = async ({ postId, formData }: PutPostProps) => {
-  const response = await fetchInstance.put(putPostPath(postId), formData, { withCredentials: true });
+  const response = await getFetchInstance().put(putPostPath(postId), formData, { withCredentials: true });
   return response.data;
 };
 

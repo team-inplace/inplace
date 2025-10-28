@@ -1,7 +1,10 @@
 import { rest } from 'msw';
-import { BASE_URL } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getConfig } from '@inplace-frontend-monorepo/shared/api/config';
 import { getInfluencerPath } from '@/api/hooks/useGetMain';
 import { InfluencerInfoData } from '@/types';
+
+const config = getConfig();
+const BASE_URL = config.baseURL;
 
 const dummyInfluencerInfo: Record<string, InfluencerInfoData> = {
   '1': {

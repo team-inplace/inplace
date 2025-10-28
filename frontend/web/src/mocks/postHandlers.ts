@@ -1,5 +1,5 @@
 import { rest } from 'msw';
-import { BASE_URL } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getConfig } from '@inplace-frontend-monorepo/shared/api/config';
 import { postCommentPath } from '@/api/hooks/usePostComment';
 import { PostingData } from '@/types';
 import { getPostDataPath } from '@/api/hooks/useGetPostData';
@@ -7,6 +7,9 @@ import { postPostPath } from '@/api/hooks/usePostPost';
 import TestImg from '@/assets/images/titletest.png';
 import { postReportCommentPath } from '@/api/hooks/usePostReportComment';
 import { postReportPostPath } from '@/api/hooks/usePostReportPost';
+
+const config = getConfig();
+const BASE_URL = config.baseURL;
 
 const postListDummy = [
   {

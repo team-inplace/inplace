@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { PageableData, InfluencerData } from '@/types';
 
 interface GetAllInfluencersParams {
@@ -16,7 +16,7 @@ export const getSearchInfluencers = async ({ value, page, size }: GetAllInfluenc
     size: size.toString(),
   });
 
-  const response = await fetchInstance.get<PageableData<InfluencerData>>(`${getSearchInfluencerPath()}?${params}`);
+  const response = await getFetchInstance().get<PageableData<InfluencerData>>(`${getSearchInfluencerPath()}?${params}`);
   return response.data;
 };
 

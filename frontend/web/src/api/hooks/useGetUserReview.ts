@@ -1,5 +1,5 @@
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { PageableData, UserReviewData } from '@/types';
 
 export const getUserReviewPath = () => `/users/reviews`;
@@ -9,7 +9,7 @@ export const getUserReview = async (page: number, size: number) => {
     size: size.toString(),
   });
 
-  const response = await fetchInstance.get<PageableData<UserReviewData>>(`${getUserReviewPath()}?${params}`, {
+  const response = await getFetchInstance().get<PageableData<UserReviewData>>(`${getUserReviewPath()}?${params}`, {
     withCredentials: true,
   });
   return response.data;

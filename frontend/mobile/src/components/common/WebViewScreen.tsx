@@ -6,9 +6,10 @@ import CustomWebView from "./CustomWebview";
 import LocationPermissionModal from "../location/LocationPermissionModal";
 import { useWebViewMessageHandler } from "../../hooks/useWebViewMessageHandler";
 import { useAuth } from "../../hooks/useAuth";
-import { BASE_URL } from "@inplace-frontend-monorepo/shared/src/api/instance";
+import { getConfig } from "@inplace-frontend-monorepo/shared/src/api/config";
 
 export default function WebViewScreen() {
+  const config = getConfig();
   const webViewRef = useRef<WebView | null>(null);
   const [isWebViewReady, setWebViewReady] = useState(false);
 
@@ -30,7 +31,7 @@ export default function WebViewScreen() {
         <>
           <CustomWebView
             ref={webViewRef}
-            url={BASE_URL}
+            url={config.webViewUrl}
             onMessage={handleMessage}
           />
           {modalContent && (

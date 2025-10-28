@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { PageableData, InfluencerData } from '@/types';
 import { getInfluencerPath } from './useGetMain';
 
@@ -14,7 +14,7 @@ export const getAllInfluencers = async ({ page, size }: GetAllInfluencersParams)
     size: size.toString(),
   });
 
-  const response = await fetchInstance.get<PageableData<InfluencerData>>(`${getInfluencerPath()}?${params}`, {
+  const response = await getFetchInstance().get<PageableData<InfluencerData>>(`${getInfluencerPath()}?${params}`, {
     withCredentials: true,
   });
   return response.data;

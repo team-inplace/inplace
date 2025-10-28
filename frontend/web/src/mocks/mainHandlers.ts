@@ -1,5 +1,5 @@
 import { rest } from 'msw';
-import { BASE_URL } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getConfig } from '@inplace-frontend-monorepo/shared/api/config';
 import { getBannerPath, getInfluencerPath } from '@/api/hooks/useGetMain';
 import { getMyInfluencerVideoPath } from '@/api/hooks/useGetMyInfluencerVideo';
 import { getAroundVideoPath } from '@/api/hooks/useGetAroundVideo';
@@ -8,6 +8,9 @@ import BannerImg from '@/assets/images/bannerImg.webp';
 import Back from '@/assets/images/back-card.webp';
 import Basic from '@/assets/images/basic-image.webp';
 import BannerMob from '@/assets/images/mobile_banner.webp';
+
+const config = getConfig();
+const BASE_URL = config.baseURL;
 
 export const dummy = [
   {

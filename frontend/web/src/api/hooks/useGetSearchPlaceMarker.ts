@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { FilterParams, MarkerData } from '@/types';
 
 export const getSearchPlaceMarkersPath = () => `/places/all/search`;
@@ -14,7 +14,7 @@ export const getSearchPlaceMarkers = async (filters: FilterParams) => {
     placeName: placeName.toString(),
   });
 
-  const response = await fetchInstance.get<MarkerData[]>(`${getSearchPlaceMarkersPath()}?${params}`);
+  const response = await getFetchInstance().get<MarkerData[]>(`${getSearchPlaceMarkersPath()}?${params}`);
   return response.data;
 };
 

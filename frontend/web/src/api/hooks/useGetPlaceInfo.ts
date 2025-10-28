@@ -1,10 +1,10 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { PlaceInfo } from '@/types';
 
 export const getPlaceInfoPath = (id: string) => `/places/${id}`;
 export const getPlaceInfo = async (id: string) => {
-  const response = await fetchInstance.get<PlaceInfo>(getPlaceInfoPath(id), {
+  const response = await getFetchInstance().get<PlaceInfo>(getPlaceInfoPath(id), {
     withCredentials: true,
   });
   return response.data;

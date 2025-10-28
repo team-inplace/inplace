@@ -1,11 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { RequestPlaceReview } from '@/types';
 
 export const postPlaceReviewPath = (uuid: string) => `/reviews/${uuid}`;
 const postPlaceReview = async (uuid: string, { likes, comments }: RequestPlaceReview) => {
-  const response = await fetchInstance.post(
+  const response = await getFetchInstance().post(
     postPlaceReviewPath(uuid),
     {
       likes,

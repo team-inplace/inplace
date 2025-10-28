@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { fetchInstance } from '@inplace-frontend-monorepo/shared/api/instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 
 interface Influencer {
   influencerName: string;
@@ -9,7 +9,7 @@ const useGetDropdownInfluencer = () => {
   return useSuspenseQuery({
     queryKey: ['influencersName'],
     queryFn: async () => {
-      const { data } = await fetchInstance.get<Influencer[]>('/influencers/names');
+      const { data } = await getFetchInstance().get<Influencer[]>('/influencers/names');
       return data.map((influencer) => ({
         label: influencer.influencerName,
       }));

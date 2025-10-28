@@ -1,8 +1,9 @@
-import { BASE_URL } from "@inplace-frontend-monorepo/shared/src/api/instance";
+import { getConfig } from "@inplace-frontend-monorepo/shared/src/api/config";
 
 export const getAccessToken = async (token: string) => {
+  const config = getConfig();
   try {
-    const response = await fetch(`${BASE_URL}/auth/kakao`, {
+    const response = await fetch(`${config.baseURL}/auth/kakao`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
