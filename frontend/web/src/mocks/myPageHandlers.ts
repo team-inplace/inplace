@@ -1,5 +1,5 @@
 import { rest } from 'msw';
-import { BASE_URL } from '@/api/instance';
+import { getConfig } from '@inplace-frontend-monorepo/shared/api/config';
 import { getUserInfoPath } from '@/api/hooks/useGetUserInfo';
 import { getUserInfluencerPath } from '@/api/hooks/useGetUserInfluencer';
 import { getUserPlacePath } from '@/api/hooks/useGetUserPlace';
@@ -9,6 +9,9 @@ import { patchNicknamePath } from '@/api/hooks/usePatchNickname';
 import silver from '@/assets/images/tier_s.webp';
 import title from '@/assets/images/titletest.png';
 import { getAllBadgePath } from '@/api/hooks/useGetAllBadge';
+
+const config = getConfig();
+const BASE_URL = config.baseURL;
 
 const mockInfluencers = [
   {

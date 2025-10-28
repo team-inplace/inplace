@@ -1,5 +1,5 @@
 import { rest } from 'msw';
-import { BASE_URL } from '@/api/instance';
+import { getConfig } from '@inplace-frontend-monorepo/shared/api/config';
 import { postCommentPath } from '@/api/hooks/usePostComment';
 import { PostingData } from '@/types';
 import { getPostDataPath } from '@/api/hooks/useGetPostData';
@@ -11,6 +11,9 @@ import bronze from '@/assets/images/tier_b.webp';
 import silver from '@/assets/images/tier_s.webp';
 import gold from '@/assets/images/tier_g.webp';
 import diamond from '@/assets/images/tier_d.webp';
+
+const config = getConfig();
+const BASE_URL = config.baseURL;
 
 const postListDummy = [
   {

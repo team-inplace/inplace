@@ -1,10 +1,13 @@
 import { rest } from 'msw';
-import { BASE_URL } from '@/api/instance';
+import { getConfig } from '@inplace-frontend-monorepo/shared/api/config';
 import { getPlaceInfoPath } from '@/api/hooks/useGetPlaceInfo';
 import { getReviewPath } from '@/api/hooks/useGetReview';
 import { getSendInfoPath } from '@/api/hooks/useGetSendInfo';
 import BasicImage from '@/assets/images/basic-image.webp';
 import { dummy } from './mainHandlers';
+
+const config = getConfig();
+const BASE_URL = config.baseURL;
 
 let reviews = [
   {

@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
-import { fetchInstance } from '../instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 
 export const postAlarmPermissionPath = () => `/alarms/permission`;
 
 const postAlarmPermission = async (permission: boolean) => {
-  const response = await fetchInstance.post(postAlarmPermissionPath(), { permission }, { withCredentials: true });
+  const response = await getFetchInstance().post(postAlarmPermissionPath(), { permission }, { withCredentials: true });
   return response.data;
 };
 

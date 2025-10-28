@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchInstance } from '../instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { FilterParams, LocationData, MarkerData } from '@/types';
 
 export const getAllMarkersPath = () => `/places/all`;
@@ -24,7 +24,7 @@ export const getAllMarkers = async (
     influencers: influencers.join(','),
   });
 
-  const response = await fetchInstance.get<MarkerData[]>(`${getAllMarkersPath()}?${params}`);
+  const response = await getFetchInstance().get<MarkerData[]>(`${getAllMarkersPath()}?${params}`);
   return response.data;
 };
 

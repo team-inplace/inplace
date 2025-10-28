@@ -1,8 +1,11 @@
 import { rest } from 'msw';
-import { BASE_URL } from '@/api/instance';
+import { getConfig } from '@inplace-frontend-monorepo/shared/api/config';
 import { MarkerInfo, PlaceData } from '@/types';
 import { getAllMarkersPath } from '@/api/hooks/useGetAllMarkers';
 import { getSearchPlaceMarkersPath } from '@/api/hooks/useGetSearchPlaceMarker';
+
+const config = getConfig();
+const BASE_URL = config.baseURL;
 
 const dummyInfluencers = [
   { influencerName: '성시경' },
