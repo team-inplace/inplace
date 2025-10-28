@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useState, useRef } from "react";
 import { WebView, WebViewMessageEvent } from "react-native-webview";
 import { BackHandler, Platform, SafeAreaView, StyleSheet } from "react-native";
 
@@ -9,37 +9,45 @@ export interface CustomWebViewProps {
 
 const CustomWebView = forwardRef<WebView, CustomWebViewProps>(
   ({ url, onMessage }, ref) => {
-    const [backPressedOnce, setBackPressedOnce] = useState(false);
+    const [canGoBack, setCanGoBack] = useState(false);
+    const webViewRef = useRef<WebView | null>(null);
 
     useEffect(() => {
       const backAction = () => {
-        if (backPressedOnce) {
-          BackHandler.exitApp();
-          return true; // 기본 동작은 막음 (중복 종료 방지)
+        if (canGoBack && webViewRef.current) {
+          webViewRef.current.goBack();
+          return true;
         }
-        setBackPressedOnce(true);
-        setTimeout(() => {
-          setBackPressedOnce(false);
-        }, 2000);
-
-        return true; // 기본 동작 막음 (아직 앱 종료 안 함)
+        return false; // 뒤로 갈 곳 없으면 앱 종료
       };
       
       const backHandler = BackHandler.addEventListener(
         "hardwareBackPress",
         backAction
-      )
+      );
       return () => backHandler.remove();
-    }, [backPressedOnce]);
+    }, [canGoBack]);
 
     return (
       <SafeAreaView style={styles.container}>
         <WebView
+          ref={(webView) => {
+            webViewRef.current = webView;
+            if (typeof ref === 'function') {
+              ref(webView);
+            } else if (ref) {
+              ref.current = webView;
+            }
+          }}
           source={{ uri: url }}
+          onNavigationStateChange={(navState) => {
+            setCanGoBack(navState.canGoBack);
+          }}
           onMessage={onMessage}
           allowsBackForwardNavigationGestures={true}
           style={styles.webview}
-          ref={ref}
+          javaScriptEnabled={true}
+          domStorageEnabled={true}
         />
       </SafeAreaView>
     );
