@@ -1,0 +1,6 @@
+<resources>
+  <string name="app_name">mobile</string>
+  <string name="expo_splash_screen_resize_mode" translatable="false">contain</string>
+  <string name="expo_splash_screen_status_bar_translucent" translatable="false">false</string>
+  <string name="kakao_app_key">0b89c213866b64e07cc8c0a049024d4a</string>
+</resources>
