@@ -11,7 +11,6 @@ import useAuth from '@/hooks/useAuth';
 import LikesContainer from '@/components/My/LikesContainer';
 import ActiveContainer from '@/components/My/ActiveContainer';
 import BadgeContainer from '@/components/My/BadgeContainer';
-import badgeImageUrl from '@/assets/images/titletest.png';
 
 export default function MyPage() {
   const { data: userInfo } = useGetUserInfo();
@@ -26,7 +25,7 @@ export default function MyPage() {
   const TAB_COMPONENTS = {
     active: <ActiveContainer />,
     likes: <LikesContainer />,
-    badges: <BadgeContainer />,
+    badges: <BadgeContainer baseBadge={userInfo?.badge.id ?? null} />,
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -73,7 +72,7 @@ export default function MyPage() {
         {isVisible ? (
           <>
             <InfoWrapper>
-              {badgeImageUrl && <UserTitle src={badgeImageUrl} alt={`${userInfo?.nickname} Title`} />}
+              {userInfo?.badge.id && <UserTitle src={userInfo?.badge.imgUrl} alt={`${userInfo?.badge.name} Title`} />}
             </InfoWrapper>
             <NickNameWrapper>
               <Text size="l" weight="bold">

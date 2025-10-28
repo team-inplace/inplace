@@ -418,12 +418,13 @@ export const myHandlers = [
           name: 'SILVER',
           imgUrl: silver,
         },
-        badges: [
-          {
-            name: 'Veteran',
-            imgUrl: 'https://example.com/badges/veteran.png',
-          },
-        ],
+        badge: {
+          id: 5,
+          name: '베테랑',
+          imgUrl: title,
+          description: '',
+          isOwned: true,
+        },
       }),
     );
   }),
@@ -565,42 +566,36 @@ export const myHandlers = [
           name: '지금은임영웅시대',
           imgUrl: title,
           isOwned: false,
-          isSelected: false,
         },
         {
           id: 2,
           name: '성시경광팬',
           imgUrl: title,
           isOwned: true,
-          isSelected: true,
         },
         {
           id: 3,
           name: '파워인플러시안룰렛',
           imgUrl: title,
           isOwned: false,
-          isSelected: false,
         },
         {
           id: 4,
           name: '초보자',
           imgUrl: title,
           isOwned: false,
-          isSelected: false,
         },
         {
           id: 5,
           name: '베테랑',
           imgUrl: title,
           isOwned: true,
-          isSelected: false,
         },
         {
           id: 6,
           name: '리뷰왕',
           imgUrl: title,
           isOwned: false,
-          isSelected: false,
         },
       ]),
     );

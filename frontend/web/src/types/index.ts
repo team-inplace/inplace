@@ -153,12 +153,7 @@ export type UserInfoData = {
     name: string;
     imgUrl: string;
   };
-  badges: [
-    {
-      name: string;
-      imgUrl: string;
-    },
-  ];
+  badge: BadgeData;
 };
 export type BadgeData = {
   id: number;
@@ -166,7 +161,6 @@ export type BadgeData = {
   imgUrl: string;
   description: string;
   isOwned: boolean;
-  isSelected: boolean;
 };
 export type UserPlaceData = {
   placeId: number;
