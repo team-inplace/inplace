@@ -8,9 +8,10 @@ import { usePatchNickname } from '@/api/hooks/usePatchNickname';
 import { useGetUserInfo } from '@/api/hooks/useGetUserInfo';
 import { useDeleteUser } from '@/api/hooks/useDeleteUser';
 import useAuth from '@/hooks/useAuth';
-import ActiveContainer from '@/components/My/ActiveContainer';
 import LikesContainer from '@/components/My/LikesContainer';
+import ActiveContainer from '@/components/My/ActiveContainer';
 import BadgeContainer from '@/components/My/BadgeContainer';
+import badgeImageUrl from '@/assets/images/titletest.png';
 
 export default function MyPage() {
   const { data: userInfo } = useGetUserInfo();
@@ -70,18 +71,24 @@ export default function MyPage() {
     <Wrapper>
       <TitleWrapper>
         {isVisible ? (
-          <NickNameWrapper>
-            {userInfo?.tier.imgUrl && <UserTier src={userInfo?.tier.imgUrl} alt={`${userInfo.nickname} Tier`} />}
-            <Text size="l" weight="bold">
-              <Text size="xl" weight="bold" style={{ color: '#47c8d9' }}>
-                {userInfo?.nickname}
+          <>
+            <InfoWrapper>
+              {badgeImageUrl && <UserTitle src={badgeImageUrl} alt={`${userInfo?.nickname} Title`} />}
+            </InfoWrapper>
+            <NickNameWrapper>
+              <Text size="l" weight="bold">
+                <Text size="xl" weight="bold" style={{ color: '#47c8d9' }}>
+                  {userInfo?.tier.imgUrl && <UserTier src={userInfo?.tier.imgUrl} alt={`${userInfo.nickname} Tier`} />}
+
+                  {userInfo?.nickname}
+                </Text>
+                <CustomButton aria-label="닉네임 수정" onClick={() => setIsVisible(false)}>
+                  <MdOutlineDriveFileRenameOutline size={24} color="#47c8d9" />
+                </CustomButton>
+                님, 안녕하세요!
               </Text>
-              <CustomButton aria-label="닉네임 수정" onClick={() => setIsVisible(false)}>
-                <MdOutlineDriveFileRenameOutline size={24} color="#47c8d9" />
-              </CustomButton>
-              님, 안녕하세요!
-            </Text>
-          </NickNameWrapper>
+            </NickNameWrapper>
+          </>
         ) : (
           <EditWrapper>
             <Form onSubmit={handleSubmit}>
@@ -95,6 +102,7 @@ export default function MyPage() {
             </Text>
           </EditWrapper>
         )}
+        <div />
         <Paragraph size="m" weight="bold">
           인플레이스를 이용해주셔서 감사합니다.
         </Paragraph>
@@ -134,10 +142,11 @@ const Wrapper = styled.div`
     align-items: center;
   }
 `;
+const InfoWrapper = styled.div``;
 const TitleWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
 
   @media screen and (max-width: 768px) {
     width: 90%;
@@ -190,11 +199,9 @@ const UnderlineText = styled.span`
   color: inherit;
 `;
 const UserTier = styled.img`
-  height: 34px;
+  height: 30px;
   width: auto;
-  vertical-align: middle;
   margin-right: 4px;
-  margin-bottom: 4px;
 `;
 
 const Tap = styled.button<{ $active: boolean }>`
@@ -236,4 +243,9 @@ const TapContainer = styled.div`
   @media screen and (max-width: 768px) {
     width: 90%;
   }
+`;
+
+const UserTitle = styled.img`
+  height: 24px;
+  margin-bottom: 4px;
 `;
