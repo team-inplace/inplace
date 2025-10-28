@@ -321,6 +321,7 @@ export type CommentData = {
     nickname: string;
     imgUrl: string;
     tierImageUrl: string;
+    titleImageUrl: string;
   };
   content: string;
   createdAt: string;
