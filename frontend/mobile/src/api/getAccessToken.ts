@@ -1,6 +1,6 @@
 import { BASE_URL } from "@inplace-frontend-monorepo/shared/src/api/instance";
 
-export const useGetAccessToken = async (token: string) => {
+export const getAccessToken = async (token: string) => {
   try {
     const response = await fetch(`${BASE_URL}/auth/kakao`, {
       method: "POST",
