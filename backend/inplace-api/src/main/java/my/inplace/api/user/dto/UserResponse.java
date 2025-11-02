@@ -1,12 +1,16 @@
 package my.inplace.api.user.dto;
 
+import my.inplace.api.global.CursorResponse;
+import my.inplace.api.post.dto.PostResponse;
 import my.inplace.application.influencer.query.dto.InfluencerResult;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 import my.inplace.application.place.query.dto.PlaceResult;
+import my.inplace.application.post.query.dto.PostResult;
 import my.inplace.application.user.dto.UserResult;
 import my.inplace.application.video.query.dto.VideoResult;
+import my.inplace.common.cursor.CursorResult;
 
 public class UserResponse {
 
@@ -171,6 +175,29 @@ public class UserResponse {
                 influencerResult.imgUrl(),
                 influencerResult.job(),
                 influencerResult.isLiked()
+            );
+        }
+    }
+    
+    public record SimpleList(
+        List<PostResponse.SimplePost> posts,
+        CursorResponse cursor
+    ) {
+        
+        public static UserResponse.SimpleList from(
+            CursorResult<PostResult.DetailedPost> postResult
+        ) {
+            List<PostResponse.SimplePost> posts = postResult.value().stream()
+                 .map(PostResponse.SimplePost::from)
+                 .toList();
+            
+            return new UserResponse.SimpleList(
+                posts,
+                new CursorResponse(
+                    postResult.hasNext(),
+                    postResult.nextCursorValue(),
+                    postResult.nextCursorId()
+                )
             );
         }
     }

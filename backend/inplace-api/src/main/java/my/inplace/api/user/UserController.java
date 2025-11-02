@@ -32,7 +32,7 @@ public class UserController implements UserControllerApiSpec {
     }
     
     @GetMapping("/posts")
-    public ResponseEntity<PostResponse.SimpleList> getMyPosts(
+    public ResponseEntity<UserResponse.SimpleList> getMyPosts(
         @RequestParam(required = false) Long cursorValue,
         @RequestParam(required = false) Long cursorId,
         @RequestParam(defaultValue = "5") int size,
@@ -40,7 +40,7 @@ public class UserController implements UserControllerApiSpec {
     ) {
         var posts = userFacade.getMyPosts(cursorValue, cursorId, size, sort);
         
-        var response = PostResponse.SimpleList.from(posts);
+        var response = UserResponse.SimpleList.from(posts);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
