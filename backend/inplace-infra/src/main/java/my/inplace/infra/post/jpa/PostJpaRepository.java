@@ -49,7 +49,15 @@ public interface PostJpaRepository extends JpaRepository<Post, Long> {
     
     Page<Post> findPostsByAuthorId(Long authorId, Pageable pageable);
     
-    Page<Post> findAllByIdIn(Set<Long> postIds, Pageable pageable);
+    Page<Post> findAllByIdIn(List<Long> postIds, Pageable pageable);
+    
+    @Query("""
+    SELECT DISTINCT c.postId
+    FROM Comment c
+    WHERE c.id IN :commentIds
+    """)
+    List<Long> findPostsByCommentIds(@Param("commentIds") List<Long> commentIds);
+    
     
     @Query("""
         SELECT COUNT(c)

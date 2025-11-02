@@ -1,6 +1,8 @@
 package my.inplace.application.post.query;
 
 import java.util.List;
+import java.util.Set;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import my.inplace.application.post.query.dto.CommentResult;
@@ -53,18 +55,27 @@ public class PostQueryService {
         
         var likedPostIds = likedPostJpaRepository.findLikedPostIdsByUserIdAndPostIds(userId, postIds);
         
-        var myPosts = posts.getContent().stream()
-             .map(post -> PostResult.SimplePost.of(post, likedPostIds.contains(post.getId())))
-             .toList();
-        
-        return new PageImpl<>(myPosts, pageable, posts.getTotalElements());
+        return posts.map(post -> PostResult.SimplePost.of(post, likedPostIds.contains(post.getId())));
     }
     
     @Transactional(readOnly = true)
     public Page<PostResult.SimplePost> getLikedPosts(Long userId, Pageable pageable) {
         var postIds = likedPostJpaRepository.findLikedPostIdsByUserId(userId);
+        
         return postJpaRepository.findAllByIdIn(postIds, pageable)
             .map(post -> PostResult.SimplePost.of(post, true));
+    }
+    
+    @Transactional(readOnly = true)
+    public Page<PostResult.SimplePost> getCommentedPosts(Long userId, Pageable pageable) {
+        var commentIds = commentJpaRepository.findCommentIdsByUserId(userId);
+        var postIds = postJpaRepository.findPostsByCommentIds(commentIds);
+        
+        var likedPostIds = likedPostJpaRepository.findLikedPostIdsByUserIdAndPostIds(userId, postIds);
+        
+        var posts = postJpaRepository.findAllByIdIn(postIds, pageable);
+        
+        return posts.map(post -> PostResult.SimplePost.of(post, likedPostIds.contains(post.getId())));
     }
     
     @Transactional(readOnly = true)

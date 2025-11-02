@@ -47,6 +47,16 @@ public class UserController implements UserControllerApiSpec {
         var response = posts.map(UserResponse.SimplePost::from);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+    
+    @GetMapping("/posts/comments")
+    public ResponseEntity<Page<UserResponse.SimplePost>> getMyCommentedPosts(
+        @PageableDefault(page = 0, size = 10) Pageable pageable
+    ) {
+        var posts = userFacade.getMyCommentedPosts(pageable);
+        
+        var response = posts.map(UserResponse.SimplePost::from);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     @GetMapping("/influencers")
     public ResponseEntity<Page<UserResponse.LikedInfluencer>> getMyFavoriteInfluencers(

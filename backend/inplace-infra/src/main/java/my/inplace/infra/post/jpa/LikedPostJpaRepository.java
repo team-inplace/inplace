@@ -22,7 +22,7 @@ public interface LikedPostJpaRepository extends JpaRepository<LikedPost, Long> {
       AND lp.postId IN :postIds
       AND lp.isLiked = TRUE
     """)
-    Set<Long> findLikedPostIdsByUserIdAndPostIds(@Param("userId") Long userId, @Param("postIds") List<Long> postIds);
+    List<Long> findLikedPostIdsByUserIdAndPostIds(@Param("userId") Long userId, @Param("postIds") List<Long> postIds);
     
     @Query("""
     SELECT lp.postId
@@ -30,5 +30,5 @@ public interface LikedPostJpaRepository extends JpaRepository<LikedPost, Long> {
     WHERE lp.userId = :userId
       AND lp.isLiked = TRUE
     """)
-    Set<Long> findLikedPostIdsByUserId(@Param("userId") Long userId);
+    List<Long> findLikedPostIdsByUserId(@Param("userId") Long userId);
 }
