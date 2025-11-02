@@ -1,5 +1,6 @@
 package my.inplace.application.user;
 
+import com.google.firebase.auth.UserInfo;
 import my.inplace.application.annotation.Facade;
 import my.inplace.application.influencer.query.InfluencerQueryService;
 import my.inplace.application.influencer.query.dto.InfluencerResult;
@@ -106,21 +107,11 @@ public class UserFacade {
         userCommandService.updateMentionPushResent(userId, isResented);
     }
     
-    public CursorResult<PostResult.DetailedPost> getMyPosts(Long cursorValue, Long cursorId, int size, String orderBy) {
+    public Page<PostResult.DetailedPost> getMyPosts(Pageable pageable) {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
-        String nickname = userQueryService.getUserInfo(userId).nickname();
+        UserResult.Simple userInfo = userQueryService.getUserInfo(userId);
+        Page<PostResult.MyPost> myPosts = postQueryService.getMyPosts(userId, pageable);
         
-        var queryResult = postQueryService.getPosts(userId, cursorValue, cursorId, size, orderBy);
-        var result = queryResult.value().stream()
-            .filter(post -> post.userNickname().equals(nickname))
-            .map(PostResult.DetailedPost::from)
-            .toList();
-        
-        return new CursorResult<>(
-            result,
-            queryResult.hasNext(),
-            queryResult.nextCursorValue(),
-            queryResult.nextCursorId()
-        );
+        return myPosts.map(myPost -> PostResult.DetailedPost.of(myPost, userInfo));
     }
 }

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import my.inplace.domain.post.PostTitle;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -43,6 +45,8 @@ public interface PostJpaRepository extends JpaRepository<Post, Long> {
 
     @Query("SELECT p.authorId FROM Post p WHERE p.id = :postId")
     Long findAuthorIdByPostId(@Param("postId") Long postId);
+    
+    Page<Post> findPostsByAuthorId(Long authorId, Pageable pageable);
     
     @Query("""
         SELECT COUNT(c)
