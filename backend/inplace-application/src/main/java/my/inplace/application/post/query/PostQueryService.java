@@ -1,6 +1,5 @@
 package my.inplace.application.post.query;
 
-import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +44,7 @@ public class PostQueryService {
     }
     
     @Transactional(readOnly = true)
-    public Page<PostResult.MyPost> getMyPosts(Long userId, Pageable pageable) {
+    public Page<PostResult.SimplePost> getMyPosts(Long userId, Pageable pageable) {
         var posts = postJpaRepository.findPostsByAuthorId(userId, pageable);
         
         var postIds = posts.getContent().stream()
@@ -55,12 +54,18 @@ public class PostQueryService {
         var likedPostIds = likedPostJpaRepository.findLikedPostIdsByUserIdAndPostIds(userId, postIds);
         
         var myPosts = posts.getContent().stream()
-             .map(post -> PostResult.MyPost.of(post, likedPostIds.contains(post.getId())))
+             .map(post -> PostResult.SimplePost.of(post, likedPostIds.contains(post.getId())))
              .toList();
         
         return new PageImpl<>(myPosts, pageable, posts.getTotalElements());
     }
     
+    @Transactional(readOnly = true)
+    public Page<PostResult.SimplePost> getLikedPosts(Long userId, Pageable pageable) {
+        var postIds = likedPostJpaRepository.findLikedPostIdsByUserId(userId);
+        return postJpaRepository.findAllByIdIn(postIds, pageable)
+            .map(post -> PostResult.SimplePost.of(post, true));
+    }
     
     @Transactional(readOnly = true)
     public DetailedPost getPostById(Long postId, Long userId) {

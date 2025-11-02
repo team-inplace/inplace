@@ -24,4 +24,11 @@ public interface LikedPostJpaRepository extends JpaRepository<LikedPost, Long> {
     """)
     Set<Long> findLikedPostIdsByUserIdAndPostIds(@Param("userId") Long userId, @Param("postIds") List<Long> postIds);
     
+    @Query("""
+    SELECT lp.postId
+    FROM LikedPost lp
+    WHERE lp.userId = :userId
+      AND lp.isLiked = TRUE
+    """)
+    Set<Long> findLikedPostIdsByUserId(@Param("userId") Long userId);
 }

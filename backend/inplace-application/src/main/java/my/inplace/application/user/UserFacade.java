@@ -1,6 +1,5 @@
 package my.inplace.application.user;
 
-import com.google.firebase.auth.UserInfo;
 import my.inplace.application.annotation.Facade;
 import my.inplace.application.influencer.query.InfluencerQueryService;
 import my.inplace.application.influencer.query.dto.InfluencerResult;
@@ -10,7 +9,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import my.inplace.application.post.query.PostQueryService;
 import my.inplace.application.post.query.dto.PostResult;
-import my.inplace.common.cursor.CursorResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import my.inplace.domain.place.query.PlaceQueryResult;
@@ -110,8 +108,16 @@ public class UserFacade {
     public Page<PostResult.DetailedPost> getMyPosts(Pageable pageable) {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
         UserResult.Simple userInfo = userQueryService.getUserInfo(userId);
-        Page<PostResult.MyPost> myPosts = postQueryService.getMyPosts(userId, pageable);
+        Page<PostResult.SimplePost> myPosts = postQueryService.getMyPosts(userId, pageable);
         
-        return myPosts.map(myPost -> PostResult.DetailedPost.of(myPost, userInfo));
+        return myPosts.map(simplePost -> PostResult.DetailedPost.of(simplePost, userInfo));
+    }
+    
+    public Page<PostResult.DetailedPost> getMyLikedPosts(Pageable pageable) {
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
+        UserResult.Simple userInfo = userQueryService.getUserInfo(userId);
+        Page<PostResult.SimplePost> likedPosts = postQueryService.getLikedPosts(userId, pageable);
+        
+        return likedPosts.map(simplePost -> PostResult.DetailedPost.of(simplePost, userInfo));
     }
 }

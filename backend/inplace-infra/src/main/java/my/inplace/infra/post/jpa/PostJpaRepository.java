@@ -2,6 +2,7 @@ package my.inplace.infra.post.jpa;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import my.inplace.domain.post.PostTitle;
 import org.springframework.data.domain.Page;
@@ -47,6 +48,8 @@ public interface PostJpaRepository extends JpaRepository<Post, Long> {
     Long findAuthorIdByPostId(@Param("postId") Long postId);
     
     Page<Post> findPostsByAuthorId(Long authorId, Pageable pageable);
+    
+    Page<Post> findAllByIdIn(Set<Long> postIds, Pageable pageable);
     
     @Query("""
         SELECT COUNT(c)

@@ -106,26 +106,26 @@ public class PostResult {
             );
         }
         
-        public static DetailedPost of(MyPost myPost, UserResult.Simple userResult) {
+        public static DetailedPost of(SimplePost simplePost, UserResult.Simple userResult) {
             return new DetailedPost(
-                myPost.postId(),
+                simplePost.postId(),
                 userResult.nickname(),
                 userResult.profileImageUrl(),
                 userResult.tierImageUrl(),
                 userResult.mainBadgeImageUrl(),
-                myPost.title(),
-                myPost.content(),
-                myPost.postImages().images(),
-                myPost.selfLiked(),
-                myPost.totalLike(),
-                myPost.totalComment(),
+                simplePost.title(),
+                simplePost.content(),
+                simplePost.postImages().images(),
+                simplePost.selfLiked(),
+                simplePost.totalLike(),
+                simplePost.totalComment(),
                 Boolean.TRUE,
-                myPost.createdAt()
+                simplePost.createdAt()
             );
         }
     }
     
-    public record MyPost(
+    public record SimplePost(
         Long postId,
         String title,
         String content,
@@ -135,8 +135,8 @@ public class PostResult {
         Integer totalComment,
         LocalDateTime createdAt
     ) {
-        public static MyPost of(Post post, Boolean selfLiked) {
-            return new MyPost(
+        public static SimplePost of(Post post, Boolean selfLiked) {
+            return new SimplePost(
                 post.getId(),
                 post.getTitle(),
                 post.getContent(),
