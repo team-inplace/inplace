@@ -1,18 +1,46 @@
 package my.inplace.api.user.dto;
 
-import my.inplace.api.global.CursorResponse;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import my.inplace.api.post.dto.PostResponse;
 import my.inplace.application.influencer.query.dto.InfluencerResult;
+
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 import my.inplace.application.place.query.dto.PlaceResult;
 import my.inplace.application.post.query.dto.PostResult;
 import my.inplace.application.user.dto.UserResult;
 import my.inplace.application.video.query.dto.VideoResult;
-import my.inplace.common.cursor.CursorResult;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
 public class UserResponse {
+    
+    private static String formatCreatedAt(LocalDateTime createdAt) {
+        var now = LocalDateTime.now();
+        var duration = Duration.between(createdAt, now);
+        
+        long minutes = duration.toMinutes();
+        long hours = duration.toHours();
+        long days = duration.toDays();
+        
+        if (minutes < 1) {
+            return "방금 전";
+        }
+        if (minutes < 60) {
+            return minutes + "분 전";
+        }
+        if (hours < 24) {
+            return hours + "시간 전";
+        }
+        if (days < 7) {
+            return days + "일 전";
+        }
+        return createdAt.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
+    }
 
     public record Simple(
         String nickname,
@@ -179,25 +207,39 @@ public class UserResponse {
         }
     }
     
-    public record SimpleList(
-        List<PostResponse.SimplePost> posts,
-        CursorResponse cursor
+    public record SimplePost(
+        Long postId,
+        UserResponse.Simple author,
+        String title,
+        String content,
+        @JsonInclude(NON_NULL)
+        String imageUrl,
+        Boolean selfLike,
+        Integer totalLikeCount,
+        Integer totalCommentCount,
+        Boolean isMine,
+        String createdAt
     ) {
         
-        public static UserResponse.SimpleList from(
-            CursorResult<PostResult.DetailedPost> postResult
-        ) {
-            List<PostResponse.SimplePost> posts = postResult.value().stream()
-                 .map(PostResponse.SimplePost::from)
-                 .toList();
-            
-            return new UserResponse.SimpleList(
-                posts,
-                new CursorResponse(
-                    postResult.hasNext(),
-                    postResult.nextCursorValue(),
-                    postResult.nextCursorId()
-                )
+        public static UserResponse.SimplePost from(PostResult.DetailedPost postResult) {
+            return new UserResponse.SimplePost(
+                postResult.postId(),
+                new UserResponse.Simple(
+                    postResult.userNickname(),
+                    postResult.userImageUrl(),
+                    postResult.tierImageUrl(),
+                    postResult.mainBadgeImageUrl()
+                ),
+                postResult.title(),
+                postResult.content(),
+                postResult.imageInfos().isEmpty()
+                    ? null
+                    : postResult.imageInfos().get(0).imageUrl(),
+                postResult.selfLike(),
+                postResult.totalLikeCount(),
+                postResult.totalCommentCount(),
+                postResult.isMine(),
+                formatCreatedAt(postResult.createdAt())
             );
         }
     }
