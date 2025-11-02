@@ -1,19 +1,17 @@
 package my.inplace.api.user;
 
 import lombok.RequiredArgsConstructor;
+import my.inplace.api.post.dto.PostResponse;
+import my.inplace.application.post.query.dto.PostResult;
 import my.inplace.application.user.UserFacade;
+import my.inplace.common.cursor.CursorResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import my.inplace.api.user.dto.UserRequest;
 import my.inplace.api.user.dto.UserResponse;
 
@@ -31,6 +29,19 @@ public class UserController implements UserControllerApiSpec {
     ) {
         userFacade.updateNickname(request.nickname());
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+    
+    @GetMapping("/posts")
+    public ResponseEntity<PostResponse.SimpleList> getMyPosts(
+        @RequestParam(required = false) Long cursorValue,
+        @RequestParam(required = false) Long cursorId,
+        @RequestParam(defaultValue = "5") int size,
+        @RequestParam(defaultValue = "createdAt") String sort
+    ) {
+        var posts = userFacade.getMyPosts(cursorValue, cursorId, size, sort);
+        
+        var response = PostResponse.SimpleList.from(posts);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/influencers")

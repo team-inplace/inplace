@@ -3,9 +3,13 @@ package my.inplace.application.user;
 import my.inplace.application.annotation.Facade;
 import my.inplace.application.influencer.query.InfluencerQueryService;
 import my.inplace.application.influencer.query.dto.InfluencerResult;
+
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import my.inplace.application.post.query.PostQueryService;
+import my.inplace.application.post.query.dto.PostResult;
+import my.inplace.common.cursor.CursorResult;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import my.inplace.domain.place.query.PlaceQueryResult;
@@ -28,6 +32,7 @@ public class UserFacade {
     private final ReviewService reviewService;
     private final VideoQueryService videoQueryService;
     private final UserQueryService userQueryService;
+    private final PostQueryService postQueryService;
 
     private final UserCommandService userCommandService;
 
@@ -99,5 +104,23 @@ public class UserFacade {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
         
         userCommandService.updateMentionPushResent(userId, isResented);
+    }
+    
+    public CursorResult<PostResult.DetailedPost> getMyPosts(Long cursorValue, Long cursorId, int size, String orderBy) {
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
+        String nickname = userQueryService.getUserInfo(userId).nickname();
+        
+        var queryResult = postQueryService.getPosts(userId, cursorValue, cursorId, size, orderBy);
+        var result = queryResult.value().stream()
+            .filter(post -> post.userNickname().equals(nickname))
+            .map(PostResult.DetailedPost::from)
+            .toList();
+        
+        return new CursorResult<>(
+            result,
+            queryResult.hasNext(),
+            queryResult.nextCursorValue(),
+            queryResult.nextCursorId()
+        );
     }
 }
