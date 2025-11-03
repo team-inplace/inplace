@@ -32,8 +32,7 @@ public class UserResult {
         String name,
         String imgUrl,
         String description,
-        Boolean isOwned,
-        Boolean isSelected
+        Boolean isOwned
     ) {
         public static BadgeWithOwnerShip from(UserQueryResult.BadgeWithOwnerShip badge) {
             return new BadgeWithOwnerShip(
@@ -41,21 +40,8 @@ public class UserResult {
                 badge.name(),
                 badge.imgUrl(),
                 badge.description(),
-                badge.isOwned(),
-                badge.isSelected()
+                badge.isOwned()
             );
-        }
-    }
-
-    public record Badge(
-        Long id,
-        String name,
-        String img_url,
-        String condition
-    ) {
-
-        public static Badge from(UserQueryResult.Badge badge) {
-            return new Badge(badge.id(), badge.name(), badge.imgUrl(), badge.condition());
         }
     }
 

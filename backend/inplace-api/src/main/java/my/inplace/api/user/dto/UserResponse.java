@@ -29,14 +29,16 @@ public class UserResponse {
     public record Info(
         String nickname,
         String imgUrl,
-        Tier tier
+        Tier tier,
+        Badge badge
     ) {
 
         public static Info from(UserResult.Info info) {
             return new Info(
                 info.nickname(),
                 info.profileImageUrl(),
-                new Tier(info.tierName(), info.tierImageUrl())
+                new Tier(info.tierName(), info.tierImageUrl()),
+                new Badge(info.mainBadgeName(), info.mainBadgeImageUrl())
             );
         }
     }
@@ -46,8 +48,7 @@ public class UserResponse {
         String name,
         String imgUrl,
         String description,
-        Boolean isOwned,
-        Boolean isSelected
+        Boolean isOwned
     ) {
 
         public static BadgeWithOwnerShip from(UserResult.BadgeWithOwnerShip badge) {
@@ -56,25 +57,15 @@ public class UserResponse {
                 badge.name(),
                 badge.imgUrl(),
                 badge.description(),
-                badge.isOwned(),
-                badge.isSelected()
+                badge.isOwned()
             );
         }
     }
 
     public record Badge(
-        Long id,
         String name,
         String imgUrl
     ) {
-
-        public static Badge from(UserResult.Badge badge) {
-            return new Badge(
-                badge.id(),
-                badge.name(),
-                badge.img_url()
-            );
-        }
     }
 
     public record Tier(

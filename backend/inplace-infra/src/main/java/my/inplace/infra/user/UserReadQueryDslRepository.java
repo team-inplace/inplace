@@ -1,8 +1,6 @@
 package my.inplace.infra.user;
 
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +10,6 @@ import my.inplace.domain.user.QTier;
 import my.inplace.domain.user.QUser;
 import my.inplace.domain.user.QUserBadge;
 import my.inplace.domain.user.query.UserQueryResult;
-import my.inplace.domain.user.query.UserQueryResult.Badge;
 import my.inplace.domain.user.query.UserQueryResult.BadgeWithOwnerShip;
 import my.inplace.domain.user.query.UserQueryResult.Info;
 import my.inplace.domain.user.query.UserReadRepository;
@@ -46,20 +43,13 @@ public class UserReadQueryDslRepository implements UserReadRepository {
 
     @Override
     public List<BadgeWithOwnerShip> getAllBadgesWithOwnerShip(Long userId) {
-        Long mainBadgeId = queryFactory
-            .select(QUser.user.mainBadgeId)
-            .from(QUser.user)
-            .where(QUser.user.id.eq(userId))
-            .fetchOne();
-
         return queryFactory
             .select(Projections.constructor(UserQueryResult.BadgeWithOwnerShip.class,
-            QBadge.badge.id,
-            QBadge.badge.name,
-            QBadge.badge.imgUrl,
-            QBadge.badge.condition,
-            QUserBadge.userBadge.id.isNotNull(),
-            mainBadgeId != null ? QBadge.badge.id.eq(mainBadgeId) : Expressions.FALSE
+                QBadge.badge.id,
+                QBadge.badge.name,
+                QBadge.badge.imgUrl,
+                QBadge.badge.condition,
+                QUserBadge.userBadge.id.isNotNull()
             ))
             .from(QBadge.badge)
             .leftJoin(QUserBadge.userBadge).on(QUserBadge.userBadge.badgeId.eq(QBadge.badge.id)
