@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
-import { fetchInstance } from '../instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 
 export const deleteAlarmPath = (id: string) => `/alarms/${id}`;
 
 export const deleteAlarm = async (id: string) => {
-  const response = await fetchInstance.delete(deleteAlarmPath(id), { withCredentials: true });
+  const response = await getFetchInstance().delete(deleteAlarmPath(id), { withCredentials: true });
   return response.data;
 };
 
