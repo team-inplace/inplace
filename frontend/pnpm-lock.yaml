@@ -32,15 +32,21 @@ importers:
       '@inplace-frontend-monorepo/shared':
         specifier: workspace:*
         version: link:../shared
-      '@react-native-seoul/kakao-login':
-        specifier: ^5.4.1
-        version: 5.4.1(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1)
+      '@react-native-kakao/core':
+        specifier: ^2.4.0
+        version: 2.4.0(expo@52.0.47(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(graphql@16.8.1)(react-native-webview@13.12.5(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1)
+      '@react-native-kakao/user':
+        specifier: ^2.4.0
+        version: 2.4.0(@react-native-kakao/core@2.4.0(expo@52.0.47(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(graphql@16.8.1)(react-native-webview@13.12.5(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1)
       eas-cli:
         specifier: ^16.17.4
         version: 16.23.0(@types/node@24.7.2)(typescript@5.8.3)
       expo:
         specifier: ~52.0.47
         version: 52.0.47(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(graphql@16.8.1)(react-native-webview@13.12.5(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1)
+      expo-build-properties:
+        specifier: ~0.13.3
+        version: 0.13.3(expo@52.0.47(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(graphql@16.8.1)(react-native-webview@13.12.5(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))
       expo-location:
         specifier: ^18.1.6
         version: 18.1.6(expo@52.0.47(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(graphql@16.8.1)(react-native-webview@13.12.5(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))
@@ -1850,6 +1856,9 @@ packages:
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
 
+  '@mj-studio/js-util@1.1.3':
+    resolution: {integrity: sha512-XZe1V3J1CJ9DbPY0GlPTOES7UdnWcoUe3kIjmUWMvwmunOb/kYuDWiswu5eogHhcPSlM3LpYQYU2HhMzf3N6tw==}
+
   '@mswjs/cookies@0.2.2':
     resolution: {integrity: sha512-mlN83YSrcFgk7Dm1Mys40DLssI1KdJji2CMKN8eOlBqsTADYzj2+jWzsANsUTFbxDMWPD5e9bfA1RGqBpS3O1g==}
     engines: {node: '>=14'}
@@ -1941,9 +1950,20 @@ packages:
   '@protobufjs/utf8@1.1.0':
     resolution: {integrity: sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==}
 
-  '@react-native-seoul/kakao-login@5.4.1':
-    resolution: {integrity: sha512-ezhkX3AsJZ3Qf3b0QDJEpPIvWDqxuz2N9lKd9g90ULpzaYa+d0r7UdfCe4h+/Fo859t7t0vFSXqIbLLIHSlxFw==}
+  '@react-native-kakao/core@2.4.0':
+    resolution: {integrity: sha512-9VOSVAGifo45syHN2cdaUVUIF4iHxj2mdg557WpMtk3egJieLiTaIMyWqFUWQt9VG4j8zjzrBr+hDJG0yiShhg==}
     peerDependencies:
+      expo: '>=47.0.0'
+      react: 18.3.1
+      react-native: '*'
+    peerDependenciesMeta:
+      expo:
+        optional: true
+
+  '@react-native-kakao/user@2.4.0':
+    resolution: {integrity: sha512-1t3xA9uBIraDkR6/AQeYjFmpYjnFvsK3L+xXZlp0qIueSM+AkVS06N7aujfu4Y0HbQmy8EDd79V3RukpmK9itg==}
+    peerDependencies:
+      '@react-native-kakao/core': 2.4.0
       react: 18.3.1
       react-native: '*'
 
@@ -3323,6 +3343,9 @@ packages:
   crypt@0.0.2:
     resolution: {integrity: sha512-mCxBlsHFYh9C+HVpiEacem8FEBnMXgU9gy4zmNC+SXAZNB/1idgp/aulFJ4FgCi7GPEVbfyng092GqL2k2rmow==}
 
+  crypto-js@4.2.0:
+    resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
+
   crypto-random-string@2.0.0:
     resolution: {integrity: sha512-v1plID3y9r/lPhviJ1wrXpLeyUIGAZ2SHNYTEapm7/8A9nLPoyvVp3RK/EPFqn5kEznyWgYZNsRtYYIWbuG8KA==}
     engines: {node: '>=8'}
@@ -3399,6 +3422,10 @@ packages:
 
   decimal.js@10.6.0:
     resolution: {integrity: sha512-YpgQiITW3JXGntzdUmyUR1V812Hn8T1YVXhCu+wO3OpS4eU9l4YdD3qjyiKdV6mvV29zapkMeD390UVEf2lkUg==}
+
+  decode-uri-component@0.4.1:
+    resolution: {integrity: sha512-+8VxcR21HhTy8nOt6jf20w0c9CADrw1O8d+VZ/YzzCt4bJ3uBjw+D1q2osAB8RnpwwaeYBxy0HyKQxD5JBMuuQ==}
+    engines: {node: '>=14.16'}
 
   dedent@1.7.0:
     resolution: {integrity: sha512-HGFtf8yhuhGhqO07SV79tRp+br4MnbdjeVxotpn1QBl30pcLLCQjX5b2295ll0fv8RKDKsmWYrl05usHM9CewQ==}
@@ -3514,10 +3541,6 @@ packages:
 
   domino@2.1.6:
     resolution: {integrity: sha512-3VdM/SXBZX2omc9JF9nOPCtDaYQ67BGp5CoLpIQlO2KCAPETs8TcDHacF26jXadGbvUteZzRTeos2fhID5+ucQ==}
-
-  dooboolab-welcome@1.3.2:
-    resolution: {integrity: sha512-2NbMaIIURElxEf/UAoVUFlXrO+7n/FRhLCiQlk4fkbGRh9cJ3/f8VEMPveR9m4Ug2l2Zey+UCXjd6EcBqHJ5bw==}
-    hasBin: true
 
   dotenv-expand@11.0.7:
     resolution: {integrity: sha512-zIHwmZPRshsCdpMDyVsqGmgyP0yT8GAgXUnkdAoJisxvf33k7yO6OuoKmcTGuXPWSsm8Oh88nZicRLA9Y0rUeA==}
@@ -3935,6 +3958,11 @@ packages:
       react: 18.3.1
       react-native: '*'
 
+  expo-build-properties@0.13.3:
+    resolution: {integrity: sha512-gw7AYP+YF50Gr912BedelRDTfR4GnUEn9p5s25g4nv0hTJGWpBZdCYR5/Oi2rmCHJXxBqhPjxzV7JRh72fntLg==}
+    peerDependencies:
+      expo: '*'
+
   expo-constants@17.0.8:
     resolution: {integrity: sha512-XfWRyQAf1yUNgWZ1TnE8pFBMqGmFP5Gb+SFSgszxDdOoheB/NI5D4p7q86kI2fvGyfTrxAe+D+74nZkfsGvUlg==}
     peerDependencies:
@@ -4080,6 +4108,10 @@ packages:
   fill-range@7.1.1:
     resolution: {integrity: sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==}
     engines: {node: '>=8'}
+
+  filter-obj@5.1.0:
+    resolution: {integrity: sha512-qWeTREPoT7I0bifpPUXtxkZJ1XJzxWtfoWWkdVGqa+eCr3SHW/Ocp89o8vLvbUuQnadybJpjOKu4V+RwO6sGng==}
+    engines: {node: '>=14.16'}
 
   finalhandler@1.1.2:
     resolution: {integrity: sha512-aAWcW57uxVNrQZqFXjITpW3sIUQmHGG3qSb9mUah9MgMC4NeWhNOlNjXEYq3HjRAvL6arUviZGGJsBg6z0zsWA==}
@@ -5907,6 +5939,10 @@ packages:
     resolution: {integrity: sha512-EXtzRZmC+YGmGlDFbXKxQiMZNwCLEO6BANKXG4iCtSIM0yqc/pappSx3RIKr4r0uh5JsBckOXeKrB3Iz7mdQpQ==}
     hasBin: true
 
+  query-string@9.3.1:
+    resolution: {integrity: sha512-5fBfMOcDi5SA9qj5jZhWAcTtDfKF5WFdd2uD9nVNlbxVv1baq65aALy6qofpNEGELHvisjjasxQp7BlM9gvMzw==}
+    engines: {node: '>=18'}
+
   querystringify@2.2.0:
     resolution: {integrity: sha512-FIqgj2EUvTa7R50u0rGsyTftzjYmv/a3hO345bZNrqabNqjtgiDMgmo4mkUjd+nzU5oF3dClKqFIPUKybUyqoQ==}
 
@@ -6171,6 +6207,9 @@ packages:
     resolution: {integrity: sha512-9LkiTwjUh6rT555DtE9rTX+BKByPfrMzEAtnlEtdEwr3Nkffwiihqe2bWADg+OQRjt9gl6ICdmB/ZFDCGAtSow==}
     engines: {node: '>= 4'}
 
+  return-fetch@0.4.8:
+    resolution: {integrity: sha512-v4QDtYcpZURU2x9fr+OqurHzuUBhudR+nrFxo8EwOY3nF35kMbE+t8FYtlmfJGfnrBun7dMJ5++VFjXjfwsWGQ==}
+
   reusify@1.1.0:
     resolution: {integrity: sha512-g6QUff04oZpHs0eG5p83rFLhHeV00ug/Yf9nZM6fLeUrPguBTkTQOdpAWWspMh55TZfVQDPaN3NQJfbVRAxdIw==}
     engines: {iojs: '>=1.0.0', node: '>=0.10.0'}
@@ -6420,6 +6459,10 @@ packages:
   source-map@0.7.6:
     resolution: {integrity: sha512-i5uvt8C3ikiWeNZSVZNWcfZPItFQOsYTUAOkcUPGd8DqDy1uOUikjt5dG+uRlwyvR108Fb9DOd4GvXfT0N2/uQ==}
     engines: {node: '>= 12'}
+
+  split-on-first@3.0.0:
+    resolution: {integrity: sha512-qxQJTx2ryR0Dw0ITYyekNQWpz6f8dGd7vffGNflQQ3Iqj9NJ6qiZ7ELpZsJ/QBhIVAiDfXdag3+Gp8RvWa62AA==}
+    engines: {node: '>=12'}
 
   split@1.0.1:
     resolution: {integrity: sha512-mTyOoPbrivtXnwnIxZRFYRrPNtEFKlpB2fvjSnCQUiAA6qAZzqwna5envK4uk6OIeP17CsdF3rSBGYVBsU0Tkg==}
@@ -9606,6 +9649,8 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
+  '@mj-studio/js-util@1.1.3': {}
+
   '@mswjs/cookies@0.2.2':
     dependencies:
       '@types/set-cookie-parser': 2.4.10
@@ -9759,9 +9804,20 @@ snapshots:
 
   '@protobufjs/utf8@1.1.0': {}
 
-  '@react-native-seoul/kakao-login@5.4.1(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1)':
+  '@react-native-kakao/core@2.4.0(expo@52.0.47(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(graphql@16.8.1)(react-native-webview@13.12.5(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1)':
     dependencies:
-      dooboolab-welcome: 1.3.2
+      crypto-js: 4.2.0
+      query-string: 9.3.1
+      react: 18.3.1
+      react-native: 0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1)
+      return-fetch: 0.4.8
+    optionalDependencies:
+      expo: 52.0.47(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(graphql@16.8.1)(react-native-webview@13.12.5(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1)
+
+  '@react-native-kakao/user@2.4.0(@react-native-kakao/core@2.4.0(expo@52.0.47(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(graphql@16.8.1)(react-native-webview@13.12.5(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@mj-studio/js-util': 1.1.3
+      '@react-native-kakao/core': 2.4.0(expo@52.0.47(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(graphql@16.8.1)(react-native-webview@13.12.5(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1)
       react: 18.3.1
       react-native: 0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1)
 
@@ -11394,6 +11450,8 @@ snapshots:
 
   crypt@0.0.2: {}
 
+  crypto-js@4.2.0: {}
+
   crypto-random-string@2.0.0: {}
 
   css-color-keywords@1.0.0: {}
@@ -11459,6 +11517,8 @@ snapshots:
       supports-color: 8.1.1
 
   decimal.js@10.6.0: {}
+
+  decode-uri-component@0.4.1: {}
 
   dedent@1.7.0(babel-plugin-macros@3.1.0):
     optionalDependencies:
@@ -11549,8 +11609,6 @@ snapshots:
       webidl-conversions: 7.0.0
 
   domino@2.1.6: {}
-
-  dooboolab-welcome@1.3.2: {}
 
   dotenv-expand@11.0.7:
     dependencies:
@@ -12265,6 +12323,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  expo-build-properties@0.13.3(expo@52.0.47(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(graphql@16.8.1)(react-native-webview@13.12.5(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1)):
+    dependencies:
+      ajv: 8.11.0
+      expo: 52.0.47(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(graphql@16.8.1)(react-native-webview@13.12.5(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1)
+      semver: 7.7.3
+
   expo-constants@17.0.8(expo@52.0.47(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(graphql@16.8.1)(react-native-webview@13.12.5(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1))(react@18.3.1))(react-native@0.76.9(@babel/core@7.28.4)(@babel/preset-env@7.28.3(@babel/core@7.28.4))(@types/react@18.3.23)(react@18.3.1)):
     dependencies:
       '@expo/config': 10.0.11
@@ -12460,6 +12524,8 @@ snapshots:
   fill-range@7.1.1:
     dependencies:
       to-regex-range: 5.0.1
+
+  filter-obj@5.1.0: {}
 
   finalhandler@1.1.2:
     dependencies:
@@ -14674,6 +14740,12 @@ snapshots:
 
   qrcode-terminal@0.12.0: {}
 
+  query-string@9.3.1:
+    dependencies:
+      decode-uri-component: 0.4.1
+      filter-obj: 5.1.0
+      split-on-first: 3.0.0
+
   querystringify@2.2.0: {}
 
   queue-microtask@1.2.3: {}
@@ -14985,6 +15057,8 @@ snapshots:
 
   retry@0.12.0: {}
 
+  return-fetch@0.4.8: {}
+
   reusify@1.1.0: {}
 
   rimraf@2.4.5:
@@ -15285,6 +15359,8 @@ snapshots:
   source-map@0.6.1: {}
 
   source-map@0.7.6: {}
+
+  split-on-first@3.0.0: {}
 
   split@1.0.1:
     dependencies:

@@ -45,6 +45,24 @@ module.exports = {
             "Allow $(inplace) to access your Face ID biometric data.",
         },
       ],
+      [
+        "expo-build-properties",
+        {
+          android: {
+            extraMavenRepos: [
+              "https://devrepo.kakao.com/nexus/content/groups/public/",
+            ],
+          },
+        },
+      ],
+      [
+        "@react-native-kakao/core",
+        {
+          nativeAppKey: "{{0b89c213866b64e07cc8c0a049024d4a}}",
+          android: { authCodeHandlerActivity: true },
+          ios: { handleKakaoOpenUrl: true },
+        },
+      ],
     ],
     scheme: "my.inplace",
     extra: {
