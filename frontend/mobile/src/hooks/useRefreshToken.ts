@@ -1,5 +1,3 @@
-import { login } from "@react-native-kakao/user";
-import { getAccessToken } from "../api/getAccessToken";
 import * as SecureStore from "expo-secure-store";
 import WebView from "react-native-webview";
 
