@@ -62,6 +62,12 @@ const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
         );
         return Promise.reject(error);
       }
+      if (isWebView() && error.response?.status === 401) {
+        if (window.ReactNativeWebView) {
+          window.ReactNativeWebView.postMessage("REQUEST_REFRESH_TOKEN");
+        }
+        return Promise.reject(error);
+      }
 
       // 예기치 못한 4~500번대 오류 로깅
       if (

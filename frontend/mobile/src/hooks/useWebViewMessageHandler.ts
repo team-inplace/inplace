@@ -3,6 +3,7 @@ import { useCallback } from "react";
 interface MessageHandlers {
   onGpsPermissionRequest: () => void;
   onLoginWithKakao: () => void;
+  onRefreshToken: () => void;
 }
 
 export const useWebViewMessageHandler = (handlers: MessageHandlers) => {
@@ -17,6 +18,9 @@ export const useWebViewMessageHandler = (handlers: MessageHandlers) => {
             break;
           case "requestKakaoLogin":
             handlers.onLoginWithKakao();
+            break;
+          case "REQUEST_REFRESH_TOKEN":
+            handlers.onRefreshToken();
             break;
         }
       } catch (error) {

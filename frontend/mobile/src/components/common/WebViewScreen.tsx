@@ -7,6 +7,7 @@ import LocationPermissionModal from "../location/LocationPermissionModal";
 import { useWebViewMessageHandler } from "../../hooks/useWebViewMessageHandler";
 import { useAuth } from "../../hooks/useAuth";
 import { getConfig } from "@inplace-frontend-monorepo/shared/src/api/config";
+import { useRefreshToken } from "../../hooks/useRefreshToken";
 
 export default function WebViewScreen() {
   const config = getConfig();
@@ -16,9 +17,11 @@ export default function WebViewScreen() {
   const { modalVisible, modalContent, showLocationModal, hideModal } =
     useLocation(webViewRef);
   const { handleKakaoLogin } = useAuth(webViewRef);
+  const { handleRefreshToken } = useRefreshToken(webViewRef);
   const { handleMessage } = useWebViewMessageHandler({
     onGpsPermissionRequest: showLocationModal,
     onLoginWithKakao: handleKakaoLogin,
+    onRefreshToken: handleRefreshToken,
   });
 
   useEffect(() => {
