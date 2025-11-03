@@ -25,7 +25,6 @@ export default function usePermissions() {
           try {
             const result = await navigator.permissions.query({ name: 'geolocation' }); // query 메서드는 현재 권한 상태 조회
             locationPermission = result.state as LocationPermission;
-            console.log('위치 권한 상태:', locationPermission);
           } catch (error) {
             locationPermission = 'default';
           }
