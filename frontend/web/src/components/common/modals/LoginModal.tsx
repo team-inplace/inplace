@@ -8,8 +8,6 @@ import { Paragraph } from '@/components/common/typography/Paragraph';
 import { Text } from '@/components/common/typography/Text';
 import Logo from '@/assets/images/InplaceLogo.png';
 
-const config = getConfig();
-
 type LoginModalProps = {
   children?: (openModal: () => void) => React.ReactNode;
   currentPath: string;
@@ -27,6 +25,7 @@ export default function LoginModal({
   onClose,
   onLoginSuccess,
 }: LoginModalProps) {
+  const config = getConfig();
   const [isOpen, setIsOpen] = useState(immediateOpen);
 
   useEffect(() => {
