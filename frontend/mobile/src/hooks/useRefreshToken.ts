@@ -1,23 +1,31 @@
 import * as SecureStore from "expo-secure-store";
 import WebView from "react-native-webview";
+import { getRefreshAuthToken } from "../api/getRefreshAuthToken";
+import { useLogout } from "./useLogout";
 
 export const useRefreshToken = (
   webViewRef: React.RefObject<WebView | null>
 ) => {
+  const { handleLogout } = useLogout(webViewRef);
   const handleRefreshToken = async () => {
     try {
       const refreshToken = await SecureStore.getItemAsync("refreshToken");
-      if (!refreshToken) throw new Error("Refresh token not found.");
+      if (!refreshToken) {
+        console.error("Refresh token not found. 로그아웃 처리");
+        await handleLogout();
+        return;
+      }
 
-      // const newTokens = await refreshAuthToken(refreshToken);
-      // todo
-      const newTokens = {
-        accessToken: "",
-        refreshToken: "",
-      };
-
-      await SecureStore.setItemAsync("accessToken", newTokens.accessToken);
-      await SecureStore.setItemAsync("refreshToken", newTokens.refreshToken);
+      const newTokens = await getRefreshAuthToken(refreshToken);
+      if (!newTokens) {
+        console.error("토큰 갱신 실패, 로그아웃 처리");
+        await handleLogout();
+        return;
+      }
+      await Promise.all([
+        SecureStore.setItemAsync("accessToken", newTokens.accessToken),
+        SecureStore.setItemAsync("refreshToken", newTokens.refreshToken),
+      ]);
 
       if (webViewRef.current) {
         const script = `
@@ -30,23 +38,9 @@ export const useRefreshToken = (
       }
     } catch (error) {
       console.error("토큰 갱신 실패, 로그아웃을 실행합니다:", error);
-      try {
-        await Promise.all([
-          SecureStore.deleteItemAsync("accessToken"),
-          SecureStore.deleteItemAsync("refreshToken"),
-        ]);
-        if (webViewRef.current) {
-          const script = `
-            window.localStorage.clear();
-            window.location.href = '/';
-            true;
-          `;
-          webViewRef.current.injectJavaScript(script);
-        }
-      } catch (logoutError) {
-        console.error("로그아웃 처리 중 추가 오류 발생:", logoutError);
-      }
+      await handleLogout();
     }
   };
+
   return { handleRefreshToken };
 };

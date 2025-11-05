@@ -9,6 +9,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { getConfig } from "@inplace-frontend-monorepo/shared/src/api/config";
 import { useRefreshToken } from "../../hooks/useRefreshToken";
 import { initializeKakaoSDK } from "@react-native-kakao/core";
+import { useLogout } from "../../hooks/useLogout";
 
 export default function WebViewScreen() {
   const config = getConfig();
@@ -19,10 +20,12 @@ export default function WebViewScreen() {
     useLocation(webViewRef);
   const { handleKakaoLogin } = useAuth(webViewRef);
   const { handleRefreshToken } = useRefreshToken(webViewRef);
+  const { handleLogout } = useLogout(webViewRef);
   const { handleMessage } = useWebViewMessageHandler({
     onGpsPermissionRequest: showLocationModal,
     onLoginWithKakao: handleKakaoLogin,
     onRefreshToken: handleRefreshToken,
+    onLogout: handleLogout,
   });
   useEffect(() => {
     initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY);
