@@ -18,10 +18,17 @@ module.exports = {
       supportsTablet: true,
       bundleIdentifier: "my.inplace.mobile",
       infoPlist: {
-        LSApplicationQueriesSchemes: ["kakaokompassauth", "kakaolink"],
+        LSApplicationQueriesSchemes: [
+          "kakaokompassauth",
+          "kakaolink",
+          `kakao${process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY}`,
+        ],
         CFBundleURLTypes: [
           {
-            CFBundleURLSchemes: [`kakao${process.env.KAKAO_NATIVE_APP_KEY}`],
+            CFBundleTypeRole: "Editor",
+            CFBundleURLSchemes: [
+              `kakao${process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY}`,
+            ],
           },
         ],
       },
@@ -58,13 +65,12 @@ module.exports = {
       [
         "@react-native-kakao/core",
         {
-          nativeAppKey: "{{0b89c213866b64e07cc8c0a049024d4a}}",
+          nativeAppKey: process.env.KAKAO_NATIVE_APP_KEY,
           android: { authCodeHandlerActivity: true },
           ios: { handleKakaoOpenUrl: true },
         },
       ],
     ],
-    scheme: "my.inplace",
     extra: {
       eas: {
         projectId: "1f938aec-ae98-4f0c-ab7a-c4c37114e2a7",

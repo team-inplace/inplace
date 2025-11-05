@@ -8,6 +8,7 @@ import { useWebViewMessageHandler } from "../../hooks/useWebViewMessageHandler";
 import { useAuth } from "../../hooks/useAuth";
 import { getConfig } from "@inplace-frontend-monorepo/shared/src/api/config";
 import { useRefreshToken } from "../../hooks/useRefreshToken";
+import { initializeKakaoSDK } from "@react-native-kakao/core";
 
 export default function WebViewScreen() {
   const config = getConfig();
@@ -23,8 +24,8 @@ export default function WebViewScreen() {
     onLoginWithKakao: handleKakaoLogin,
     onRefreshToken: handleRefreshToken,
   });
-
   useEffect(() => {
+    initializeKakaoSDK(process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY);
     setWebViewReady(true);
   }, []);
 
