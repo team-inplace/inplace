@@ -4,7 +4,7 @@ on:
     branches:
       - "**"
     paths:
-      - "frontend/web/**"
+      - "frontend/**"
       - ".github/**"
 jobs:
   lint-and-test:
