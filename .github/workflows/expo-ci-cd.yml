@@ -91,6 +91,8 @@ jobs:
 
           # Expo 의존성 정리 및 재설치
           npx expo install --fix
+        env:
+          EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY }}
 
       - name: 📋 Update metro.config.js for SVG support
         run: |
@@ -131,6 +133,7 @@ jobs:
           eas build --platform android --profile production-apk --local --non-interactive --output=./app-prod.apk
         env:
           NODE_ENV: production
+          EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY }}
 
       - name: 🚀 Publish to Expo
         if: github.event.inputs.buildType == 'all' || github.event.inputs.buildType == 'publish-expo'
