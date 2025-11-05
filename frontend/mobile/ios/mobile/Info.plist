@@ -37,7 +37,11 @@
     <array>
       <string>kakaokompassauth</string>
       <string>kakaolink</string>
+      <string>kakao0b89c213866b64e07cc8c0a049024d4a</string>
     </array>
+
+    <key>KAKAO_APP_KEY</key>
+    <string>0b89c213866b64e07cc8c0a049024d4a</string>
     <key>LSMinimumSystemVersion</key>
     <string>12.0</string>
     <key>LSRequiresIPhoneOS</key>

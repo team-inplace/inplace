@@ -5,19 +5,18 @@ type Tokens = {
   refreshToken: string;
 };
 
-export const getAccessToken = async (token: string) => {
+export const getRefreshAuthToken = async (
+  token: string
+): Promise<Tokens | null> => {
   const config = getConfig();
   try {
-    const response = await fetch(
-      `${config.baseURL}/login/oauth2/code/kakao/mobile`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ kakaoAccessToken: token }),
-      }
-    );
+    const response = await fetch(`${config.baseURL}/refresh-token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ refreshToken: token }),
+    });
 
     if (!response.ok) {
       throw new Error("서버 인증에 실패했습니다.");

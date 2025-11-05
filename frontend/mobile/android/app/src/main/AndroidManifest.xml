@@ -26,10 +26,15 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="my.inplace"/>
         <data android:scheme="my.inplace.mobile"/>
-        <data android:host="oauth"
-              android:scheme="kakao0b89c213866b64e07cc8c0a049024d4a" />
+      </intent-filter>
+    </activity>
+    <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity" android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
+        <data android:host="oauth" android:scheme="kakao0b89c213866b64e07cc8c0a049024d4a"/>
       </intent-filter>
     </activity>
   </application>

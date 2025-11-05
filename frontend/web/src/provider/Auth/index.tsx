@@ -29,6 +29,14 @@ export default function AuthProvider({ children }: AuthProviderProps) {
 
   const handleLogout = useCallback(async () => {
     try {
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({
+            type: 'LOGOUT',
+          }),
+        );
+        return;
+      }
       await deleteFCMToken();
       await logout();
     } catch (error) {
