@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchInstance } from '../instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { AlarmData } from '@/types';
 
 export const getAlarmsPath = () => `/alarms`;
 
 export const getAlarms = async () => {
-  const response = await fetchInstance.get<AlarmData[]>(getAlarmsPath(), { withCredentials: true });
+  const response = await getFetchInstance().get<AlarmData[]>(getAlarmsPath(), { withCredentials: true });
   return response.data;
 };
 export const useGetAlarms = (enabled: boolean) => {

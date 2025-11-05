@@ -1,17 +1,17 @@
 import { useSuspenseQueries } from '@tanstack/react-query';
 
-import { fetchInstance } from '../instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { BannerData, InfluencerData, PageableData } from '@/types';
 
 export const getBannerPath = () => `/banners`;
 export const getInfluencerPath = () => `/influencers`;
 
 export const getBanner = async () => {
-  const response = await fetchInstance.get<BannerData[]>(getBannerPath());
+  const response = await getFetchInstance().get<BannerData[]>(getBannerPath());
   return response.data;
 };
 export const getInfluencer = async () => {
-  const response = await fetchInstance.get<PageableData<InfluencerData>>(getInfluencerPath(), {
+  const response = await getFetchInstance().get<PageableData<InfluencerData>>(getInfluencerPath(), {
     withCredentials: true,
   });
 

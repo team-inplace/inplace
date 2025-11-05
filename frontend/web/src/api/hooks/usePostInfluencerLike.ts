@@ -1,11 +1,11 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { fetchInstance } from '../instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { RequestInfluencerLike } from '@/types';
 
 export const postInfluencerLikePath = () => `/influencers/likes`;
 const postInfluencerLike = async ({ influencerId, likes }: RequestInfluencerLike) => {
-  const response = await fetchInstance.post(
+  const response = await getFetchInstance().post(
     postInfluencerLikePath(),
     {
       influencerId,

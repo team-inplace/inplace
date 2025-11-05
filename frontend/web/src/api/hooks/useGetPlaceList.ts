@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchInstance } from '../instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { LocationData, FilterParams, PlaceData, PageableData } from '@/types';
 
 export const getPlaceList = async (
@@ -25,7 +25,9 @@ export const getPlaceList = async (
     influencers: influencers.join(','),
   });
 
-  const response = await fetchInstance.get<PageableData<PlaceData>>(`/places?${params}`, { withCredentials: true });
+  const response = await getFetchInstance().get<PageableData<PlaceData>>(`/places?${params}`, {
+    withCredentials: true,
+  });
   return response.data;
 };
 

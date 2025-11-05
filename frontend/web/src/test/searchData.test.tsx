@@ -7,10 +7,13 @@ import SearchPage from '@/pages/Search';
 import { AuthContext } from '@/provider/Auth';
 import ABTestProvider from '@/provider/ABTest';
 
-Object.defineProperty(window, 'dataLayer', {
-  writable: true,
-  value: [],
-});
+jest.mock('@inplace-frontend-monorepo/shared/api/config', () => ({
+  initializeConfig: jest.fn(),
+  getConfig: jest.fn(() => ({
+    baseURL: 'https://a7b2c3d4-dev.inplace.my:444',
+    environment: 'development',
+  })),
+}));
 
 jest.mock('@/api/hooks/useGetSearchComplete');
 (completeApi.useGetSearchComplete as jest.Mock).mockReturnValue({
@@ -23,6 +26,12 @@ jest.mock('@/api/hooks/useGetSearchData', () => ({
   ...jest.requireActual('@/api/hooks/useGetSearchData'),
   useGetSearchData: jest.fn(),
 }));
+
+Object.defineProperty(window, 'dataLayer', {
+  writable: true,
+  value: [],
+});
+
 (api.useGetSearchData as jest.Mock).mockImplementation(() => [
   {
     data: [{ influencerId: 1, influencerName: 'Test Influencer', influencerImgUrl: '', influencerJob: 'Test Infl2' }],

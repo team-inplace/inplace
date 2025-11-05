@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchInstance } from '../instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { PageableData, CommentData } from '@/types';
 
 export const getCommentList = async (id: string, page: number, size: number) => {
@@ -7,7 +7,7 @@ export const getCommentList = async (id: string, page: number, size: number) => 
     page: page.toString(),
     size: size.toString(),
   });
-  const response = await fetchInstance.get<PageableData<CommentData>>(`/posts/${id}/comments?${params}`, {
+  const response = await getFetchInstance().get<PageableData<CommentData>>(`/posts/${id}/comments?${params}`, {
     withCredentials: true,
   });
   return response.data;

@@ -153,12 +153,14 @@ export type UserInfoData = {
     name: string;
     imgUrl: string;
   };
-  badges: [
-    {
-      name: string;
-      imgUrl: string;
-    },
-  ];
+  badge: BadgeData;
+};
+export type BadgeData = {
+  id: number;
+  name: string;
+  imgUrl: string;
+  description: string;
+  isOwned: boolean;
 };
 export type UserPlaceData = {
   placeId: number;
@@ -319,6 +321,7 @@ export type CommentData = {
     nickname: string;
     imgUrl: string;
     tierImageUrl: string;
+    titleImageUrl: string;
   };
   content: string;
   createdAt: string;

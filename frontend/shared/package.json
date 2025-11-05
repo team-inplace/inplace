@@ -2,9 +2,20 @@
   "name": "@inplace-frontend-monorepo/shared",
   "version": "1.0.0",
   "main": "src/index.ts",
+  "types": "dist/index.d.ts",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "build": "echo 'No build step needed for simple constants, or add Babel/TypeScript build here'"
+    "build": "echo 'No build step needed for simple constants, or add Babel/TypeScript build here'",
+    "dev": "tsc -b --watch"
+  },
+  "dependencies": {
+    "@sentry/core": "^7.0.0",
+    "@sentry/types": "^7.120.4",
+    "axios": "^1.7.7",
+    "@tanstack/react-query": "^5.56.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
   }
 }

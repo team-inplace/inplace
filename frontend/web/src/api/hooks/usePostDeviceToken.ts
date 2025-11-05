@@ -1,9 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
-import { fetchInstance } from '../instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 
 export const postDeviceTokenPath = () => `/alarms`;
 const postDeviceToken = async (token: string) => {
-  const response = await fetchInstance.post(postDeviceTokenPath(), { token }, { withCredentials: true });
+  const response = await getFetchInstance().post(postDeviceTokenPath(), { token }, { withCredentials: true });
   return response.data;
 };
 
