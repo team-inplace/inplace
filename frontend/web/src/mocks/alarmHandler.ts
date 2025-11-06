@@ -1,8 +1,10 @@
 import { rest } from 'msw';
-import { BASE_URL } from '@/api/instance';
+import { getConfig } from '@inplace-frontend-monorepo/shared/api/config';
 import { getAlarmsPath } from '@/api/hooks/useGetAlarms';
 import { postAlarmPermissionPath } from '@/api/hooks/usePostAlarmPermission';
 
+const config = getConfig();
+const BASE_URL = config.baseURL;
 const dummyAlarm = [
   {
     alarmId: 1,

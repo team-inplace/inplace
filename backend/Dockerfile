@@ -2,7 +2,7 @@
 
 # jdk17 Image Start
 #FROM --platform=linux/amd64 ubuntu:latest
-FROM openjdk:17
+FROM amazoncorretto:17
 
 # 인자 설정 - Jar_File
 ARG JAR_FILE=inplace-api/build/libs/*.jar

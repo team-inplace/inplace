@@ -1,11 +1,17 @@
 import { rest } from 'msw';
-import { BASE_URL } from '@/api/instance';
+import { getConfig } from '@inplace-frontend-monorepo/shared/api/config';
 import { getUserInfoPath } from '@/api/hooks/useGetUserInfo';
 import { getUserInfluencerPath } from '@/api/hooks/useGetUserInfluencer';
 import { getUserPlacePath } from '@/api/hooks/useGetUserPlace';
 import { getUserReviewPath } from '@/api/hooks/useGetUserReview';
 import { postPlaceReviewPath } from '@/api/hooks/usePostPlaceReview';
 import { patchNicknamePath } from '@/api/hooks/usePatchNickname';
+import silver from '@/assets/images/tier_s.webp';
+import title from '@/assets/images/titletest.png';
+import { getAllBadgePath } from '@/api/hooks/useGetAllBadge';
+
+const config = getConfig();
+const BASE_URL = config.baseURL;
 
 const mockInfluencers = [
   {
@@ -412,15 +418,16 @@ export const myHandlers = [
         nickname: nickName,
         imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
         tier: {
-          name: 'GOLD',
-          imgUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
+          name: 'SILVER',
+          imgUrl: silver,
         },
-        badges: [
-          {
-            name: 'Veteran',
-            imgUrl: 'https://example.com/badges/veteran.png',
-          },
-        ],
+        badge: {
+          id: 5,
+          name: '베테랑',
+          imgUrl: title,
+          description: '',
+          isOwned: true,
+        },
       }),
     );
   }),
@@ -551,6 +558,49 @@ export const myHandlers = [
         last: page === totalPages - 1,
         empty: paginatedContent.length === 0,
       }),
+    );
+  }),
+  rest.get(`${BASE_URL}${getAllBadgePath()}`, (_, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json([
+        {
+          id: 1,
+          name: '지금은임영웅시대',
+          imgUrl: title,
+          isOwned: false,
+        },
+        {
+          id: 2,
+          name: '성시경광팬',
+          imgUrl: title,
+          isOwned: true,
+        },
+        {
+          id: 3,
+          name: '파워인플러시안룰렛',
+          imgUrl: title,
+          isOwned: false,
+        },
+        {
+          id: 4,
+          name: '초보자',
+          imgUrl: title,
+          isOwned: false,
+        },
+        {
+          id: 5,
+          name: '베테랑',
+          imgUrl: title,
+          isOwned: true,
+        },
+        {
+          id: 6,
+          name: '리뷰왕',
+          imgUrl: title,
+          isOwned: false,
+        },
+      ]),
     );
   }),
   rest.post(`${BASE_URL}${postPlaceReviewPath('1')}`, async (_, res, ctx) => {

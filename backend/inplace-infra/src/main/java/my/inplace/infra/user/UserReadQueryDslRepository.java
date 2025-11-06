@@ -10,8 +10,8 @@ import my.inplace.domain.user.QTier;
 import my.inplace.domain.user.QUser;
 import my.inplace.domain.user.QUserBadge;
 import my.inplace.domain.user.query.UserQueryResult;
-import my.inplace.domain.user.query.UserQueryResult.Badge;
-import my.inplace.domain.user.query.UserQueryResult.Simple;
+import my.inplace.domain.user.query.UserQueryResult.BadgeWithOwnerShip;
+import my.inplace.domain.user.query.UserQueryResult.Info;
 import my.inplace.domain.user.query.UserReadRepository;
 import org.springframework.stereotype.Repository;
 
@@ -22,9 +22,9 @@ public class UserReadQueryDslRepository implements UserReadRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Optional<Simple> findUserInfoById(Long id) {
-        Simple userSimple = queryFactory
-            .select(Projections.constructor(UserQueryResult.Simple.class,
+    public Optional<Info> findUserInfoById(Long id) {
+        Info userInfo = queryFactory
+            .select(Projections.constructor(Info.class,
                 QUser.user.nickname,
                 QUser.user.profileImageUrl,
                 QTier.tier.name,
@@ -38,21 +38,22 @@ public class UserReadQueryDslRepository implements UserReadRepository {
             .where(QUser.user.id.eq(id))
             .fetchOne();
 
-        return Optional.ofNullable(userSimple);
+        return Optional.ofNullable(userInfo);
     }
 
     @Override
-    public List<Badge> findAllBadgeByUserId(Long userId) {
+    public List<BadgeWithOwnerShip> getAllBadgesWithOwnerShip(Long userId) {
         return queryFactory
-            .select(Projections.constructor(UserQueryResult.Badge.class,
+            .select(Projections.constructor(UserQueryResult.BadgeWithOwnerShip.class,
                 QBadge.badge.id,
                 QBadge.badge.name,
                 QBadge.badge.imgUrl,
-                QBadge.badge.condition
+                QBadge.badge.condition,
+                QUserBadge.userBadge.id.isNotNull()
             ))
             .from(QBadge.badge)
-            .leftJoin(QUserBadge.userBadge).on(QUserBadge.userBadge.badgeId.eq(QBadge.badge.id))
-            .where(QUserBadge.userBadge.userId.eq(userId))
+            .leftJoin(QUserBadge.userBadge).on(QUserBadge.userBadge.badgeId.eq(QBadge.badge.id)
+                .and(QUserBadge.userBadge.userId.eq(userId)))
             .fetch();
     }
 

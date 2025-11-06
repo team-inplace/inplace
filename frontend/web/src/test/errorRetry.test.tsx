@@ -8,6 +8,10 @@ jest.mock('@/libs/FCM/firebaseSetting', () => ({
   app: {},
   messaging: {},
 }));
+jest.mock('@/libs/FCM/fcmTokenManager', () => ({
+  requestNotificationPermission: jest.fn(),
+  setupFCMToken: jest.fn(),
+}));
 
 jest.mock('@/hooks/usePermissions', () => ({
   __esModule: true,

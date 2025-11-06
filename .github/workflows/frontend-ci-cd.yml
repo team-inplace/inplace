@@ -4,7 +4,7 @@ on:
     branches:
       - "**"
     paths:
-      - "frontend/web/**"
+      - "frontend/**"
       - ".github/**"
 jobs:
   lint-and-test:
@@ -18,7 +18,7 @@ jobs:
       - name: Install pnpm
         run: npm install -g pnpm
       - name: Install dependencies
-        run: pnpm --filter web install
+        run: pnpm install
       - name: Run ESLint
         run: pnpm --filter web run lint
       - name: Run Prettier
@@ -43,7 +43,7 @@ jobs:
         run: npm install -g pnpm
 
       - name: Install dependencies
-        run: pnpm --filter web install
+        run: pnpm install
 
       - name: Run tests
         run: pnpm --filter web run test

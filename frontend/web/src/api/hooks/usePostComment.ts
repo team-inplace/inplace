@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
-import { fetchInstance } from '../instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { PostCommentProps } from '@/types';
 
 export const postCommentPath = (postId: string) => `/posts/${postId}/comments`;
 const postComment = async ({ postId, comment }: PostCommentProps) => {
-  const response = await fetchInstance.post(
+  const response = await getFetchInstance().post(
     postCommentPath(postId),
     {
       comment,

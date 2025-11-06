@@ -1,6 +1,9 @@
 package my.inplace.api.user;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import my.inplace.api.user.dto.UserRequest;
+import my.inplace.api.user.dto.UserResponse;
 import my.inplace.application.user.UserFacade;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,9 +11,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-import my.inplace.api.user.dto.UserRequest;
-import my.inplace.api.user.dto.UserResponse;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -88,10 +94,17 @@ public class UserController implements UserControllerApiSpec {
     }
 
     @GetMapping("/info")
-    public ResponseEntity<UserResponse.Detail> getUserDetail() {
-        var userInfo = userFacade.getUserDetail();
+    public ResponseEntity<UserResponse.Info> getUserDetail() {
+        var userInfo = userFacade.getUserInfo();
 
-        var response = UserResponse.Detail.from(userInfo);
+        var response = UserResponse.Info.from(userInfo);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/all-badges")
+    public ResponseEntity<List<UserResponse.BadgeWithOwnerShip>> getAllBadgesWithOwnerShip() {
+        var response = userFacade.getAllBadges()
+            .stream().map(UserResponse.BadgeWithOwnerShip::from).toList();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -113,7 +126,7 @@ public class UserController implements UserControllerApiSpec {
         userFacade.updateReportResent(resent.isResented());
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    
+
     @PatchMapping("/resent/mention")
     public ResponseEntity<Void> updateMentionPushResent(UserRequest.UpdatePushResent resent) {
         userFacade.updateMentionResent(resent.isResented());

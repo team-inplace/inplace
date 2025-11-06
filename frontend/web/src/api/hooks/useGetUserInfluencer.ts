@@ -1,5 +1,5 @@
 import { useSuspenseInfiniteQuery } from '@tanstack/react-query';
-import { fetchInstance } from '../instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { InfluencerData, PageableData } from '@/types';
 
 export const getUserInfluencerPath = () => `/users/influencers`;
@@ -9,7 +9,7 @@ export const getUserInfluencer = async (page: number, size: number) => {
     size: size.toString(),
   });
 
-  const response = await fetchInstance.get<PageableData<InfluencerData>>(`${getUserInfluencerPath()}?${params}`, {
+  const response = await getFetchInstance().get<PageableData<InfluencerData>>(`${getUserInfluencerPath()}?${params}`, {
     withCredentials: true,
   });
   return response.data;

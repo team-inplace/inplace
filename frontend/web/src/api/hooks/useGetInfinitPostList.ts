@@ -1,5 +1,5 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { fetchInstance } from '../instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { CursorData, PostListData } from '@/types';
 
 export const getInfinitPostList = async (
@@ -16,7 +16,9 @@ export const getInfinitPostList = async (
     params.append('cursorId', cursorId.toString());
   }
 
-  const response = await fetchInstance.get<CursorData<PostListData>>(`/posts?${params}`, { withCredentials: true });
+  const response = await getFetchInstance().get<CursorData<PostListData>>(`/posts?${params}`, {
+    withCredentials: true,
+  });
   return response.data;
 };
 

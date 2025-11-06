@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
-import { fetchInstance } from '../instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 
 export const getRefreshTokenPath = () => '/refresh-token';
 
 export const getRefreshToken = async () => {
-  await fetchInstance.get(getRefreshTokenPath(), { withCredentials: true });
+  await getFetchInstance().get(getRefreshTokenPath(), { withCredentials: true });
   return null;
 };
 

@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { fetchInstance } from '../instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { UserInfoData } from '@/types';
 
 export const getUserInfoPath = () => `/users/info`;
 
 export const getUserInfo = async () => {
   try {
-    const response = await fetchInstance.get<UserInfoData>(getUserInfoPath(), {
+    const response = await getFetchInstance().get<UserInfoData>(getUserInfoPath(), {
       withCredentials: true,
     });
     return response.data;

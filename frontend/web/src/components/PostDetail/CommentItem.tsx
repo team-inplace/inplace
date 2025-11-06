@@ -195,7 +195,11 @@ export default function CommentItem({
           <ProfileImg>
             <FallbackImage src={item.author.imgUrl} alt="profile" />
           </ProfileImg>
-          <UserName userNickname={item.author.nickname} tierImageUrl={item.author.tierImageUrl} />
+          <UserName
+            userNickname={item.author.nickname}
+            tierImageUrl={item.author.tierImageUrl}
+            badgeImageUrl={item.author.titleImageUrl}
+          />
         </UserInfo>
         {!isEditing && (
           <EditMenu

@@ -1,6 +1,6 @@
 import { useQueries } from '@tanstack/react-query';
 
-import { fetchInstance } from '../instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { SpotData } from '@/types';
 
 export const getCoolEatsVideoPath = () => `/videos/cool/eats`;
@@ -8,15 +8,15 @@ export const getCoolPlaysVideoPath = () => `/videos/cool/plays`;
 export const getNewVideoPath = () => `/videos/new`;
 
 export const getCoolEatsVideo = async () => {
-  const response = await fetchInstance.get<SpotData[]>(getCoolEatsVideoPath());
+  const response = await getFetchInstance().get<SpotData[]>(getCoolEatsVideoPath());
   return response.data;
 };
 export const getCoolPlaysVideo = async () => {
-  const response = await fetchInstance.get<SpotData[]>(getCoolPlaysVideoPath());
+  const response = await getFetchInstance().get<SpotData[]>(getCoolPlaysVideoPath());
   return response.data;
 };
 export const getNewVideo = async () => {
-  const response = await fetchInstance.get<SpotData[]>(getNewVideoPath());
+  const response = await getFetchInstance().get<SpotData[]>(getNewVideoPath());
   return response.data;
 };
 export const useGetLogoutVideo = (enabled: boolean) => {

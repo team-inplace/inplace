@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { fetchInstance } from '../instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 
 type PostAlarmCheckProps = {
   alarmId: number;
@@ -7,7 +7,7 @@ type PostAlarmCheckProps = {
 
 export const postAlarmCheckPath = ({ alarmId }: PostAlarmCheckProps) => `/alarms/${alarmId}`;
 const postAlarmCheck = async ({ alarmId }: PostAlarmCheckProps) => {
-  const response = await fetchInstance.post(postAlarmCheckPath({ alarmId }), {}, { withCredentials: true });
+  const response = await getFetchInstance().post(postAlarmCheckPath({ alarmId }), {}, { withCredentials: true });
   return response.data;
 };
 

@@ -1,13 +1,12 @@
 package my.inplace.application.user.dto;
 
 import java.time.LocalDate;
-import java.util.List;
 import my.inplace.domain.review.query.ReviewQueryResult;
 import my.inplace.domain.user.query.UserQueryResult;
 
 public class UserResult {
 
-    public record Simple(
+    public record Info(
         String nickname,
         String profileImageUrl,
         String mainBadgeName,
@@ -16,8 +15,8 @@ public class UserResult {
         String tierImageUrl
     ) {
 
-        public static Simple from(UserQueryResult.Simple user) {
-            return new Simple(
+        public static Info from(UserQueryResult.Info user) {
+            return new Info(
                 user.nickname(),
                 user.imgUrl(),
                 user.mainBadgeName(),
@@ -28,36 +27,21 @@ public class UserResult {
         }
     }
 
-    public record Detail(
-        String nickname,
-        String profileImageUrl,
-        String tierName,
-        String tierImageUrl,
-        List<Badge> badges
-    ) {
-
-        public static Detail from(
-            UserQueryResult.Simple user, List<UserQueryResult.Badge> badgeQueryResults) {
-            List<Badge> badges = badgeQueryResults.stream().map(Badge::from).toList();
-            return new Detail(
-                user.nickname(),
-                user.imgUrl(),
-                user.tierName(),
-                user.tierImgUrl(),
-                badges
-            );
-        }
-    }
-
-    public record Badge(
+    public record BadgeWithOwnerShip(
         Long id,
         String name,
-        String img_url,
-        String condition
+        String imgUrl,
+        String description,
+        Boolean isOwned
     ) {
-
-        public static Badge from(UserQueryResult.Badge badge) {
-            return new Badge(badge.id(), badge.name(), badge.imgUrl(), badge.condition());
+        public static BadgeWithOwnerShip from(UserQueryResult.BadgeWithOwnerShip badge) {
+            return new BadgeWithOwnerShip(
+                badge.id(),
+                badge.name(),
+                badge.imgUrl(),
+                badge.description(),
+                badge.isOwned()
+            );
         }
     }
 
