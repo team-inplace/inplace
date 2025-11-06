@@ -4,14 +4,13 @@ import my.inplace.common.exception.InplaceException;
 import my.inplace.common.exception.code.UserErrorCode;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import my.inplace.domain.user.query.UserQueryResult;
+import my.inplace.domain.user.query.UserQueryResult.Info;
 import my.inplace.domain.user.query.UserReadRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import my.inplace.domain.user.User;
 import my.inplace.application.user.dto.UserResult;
 import my.inplace.infra.user.jpa.UserJpaRepository;
-import my.inplace.domain.user.query.UserQueryResult.Badge;
 
 @Service
 @RequiredArgsConstructor
@@ -26,21 +25,10 @@ public class UserQueryService {
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
     }
 
-    public UserResult.Simple getUserInfo(Long userId) {
-        UserQueryResult.Simple simpleUser = userReadRepository.findUserInfoById(userId)
+    public UserResult.Info getUserInfo(Long userId) {
+        Info userInfo = userReadRepository.findUserInfoById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
-        return UserResult.Simple.from(simpleUser);
-    }
-
-    public UserResult.Detail getUserDetail(Long userId) {
-        UserQueryResult.Simple simpleUser = userReadRepository.findUserInfoById(userId)
-            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
-        List<Badge> badges = userReadRepository.findAllBadgeByUserId(userId);
-        return UserResult.Detail.from(simpleUser, badges);
-    }
-
-    public boolean isExistUserName(String userName) {
-        return userJpaRepository.existsByUsername(userName);
+        return UserResult.Info.from(userInfo);
     }
 
     public String getFcmTokenByUser(Long userId) {
@@ -62,5 +50,10 @@ public class UserQueryService {
                         .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
         
         return user.getMentionPushConsent();
+    }
+
+    public List<UserResult.BadgeWithOwnerShip> getAllBadgesWithOwnerShip(Long userId) {
+        return userReadRepository.getAllBadgesWithOwnerShip(userId)
+            .stream().map(UserResult.BadgeWithOwnerShip::from).toList();
     }
 }

@@ -1,11 +1,13 @@
 package my.inplace.application.user;
 
+import java.util.List;
 import my.inplace.application.annotation.Facade;
 import my.inplace.application.influencer.query.InfluencerQueryService;
 import my.inplace.application.influencer.query.dto.InfluencerResult;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import my.inplace.application.user.dto.UserResult.Info;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import my.inplace.domain.place.query.PlaceQueryResult;
@@ -82,9 +84,14 @@ public class UserFacade {
         userCommandService.deleteUser(userId);
     }
 
-    public UserResult.Detail getUserDetail() {
+    public UserResult.Info getUserInfo() {
         Long userId = AuthorizationUtil.getUserIdOrThrow();
-        return userQueryService.getUserDetail(userId);
+        return userQueryService.getUserInfo(userId);
+    }
+
+    public List<UserResult.BadgeWithOwnerShip> getAllBadges() {
+        Long userId = AuthorizationUtil.getUserIdOrThrow();
+        return userQueryService.getAllBadgesWithOwnerShip(userId);
     }
 
     public void updateMainBadge(Long badgeId) {
