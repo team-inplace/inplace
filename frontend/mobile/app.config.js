@@ -39,6 +39,19 @@ module.exports = {
         foregroundImage: "./assets/adaptive-icon.png",
         backgroundColor: "#292929",
       },
+      intentFilters: [
+        {
+          action: "VIEW",
+          autoVerify: true,
+          data: [
+            {
+              scheme: `kakao${process.env.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY}`,
+              host: "oauth",
+            },
+          ],
+          category: ["DEFAULT", "BROWSABLE"],
+        },
+      ],
     },
     web: {
       favicon: "./assets/favicon.png",
