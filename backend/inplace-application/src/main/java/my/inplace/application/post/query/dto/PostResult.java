@@ -106,7 +106,7 @@ public class PostResult {
             );
         }
         
-        public static DetailedPost of(SimplePost simplePost, UserResult.Simple userResult) {
+        public static DetailedPost of(SimplePost simplePost, UserResult.Info userResult) {
             return new DetailedPost(
                 simplePost.postId(),
                 userResult.nickname(),
