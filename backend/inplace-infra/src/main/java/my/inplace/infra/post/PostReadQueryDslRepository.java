@@ -1,7 +1,6 @@
 package my.inplace.infra.post;
 
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -10,9 +9,9 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import my.inplace.common.cursor.CursorResult;
@@ -63,17 +62,20 @@ public class PostReadQueryDslRepository implements PostReadRepository {
         }
 
         var cursorPosts = buildCursorDetailedPostsQuery(userId, orderBy, orderedPostIds)
-            .orderBy(orderByField(QPost.post.id, orderedPostIds))
             .fetch();
 
-        boolean hasNext = cursorPosts.size() > size;
-        var posts = cursorPosts.stream().map(CursorDetailedPost::detailedPost).toList();
+        var sortedPosts = cursorPosts.stream()
+            .sorted(Comparator.comparingInt(p -> orderedPostIds.indexOf(p.detailedPost().postId())))
+            .toList();
+
+        boolean hasNext = sortedPosts.size() > size;
+        var posts = sortedPosts.stream().map(CursorDetailedPost::detailedPost).toList();
 
         return new CursorResult<>(
             posts.subList(0, Math.min(size, posts.size())),
             hasNext,
-            hasNext ? cursorPosts.get(size - 1).cursorValue() : null,
-            hasNext ? cursorPosts.get(size - 1).cursorId() : null
+            hasNext ? sortedPosts.get(size - 1).cursorValue() : null,
+            hasNext ? sortedPosts.get(size - 1).cursorId() : null
         );
     }
 
@@ -123,18 +125,6 @@ public class PostReadQueryDslRepository implements PostReadRepository {
         }
 
         return query;
-    }
-
-    private OrderSpecifier<Integer> orderByField(Path<Long> column, List<Long> ids) {
-        String idListString = ids.stream()
-            .map(String::valueOf)
-            .collect(Collectors.joining(", "));
-
-        return Expressions.numberTemplate(
-            Integer.class,
-            "FIELD({0}, " + idListString + ")",
-            column
-        ).asc();
     }
 
     private OrderSpecifier<?>[] getOrderSpecifier(String orderBy) {
