@@ -38,6 +38,13 @@ public class UserQueryService {
         return user.getFcmToken();
     }
     
+    public String getExpoTokenByUserId(Long userId) {
+        User user = userJpaRepository.findById(userId)
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
+        
+        return user.getExpoToken();
+    }
+    
     public boolean isReportPushResented(Long userId) {
         User user = userJpaRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
@@ -45,7 +52,7 @@ public class UserQueryService {
         return user.getReportPushConsent();
     }
     
-    public boolean isMentionResented(Long userId) {
+    public boolean isMentionPushResented(Long userId) {
         User user = userJpaRepository.findById(userId)
                         .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
         
