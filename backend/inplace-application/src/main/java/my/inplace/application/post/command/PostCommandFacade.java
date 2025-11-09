@@ -84,7 +84,7 @@ public class PostCommandFacade {
             
             String content = mentionMessageFactory.createMessage(
                 postQueryService.getPostTitleById(postId).getTitle(),
-                userQueryService.getUserInfo(receiverId).nickname());
+                userQueryService.getUserInfo(senderId).nickname());
             
             // 비즈니스 데이터 저장
             alarmCommandService.saveAlarm(
