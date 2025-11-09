@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.spatial.locationtech.jts.JTSGeometryExpressions;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,9 @@ import my.inplace.domain.place.query.PlaceQueryResult.Marker;
 import my.inplace.domain.place.query.PlaceQueryResult.MarkerDetail;
 import my.inplace.domain.place.query.PlaceQueryResult.SimplePlace;
 import my.inplace.domain.place.query.PlaceReadRepository;
+import my.inplace.domain.util.SingletonGeometryFactory;
 import my.inplace.domain.video.QVideo;
+import org.locationtech.jts.geom.Coordinate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -209,8 +212,8 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
                 QPlace.place.address.address1,
                 QPlace.place.address.address2,
                 QPlace.place.address.address3,
-                QPlace.place.coordinate.longitude,
-                QPlace.place.coordinate.latitude,
+                Expressions.numberTemplate(Double.class, "ST_Y({0})", QPlace.place.location),
+                Expressions.numberTemplate(Double.class, "ST_X({0})", QPlace.place.location),
                 QCategory.category.name,
                 QPlace.place.googlePlaceId,
                 QPlace.place.kakaoPlaceId,
@@ -236,8 +239,8 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
                 QPlace.place.address.address1,
                 QPlace.place.address.address2,
                 QPlace.place.address.address3,
-                QPlace.place.coordinate.longitude,
-                QPlace.place.coordinate.latitude,
+                Expressions.numberTemplate(Double.class, "ST_Y({0})", QPlace.place.location),
+                Expressions.numberTemplate(Double.class, "ST_X({0})", QPlace.place.location),
                 QCategory.category.name,
                 QPlace.place.googlePlaceId,
                 QPlace.place.kakaoPlaceId,
@@ -260,8 +263,8 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
             .select(Projections.constructor(PlaceQueryResult.Marker.class,
                 QPlace.place.id,
                 parentCategory.engName,
-                QPlace.place.coordinate.longitude,
-                QPlace.place.coordinate.latitude
+                Expressions.numberTemplate(Double.class, "ST_Y({0})", QPlace.place.location),
+                Expressions.numberTemplate(Double.class, "ST_X({0})", QPlace.place.location)
             ))
             .from(QPlace.place)
             .leftJoin(category).on(QPlace.place.categoryId.eq(category.id))
@@ -359,10 +362,27 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
             }
         } else if (topLeftLng != null && bottomRightLng != null &&
             topLeftLat != null && bottomRightLat != null) {
-            builder.and(QPlace.place.coordinate.longitude.between(topLeftLng, bottomRightLng))
-                .and(QPlace.place.coordinate.latitude.between(bottomRightLat, topLeftLat));
+            builder.and(
+                JTSGeometryExpressions.asJTSGeometry(
+                    SingletonGeometryFactory.newPolygon(
+                        getRectangleCoordinatesByTopLeftAndBottomRight(topLeftLng, topLeftLat, bottomRightLng, bottomRightLat)
+                    )
+                )
+                .contains(QPlace.place.location)
+            );
         }
         return builder;
+    }
+
+    private Coordinate[] getRectangleCoordinatesByTopLeftAndBottomRight(Double topLeftLng, Double topLeftLat,
+        Double bottomRightLng, Double bottomRightLat) {
+        Coordinate[] coordinates = new Coordinate[5];
+        coordinates[0] = new Coordinate(topLeftLng, topLeftLat);
+        coordinates[1] = new Coordinate(topLeftLng, bottomRightLat);
+        coordinates[2] = new Coordinate(bottomRightLng, bottomRightLat);
+        coordinates[3] = new Coordinate(bottomRightLng, topLeftLat);
+        coordinates[4] = new Coordinate(topLeftLng, topLeftLat);
+        return coordinates;
     }
 
     private NumberTemplate<Double> getMatchScore(String keyword) {

@@ -3,6 +3,7 @@ package my.inplace.infra.place;
 import my.inplace.domain.place.query.PlaceQueryParam;
 import my.inplace.domain.place.query.PlaceQueryResult;
 import my.inplace.domain.place.query.PlaceQueryResult.DetailedPlace;
+import my.inplace.domain.place.query.PlaceQueryResult.Marker;
 import my.inplace.domain.place.query.PlaceQueryResult.SimplePlace;
 import my.inplace.infra.config.AbstractMySQLContainer;
 import my.inplace.infra.global.MySQLContainerJpaTest;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
 
 @MySQLContainerJpaTest(
     includeFilters = @Filter(
@@ -80,7 +82,7 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
 
         // then
         assertThat(actual.getTotalElements()).isEqualTo(expected.size());
-        assertThat(actual.getContent()).containsExactlyInAnyOrderElementsOf(expected);
+        assertAdjustedDetailedPlaces(actual, expected);
     }
 
     @Test
@@ -116,7 +118,7 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
 
         // then
         assertThat(actual.getTotalElements()).isEqualTo(expected.size());
-        assertThat(actual.getContent()).containsExactlyInAnyOrderElementsOf(expected);
+        assertAdjustedDetailedPlaces(actual, expected);
     }
 
     @Test
@@ -140,7 +142,7 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
         // then
 
         assertThat(actual).isNotNull();
-        assertThat(actual).hasSameElementsAs(expected);
+        assertAdjustedMarkers(actual, expected);
     }
 
     @Test
@@ -166,7 +168,7 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
         // then
 
         assertThat(actual).isNotNull();
-        assertThat(actual).hasSameElementsAs(expected);
+        assertAdjustedMarkers(actual, expected);
     }
 
     @Test
@@ -204,7 +206,7 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
 
         // then
         assertThat(actual.getTotalElements()).isEqualTo(expected.size());
-        assertThat(actual.getContent()).containsExactlyInAnyOrderElementsOf(expected);
+        assertAdjustedDetailedPlaces(actual, expected);
     }
 
     @Test
@@ -239,7 +241,7 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
 
         // then
         assertThat(actual).isNotNull();
-        assertThat(actual).hasSameElementsAs(expected);
+        assertAdjustedMarkers(actual, expected);
     }
 
     @Test
@@ -327,5 +329,26 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
 
         // then
         assertThat(actual).isEqualTo(expected);
+    }
+
+    private void assertAdjustedDetailedPlaces(Page<DetailedPlace> actual, List<DetailedPlace> expected) {
+        List<DetailedPlace> list = actual.getContent();
+        for (int i = 0; i < list.size(); i++) {
+            DetailedPlace actualPlace = list.get(i);
+            DetailedPlace expectedPlace = expected.get(i);
+            assertThat(actualPlace).usingRecursiveComparison().ignoringFields("longitude", "latitude").isEqualTo(expectedPlace);
+            assertThat(actualPlace.longitude()).isCloseTo(expectedPlace.longitude(), within(0.00000001));
+            assertThat(actualPlace.latitude()).isCloseTo(expectedPlace.latitude(), within(0.00000001));
+        }
+    }
+
+    private void assertAdjustedMarkers(List<Marker> actual, List<Marker> expected) {
+        for (int i = 0; i < actual.size(); i++) {
+            Marker actualMarker = actual.get(i);
+            Marker expectedMarker = expected.get(i);
+            assertThat(actualMarker).usingRecursiveComparison().ignoringFields("longitude", "latitude").isEqualTo(expectedMarker);
+            assertThat(actualMarker.longitude()).isCloseTo(expectedMarker.longitude(), within(0.00000001));
+            assertThat(actualMarker.latitude()).isCloseTo(expectedMarker.latitude(), within(0.00000001));
+        }
     }
 }
