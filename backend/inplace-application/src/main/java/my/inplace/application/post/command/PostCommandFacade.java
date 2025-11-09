@@ -1,13 +1,13 @@
 package my.inplace.application.post.command;
 
-import my.inplace.application.alarm.command.AlarmCommandService;
-import my.inplace.application.annotation.Facade;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import my.inplace.application.alarm.util.MentionMessageFactory;
-import my.inplace.application.post.util.ReceiverParser;
+import my.inplace.application.alarm.command.AlarmCommandService;
+import my.inplace.application.annotation.Facade;
 import my.inplace.application.post.command.dto.PostCommand;
 import my.inplace.application.post.query.PostQueryService;
+import my.inplace.application.post.util.MentionMessageFactory;
+import my.inplace.application.post.util.ReceiverParser;
 import my.inplace.application.user.command.UserCommandService;
 import my.inplace.application.user.query.UserQueryService;
 import my.inplace.domain.alarm.AlarmType;
@@ -60,36 +60,44 @@ public class PostCommandFacade {
         Long authorId = postQueryService.getAuthorIdByPostId(command.postId());
         userCommandService.addToReceivedCommentByUserId(authorId, 1);
         
-        List<Long> receiverIds = receiverParser.parseMentionedUser(command.comment());
-        if(!receiverIds.isEmpty()) {
-            mention(command.postId(), commentId, command.comment());
-        }
+        mention(command.postId(), commentId, userId, command.comment());
     }
     
     public void updateComment(PostCommand.UpdateComment updateCommand) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postCommandService.updateComment(updateCommand, userId);
         
-        List<Long> receiverIds = receiverParser.parseMentionedUser(updateCommand.comment());
-        if(!receiverIds.isEmpty()) {
-            mention(updateCommand.postId(), updateCommand.commentId(), updateCommand.comment());
-        }
+        mention(updateCommand.postId(), updateCommand.commentId(), userId, updateCommand.comment());
     }
     
-    private void mention(Long postId, Long commentId, String commentContent) {
-        List<Long> receiverIds = receiverParser.parseMentionedUser(commentContent);
+    private void mention(Long postId, Long commentId, Long senderId, String commentContent) {
+        List<Long> receiverIds = receiverParser.parseMentionedUser(commentContent).stream()
+            .map(userQueryService::getUserIdByNickname)
+            .toList();
+        
         String title = mentionMessageFactory.createTitle();
         
         for (Long receiverId : receiverIds) {
+            Long index = postQueryService.getCommentIndexByPostIdAndCommentId(postId, commentId);
+            String fcmToken = userQueryService.getFcmTokenByUser(receiverId);
+            String expoToken = userQueryService.getExpoTokenByUserId(receiverId);
+            
             String content = mentionMessageFactory.createMessage(
                 postQueryService.getPostTitleById(postId).getTitle(),
-                AuthorizationUtil.getUserNicknameOrThrow());
+                userQueryService.getUserInfo(receiverId).nickname());
             
             // 비즈니스 데이터 저장
-            alarmCommandService.saveAlarm(receiverId, postId, commentId, content, AlarmType.MENTION);
+            alarmCommandService.saveAlarm(
+                receiverId,
+                postId,
+                commentId,
+                (int) (index / 10),
+                (int) (index % 10),
+                content,
+                AlarmType.MENTION);
             
             // 이벤트 데이터 저장
-            alarmCommandService.saveAlarmEvent(receiverId, title, content);
+            alarmCommandService.saveAlarmEvent(title, content, fcmToken, expoToken);
         }
     }
 

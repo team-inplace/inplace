@@ -14,12 +14,12 @@ public class ReceiverParser {
     
     private static final String PARSING_REGEX = "<<@([^:>]+):([^>]+)>>";
     
-    public List<Long> parseMentionedUser(String content) {
-        List<Long> mentions = new ArrayList<>();
+    public List<String> parseMentionedUser(String content) {
+        List<String> mentions = new ArrayList<>();
         Pattern pattern = Pattern.compile(PARSING_REGEX);
         Matcher matcher = pattern.matcher(content);
         while (matcher.find()) {
-            mentions.add(Long.valueOf(matcher.group(1)));
+            mentions.add(matcher.group(2));
         }
         
         return mentions;
