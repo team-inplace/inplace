@@ -78,7 +78,7 @@ export async function setupFCMToken(postDeviceToken: (token: AlarmTokenData) => 
 }
 
 export function setupNotificationTokenListener(postDeviceToken: (token: AlarmTokenData) => Promise<void>) {
-  window.addEventListener('notificationPermission', async (event: Event) => {
+  window.addEventListener('mobileNotificationPermission', async (event: Event) => {
     const notificationEvent = event as NotificationPermissionEvent;
     const { token: expoToken, granted } = notificationEvent.detail || {};
     if (!granted) {

@@ -40,7 +40,7 @@ export const useNotification = (webViewRef: React.RefObject<WebView | null>) => 
 
       if (webViewRef.current) {
         const script = `
-          window.dispatchEvent(new CustomEvent('notificationPermission', {
+          window.dispatchEvent(new CustomEvent('mobileNotificationPermission', {
             detail: { token: '${expoPushToken}', granted: true }
           }));
           true;
