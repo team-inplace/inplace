@@ -1,6 +1,5 @@
 package my.inplace.infra.alarm;
 
-import my.inplace.infra.annotation.Client;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -11,8 +10,9 @@ import com.google.firebase.messaging.Notification;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.ClassPathResource;
+import my.inplace.infra.annotation.Client;
 import my.inplace.infra.properties.FcmProperties;
+import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +42,7 @@ public class FcmClient {
         }
     }
     
-    public void sendMessageByToken(String title, String body, String token) {
+    public void sendMessageByToken(String title, String body, String token) throws FirebaseMessagingException {
         try {
             String response = FirebaseMessaging.getInstance().send(Message.builder()
                 .setNotification(Notification.builder()
@@ -54,7 +54,6 @@ public class FcmClient {
             log.info("FCM 알림 메시지 전송 성공, response={}", response);
         } catch (FirebaseMessagingException e) {
             log.error("FCM 알림 메시지 전송 실패 code={} msg={}", e.getErrorCode(), e.getMessage());
-            throw new RuntimeException();
         }
     }
     
