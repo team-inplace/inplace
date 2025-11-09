@@ -11,10 +11,10 @@ public class AlarmCommandFacade {
     private final UserCommandService userCommandService;
     private final AlarmCommandService alarmCommandService;
     
-    public void updateFcmToken(String token) {
+    public void updateAlarmToken(String fcmToken, String expoToken) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         
-        userCommandService.updateFcmToken(userId, token);
+        userCommandService.updateAlarmToken(userId, fcmToken, expoToken);
     }
     
     public void deleteFcmToken() {
