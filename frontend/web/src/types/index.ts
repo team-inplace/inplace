@@ -378,3 +378,8 @@ export type RequestReport = {
   id: number;
   reason: string;
 };
+
+export type AlarmTokenData = {
+  fcmToken: string | null;
+  expoToken: string | null;
+};
