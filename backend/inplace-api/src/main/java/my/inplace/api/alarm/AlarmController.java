@@ -19,10 +19,10 @@ public class AlarmController implements AlarmControllerApiSpec {
     private final AlarmQueryFacade alarmQueryFacade;
 
     @PostMapping
-    public ResponseEntity<Void> upsertFcmToken(
+    public ResponseEntity<Void> upsertAlarmToken(
         @RequestBody AlarmRequest alarmRequest
     ) {
-        alarmCommandFacade.updateFcmToken(alarmRequest.token());
+        alarmCommandFacade.updateAlarmToken(alarmRequest.fcmToken(), alarmRequest.expoToken());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

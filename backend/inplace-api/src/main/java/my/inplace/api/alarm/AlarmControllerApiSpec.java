@@ -11,8 +11,8 @@ import java.util.List;
 
 public interface AlarmControllerApiSpec {
     
-    @Operation(summary = "FCM 토큰 입력", description = "로그인 시에 FCM 토큰을 등록합니다.")
-    public ResponseEntity<Void> upsertFcmToken(@RequestBody AlarmRequest alarmRequest);
+    @Operation(summary = "토큰 입력", description = "로그인 시에 FCM, 또는 Expo 토큰을 등록합니다.")
+    public ResponseEntity<Void> upsertAlarmToken(@RequestBody AlarmRequest alarmRequest);
     
     @Operation(summary = "FCM 토큰 삭제", description = "로그아웃 시에 FCM 토큰을 삭제합니다.")
     public ResponseEntity<Void> deleteFcmToken();
