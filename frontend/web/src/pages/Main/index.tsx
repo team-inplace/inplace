@@ -27,6 +27,7 @@ export default function MainPage() {
   const [permissionModalShown, setPermissionModalShown] = useState(false);
   const [permissionModalClosed, setPermissionModalClosed] = useState(false);
   const location = useGetLocation(!isLoading && (permissions.location === 'granted' || permissionModalClosed));
+  const isReactNativeWebView = typeof window !== 'undefined' && window.ReactNativeWebView != null;
 
   const [{ data: bannerData }, { data: influencersData }] = useGetMain();
   const [{ data: coolEatsVideoData }, { data: coolPlaysVideoData }, { data: newVideoData }] =
@@ -39,13 +40,23 @@ export default function MainPage() {
   );
 
   useEffect(() => {
+    if (isReactNativeWebView) {
+      // 앱에선 네이티브 권한을 사용하니까 일단 PermissionModal 안 띄움
+      return;
+    }
     if (!isLoading && !permissionModalShown) {
       if (hasUndecidedPermissions()) {
         setShowPermissionModal(true);
         setPermissionModalShown(true);
       }
     }
-  }, [isLoading, hasUndecidedPermissions, permissionModalShown]);
+  }, [isLoading, hasUndecidedPermissions, permissionModalShown, isReactNativeWebView]);
+
+  useEffect(() => {
+    if (isReactNativeWebView) {
+      requestNotificationPermission();
+    }
+  }, [isReactNativeWebView]);
 
   const handlePermissionModalClose = () => {
     setShowPermissionModal(false);

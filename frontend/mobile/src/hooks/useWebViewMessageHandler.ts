@@ -5,6 +5,7 @@ interface MessageHandlers {
   onLoginWithKakao: () => void;
   onRefreshToken: () => void;
   onLogout: () => void;
+  onNotificationPermission?: () => Promise<void>;
 }
 
 export const useWebViewMessageHandler = (handlers: MessageHandlers) => {
@@ -25,6 +26,11 @@ export const useWebViewMessageHandler = (handlers: MessageHandlers) => {
             break;
           case "LOGOUT":
             handlers.onLogout();
+            break;
+          case "NOTIFICATION_PERMISSION":
+            if (handlers.onNotificationPermission) {
+              await handlers.onNotificationPermission();
+            }
             break;
         }
       } catch (error) {

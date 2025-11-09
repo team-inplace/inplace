@@ -22,9 +22,14 @@ async function getDeviceToken() {
   });
   return token;
 }
+const isReactNativeWebView = typeof window !== 'undefined' && window.ReactNativeWebView != null;
 
 export async function requestNotificationPermission() {
   try {
+    if (isReactNativeWebView) {
+      window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'NOTIFICATION_PERMISSION' }));
+      return true; // 모바일에서는 메시지 전송 성공을 의미 (실제 권한 결과는 react native에서 처리)
+    }
     const { permission } = Notification;
     let currentPermission = permission;
     if (currentPermission === 'default') {
