@@ -42,7 +42,7 @@ public class FcmClient {
         }
     }
     
-    public void sendMessageByToken(String title, String body, String token) throws FirebaseMessagingException {
+    public void sendMessageByToken(String title, String body, String token) {
         try {
             String response = FirebaseMessaging.getInstance().send(Message.builder()
                 .setNotification(Notification.builder()
@@ -54,6 +54,7 @@ public class FcmClient {
             log.info("FCM 알림 메시지 전송 성공, response={}", response);
         } catch (FirebaseMessagingException e) {
             log.error("FCM 알림 메시지 전송 실패 code={} msg={}", e.getErrorCode(), e.getMessage());
+            throw new RuntimeException();
         }
     }
     
