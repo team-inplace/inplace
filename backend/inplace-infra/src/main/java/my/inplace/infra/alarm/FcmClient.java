@@ -51,9 +51,9 @@ public class FcmClient {
                     .build())
                 .setToken(token)
                 .build());
-            log.info("알림 메시지 전송 성공, response={}", response);
+            log.info("FCM 알림 메시지 전송 성공, response={}", response);
         } catch (FirebaseMessagingException e) {
-            log.error("알림 메시지 전송 실패 code={} msg={}", e.getErrorCode(), e.getMessage());
+            log.error("FCM 알림 메시지 전송 실패 code={} msg={}", e.getErrorCode(), e.getMessage());
         }
     }
     
