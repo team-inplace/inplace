@@ -4,7 +4,7 @@ import my.inplace.application.alarm.command.AlarmCommandService;
 import my.inplace.application.annotation.Facade;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import my.inplace.application.post.util.MentionMessageFactory;
+import my.inplace.application.alarm.util.MentionMessageFactory;
 import my.inplace.application.post.util.ReceiverParser;
 import my.inplace.application.post.command.dto.PostCommand;
 import my.inplace.application.post.query.PostQueryService;
@@ -60,30 +60,40 @@ public class PostCommandFacade {
         Long authorId = postQueryService.getAuthorIdByPostId(command.postId());
         userCommandService.addToReceivedCommentByUserId(authorId, 1);
         
-        mention(command.postId(), commentId, userId, command.comment());
+        List<Long> receiverIds = receiverParser.parseMentionedUser(command.comment());
+        if(!receiverIds.isEmpty()) {
+            mention(command.postId(), commentId, userId, command.comment());
+        }
     }
     
     public void updateComment(PostCommand.UpdateComment updateCommand) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postCommandService.updateComment(updateCommand, userId);
         
-        mention(updateCommand.postId(), updateCommand.commentId(), userId, updateCommand.comment());
+        List<Long> receiverIds = receiverParser.parseMentionedUser(updateCommand.comment());
+        if(!receiverIds.isEmpty()) {
+            mention(updateCommand.postId(), updateCommand.commentId(), userId, updateCommand.comment());
+        }
     }
     
     private void mention(Long postId, Long commentId, Long senderId, String commentContent) {
-        List<Long> receiverIds = receiverParser.parseMentionedUser(commentContent).stream()
-            .map(userQueryService::getUserIdByNickname)
-            .toList();
+        // parseMentionUser 에서 receiver ID 받을 수 있음!!
+        List<Long> receiverIds = receiverParser.parseMentionedUser(commentContent);
         
         String title = mentionMessageFactory.createTitle();
         
         for (Long receiverId : receiverIds) {
+            // 이거는 나중에 조회할 때 Facade 단에서 만들어서 주는게?
             Long index = postQueryService.getCommentIndexByPostIdAndCommentId(postId, commentId);
+            
+            // 토큰이 둘 다 Null 일때는 어캐할거?
             String fcmToken = userQueryService.getFcmTokenByUser(receiverId);
             String expoToken = userQueryService.getExpoTokenByUserId(receiverId);
             
+            
             String content = mentionMessageFactory.createMessage(
                 postQueryService.getPostTitleById(postId).getTitle(),
+                // AuthorizationUtil 에서 Nickname 떼오기
                 userQueryService.getUserInfo(senderId).nickname());
             
             // 비즈니스 데이터 저장

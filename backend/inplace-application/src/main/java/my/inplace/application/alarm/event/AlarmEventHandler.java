@@ -18,6 +18,9 @@ import my.inplace.application.post.query.PostQueryService;
 import my.inplace.application.user.query.UserQueryService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.Optional;
 
@@ -29,7 +32,7 @@ public class AlarmEventHandler {
     private final AlarmOutBoxRepository alarmOutBoxRepository;
     private final FcmClient fcmClient;
     private final ExpoClient expoClient;
-
+    
     @Async("alarmExecutor")
     @EventListener
     @Transactional

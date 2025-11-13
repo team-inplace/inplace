@@ -1,4 +1,4 @@
-package my.inplace.application.post.util;
+package my.inplace.application.alarm.util;
 
 import org.springframework.stereotype.Component;
 
