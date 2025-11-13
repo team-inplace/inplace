@@ -8,6 +8,8 @@ import my.inplace.infra.alarm.jpa.AlarmOutBoxRepository;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
 
@@ -25,5 +27,14 @@ public class AlarmEventPublisher {
         for (AlarmOutBox alarmEvent : alarmEvents) {
             eventPublisher.publishEvent(AlarmEvent.from(alarmEvent));
         }
+        
+        TransactionSynchronizationManager.registerSynchronization(
+            new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    TransactionSynchronization.super.afterCommit();
+                }
+            }
+        );
     }
 }

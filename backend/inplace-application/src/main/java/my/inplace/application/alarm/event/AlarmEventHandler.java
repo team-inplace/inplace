@@ -20,7 +20,7 @@ public class AlarmEventHandler {
     private final AlarmOutBoxRepository alarmOutBoxRepository;
     private final FcmClient fcmClient;
     private final ExpoClient expoClient;
-
+    
     @Async("alarmExecutor")
     @EventListener
     @Transactional
