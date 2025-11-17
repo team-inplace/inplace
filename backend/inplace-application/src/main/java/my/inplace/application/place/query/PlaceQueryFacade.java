@@ -6,6 +6,7 @@ import java.util.concurrent.Executor;
 import my.inplace.application.annotation.Facade;
 import my.inplace.application.place.query.dto.PlaceParam;
 import my.inplace.application.place.query.dto.PlaceResult;
+import my.inplace.application.place.query.dto.PlaceResult.Region;
 import my.inplace.application.review.ReviewService;
 import my.inplace.application.video.query.VideoQueryService;
 import my.inplace.application.video.query.dto.VideoParam.SquareBound;
@@ -183,5 +184,9 @@ public class PlaceQueryFacade {
             .stream()
             .map(PlaceResult.Marker::from)
             .toList();
+    }
+
+    public List<PlaceResult.Region> getRegions() {
+        return placeQueryService.getRegions();
     }
 }

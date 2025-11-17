@@ -3,6 +3,7 @@ package my.inplace.api.place;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import my.inplace.api.place.dto.PlaceResponse.Regions;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -237,5 +238,14 @@ public class PlaceController implements PlaceControllerApiSpec {
         placeCommandService.deleteCategoryById(categoryId);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    @GetMapping("/regions")
+    public ResponseEntity<Regions> getRegions() {
+        List<PlaceResult.Region> regions = placeQueryFacade.getRegions();
+        var response = Regions.from(regions);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

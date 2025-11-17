@@ -1,5 +1,6 @@
 package my.inplace.application.place.query;
 
+import my.inplace.application.place.query.dto.PlaceResult.Region;
 import my.inplace.common.exception.InplaceException;
 import my.inplace.common.exception.code.CategoryErrorCode;
 import my.inplace.common.exception.code.PlaceErrorCode;
@@ -8,6 +9,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import my.inplace.domain.place.query.PlaceQueryResult;
 import my.inplace.domain.place.query.PlaceReadRepository;
+import my.inplace.infra.region.jpa.RegionJpaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +34,7 @@ public class PlaceQueryService {
     private final GooglePlaceClient googlePlaceClient;
     private final CategoryJpaRepository categoryRepository;
     private final VideoReadRepository videoReadRepository;
+    private final RegionJpaRepository regionRepository;
 
     public PlaceQueryResult.DetailedPlace getPlaceInfo(final Long userId, final Long placeId) {
         return placeReadRepository.findDetailedPlaceById(userId, placeId)
@@ -169,5 +172,12 @@ public class PlaceQueryService {
         return categoryRepository.findById(categoryId)
             .map(PlaceResult.Category::from)
             .orElseThrow(() -> InplaceException.of(CategoryErrorCode.NOT_FOUND));
+    }
+
+    public List<PlaceResult.Region> getRegions() {
+        var regions = regionRepository.findAll();
+        return regions.stream()
+            .map(PlaceResult.Region::from)
+            .toList();
     }
 }

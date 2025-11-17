@@ -2,11 +2,13 @@ package my.inplace.api.place;
 
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
+import my.inplace.api.place.dto.PlaceResponse.Regions;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -102,4 +104,7 @@ public interface PlaceControllerApiSpec {
     ResponseEntity<Void> deleteCategoryById(
         @PathVariable Long categoryId
     );
+
+    @Operation(summary = "지역 조회", description = "모든 지역을 조회합니다.")
+    ResponseEntity<Regions> getRegions();
 }
