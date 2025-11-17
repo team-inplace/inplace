@@ -13,11 +13,17 @@ import org.locationtech.jts.geom.Geometry;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Region extends BaseEntity {
 
-    @Column(length = 10)
+    @Column(length = 50)
     private String city;
 
-    @Column(length = 10)
+    @Column(name = "middle_city", length = 50)
+    private String middleCity;
+
+    @Column(length = 50)
     private String district;
+
+    @Column(name = "sig_cd")
+    private Integer sigCd;
 
     @Column(nullable = false, columnDefinition = "GEOMETRY SRID 4326")
     private Geometry area;
