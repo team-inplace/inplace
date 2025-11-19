@@ -1,4 +1,5 @@
 CREATE FULLTEXT INDEX full_text_idx_place_name ON places (name) with parser ngram;
+CREATE SPATIAL INDEX spatial_idx_place_location ON places (location);
 
 INSERT INTO categories(id, name, eng_name, parent_id)
 VALUES (1, '맛집', 'eats', null),
@@ -6,6 +7,17 @@ VALUES (1, '맛집', 'eats', null),
        (3, '양식', 'western', 1),
        (4, '일식', 'japanese',1),
        (5, '한식', 'korean', 1);
+
+INSERT INTO regions (id, city, middle_city, district, area)
+VALUES
+    (1, 'city1', 'middle_city1', 'district1',
+     ST_PolygonFromText('POLYGON((35.9 125.9, 36.0 126.49, 36.49 126.49, 36.49 126.0, 35.9 125.9))', 4326)),
+    (2, 'city2', 'middle_city2', 'district2',
+     ST_PolygonFromText('POLYGON((36.5 126.5, 36.5 126.99, 36.99 126.99, 36.99 126.5, 36.5 126.5))', 4326)),
+    (3, 'city3', 'middle_city3', 'district3',
+     ST_PolygonFromText('POLYGON((37.0 127.0, 37.0 127.49, 37.49 127.49, 37.49 127.0, 37.0 127.0))', 4326)),
+    (4, 'city4', 'middle_city4', 'district4',
+     ST_PolygonFromText('POLYGON((37.5 127.5, 37.5 127.99, 37.99 127.99, 37.99 127.5, 37.5 127.5))', 4326));
 
 INSERT INTO places (id, name, address1, address2, address3, google_place_id, kakao_place_id, category_id, location)
 VALUES (1, '테스트장소1', '주소1-1', '주소2-1', '주소3', 'googlePlaceId1', 1, 2, ST_PointFromText('POINT(36.0 126.0)', 4326)),
