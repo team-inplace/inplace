@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AlarmEventHandler {
     
     private final AlarmOutBoxRepository alarmOutBoxRepository;
+    private final UserQueryService userQueryService;
     private final FcmClient fcmClient;
     private final ExpoClient expoClient;
     
@@ -25,18 +26,25 @@ public class AlarmEventHandler {
     @EventListener
     @Transactional
     public void processMentionAlarm(AlarmEvent alarmEvent) {
-        AlarmOutBox outBoxEvent = alarmOutBoxRepository.findById(alarmEvent.idempotencyKey())
+        AlarmOutBox outBoxEvent = alarmOutBoxRepository.findById(alarmEvent.id())
             .orElseThrow();
         
-        boolean fcmSuccess = sendFcmMessage(alarmEvent.title(), alarmEvent.body(), alarmEvent.fcmToken());
-        boolean expoSuccess = sendExpoMessage(alarmEvent.title(), alarmEvent.body(), alarmEvent.expoToken());
+        String fcmToken = userQueryService.getFcmTokenByUser(outBoxEvent.getReceiverId());
+        String expoToken = userQueryService.getExpoTokenByUserId(outBoxEvent.getReceiverId());
+        if(fcmToken == null && expoToken == null) {
+            outBoxEvent.pending();
+            return;
+        }
+        
+        boolean fcmSuccess = sendFcmMessage(outBoxEvent.getTitle(), outBoxEvent.getContent(), fcmToken);
+        boolean expoSuccess = sendExpoMessage(outBoxEvent.getTitle(), outBoxEvent.getContent(), expoToken);
         
         if(fcmSuccess && expoSuccess) {
             outBoxEvent.published();
             return;
         }
         
-        outBoxEvent.pending();
+        outBoxEvent.ready();
     }
     
     public boolean sendFcmMessage(String title, String body, String token) {

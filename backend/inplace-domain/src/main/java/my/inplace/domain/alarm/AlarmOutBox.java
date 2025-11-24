@@ -26,7 +26,11 @@ public class AlarmOutBox {
         this.receiverId = receiverId;
         this.title = title;
         this.content = content;
-        this.alarmStatus = AlarmStatus.PENDING;
+        this.alarmStatus = AlarmStatus.READY;
+    }
+    
+    public void ready() {
+        this.alarmStatus = AlarmStatus.READY;
     }
     
     public void published() {
