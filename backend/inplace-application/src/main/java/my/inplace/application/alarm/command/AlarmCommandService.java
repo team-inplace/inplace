@@ -5,7 +5,7 @@ import my.inplace.domain.alarm.Alarm;
 import my.inplace.domain.alarm.AlarmOutBox;
 import my.inplace.domain.alarm.AlarmType;
 import my.inplace.infra.alarm.jpa.AlarmJpaRepository;
-import my.inplace.infra.alarm.jpa.AlarmOutBoxRepository;
+import my.inplace.infra.alarm.jpa.AlarmOutBoxJpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AlarmCommandService {
     
     private final AlarmJpaRepository alarmJpaRepository;
-    private final AlarmOutBoxRepository alarmOutBoxRepository;
+    private final AlarmOutBoxJpaRepository alarmOutBoxJpaRepository;
 
     @Transactional
     public void checkAlarm(Long id) {
@@ -36,6 +36,6 @@ public class AlarmCommandService {
     ) {
         AlarmOutBox alarmEvent = new AlarmOutBox(receiverId, title, content);
         
-        alarmOutBoxRepository.save(alarmEvent);
+        alarmOutBoxJpaRepository.save(alarmEvent);
     }
 }
