@@ -24,19 +24,10 @@ public class AlarmEventPublisher {
     
     @Scheduled(cron = "0 0/15 * * * *")
     public void publishOutBoxEvent() {
-        List<AlarmOutBox> alarmEvents = alarmOutBoxRepository.findAllByAlarmStatus(AlarmStatus.PENDING);
+        List<AlarmOutBox> alarmEvents = alarmOutBoxRepository.findAllByAlarmStatus(AlarmStatus.READY);
         
         for (AlarmOutBox alarmEvent : alarmEvents) {
             eventPublisher.publishEvent(AlarmEvent.from(alarmEvent));
         }
-        
-        TransactionSynchronizationManager.registerSynchronization(
-            new TransactionSynchronization() {
-                @Override
-                public void afterCommit() {
-                    TransactionSynchronization.super.afterCommit();
-                }
-            }
-        );
     }
 }

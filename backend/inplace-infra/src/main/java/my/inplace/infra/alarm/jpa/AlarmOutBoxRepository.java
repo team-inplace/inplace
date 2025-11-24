@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.UUID;
 
-public interface AlarmOutBoxRepository extends JpaRepository<AlarmOutBox, UUID> {
+public interface AlarmOutBoxRepository extends JpaRepository<AlarmOutBox, Long> {
     List<AlarmOutBox> findAllByAlarmStatus(AlarmStatus alarmStatus);
 }
