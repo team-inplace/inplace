@@ -14,18 +14,17 @@ public class Alarm extends BaseEntity {
 
     private Long userId;
     private Long postId;
-    @Embedded
-    private AlarmComment alarmComment;
+    private Long commentId;
     private String content;
     private boolean checked;
 
     @Enumerated(EnumType.STRING)
     private AlarmType alarmType;
 
-    public Alarm(Long userId, Long postId, AlarmComment alarmComment, String content, AlarmType alarmType) {
+    public Alarm(Long userId, Long postId, Long commentId, String content, AlarmType alarmType) {
         this.userId = userId;
         this.postId = postId;
-        this.alarmComment = alarmComment;
+        this.commentId = commentId;
         this.content = content;
         this.alarmType = alarmType;
     }
