@@ -26,6 +26,13 @@ public class AuthorizationUtil {
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
         return customOAuth2User.id();
     }
+    
+    public static String getUserNicknameOrThrow() {
+        checkLoginUser();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        return customOAuth2User.getName();
+    }
 
     public static boolean isNotLoginUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
