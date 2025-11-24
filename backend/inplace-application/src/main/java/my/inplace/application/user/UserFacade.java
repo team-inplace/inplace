@@ -7,7 +7,6 @@ import my.inplace.application.influencer.query.dto.InfluencerResult;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import my.inplace.application.user.dto.UserResult.Info;
 import my.inplace.application.post.query.PostQueryService;
 import my.inplace.application.post.query.dto.PostResult;
 import org.springframework.data.domain.Page;
