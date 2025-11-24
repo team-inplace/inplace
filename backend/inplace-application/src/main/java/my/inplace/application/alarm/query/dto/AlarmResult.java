@@ -15,13 +15,13 @@ public record AlarmResult(
     String createdAt
 ) {
 
-    public static AlarmResult from(Alarm alarm) {
+    public static AlarmResult from(Alarm alarm, Long index) {
         return new AlarmResult(
             alarm.getId(),
             alarm.getPostId(),
-            alarm.getAlarmComment().getCommentId(),
-            alarm.getAlarmComment().getPageNumber(),
-            alarm.getAlarmComment().getOffset(),
+            alarm.getCommentId(),
+            index.intValue() % 10,
+            index.intValue() / 10,
             alarm.getContent(),
             alarm.isChecked(),
             alarm.getAlarmType().name(),
