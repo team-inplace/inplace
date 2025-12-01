@@ -16,11 +16,11 @@ const postCommentLike = async ({ postId, commentId, likes }: RequestCommentLike)
 };
 
 export const usePostCommentLike = (postId: string) => {
-  return useOptimisticUpdate<any, RequestCommentLike>({
+  return useOptimisticUpdate<CommentData[], RequestCommentLike>({
     mutationFn: postCommentLike,
     queryKey: ['commentList', postId],
 
-    updater: (oldData: CommentData[] | undefined, variables) => {
+    updater: (oldData, variables) => {
       if (!oldData) return [];
       return oldData.map((comment) =>
         comment.commentId === variables.commentId ? { ...comment, likes: variables.likes } : comment,

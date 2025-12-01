@@ -16,11 +16,11 @@ export const postMultipleInfluencerLike = async ({ influencerIds, likes }: Multi
 };
 
 export const usePostMultipleInfluencerLike = () => {
-  return useOptimisticUpdate<any, MultipleLikeRequest>({
+  return useOptimisticUpdate<InfluencerData[], MultipleLikeRequest>({
     mutationFn: postMultipleInfluencerLike,
     queryKey: ['UserInfluencer'],
 
-    updater: (oldData: InfluencerData[] | undefined, variables) => {
+    updater: (oldData, variables) => {
       if (!oldData) return [];
       return oldData.map((item) =>
         variables.influencerIds.includes(item.influencerId) ? { ...item, likes: variables.likes } : item,

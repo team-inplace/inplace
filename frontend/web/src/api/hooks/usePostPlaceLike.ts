@@ -24,10 +24,10 @@ export const usePostPlaceLike = () => {
       await queryClient.cancelQueries({ queryKey: ['UserPlace'] });
       await queryClient.cancelQueries({ queryKey: ['placeInfo', String(placeId)] });
 
-      const prevUserPlace = queryClient.getQueryData(['UserPlace']);
-      const prevPlaceInfo = queryClient.getQueryData(['placeInfo', String(placeId)]);
+      const prevUserPlace = queryClient.getQueryData<PlaceData[]>(['UserPlace']);
+      const prevPlaceInfo = queryClient.getQueryData<PlaceData>(['placeInfo', String(placeId)]);
 
-      queryClient.setQueryData(['UserPlace'], (old: PlaceData[] | undefined) => {
+      queryClient.setQueryData<PlaceData[]>(['UserPlace'], (old) => {
         if (!old) return [];
         return old.map((place) =>
           place.placeId === placeId
@@ -40,8 +40,8 @@ export const usePostPlaceLike = () => {
         );
       });
 
-      queryClient.setQueryData(['placeInfo', String(placeId)], (old: any) => {
-        if (!old) return old;
+      queryClient.setQueryData<PlaceData>(['placeInfo', String(placeId)], (old) => {
+        if (!old) return undefined;
         return {
           ...old,
           likes,

@@ -16,11 +16,11 @@ const postPostLike = async ({ postId, likes }: RequestPostLike) => {
 };
 
 export const usePostPostLike = () => {
-  return useOptimisticUpdate<any, RequestPostLike>({
+  return useOptimisticUpdate<PostData[], RequestPostLike>({
     mutationFn: postPostLike,
     queryKey: ['postData'],
 
-    updater: (oldData: PostData[] | undefined, variables) => {
+    updater: (oldData, variables) => {
       if (!oldData) return [];
       return oldData.map((post) => (post.postId === variables.postId ? { ...post, likes: variables.likes } : post));
     },

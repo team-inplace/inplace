@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient, QueryKey } from '@tanstack/react-query';
 
 interface OptimisticConfig<TData, TVariables> {
-  mutationFn: (variables: TVariables) => Promise<TData>;
+  mutationFn: (variables: TVariables) => Promise<unknown>;
   queryKey: QueryKey;
-  updater: (oldData: any, variables: TVariables) => any;
+  updater: (oldData: TData | undefined, variables: TVariables) => TData | undefined;
   invalidates?: QueryKey[];
 }
 
@@ -20,9 +20,9 @@ export default function useOptimisticUpdate<TData, TVariables>({
 
     onMutate: async (variables) => {
       await queryClient.cancelQueries({ queryKey });
-      const previousData = queryClient.getQueryData(queryKey);
+      const previousData = queryClient.getQueryData<TData>(queryKey);
 
-      queryClient.setQueryData(queryKey, (oldData: any) => {
+      queryClient.setQueryData<TData>(queryKey, (oldData) => {
         return updater(oldData, variables);
       });
       return { previousData };
@@ -30,7 +30,7 @@ export default function useOptimisticUpdate<TData, TVariables>({
 
     onError: (err, variables, context) => {
       if (context?.previousData) {
-        queryClient.setQueryData(queryKey, context.previousData);
+        queryClient.setQueryData<TData>(queryKey, context.previousData);
       }
       alert('좋아요 처리에 실패했습니다.');
     },
