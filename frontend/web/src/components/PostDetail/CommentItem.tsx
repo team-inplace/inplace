@@ -38,7 +38,6 @@ export default function CommentItem({
   const isMobile = useIsMobile();
 
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [isLike, setIsLike] = useState(item.selfLike);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(item.content);
@@ -47,7 +46,7 @@ export default function CommentItem({
 
   const { mutate: deleteComment } = useDeleteComment();
   const { mutate: putComment } = usePutComment();
-  const { mutate: postLike } = usePostCommentLike();
+  const { mutate: postLike } = usePostCommentLike(postId);
   const { mutate: reportComment } = usePostReportComment();
 
   const handleResizeHeight = useAutoResizeTextarea();
@@ -162,21 +161,9 @@ export default function CommentItem({
         setShowLoginModal(true);
         return;
       }
-      const newLikeStatus = !isLike;
-      postLike(
-        { postId, commentId: Number(item.commentId), likes: newLikeStatus },
-        {
-          onSuccess: () => {
-            setIsLike(newLikeStatus);
-            queryClient.invalidateQueries({ queryKey: ['commentList', postId, currentPage - 1, 10] });
-          },
-          onError: () => {
-            alert('좋아요 등록에 실패했어요. 다시 시도해주세요!');
-          },
-        },
-      );
+      postLike({ postId, commentId: Number(item.commentId), likes: !item.selfLike });
     },
-    [isLike, item.commentId, postLike],
+    [item.selfLike, item.commentId, postId, postLike, isAuthenticated],
   );
 
   useEffect(() => {
@@ -260,7 +247,7 @@ export default function CommentItem({
                 aria-label="댓글 좋아요 버튼"
                 onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
               >
-                {isLike ? (
+                {item.selfLike ? (
                   <PiHeartFill color="#fe7373" size={isMobile ? 14 : 18} data-testid="PiHeartFill" />
                 ) : (
                   <PiHeartLight size={isMobile ? 14 : 18} data-testid="PiHeartLight" />

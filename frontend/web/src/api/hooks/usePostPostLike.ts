@@ -1,7 +1,6 @@
-import { useMutation } from '@tanstack/react-query';
-
 import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
-import { RequestPostLike } from '@/types';
+import { PostData, RequestPostLike } from '@/types';
+import useOptimisticUpdate from '@/hooks/useOptimisticUpdate';
 
 export const postPostLikePath = () => `/posts/likes`;
 const postPostLike = async ({ postId, likes }: RequestPostLike) => {
@@ -17,7 +16,13 @@ const postPostLike = async ({ postId, likes }: RequestPostLike) => {
 };
 
 export const usePostPostLike = () => {
-  return useMutation({
-    mutationFn: ({ postId, likes }: RequestPostLike) => postPostLike({ postId, likes }),
+  return useOptimisticUpdate<any, RequestPostLike>({
+    mutationFn: postPostLike,
+    queryKey: ['postData'],
+
+    updater: (oldData: PostData[] | undefined, variables) => {
+      if (!oldData) return [];
+      return oldData.map((post) => (post.postId === variables.postId ? { ...post, likes: variables.likes } : post));
+    },
   });
 };

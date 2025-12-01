@@ -2,7 +2,6 @@ import styled from 'styled-components';
 import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
 import { useCallback, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { Text } from '@/components/common/typography/Text';
 import { PlaceData } from '@/types';
@@ -32,10 +31,8 @@ export default function PlaceItem({
 }: PlaceItemProps) {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
-  const [isLike, setIsLike] = useState(likes);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { mutate: postLike } = usePostPlaceLike();
-  const queryClient = useQueryClient();
   const isYoutubeUrl = videos[0].videoUrl?.includes('youtu');
   const extractedVideoId = useExtractYoutubeVideoId(videos[0].videoUrl || '');
   const imgSrc = isYoutubeUrl ? `https://img.youtube.com/vi/${extractedVideoId}/mqdefault.jpg` : '';
@@ -48,22 +45,9 @@ export default function PlaceItem({
         setShowLoginModal(true);
         return;
       }
-      const newLikeStatus = !isLike;
-      postLike(
-        { placeId, likes: newLikeStatus },
-        {
-          onSuccess: () => {
-            setIsLike(newLikeStatus);
-            queryClient.invalidateQueries({ queryKey: ['UserPlace'] });
-            queryClient.invalidateQueries({ queryKey: ['placeInfo', placeId] });
-          },
-          onError: () => {
-            alert('좋아요 등록에 실패했어요. 다시 시도해주세요!');
-          },
-        },
-      );
+      postLike({ placeId, likes: !likes });
     },
-    [isLike, placeId, postLike],
+    [likes, placeId, postLike, isAuthenticated],
   );
 
   return (
@@ -94,7 +78,7 @@ export default function PlaceItem({
             aria-label="장소 좋아요"
             onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
           >
-            {isLike ? (
+            {likes ? (
               <PiHeartFill color="#fe7373" size={30} data-testid="PiHeartFill" />
             ) : (
               <PiHeartLight size={30} data-testid="PiHeartLight" />

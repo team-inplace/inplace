@@ -1,7 +1,7 @@
-import { useMutation } from '@tanstack/react-query';
 import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 
-import { MultipleLikeRequest } from '@/types';
+import { InfluencerData, MultipleLikeRequest } from '@/types';
+import useOptimisticUpdate from '@/hooks/useOptimisticUpdate';
 
 export const postMultipleInfluencerLike = async ({ influencerIds, likes }: MultipleLikeRequest) => {
   const response = await getFetchInstance().post(
@@ -16,7 +16,15 @@ export const postMultipleInfluencerLike = async ({ influencerIds, likes }: Multi
 };
 
 export const usePostMultipleInfluencerLike = () => {
-  return useMutation({
-    mutationFn: ({ influencerIds, likes }: MultipleLikeRequest) => postMultipleInfluencerLike({ influencerIds, likes }),
+  return useOptimisticUpdate<any, MultipleLikeRequest>({
+    mutationFn: postMultipleInfluencerLike,
+    queryKey: ['UserInfluencer'],
+
+    updater: (oldData: InfluencerData[] | undefined, variables) => {
+      if (!oldData) return [];
+      return oldData.map((item) =>
+        variables.influencerIds.includes(item.influencerId) ? { ...item, likes: variables.likes } : item,
+      );
+    },
   });
 };

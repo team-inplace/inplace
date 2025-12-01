@@ -35,7 +35,6 @@ export default function PostDetailPage() {
   const { mutate: postLike } = usePostPostLike();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
-  const [isLike, setIsLike] = useState(postData.selfLike);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [reportStatus, setReportStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
@@ -94,21 +93,9 @@ export default function PostDetailPage() {
         setShowLoginModal(true);
         return;
       }
-      const newLikeStatus = !isLike;
-      postLike(
-        { postId: Number(id), likes: newLikeStatus },
-        {
-          onSuccess: () => {
-            setIsLike(newLikeStatus);
-            queryClient.invalidateQueries({ queryKey: ['postData', id] });
-          },
-          onError: () => {
-            alert('좋아요 등록에 실패했어요. 다시 시도해주세요!');
-          },
-        },
-      );
+      postLike({ postId: Number(id), likes: postData.selfLike });
     },
-    [isLike, id, postLike],
+    [postData.selfLike, id, postLike, isAuthenticated],
   );
   const formData = {
     title: postData.title,
@@ -193,7 +180,7 @@ export default function PostDetailPage() {
           onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
         >
           <Count>
-            {isLike ? (
+            {postData.selfLike ? (
               <PiHeartFill color="#fe7373" size={isMobile ? 14 : 18} data-testid="PiHeartFill" />
             ) : (
               <PiHeartLight size={isMobile ? 14 : 18} data-testid="PiHeartLight" />
