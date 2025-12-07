@@ -10,13 +10,37 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import my.inplace.api.global.CursorResponse;
 import my.inplace.application.place.query.dto.GooglePlaceResult;
 import my.inplace.application.place.query.dto.PlaceResult;
-import my.inplace.application.place.query.dto.PlaceResult.Region;
 import my.inplace.application.review.dto.ReviewResult;
 import my.inplace.application.video.query.dto.VideoResult;
+import my.inplace.common.cursor.CursorResult;
 
 public class PlaceResponse {
+
+    public record SimpleList(
+        List<Simple> places,
+        CursorResponse cursor
+    ) {
+
+        public static PlaceResponse.SimpleList from(
+            CursorResult<PlaceResult.Simple> placeResults
+        ) {
+            List<Simple> places = placeResults.value().stream()
+                .map(Simple::from)
+                .toList();
+
+            return new PlaceResponse.SimpleList(
+                places,
+                new CursorResponse(
+                    placeResults.hasNext(),
+                    placeResults.nextCursorValue(),
+                    placeResults.nextCursorId()
+                )
+            );
+        }
+    }
 
     public record Simple(
         Long placeId,

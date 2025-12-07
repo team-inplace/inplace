@@ -9,10 +9,12 @@ import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.spatial.locationtech.jts.JTSGeometryExpressions;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import my.inplace.common.cursor.CursorResult;
 import my.inplace.domain.influencer.QInfluencer;
 import my.inplace.domain.place.QCategory;
 import my.inplace.domain.place.QLikedPlace;
@@ -50,11 +52,14 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
     }
 
     @Override
-    public Page<DetailedPlace> findPlacesInMapRangeWithPaging(
+    public CursorResult<DetailedPlace> findPlacesInMapRangeOrderBy(
         PlaceQueryParam.Coordinate coordinateParams,
         PlaceQueryParam.Filter filterParams,
-        Pageable pageable,
-        Long userId
+        Long userId,
+        int size,
+        String orderBy,
+        Long cursorValue,
+        Long cursorId
     ) {
         var topLeftLongitude = coordinateParams.topLeftLongitude();
         var topLeftLatitude = coordinateParams.topLeftLatitude();
@@ -70,17 +75,32 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
         );
 
         if (placeIds.isEmpty()) {
-            return Page.empty(pageable);
+            return new CursorResult<>(
+                Collections.emptyList(),
+                false,
+                null,
+                null
+            );
         }
 
-        List<DetailedPlace> results = buildDetailedPlaceQuery(userId)
-            .where(QPlace.place.id.in(placeIds))
+        List<DetailedPlace> cursorPlaces = buildDetailedPlaceQuery(userId)
+            .where(
+                QPlace.place.id.in(placeIds),
+                cursorId != null ? QPlace.place.id.gt(cursorId) : null
+            )
             .groupBy(QPlace.place.id)
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
+            .orderBy(QPlace.place.id.asc())
+            .limit(size + 1)
             .fetch();
 
-        return PageableExecutionUtils.getPage(results, pageable, () -> (long) placeIds.size());
+        boolean hasNext = cursorPlaces.size() > size;
+
+        return new CursorResult<>(
+            cursorPlaces.subList(0, Math.min(size, cursorPlaces.size())),
+            hasNext,
+            null,
+            hasNext ? cursorPlaces.get(size - 1).placeId() : null
+        );
     }
 
     @Override

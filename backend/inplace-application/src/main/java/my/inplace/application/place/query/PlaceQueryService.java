@@ -1,6 +1,7 @@
 package my.inplace.application.place.query;
 
 import my.inplace.application.place.query.dto.PlaceResult.Region;
+import my.inplace.common.cursor.CursorResult;
 import my.inplace.common.exception.InplaceException;
 import my.inplace.common.exception.code.CategoryErrorCode;
 import my.inplace.common.exception.code.PlaceErrorCode;
@@ -8,10 +9,10 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import my.inplace.domain.place.query.PlaceQueryResult;
+import my.inplace.domain.place.query.PlaceQueryResult.DetailedPlace;
 import my.inplace.domain.place.query.PlaceReadRepository;
 import my.inplace.infra.region.jpa.RegionJpaRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,26 +46,28 @@ public class PlaceQueryService {
         return placeReadRepository.getDetailedPlacesByVideoId(videoId);
     }
 
-    public Page<PlaceQueryResult.DetailedPlace> getPlacesInMapRange(
+    public CursorResult<DetailedPlace> getPlacesInMapRange(
         Long userId,
         PlaceParam.Coordinate coordinateParam,
         PlaceParam.Filter filterParam,
-        Pageable pageable
+        int size,
+        String orderBy,
+        Long cursorValue,
+        Long cursorId
     ) {
 
         var coordinateQueryParam = coordinateParam.toQueryParam();
         var filterQueryParam = filterParam.toQueryParam();
 
-        var placeQueryResult = placeReadRepository.findPlacesInMapRangeWithPaging(
+        var placeQueryResult = placeReadRepository.findPlacesInMapRangeOrderBy(
             coordinateQueryParam,
             filterQueryParam,
-            pageable,
-            userId
+            userId,
+            size,
+            orderBy,
+            cursorValue,
+            cursorId
         );
-
-        if (placeQueryResult.isEmpty()) {
-            return new PageImpl<>(List.of(), pageable, 0);
-        }
 
         return placeQueryResult;
     }

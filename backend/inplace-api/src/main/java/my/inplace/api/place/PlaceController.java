@@ -4,6 +4,21 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import my.inplace.api.place.dto.PlaceResponse.Regions;
+import my.inplace.api.place.dto.PlaceRequest;
+import my.inplace.api.place.dto.PlaceRequest.Upsert;
+import my.inplace.api.place.dto.PlaceResponse;
+import my.inplace.api.place.dto.PlaceResponse.Admin;
+import my.inplace.api.place.dto.PlaceResponse.AdminCategory;
+import my.inplace.api.place.dto.PlaceResponse.Categories;
+import my.inplace.api.place.dto.PlaceResponse.Marker;
+import my.inplace.api.place.dto.PlaceResponse.MarkerDetail;
+import my.inplace.api.place.dto.PlaceResponse.Simple;
+import my.inplace.api.place.dto.ReviewResponse;
+import my.inplace.application.place.command.PlaceCommandService;
+import my.inplace.application.place.command.dto.PlaceCommand;
+import my.inplace.application.place.query.PlaceQueryFacade;
+import my.inplace.application.place.query.dto.PlaceResult;
+import my.inplace.application.review.ReviewService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -22,21 +37,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import my.inplace.application.place.command.PlaceCommandService;
-import my.inplace.application.place.command.dto.PlaceCommand;
-import my.inplace.api.place.dto.PlaceRequest;
-import my.inplace.api.place.dto.PlaceRequest.Upsert;
-import my.inplace.api.place.dto.PlaceResponse;
-import my.inplace.api.place.dto.PlaceResponse.Admin;
-import my.inplace.api.place.dto.PlaceResponse.AdminCategory;
-import my.inplace.api.place.dto.PlaceResponse.Categories;
-import my.inplace.api.place.dto.PlaceResponse.Marker;
-import my.inplace.api.place.dto.PlaceResponse.MarkerDetail;
-import my.inplace.api.place.dto.PlaceResponse.Simple;
-import my.inplace.api.place.dto.ReviewResponse;
-import my.inplace.application.place.query.PlaceQueryFacade;
-import my.inplace.application.place.query.dto.PlaceResult;
-import my.inplace.application.review.ReviewService;
 
 @Slf4j
 @RestController
@@ -60,22 +60,24 @@ public class PlaceController implements PlaceControllerApiSpec {
 
     @Override
     @GetMapping
-    public ResponseEntity<Page<Simple>> getPlaces(
+    public ResponseEntity<PlaceResponse.SimpleList> getPlaces(
         @ModelAttribute @Validated PlaceRequest.Coordinate coordinateParams,
         @ModelAttribute PlaceRequest.Filter placeFilter,
-        @PageableDefault(page = 0, size = 10) Pageable pageable
+        @RequestParam(required = false) Long cursorValue,
+        @RequestParam(required = false) Long cursorId,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(defaultValue = "createdAt") String sort
     ) {
         var placeSimpleInfos = placeQueryFacade.getPlacesInMapRange(
             coordinateParams.toParam(),
             placeFilter.toParam(),
-            pageable
+            size,
+            sort,
+            cursorValue,
+            cursorId
         );
-
-        var responses = PlaceResponse.Simple.from(placeSimpleInfos.getContent());
-        return new ResponseEntity<>(
-            new PageImpl<>(responses, pageable, placeSimpleInfos.getTotalElements()),
-            HttpStatus.OK
-        );
+        var response = PlaceResponse.SimpleList.from(placeSimpleInfos);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Override
