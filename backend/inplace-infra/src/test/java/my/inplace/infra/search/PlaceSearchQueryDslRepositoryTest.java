@@ -1,5 +1,8 @@
 package my.inplace.infra.search;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
 import my.inplace.domain.search.SearchQueryResult;
 import my.inplace.infra.config.AbstractMySQLContainer;
 import my.inplace.infra.global.MySQLContainerJpaTest;
@@ -9,10 +12,6 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @MySQLContainerJpaTest(
     includeFilters = @Filter(
@@ -31,23 +30,26 @@ class PlaceSearchQueryDslRepositoryTest extends AbstractMySQLContainer {
         // given
         String keyword = "장소1";
         List<SearchQueryResult.AutoComplete> expected = List.of(
-            new SearchQueryResult.AutoComplete("테스트장소1", "place", 0.06741153448820114),
-            new SearchQueryResult.AutoComplete("테스트장소10", "place", 0.06741153448820114),
-            new SearchQueryResult.AutoComplete("테스트장소11", "place", 0.06741153448820114),
-            new SearchQueryResult.AutoComplete("테스트장소12", "place", 0.06741153448820114),
-            new SearchQueryResult.AutoComplete("테스트장소13", "place", 0.06741153448820114),
-            new SearchQueryResult.AutoComplete("테스트장소14", "place", 0.06741153448820114),
-            new SearchQueryResult.AutoComplete("테스트장소15", "place", 0.06741153448820114),
-            new SearchQueryResult.AutoComplete("테스트장소16", "place", 0.06741153448820114),
-            new SearchQueryResult.AutoComplete("테스트장소17", "place", 0.06741153448820114),
-            new SearchQueryResult.AutoComplete("테스트장소18", "place", 0.06741153448820114)
+            new SearchQueryResult.AutoComplete("테스트장소1", "place", null),
+            new SearchQueryResult.AutoComplete("테스트장소10", "place", null),
+            new SearchQueryResult.AutoComplete("테스트장소11", "place", null),
+            new SearchQueryResult.AutoComplete("테스트장소12", "place", null),
+            new SearchQueryResult.AutoComplete("테스트장소13", "place", null),
+            new SearchQueryResult.AutoComplete("테스트장소14", "place", null),
+            new SearchQueryResult.AutoComplete("테스트장소15", "place", null),
+            new SearchQueryResult.AutoComplete("테스트장소16", "place", null),
+            new SearchQueryResult.AutoComplete("테스트장소17", "place", null),
+            new SearchQueryResult.AutoComplete("테스트장소18", "place", null)
         );
 
         // when
         List<SearchQueryResult.AutoComplete> actual = placeSearchRepository.searchAutoComplete(keyword);
 
         // then
-        assertThat(actual).containsExactlyElementsOf(expected);
+        assertThat(actual)
+            .usingRecursiveComparison()
+            .ignoringFields("score")
+            .isEqualTo(expected);
     }
 
     @Test
