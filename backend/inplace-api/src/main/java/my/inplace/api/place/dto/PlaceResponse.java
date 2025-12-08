@@ -7,10 +7,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import my.inplace.application.place.query.dto.GooglePlaceResult;
 import my.inplace.application.place.query.dto.PlaceResult;
+import my.inplace.application.place.query.dto.PlaceResult.Region;
 import my.inplace.application.review.dto.ReviewResult;
 import my.inplace.application.video.query.dto.VideoResult;
 
@@ -428,4 +430,59 @@ public class PlaceResponse {
         }
     }
 
+    public record Regions(
+        List<Region> regions
+    ) {
+
+        public static Regions from(List<PlaceResult.Region> regions) {
+            Map<String, List<PlaceResult.Region>> regionsGroupByCity = regions.stream()
+                .collect(Collectors.groupingBy(PlaceResult.Region::city));
+
+            ArrayList<Region> cities = new ArrayList<>();
+            regionsGroupByCity.forEach((city, regionsInCity) -> {
+                Region cityRegion = Region.fromCity(city);
+                var regionsGroupByNonNullMiddleCityInCity = regionsInCity.stream()
+                    .filter(r -> Objects.nonNull(r.middleCity()))
+                    .collect(Collectors.groupingBy(PlaceResult.Region::middleCity));
+
+                regionsGroupByNonNullMiddleCityInCity.forEach(
+                    (middleCity, middleCitySubRegions) ->
+                        cityRegion.subRegions.add(new Region(
+                            null,
+                            middleCity,
+                            middleCitySubRegions.stream().map(Region::fromRegionDistrict).toList()
+                        ))
+                );
+
+                cityRegion.subRegions.addAll(
+                    regionsInCity.stream()
+                        .filter(r -> Objects.isNull(r.middleCity()))
+                        .map(Region::fromRegionDistrict).toList()
+                );
+
+                cities.add(cityRegion);
+            });
+
+            return new Regions(cities);
+        }
+    }
+
+    public record Region(
+        Long id,
+        String name,
+        List<Region> subRegions
+    ) {
+
+        public static Region fromCity(String city) {
+            return new Region(null, city, new ArrayList<>());
+        }
+
+        public static Region fromRegionDistrict(PlaceResult.Region r) {
+            if (Objects.nonNull(r.district())) {
+                return new Region(r.id(), r.district(), null);
+            }
+            return new Region(r.id(), "전체", null);
+        }
+
+    }
 }

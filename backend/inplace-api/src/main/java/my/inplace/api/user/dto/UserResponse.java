@@ -2,6 +2,7 @@ package my.inplace.api.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import my.inplace.application.influencer.query.dto.InfluencerResult;
+
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

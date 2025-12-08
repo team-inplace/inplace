@@ -13,15 +13,8 @@ public class PlaceQueryParam {
 
     }
 
-    public record Region(
-        String city,
-        String district
-    ) {
-
-    }
-
     public record Filter(
-        List<Region> regions,
+        List<Long> regions,
         List<Long> categories,
         List<String> influencers
     ) {

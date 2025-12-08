@@ -71,6 +71,60 @@ const dummyAlarm = [
     type: 'REPORT',
     createdAt: '1년 전',
   },
+  {
+    alarmId: 8,
+    postId: 107,
+    commentId: null,
+    content: '"나는할말이엄청많은데말이..." 게시글에 작성한 댓글이 신고로 인하여 삭제되었습니다.',
+    checked: true,
+    type: 'REPORT',
+    createdAt: '1년 전',
+  },
+  {
+    alarmId: 9,
+    postId: 107,
+    commentId: null,
+    content: '"하이루" 게시물에서 나는 김밥천국 알림입니다.',
+    checked: true,
+    type: 'REPORT',
+    createdAt: '1년 전',
+  },
+  {
+    alarmId: 10,
+    postId: 107,
+    commentId: null,
+    content: '"하이루" 게시물에서 나는 김밥천국 알림입니다.',
+    checked: true,
+    type: 'REPORT',
+    createdAt: '1년 전',
+  },
+  {
+    alarmId: 11,
+    postId: 107,
+    commentId: null,
+    content: '"하이루" 게시물에서 나는 김밥천국 알림입니다.',
+    checked: true,
+    type: 'REPORT',
+    createdAt: '1년 전',
+  },
+  {
+    alarmId: 12,
+    postId: 107,
+    commentId: null,
+    content: '"하이루" 게시물에서 나는 김밥천국 알림입니다.',
+    checked: true,
+    type: 'REPORT',
+    createdAt: '1년 전',
+  },
+  {
+    alarmId: 13,
+    postId: 107,
+    commentId: null,
+    content: '"하이루" 게시물에서 나는 김밥천국 알림입니다.',
+    checked: true,
+    type: 'REPORT',
+    createdAt: '1년 전',
+  },
 ];
 
 export const alarmHandlers = [
@@ -78,6 +132,15 @@ export const alarmHandlers = [
     return res(ctx.status(200), ctx.json(dummyAlarm));
   }),
   rest.post(`${BASE_URL}/alarms/:alarmId`, (req, res, ctx) => {
+    const { alarmId } = req.params;
+    return res(
+      ctx.status(200),
+      ctx.json({
+        alarmId,
+      }),
+    );
+  }),
+  rest.delete(`${BASE_URL}/alarms/:alarmId`, (req, res, ctx) => {
     const { alarmId } = req.params;
     return res(
       ctx.status(200),

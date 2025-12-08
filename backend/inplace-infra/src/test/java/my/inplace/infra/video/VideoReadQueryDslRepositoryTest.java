@@ -3,6 +3,7 @@ package my.inplace.infra.video;
 import my.inplace.domain.video.query.VideoQueryParam;
 import my.inplace.domain.video.query.VideoQueryParam.SquareBound;
 import my.inplace.domain.video.query.VideoQueryResult;
+import my.inplace.domain.video.query.VideoQueryResult.DetailedVideo;
 import my.inplace.domain.video.query.VideoQueryResult.SimpleVideo;
 import my.inplace.infra.config.AbstractMySQLContainer;
 import my.inplace.infra.global.MySQLContainerJpaTest;
@@ -37,10 +38,10 @@ class VideoReadQueryDslRepositoryTest extends AbstractMySQLContainer {
         Pageable pageable = Pageable.ofSize(5);
         List<VideoQueryResult.DetailedVideo> expected = List.of(
             new VideoQueryResult.DetailedVideo(28L, "Video28", "searchInfluencer", 6L, "testPlace6", "eats", 1L, "add1", "add2", "add3"),
-            new VideoQueryResult.DetailedVideo(9L, "Video9", "influencer3", 9L, "testPlace9", "eats", 1L, "add1", "add2", "add3"),
             new VideoQueryResult.DetailedVideo(8L, "Video8", "influencer2", 8L, "testPlace8", "eats", 1L, "add1", "add2", "add3"),
             new VideoQueryResult.DetailedVideo(7L, "Video7", "influencer2", 7L, "testPlace7", "eats", 1L, "add1", "add2", "add3"),
-            new VideoQueryResult.DetailedVideo(6L, "Video6", "influencer2", 6L, "testPlace6", "eats", 1L, "add1", "add2", "add3")
+            new VideoQueryResult.DetailedVideo(6L, "Video6", "influencer2", 6L, "testPlace6", "eats", 1L, "add1", "add2", "add3"),
+            new VideoQueryResult.DetailedVideo(5L, "Video5", "influencer2", 5L, "testPlace5", "eats", 1L, "add1", "add2", "add3")
         );
 
         // when

@@ -268,6 +268,7 @@ export type CursorData<T> = {
   posts: T[];
   cursor: {
     hasNext: boolean;
+    nextCursorValue: number;
     nextCursorId: number;
   };
 };
@@ -376,4 +377,9 @@ export type AlarmData = {
 export type RequestReport = {
   id: number;
   reason: string;
+};
+
+export type AlarmTokenData = {
+  fcmToken: string | null;
+  expoToken: string | null;
 };

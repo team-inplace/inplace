@@ -5,8 +5,11 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -39,20 +42,40 @@ public class PostReadQueryDslRepository implements PostReadRepository {
         int size,
         String orderBy
     ) {
-        var cursorPosts = buildCursorDetailedPostsQuery(userId, orderBy)
-            .where(cursorId == null ? null : getCursorWhere(cursorValue, cursorId, orderBy))
+        var orderedPostIds = queryFactory.select(QPost.post.id)
+            .from(QPost.post)
+            .where(
+                QPost.post.deleteAt.isNull(),
+                cursorId == null ? null : getCursorWhere(cursorValue, cursorId, orderBy)
+            )
             .orderBy(getOrderSpecifier(orderBy))
             .limit(size + 1)
             .fetch();
 
-        boolean hasNext = cursorPosts.size() > size;
-        var posts = cursorPosts.stream().map(CursorDetailedPost::detailedPost).toList();
+        if (orderedPostIds.isEmpty()) {
+            return new CursorResult<>(
+                Collections.emptyList(),
+                false,
+                null,
+                null
+            );
+        }
+
+        var cursorPosts = buildCursorDetailedPostsQuery(userId, orderBy, orderedPostIds)
+            .fetch();
+
+        var sortedPosts = cursorPosts.stream()
+            .sorted(Comparator.comparingInt(p -> orderedPostIds.indexOf(p.detailedPost().postId())))
+            .toList();
+
+        boolean hasNext = sortedPosts.size() > size;
+        var posts = sortedPosts.stream().map(CursorDetailedPost::detailedPost).toList();
 
         return new CursorResult<>(
             posts.subList(0, Math.min(size, posts.size())),
             hasNext,
-            hasNext ? cursorPosts.get(size - 1).cursorValue() : null,
-            hasNext ? cursorPosts.get(size - 1).cursorId() : null
+            hasNext ? sortedPosts.get(size - 1).cursorValue() : null,
+            hasNext ? sortedPosts.get(size - 1).cursorId() : null
         );
     }
 
@@ -63,7 +86,8 @@ public class PostReadQueryDslRepository implements PostReadRepository {
 
     private JPAQuery<CursorDetailedPost> buildCursorDetailedPostsQuery(
         Long userId,
-        String orderBy
+        String orderBy,
+        List<Long> orderedPostIds
     ) {
         var query = queryFactory
             .select(Projections.constructor(PostQueryResult.CursorDetailedPost.class,
@@ -92,7 +116,7 @@ public class PostReadQueryDslRepository implements PostReadRepository {
             .innerJoin(QUser.user).on(QPost.post.authorId.eq(QUser.user.id))
             .innerJoin(QTier.tier).on(QUser.user.tierId.eq(QTier.tier.id))
             .leftJoin(QBadge.badge).on(QUser.user.mainBadgeId.eq(QBadge.badge.id))
-            .where(QPost.post.deleteAt.isNull());
+            .where(QPost.post.id.in(orderedPostIds));
 
         if (userId != null) {
             query.leftJoin(QLikedPost.likedPost)
@@ -101,6 +125,31 @@ public class PostReadQueryDslRepository implements PostReadRepository {
         }
 
         return query;
+    }
+
+    private OrderSpecifier<?>[] getOrderSpecifier(String orderBy) {
+        return switch (orderBy) {
+            case "popularity" -> new OrderSpecifier<?>[]{
+                QPost.post.totalLikeCount.desc(),
+                QPost.post.id.desc()
+            };
+            default -> new OrderSpecifier<?>[]{ QPost.post.id.desc() };
+        };
+    }
+
+    private NumberExpression<Long> getCursorPath(String orderBy) {
+        return switch (orderBy) {
+            case "popularity" -> QPost.post.totalLikeCount.longValue();
+            default -> QPost.post.id;
+        };
+    }
+
+    private BooleanExpression getCursorWhere(Long cursorValue, Long cursorId, String orderBy) {
+        return switch (orderBy) {
+            case "popularity" -> QPost.post.totalLikeCount.longValue().lt(cursorValue)
+                .or(QPost.post.totalLikeCount.longValue().eq(cursorValue).and(QPost.post.id.lt(cursorId)));
+            default -> QPost.post.id.lt(cursorId);
+        };
     }
 
     private JPAQuery<DetailedPost> buildDetailedPostsQuery(Long postId, Long userId) {
@@ -141,32 +190,6 @@ public class PostReadQueryDslRepository implements PostReadRepository {
         return query;
     }
 
-
-    private OrderSpecifier<?>[] getOrderSpecifier(String orderBy) {
-        return switch (orderBy) {
-            case "popularity" -> new OrderSpecifier<?>[]{
-                QPost.post.totalLikeCount.desc(),
-                QPost.post.id.desc()
-            };
-            default -> new OrderSpecifier<?>[]{ QPost.post.id.desc() };
-        };
-    }
-
-    private NumberExpression<Long> getCursorPath(String orderBy) {
-        return switch (orderBy) {
-            case "popularity" -> QPost.post.totalLikeCount.longValue();
-            default -> QPost.post.id;
-        };
-    }
-
-    private BooleanExpression getCursorWhere(Long cursorValue, Long cursorId, String orderBy) {
-        return switch (orderBy) {
-            case "popularity" -> QPost.post.totalLikeCount.longValue().lt(cursorValue)
-                .or(QPost.post.totalLikeCount.longValue().eq(cursorValue).and(QPost.post.id.lt(cursorId)));
-            default -> QPost.post.id.lt(cursorId);
-        };
-    }
-
     @Override
     public List<UserSuggestion> findCommentUserSuggestions(
         Long postId, String keyword
@@ -192,14 +215,18 @@ public class PostReadQueryDslRepository implements PostReadRepository {
                 QUser.user.id,
                 QUser.user.nickname,
                 QUser.user.profileImageUrl
-            )).distinct()
-            .from(QComment.comment)
-            .innerJoin(QUser.user).on(QComment.comment.authorId.eq(QUser.user.id))
+            ))
+            .from(QUser.user)
             .where(
-                QComment.comment.postId.eq(postId),
                 keyword == null || keyword.isEmpty()
                     ? null
-                    : QUser.user.nickname.containsIgnoreCase(keyword)
+                    : QUser.user.nickname.containsIgnoreCase(keyword),
+                JPAExpressions
+                    .selectOne()
+                    .from(QComment.comment)
+                    .where(QComment.comment.postId.eq(postId)
+                        .and(QComment.comment.authorId.eq(QUser.user.id)))
+                    .exists()
             )
             .fetch();
 
