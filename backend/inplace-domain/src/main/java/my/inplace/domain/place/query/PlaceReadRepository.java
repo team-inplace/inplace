@@ -2,6 +2,8 @@ package my.inplace.domain.place.query;
 
 import java.util.List;
 import java.util.Optional;
+import my.inplace.common.cursor.CursorResult;
+import my.inplace.domain.place.query.PlaceQueryResult.DetailedPlace;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,11 +13,14 @@ public interface PlaceReadRepository {
 
     Optional<PlaceQueryResult.SimplePlace> findSimplePlaceById(Long placeId);
 
-    Page<PlaceQueryResult.DetailedPlace> findPlacesInMapRangeWithPaging(
+    CursorResult<DetailedPlace> findPlacesInMapRangeOrderBy(
         PlaceQueryParam.Coordinate coordinateParams,
         PlaceQueryParam.Filter filterParams,
-        Pageable pageable,
-        Long userId
+        Long userId,
+        int size,
+        String orderBy,
+        Long cursorValue,
+        Long cursorId
     );
 
     List<PlaceQueryResult.Marker> findPlaceLocationsInMapRange(

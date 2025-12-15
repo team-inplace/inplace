@@ -23,27 +23,17 @@ public class PlaceParam {
     }
 
     public record Filter(
-        List<PlaceParam.Region> regions,
+        List<Long> regions,
         List<Long> categories,
         List<String> influencers
     ) {
 
         public PlaceQueryParam.Filter toQueryParam() {
             return new PlaceQueryParam.Filter(
-                regions.stream().map(PlaceParam.Region::toQueryParam).toList(),
+                regions,
                 categories,
                 influencers
             );
-        }
-    }
-
-    public record Region(
-        String city,
-        String district
-    ) {
-
-        public PlaceQueryParam.Region toQueryParam() {
-            return new PlaceQueryParam.Region(city, district);
         }
     }
 }

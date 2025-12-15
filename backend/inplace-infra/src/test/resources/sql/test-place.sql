@@ -1,4 +1,5 @@
 CREATE FULLTEXT INDEX full_text_idx_place_name ON places (name) with parser ngram;
+CREATE SPATIAL INDEX spatial_idx_place_location ON places (location);
 
 INSERT INTO categories(id, name, eng_name, parent_id)
 VALUES (1, '맛집', 'eats', null),
@@ -7,27 +8,38 @@ VALUES (1, '맛집', 'eats', null),
        (4, '일식', 'japanese',1),
        (5, '한식', 'korean', 1);
 
-INSERT INTO places (id, name, latitude, longitude, address1, address2, address3, google_place_id, kakao_place_id, category_id)
-VALUES (1, '테스트장소1', 36.0, 126.0, '주소1-1', '주소2-1', '주소3', 'googlePlaceId1', 1, 2),
-       (2, '테스트장소2', 36.1, 126.1, '주소1-1', '주소2-1', '주소3', 'googlePlaceId2', 2, 2),
-       (3, '테스트장소3', 36.2, 126.2, '주소1-1', '주소2-1', '주소3', 'googlePlaceId3', 3, 3),
-       (4, '테스트장소4', 36.3, 126.3, '주소1-1', '주소2-1', '주소3', 'googlePlaceId4', 4, 4),
-       (5, '테스트장소5', 36.4, 126.4, '주소1-1', '주소2-1', '주소3', 'googlePlaceId5', 5, 5),
-       (6, '테스트장소6', 36.5, 126.5, '주소1-1', '주소2-2', '주소3', 'googlePlaceId6', 6, 2),
-       (7, '테스트장소7', 36.6, 126.6, '주소1-2', '주소2-2', '주소3', 'googlePlaceId7', 7, 2),
-       (8, '테스트장소8', 36.7, 126.7, '주소1-2', '주소2-2', '주소3', 'googlePlaceId8', 8, 3),
-       (9, '테스트장소9', 36.8, 126.8, '주소1-2', '주소2-3', '주소3', 'googlePlaceId9', 9, 4),
-       (10, '테스트장소10', 36.9, 126.9, '주소1-2', '주소2-3', '주소3', 'googlePlaceId10', 10, 5),
-       (11, '테스트장소11', 37.0, 127.0, '주소1', '주소2', '주소3', 'googlePlaceId11', 11, 2),
-       (12, '테스트장소12', 37.1, 127.1, '주소1', '주소2', '주소3', 'googlePlaceId12', 12, 2),
-       (13, '테스트장소13', 37.2, 127.2, '주소1', '주소2', '주소3', 'googlePlaceId13', 13, 3),
-       (14, '테스트장소14', 37.3, 127.3, '주소1', '주소2', '주소3', 'googlePlaceId14', 14, 4),
-       (15, '테스트장소15', 37.4, 127.4, '주소1', '주소2', '주소3', 'googlePlaceId15', 15, 5),
-       (16, '테스트장소16', 37.5, 127.5, '주소1', '주소2', '주소3', 'googlePlaceId16', 16, 2),
-       (17, '테스트장소17', 37.6, 127.6, '주소1', '주소2', '주소3', 'googlePlaceId17', 17, 2),
-       (18, '테스트장소18', 37.7, 127.7, '주소1', '주소2', '주소3', 'googlePlaceId18', 18, 3),
-       (19, '테스트장소19', 37.8, 127.8, '주소1', '주소2', '주소3', 'googlePlaceId19', 19, 4),
-       (20, '테스트장소20', 37.9, 127.9, '주소1', '주소2', '주소3', 'googlePlaceId20', 20, 5);
+INSERT INTO regions (id, city, middle_city, district, area)
+VALUES
+    (1, 'city1', 'middle_city1', 'district1',
+     ST_PolygonFromText('POLYGON((35.9 125.9, 36.0 126.49, 36.49 126.49, 36.49 126.0, 35.9 125.9))', 4326)),
+    (2, 'city2', 'middle_city2', 'district2',
+     ST_PolygonFromText('POLYGON((36.5 126.5, 36.5 126.99, 36.99 126.99, 36.99 126.5, 36.5 126.5))', 4326)),
+    (3, 'city3', 'middle_city3', 'district3',
+     ST_PolygonFromText('POLYGON((37.0 127.0, 37.0 127.49, 37.49 127.49, 37.49 127.0, 37.0 127.0))', 4326)),
+    (4, 'city4', 'middle_city4', 'district4',
+     ST_PolygonFromText('POLYGON((37.5 127.5, 37.5 127.99, 37.99 127.99, 37.99 127.5, 37.5 127.5))', 4326));
+
+INSERT INTO places (id, name, address1, address2, address3, google_place_id, kakao_place_id, category_id, location)
+VALUES (1, '테스트장소1', '주소1-1', '주소2-1', '주소3', 'googlePlaceId1', 1, 2, ST_PointFromText('POINT(36.0 126.0)', 4326)),
+       (2, '테스트장소2', '주소1-1', '주소2-1', '주소3', 'googlePlaceId2', 2, 2, ST_PointFromText('POINT(36.1 126.1)', 4326)),
+       (3, '테스트장소3', '주소1-1', '주소2-1', '주소3', 'googlePlaceId3', 3, 3, ST_PointFromText('POINT(36.2 126.2)', 4326)),
+       (4, '테스트장소4', '주소1-1', '주소2-1', '주소3', 'googlePlaceId4', 4, 4, ST_PointFromText('POINT(36.3 126.3)', 4326)),
+       (5, '테스트장소5', '주소1-1', '주소2-1', '주소3', 'googlePlaceId5', 5, 5, ST_PointFromText('POINT(36.4 126.4)', 4326)),
+       (6, '테스트장소6', '주소1-1', '주소2-2', '주소3', 'googlePlaceId6', 6, 2, ST_PointFromText('POINT(36.5 126.5)', 4326)),
+       (7, '테스트장소7', '주소1-2', '주소2-2', '주소3', 'googlePlaceId7', 7, 2, ST_PointFromText('POINT(36.6 126.6)', 4326)),
+       (8, '테스트장소8', '주소1-2', '주소2-2', '주소3', 'googlePlaceId8', 8, 3, ST_PointFromText('POINT(36.7 126.7)', 4326)),
+       (9, '테스트장소9', '주소1-2', '주소2-3', '주소3', 'googlePlaceId9', 9, 4, ST_PointFromText('POINT(36.8 126.8)', 4326)),
+       (10, '테스트장소10', '주소1-2', '주소2-3', '주소3', 'googlePlaceId10', 10, 5, ST_PointFromText('POINT(36.9 126.9)', 4326)),
+       (11, '테스트장소11', '주소1', '주소2', '주소3', 'googlePlaceId11', 11, 2, ST_PointFromText('POINT(37.0 127.0)', 4326)),
+       (12, '테스트장소12', '주소1', '주소2', '주소3', 'googlePlaceId12', 12, 2, ST_PointFromText('POINT(37.1 127.1)', 4326)),
+       (13, '테스트장소13', '주소1', '주소2', '주소3', 'googlePlaceId13', 13, 3, ST_PointFromText('POINT(37.2 127.2)', 4326)),
+       (14, '테스트장소14', '주소1', '주소2', '주소3', 'googlePlaceId14', 14, 4, ST_PointFromText('POINT(37.3 127.3)', 4326)),
+       (15, '테스트장소15', '주소1', '주소2', '주소3', 'googlePlaceId15', 15, 5, ST_PointFromText('POINT(37.4 127.4)', 4326)),
+       (16, '테스트장소16', '주소1', '주소2', '주소3', 'googlePlaceId16', 16, 2, ST_PointFromText('POINT(37.5 127.5)', 4326)),
+       (17, '테스트장소17', '주소1', '주소2', '주소3', 'googlePlaceId17', 17, 2, ST_PointFromText('POINT(37.6 127.6)', 4326)),
+       (18, '테스트장소18', '주소1', '주소2', '주소3', 'googlePlaceId18', 18, 3, ST_PointFromText('POINT(37.7 127.7)', 4326)),
+       (19, '테스트장소19', '주소1', '주소2', '주소3', 'googlePlaceId19', 19, 4, ST_PointFromText('POINT(37.8 127.8)', 4326)),
+       (20, '테스트장소20', '주소1', '주소2', '주소3', 'googlePlaceId20', 20, 5, ST_PointFromText('POINT(37.9 127.9)', 4326));
 
 INSERT INTO influencers (id, name, job, channel_id, img_url)
 VALUES (1, '인플루언서1', '직업1', 'channel1', 'img1'),

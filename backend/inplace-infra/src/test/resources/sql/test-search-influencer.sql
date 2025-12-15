@@ -13,11 +13,11 @@ VALUES (1, '맛집', 'eats', null),
        (4, '일식', 'japanese',1),
        (5, '한식', 'korean', 1);
 
-INSERT INTO places (id, name, latitude, longitude, address1, address2, address3, category_id)
-VALUES (1, '테스트장소1', 36.0, 126.0, '주소1', '주소2', '주소3', 1),
-       (2, '테스트장소2', 36.1, 126.1, '주소1', '주소2', '주소3', 2),
-       (3, '테스트장소3', 36.2, 126.2, '주소1', '주소2', '주소3', 3),
-       (4, '테스트장소4', 36.3, 126.3, '주소1', '주소2', '주소3', 4);
+INSERT INTO places (id, name, address1, address2, address3, category_id, location)
+VALUES (1, '테스트장소1', '주소1', '주소2', '주소3', 1, ST_PointFromText('POINT(36.0 126.0)', 4326)),
+       (2, '테스트장소2', '주소1', '주소2', '주소3', 2, ST_PointFromText('POINT(36.1 126.1)', 4326)),
+       (3, '테스트장소3', '주소1', '주소2', '주소3', 3, ST_PointFromText('POINT(36.2 126.2)', 4326)),
+       (4, '테스트장소4', '주소1', '주소2', '주소3', 4, ST_PointFromText('POINT(36.3 126.3)', 4326));
 
 INSERT INTO videos (id, influencer_id, place_id, uuid)
 VALUES (1, 1, null, 'UUID1'),

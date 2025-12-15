@@ -8,6 +8,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.spatial.locationtech.jts.JTSGeometryExpressions;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import my.inplace.domain.place.QCategory;
 import my.inplace.domain.place.QLikedPlace;
 import my.inplace.domain.place.QPlace;
 import my.inplace.domain.place.QPlaceVideo;
+import my.inplace.domain.util.SingletonGeometryFactory;
 import my.inplace.domain.video.QVideo;
 import my.inplace.domain.video.query.VideoQueryParam;
 import my.inplace.domain.video.query.VideoQueryResult;
@@ -36,7 +38,7 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class VideoReadQueryDslRepository implements VideoReadRepository {
 
-    private static final double RANGE = 0.03;
+    private static final int RANGE_IN_METERS = 3000;
     private final JPAQueryFactory queryFactory;
 
     @Override
@@ -314,8 +316,12 @@ public class VideoReadQueryDslRepository implements VideoReadRepository {
     }
 
     private BooleanExpression locationCondition(double longitude, double latitude) {
-        return QPlace.place.coordinate.longitude.between(longitude - RANGE, longitude + RANGE)
-            .and(QPlace.place.coordinate.latitude.between(latitude - RANGE, latitude + RANGE));
+        return Expressions.numberTemplate(
+            Double.class,
+            "ST_Distance_Sphere({0}, {1})",
+            QPlace.place.location,
+            Expressions.constant(SingletonGeometryFactory.newPoint(longitude, latitude))
+        ).loe(RANGE_IN_METERS);
     }
 
     private BooleanExpression commonWhere() {

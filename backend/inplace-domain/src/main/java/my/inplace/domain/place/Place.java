@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import my.inplace.domain.util.SingletonGeometryFactory;
+import org.locationtech.jts.geom.Point;
 
 @Getter
 @Entity(name = "places")
@@ -21,8 +23,8 @@ public class Place extends BaseEntity {
     @Embedded
     private Address address;
 
-    @Embedded
-    private Coordinate coordinate;
+    @Column(nullable = false, columnDefinition = "POINT SRID 4326")
+    private Point location;
 
     private String googlePlaceId;
     private Long kakaoPlaceId;
@@ -34,7 +36,7 @@ public class Place extends BaseEntity {
         this.name = name;
         this.categoryId = categoryId;
         this.address = Address.of(address);
-        this.coordinate = Coordinate.of(x, y);
+        this.location = SingletonGeometryFactory.newPoint(Double.parseDouble(x), Double.parseDouble(y));
         this.googlePlaceId = googlePlaceId;
         this.kakaoPlaceId = kakaoPlaceId;
     }
@@ -46,7 +48,7 @@ public class Place extends BaseEntity {
         this.name = name;
         this.categoryId = categoryId;
         this.address = Address.of(address);
-        this.coordinate = Coordinate.of(x, y);
+        this.location = SingletonGeometryFactory.newPoint(Double.parseDouble(x), Double.parseDouble(y));
         this.googlePlaceId = googlePlaceId;
         this.kakaoPlaceId = kakaoPlaceId;
     }

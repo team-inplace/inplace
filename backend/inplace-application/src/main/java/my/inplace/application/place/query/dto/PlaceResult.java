@@ -4,6 +4,7 @@ import java.util.List;
 import my.inplace.domain.place.client.GooglePlaceClientResponse;
 import my.inplace.domain.place.query.PlaceQueryResult;
 import my.inplace.application.review.dto.ReviewResult;
+import my.inplace.domain.region.Region;
 import my.inplace.domain.review.query.ReviewQueryResult;
 import my.inplace.domain.video.query.VideoQueryResult;
 import my.inplace.application.video.query.dto.VideoResult;
@@ -152,6 +153,22 @@ public class PlaceResult {
                 place.address1(),
                 place.address2(),
                 place.address3()
+            );
+        }
+    }
+    public record Region(
+        String city,
+        String middleCity,
+        String district,
+        Long id
+    ) {
+
+        public static Region from(my.inplace.domain.region.Region region) {
+            return new Region(
+                region.getCity(),
+                region.getMiddleCity(),
+                region.getDistrict(),
+                region.getId()
             );
         }
     }

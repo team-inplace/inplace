@@ -5,11 +5,16 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.spatial.locationtech.jts.JTSGeometryExpressions;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import my.inplace.common.cursor.CursorResult;
 import my.inplace.domain.influencer.QInfluencer;
 import my.inplace.domain.place.QCategory;
 import my.inplace.domain.place.QLikedPlace;
@@ -22,7 +27,10 @@ import my.inplace.domain.place.query.PlaceQueryResult.Marker;
 import my.inplace.domain.place.query.PlaceQueryResult.MarkerDetail;
 import my.inplace.domain.place.query.PlaceQueryResult.SimplePlace;
 import my.inplace.domain.place.query.PlaceReadRepository;
+import my.inplace.domain.region.QRegion;
+import my.inplace.domain.util.SingletonGeometryFactory;
 import my.inplace.domain.video.QVideo;
+import org.locationtech.jts.geom.Coordinate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
@@ -44,11 +52,14 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
     }
 
     @Override
-    public Page<DetailedPlace> findPlacesInMapRangeWithPaging(
+    public CursorResult<DetailedPlace> findPlacesInMapRangeOrderBy(
         PlaceQueryParam.Coordinate coordinateParams,
         PlaceQueryParam.Filter filterParams,
-        Pageable pageable,
-        Long userId
+        Long userId,
+        int size,
+        String orderBy,
+        Long cursorValue,
+        Long cursorId
     ) {
         var topLeftLongitude = coordinateParams.topLeftLongitude();
         var topLeftLatitude = coordinateParams.topLeftLatitude();
@@ -64,17 +75,32 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
         );
 
         if (placeIds.isEmpty()) {
-            return Page.empty(pageable);
+            return new CursorResult<>(
+                Collections.emptyList(),
+                false,
+                null,
+                null
+            );
         }
 
-        List<DetailedPlace> results = buildDetailedPlaceQuery(userId)
-            .where(QPlace.place.id.in(placeIds))
+        List<DetailedPlace> cursorPlaces = buildDetailedPlaceQuery(userId)
+            .where(
+                QPlace.place.id.in(placeIds),
+                cursorId != null ? QPlace.place.id.gt(cursorId) : null
+            )
             .groupBy(QPlace.place.id)
-            .offset(pageable.getOffset())
-            .limit(pageable.getPageSize())
+            .orderBy(QPlace.place.id.asc())
+            .limit(size + 1)
             .fetch();
 
-        return PageableExecutionUtils.getPage(results, pageable, () -> (long) placeIds.size());
+        boolean hasNext = cursorPlaces.size() > size;
+
+        return new CursorResult<>(
+            cursorPlaces.subList(0, Math.min(size, cursorPlaces.size())),
+            hasNext,
+            null,
+            hasNext ? cursorPlaces.get(size - 1).placeId() : null
+        );
     }
 
     @Override
@@ -209,8 +235,8 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
                 QPlace.place.address.address1,
                 QPlace.place.address.address2,
                 QPlace.place.address.address3,
-                QPlace.place.coordinate.longitude,
-                QPlace.place.coordinate.latitude,
+                Expressions.numberTemplate(Double.class, "ST_Y({0})", QPlace.place.location),
+                Expressions.numberTemplate(Double.class, "ST_X({0})", QPlace.place.location),
                 QCategory.category.name,
                 QPlace.place.googlePlaceId,
                 QPlace.place.kakaoPlaceId,
@@ -236,8 +262,8 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
                 QPlace.place.address.address1,
                 QPlace.place.address.address2,
                 QPlace.place.address.address3,
-                QPlace.place.coordinate.longitude,
-                QPlace.place.coordinate.latitude,
+                Expressions.numberTemplate(Double.class, "ST_Y({0})", QPlace.place.location),
+                Expressions.numberTemplate(Double.class, "ST_X({0})", QPlace.place.location),
                 QCategory.category.name,
                 QPlace.place.googlePlaceId,
                 QPlace.place.kakaoPlaceId,
@@ -260,8 +286,8 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
             .select(Projections.constructor(PlaceQueryResult.Marker.class,
                 QPlace.place.id,
                 parentCategory.engName,
-                QPlace.place.coordinate.longitude,
-                QPlace.place.coordinate.latitude
+                Expressions.numberTemplate(Double.class, "ST_Y({0})", QPlace.place.location),
+                Expressions.numberTemplate(Double.class, "ST_X({0})", QPlace.place.location)
             ))
             .from(QPlace.place)
             .leftJoin(category).on(QPlace.place.categoryId.eq(category.id))
@@ -274,9 +300,9 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
     private List<Long> getFilteredPlaceIds(
         Double topLeftLng, Double topLeftLat,
         Double bottomRightLng, Double bottomRightLat,
-        List<PlaceQueryParam.Region> regions, List<Long> categories, List<String> influencers
+        List<Long> regions, List<Long> categories, List<String> influencers
     ) {
-        return jpaQueryFactory
+        JPAQuery<Long> query = jpaQueryFactory
             .select(QPlace.place.id)
             .from(QPlace.place)
             .innerJoin(QCategory.category).on(QPlace.place.categoryId.eq(QCategory.category.id))
@@ -284,10 +310,18 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
             .on(QPlaceVideo.placeVideo.placeId.eq(QPlace.place.id))
             .innerJoin(QVideo.video).on(QPlaceVideo.placeVideo.videoId.eq(QVideo.video.id))
             .innerJoin(QInfluencer.influencer)
-            .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id))
+            .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id));
+        if (Objects.nonNull(regions) && !regions.isEmpty()) {
+            applyRegionJoin(query, regions);
+        }
+        else if (hasRectangleCoordinates(topLeftLng, topLeftLat, bottomRightLng, bottomRightLat)) {
+            query.where(
+                rectangleCondition(topLeftLng, topLeftLat, bottomRightLng, bottomRightLat)
+            );
+        }
+
+        return query
             .where(
-                buildLocationCondition(regions, topLeftLng, topLeftLat, bottomRightLng,
-                    bottomRightLat),
                 buildFilterCondition(categories, influencers),
                 commonWhere()
             )
@@ -297,11 +331,11 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
 
     private List<Long> getFilteredPlaceIdsByName(
         String name,
-        List<PlaceQueryParam.Region> regions,
+        List<Long> regions,
         List<Long> categories,
         List<String> influencers
     ) {
-        return jpaQueryFactory
+        JPAQuery<Long> query = jpaQueryFactory
             .select(QPlace.place.id)
             .from(QPlace.place)
             .innerJoin(QCategory.category).on(QPlace.place.categoryId.eq(QCategory.category.id))
@@ -309,9 +343,14 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
             .on(QPlaceVideo.placeVideo.placeId.eq(QPlace.place.id))
             .innerJoin(QVideo.video).on(QPlaceVideo.placeVideo.videoId.eq(QVideo.video.id))
             .innerJoin(QInfluencer.influencer)
-            .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id))
+            .on(QVideo.video.influencerId.eq(QInfluencer.influencer.id));
+
+        if (Objects.nonNull(regions) && !regions.isEmpty()) {
+            applyRegionJoin(query, regions);
+        }
+
+        return query
             .where(
-                buildLocationCondition(regions, null, null, null, null),
                 buildFilterCondition(categories, influencers),
                 getMatchScore(name).gt(0),
                 commonWhere()
@@ -343,31 +382,45 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
         return builder;
     }
 
-    private BooleanBuilder buildLocationCondition(
-        List<PlaceQueryParam.Region> regions,
-        Double topLeftLng, Double topLeftLat,
-        Double bottomRightLng, Double bottomRightLat
-    ) {
-        BooleanBuilder builder = new BooleanBuilder();
-        if (regions != null && !regions.isEmpty()) {
-            for (PlaceQueryParam.Region region : regions) {
-                BooleanExpression city = QPlace.place.address.address1.eq(region.city());
-                BooleanExpression district = region.district() == null
-                    ? Expressions.TRUE
-                    : QPlace.place.address.address2.eq(region.district());
-                builder.or(city.and(district));
-            }
-        } else if (topLeftLng != null && bottomRightLng != null &&
-            topLeftLat != null && bottomRightLat != null) {
-            builder.and(QPlace.place.coordinate.longitude.between(topLeftLng, bottomRightLng))
-                .and(QPlace.place.coordinate.latitude.between(bottomRightLat, topLeftLat));
-        }
-        return builder;
+    private Coordinate[] getRectangleCoordinatesByTopLeftAndBottomRight(Double topLeftLng, Double topLeftLat,
+        Double bottomRightLng, Double bottomRightLat) {
+        Coordinate[] coordinates = new Coordinate[5];
+        coordinates[0] = new Coordinate(topLeftLng, topLeftLat);
+        coordinates[1] = new Coordinate(topLeftLng, bottomRightLat);
+        coordinates[2] = new Coordinate(bottomRightLng, bottomRightLat);
+        coordinates[3] = new Coordinate(bottomRightLng, topLeftLat);
+        coordinates[4] = new Coordinate(topLeftLng, topLeftLat);
+        return coordinates;
     }
 
     private NumberTemplate<Double> getMatchScore(String keyword) {
         return Expressions.numberTemplate(Double.class,
             "function('match_against', {0}, {1})",
             QPlace.place.name, keyword);
+    }
+
+    private BooleanExpression rectangleCondition(Double topLeftLng, Double topLeftLat, Double bottomRightLng, Double bottomRightLat) {
+        return JTSGeometryExpressions.asJTSGeometry(
+                SingletonGeometryFactory.newPolygon(
+                    getRectangleCoordinatesByTopLeftAndBottomRight(topLeftLng, topLeftLat, bottomRightLng, bottomRightLat)
+                )
+            )
+            .contains(QPlace.place.location);
+    }
+
+    private void applyRegionJoin(JPAQuery<Long> query, List<Long> regions) {
+        query.innerJoin(QRegion.region).on(QRegion.region.area.contains(QPlace.place.location))
+            .where(QRegion.region.id.in(regions));
+    }
+
+    // ====================== 유틸 함수 =========================
+    private boolean hasRectangleCoordinates(Double topLeftLng,
+        Double topLeftLat,
+        Double bottomRightLng,
+        Double bottomRightLat) {
+        return topLeftLng != null &&
+            topLeftLat != null &&
+            bottomRightLng != null &&
+            bottomRightLat != null;
     }
 }
