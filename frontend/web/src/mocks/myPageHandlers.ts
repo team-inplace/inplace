@@ -13,85 +13,112 @@ import { getAllBadgePath } from '@/api/hooks/useGetAllBadge';
 const config = getConfig();
 const BASE_URL = config.baseURL;
 
-const mockInfluencers = [
-  {
-    influencerId: 1,
-    influencerName: '성시경',
-    influencerImgUrl: 'https://via.placeholder.com/100',
-    influencerJob: '모델',
-    likes: true,
+const mockInfluencers = {
+  totalPages: 0,
+  totalElements: 0,
+  size: 0,
+  content: [
+    {
+      influencerId: 1,
+      influencerName: '성시경',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '모델',
+      likes: true,
+    },
+    {
+      influencerId: 2,
+      influencerName: '풍자',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '배우',
+      likes: false,
+    },
+    {
+      influencerId: 3,
+      influencerName: '아이유',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '가수',
+      likes: false,
+    },
+    {
+      influencerId: 4,
+      influencerName: '이영자',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '방송인',
+      likes: false,
+    },
+    {
+      influencerId: 5,
+      influencerName: '정해인',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '배우',
+      likes: false,
+    },
+    {
+      influencerId: 6,
+      influencerName: '황정민',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '배우',
+      likes: false,
+    },
+    {
+      influencerId: 7,
+      influencerName: '히밥',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '유튜버',
+      likes: false,
+    },
+    {
+      influencerId: 8,
+      influencerName: '백종원',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '유튜버',
+      likes: true,
+    },
+    {
+      influencerId: 9,
+      influencerName: '안성재',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '셰프',
+      likes: false,
+    },
+    {
+      influencerId: 10,
+      influencerName: '임영웅',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '배우',
+      likes: false,
+    },
+    {
+      influencerId: 11,
+      influencerName: '짱구 대디',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '패션 유튜버',
+      likes: false,
+    },
+  ],
+  number: 0,
+  sort: {
+    empty: true,
+    sorted: true,
+    unsorted: true,
   },
-  {
-    influencerId: 2,
-    influencerName: '풍자',
-    influencerImgUrl: 'https://via.placeholder.com/100',
-    influencerJob: '배우',
-    likes: false,
+  numberOfElements: 0,
+  pageable: {
+    offset: 0,
+    sort: {
+      empty: true,
+      sorted: true,
+      unsorted: true,
+    },
+    paged: true,
+    pageNumber: 0,
+    pageSize: 0,
+    unpaged: false,
   },
-  {
-    influencerId: 3,
-    influencerName: '아이유',
-    influencerImgUrl: 'https://via.placeholder.com/100',
-    influencerJob: '가수',
-    likes: false,
-  },
-  {
-    influencerId: 4,
-    influencerName: '이영자',
-    influencerImgUrl: 'https://via.placeholder.com/100',
-    influencerJob: '방송인',
-    likes: false,
-  },
-  {
-    influencerId: 5,
-    influencerName: '정해인',
-    influencerImgUrl: 'https://via.placeholder.com/100',
-    influencerJob: '배우',
-    likes: false,
-  },
-  {
-    influencerId: 6,
-    influencerName: '황정민',
-    influencerImgUrl: 'https://via.placeholder.com/100',
-    influencerJob: '배우',
-    likes: false,
-  },
-  {
-    influencerId: 7,
-    influencerName: '히밥',
-    influencerImgUrl: 'https://via.placeholder.com/100',
-    influencerJob: '유튜버',
-    likes: false,
-  },
-  {
-    influencerId: 8,
-    influencerName: '백종원',
-    influencerImgUrl: 'https://via.placeholder.com/100',
-    influencerJob: '유튜버',
-    likes: true,
-  },
-  {
-    influencerId: 9,
-    influencerName: '안성재',
-    influencerImgUrl: 'https://via.placeholder.com/100',
-    influencerJob: '셰프',
-    likes: false,
-  },
-  {
-    influencerId: 10,
-    influencerName: '임영웅',
-    influencerImgUrl: 'https://via.placeholder.com/100',
-    influencerJob: '배우',
-    likes: false,
-  },
-  {
-    influencerId: 11,
-    influencerName: '짱구 대디',
-    influencerImgUrl: 'https://via.placeholder.com/100',
-    influencerJob: '패션 유튜버',
-    likes: false,
-  },
-];
+  first: true,
+  last: true,
+  empty: true,
+};
 
 const mockReviews = [
   {
@@ -272,143 +299,177 @@ const mockReviews = [
   },
 ];
 
-const mockPlaces = [
-  {
-    placeId: 1,
-    placeName: '료코존나길면어떻게될까용가리',
-    imageUrl: null,
-    videoUrl: 'https://www.youtube.com/watch?v=LrVqJn008-I',
-    likes: true,
-    influencerName: '성시경',
-    address: {
-      address1: '대구광역시',
-      address2: '북구',
-      address3: '대현로',
+const mockPlaces = {
+  totalPages: 0,
+  totalElements: 0,
+  size: 0,
+  content: [
+    {
+      placeId: 1,
+      placeName: '료코존나길면어떻게될까용가리',
+      imageUrl: null,
+      videoUrl: 'https://www.youtube.com/watch?v=LrVqJn008-I',
+      likes: false,
+      influencerName: '성시경',
+      address: {
+        address1: '대구광역시',
+        address2: '북구',
+        address3: '대현로',
+      },
     },
-  },
-  {
-    placeId: 2,
-    placeName: '이선장네',
-    likes: true,
-    imageUrl: null,
-    videoUrl: '',
-    influencerName: '임영웅',
-    address: {
-      address1: '대구광역시',
-      address2: '북구',
-      address3: '대현로주소가길면어떻게되나요',
+    {
+      placeId: 2,
+      placeName: '이선장네',
+      likes: false,
+      imageUrl: null,
+      videoUrl: '',
+      influencerName: '임영웅',
+      address: {
+        address1: '대구광역시',
+        address2: '북구',
+        address3: '대현로주소가길면어떻게되나요',
+      },
     },
-  },
-  {
-    placeId: 3,
-    placeName: '풍자또가',
-    imageUrl: null,
-    videoUrl: '',
-    likes: true,
-    influencerName: '풍자',
-    address: {
-      address1: '대구광역시',
-      address2: '북구',
-      address3: '대현로',
+    {
+      placeId: 3,
+      placeName: '풍자또가',
+      imageUrl: null,
+      videoUrl: '',
+      likes: true,
+      influencerName: '풍자',
+      address: {
+        address1: '대구광역시',
+        address2: '북구',
+        address3: '대현로',
+      },
     },
-  },
-  {
-    placeId: 4,
-    placeName: '풍자또가',
-    imageUrl: null,
-    videoUrl: '',
-    influencerName: '풍자',
-    address: {
-      address1: '대구광역시',
-      address2: '북구',
-      address3: '대현로',
+    {
+      placeId: 4,
+      placeName: '풍자또가',
+      imageUrl: null,
+      videoUrl: '',
+      likes: false,
+      influencerName: '풍자',
+      address: {
+        address1: '대구광역시',
+        address2: '북구',
+        address3: '대현로',
+      },
     },
-  },
-  {
-    placeId: 5,
-    placeName: '풍자또가',
-    imageUrl: null,
-    videoUrl: '',
-    influencerName: '풍자',
-    address: {
-      address1: '대구광역시',
-      address2: '북구',
-      address3: '대현로',
+    {
+      placeId: 5,
+      placeName: '풍자또가',
+      imageUrl: null,
+      likes: true,
+      videoUrl: '',
+      influencerName: '풍자',
+      address: {
+        address1: '대구광역시',
+        address2: '북구',
+        address3: '대현로',
+      },
     },
-  },
-  {
-    placeId: 6,
-    placeName: '풍자또가',
-    imageUrl: null,
-    videoUrl: '',
-    influencerName: '풍자',
-    address: {
-      address1: '대구광역시',
-      address2: '북구',
-      address3: '대현로',
+    {
+      placeId: 6,
+      placeName: '풍자또가',
+      imageUrl: null,
+      likes: true,
+      videoUrl: '',
+      influencerName: '풍자',
+      address: {
+        address1: '대구광역시',
+        address2: '북구',
+        address3: '대현로',
+      },
     },
-  },
-  {
-    placeId: 7,
-    placeName: '풍자또가',
-    imageUrl: null,
-    videoUrl: '',
-    influencerName: '풍자',
-    address: {
-      address1: '대구광역시',
-      address2: '북구',
-      address3: '대현로',
+    {
+      placeId: 7,
+      placeName: '풍자또가',
+      imageUrl: null,
+      likes: true,
+      videoUrl: '',
+      influencerName: '풍자',
+      address: {
+        address1: '대구광역시',
+        address2: '북구',
+        address3: '대현로',
+      },
     },
-  },
-  {
-    placeId: 8,
-    placeName: '풍자또가',
-    imageUrl: null,
-    videoUrl: '',
-    influencerName: '풍자',
-    address: {
-      address1: '대구광역시',
-      address2: '북구',
-      address3: '대현로',
+    {
+      placeId: 8,
+      placeName: '풍자또가',
+      imageUrl: null,
+      likes: true,
+      videoUrl: '',
+      influencerName: '풍자',
+      address: {
+        address1: '대구광역시',
+        address2: '북구',
+        address3: '대현로',
+      },
     },
-  },
-  {
-    placeId: 9,
-    placeName: '풍자또가',
-    imageUrl: null,
-    videoUrl: '',
-    influencerName: '풍자',
-    address: {
-      address1: '대구광역시',
-      address2: '북구',
-      address3: '대현로',
+    {
+      placeId: 9,
+      placeName: '풍자또가',
+      imageUrl: null,
+      likes: true,
+      videoUrl: '',
+      influencerName: '풍자',
+      address: {
+        address1: '대구광역시',
+        address2: '북구',
+        address3: '대현로',
+      },
     },
-  },
-  {
-    placeId: 10,
-    placeName: '풍자또가',
-    imageUrl: null,
-    videoUrl: '',
-    influencerName: '풍자',
-    address: {
-      address1: '대구광역시',
-      address2: '북구',
-      address3: '대현로',
+    {
+      placeId: 10,
+      placeName: '풍자또가',
+      imageUrl: null,
+      likes: true,
+      videoUrl: '',
+      influencerName: '풍자',
+      address: {
+        address1: '대구광역시',
+        address2: '북구',
+        address3: '대현로',
+      },
     },
+    // {
+    //   placeId: 11,
+    //   placeName: '풍자또가',
+    //   imageUrl: null,
+    //   videoUrl: '',
+    //   influencerName: '풍자',
+    //   address: {
+    //     address1: '대구광역시',
+    //     address2: '북구',
+    //     address3: '대현로',
+    //   },
+    // },
+  ],
+  number: 0,
+  sort: {
+    empty: true,
+    sorted: true,
+    unsorted: true,
   },
-  {
-    placeId: 11,
-    placeName: '풍자또가',
-    imageUrl: null,
-    videoUrl: '',
-    influencerName: '풍자',
-    address: {
-      address1: '대구광역시',
-      address2: '북구',
-      address3: '대현로',
+  numberOfElements: 0,
+  pageable: {
+    offset: 0,
+    sort: {
+      empty: true,
+      sorted: true,
+      unsorted: true,
     },
+    paged: true,
+    pageNumber: 0,
+    pageSize: 0,
+    unpaged: false,
   },
-];
+  first: true,
+  last: true,
+  empty: true,
+};
 let nickName = '랄라스윗칩';
 export const myHandlers = [
   rest.get(`${BASE_URL}${getUserInfoPath()}`, (_, res, ctx) => {
@@ -431,91 +492,11 @@ export const myHandlers = [
       }),
     );
   }),
-  rest.get(`${BASE_URL}${getUserInfluencerPath()}`, (req, res, ctx) => {
-    const url = new URL(req.url);
-    const page = parseInt(url.searchParams.get('page') ?? '0', 10);
-    const size = parseInt(url.searchParams.get('size') ?? '10', 10);
-
-    const totalElements = mockInfluencers.length;
-    const totalPages = Math.ceil(totalElements / size);
-    const startIndex = page * size;
-    const endIndex = Math.min(startIndex + size, totalElements);
-    const paginatedContent = mockInfluencers.slice(startIndex, endIndex);
-
-    return res(
-      ctx.status(200),
-      ctx.json({
-        totalPages,
-        totalElements,
-        size,
-        content: paginatedContent,
-        number: page,
-        sort: {
-          empty: true,
-          sorted: true,
-          unsorted: true,
-        },
-        numberOfElements: paginatedContent.length,
-        pageable: {
-          offset: page * size,
-          sort: {
-            empty: true,
-            sorted: true,
-            unsorted: true,
-          },
-          paged: true,
-          pageNumber: page,
-          pageSize: size,
-          unpaged: false,
-        },
-        first: page === 0,
-        last: page === totalPages - 1,
-        empty: paginatedContent.length === 0,
-      }),
-    );
+  rest.get(`${BASE_URL}${getUserInfluencerPath()}`, (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json(mockInfluencers));
   }),
-  rest.get(`${BASE_URL}${getUserPlacePath()}`, (req, res, ctx) => {
-    const url = new URL(req.url);
-    const page = parseInt(url.searchParams.get('page') ?? '0', 10);
-    const size = parseInt(url.searchParams.get('size') ?? '10', 10);
-
-    const totalElements = mockPlaces.length;
-    const totalPages = Math.ceil(totalElements / size);
-    const startIndex = page * size;
-    const endIndex = Math.min(startIndex + size, totalElements);
-    const paginatedContent = mockPlaces.slice(startIndex, endIndex);
-
-    return res(
-      ctx.status(200),
-      ctx.json({
-        totalPages,
-        totalElements,
-        size,
-        content: paginatedContent,
-        number: page,
-        sort: {
-          empty: true,
-          sorted: true,
-          unsorted: true,
-        },
-        numberOfElements: paginatedContent.length,
-        pageable: {
-          offset: page * size,
-          sort: {
-            empty: true,
-            sorted: true,
-            unsorted: true,
-          },
-          paged: true,
-          pageNumber: page,
-          pageSize: size,
-          unpaged: false,
-        },
-        first: page === 0,
-        last: page === totalPages - 1,
-        empty: paginatedContent.length === 0,
-      }),
-    );
+  rest.get(`${BASE_URL}${getUserPlacePath()}`, (_, res, ctx) => {
+    return res(ctx.status(200), ctx.json(mockPlaces));
   }),
   rest.get(`${BASE_URL}${getUserReviewPath()}`, (req, res, ctx) => {
     const url = new URL(req.url);
@@ -602,6 +583,26 @@ export const myHandlers = [
         },
       ]),
     );
+  }),
+  rest.post(`${BASE_URL}/influencers/likes`, (req, res, ctx) => {
+    const { influencerId, likes } = req.body as { influencerId: number | string; likes: boolean };
+    const targetId = Number(influencerId);
+
+    const targetIndex = mockInfluencers.content.findIndex((item) => item.influencerId === targetId);
+
+    mockInfluencers.content[targetIndex].likes = likes;
+
+    return res(ctx.status(200), ctx.json({ success: true }));
+  }),
+  rest.post(`${BASE_URL}/places/likes`, (req, res, ctx) => {
+    const { placeId, likes } = req.body as { placeId: number | string; likes: boolean };
+    const targetId = Number(placeId);
+
+    const targetIndex = mockPlaces.content.findIndex((item) => item.placeId === targetId);
+
+    mockPlaces.content[targetIndex].likes = likes;
+
+    return res(ctx.status(200), ctx.json({ success: true }));
   }),
   rest.post(`${BASE_URL}${postPlaceReviewPath('1')}`, async (_, res, ctx) => {
     return res(ctx.status(200), ctx.json({ message: 'send successfully.' }));

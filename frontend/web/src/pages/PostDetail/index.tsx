@@ -93,7 +93,7 @@ export default function PostDetailPage() {
         setShowLoginModal(true);
         return;
       }
-      postLike({ postId: Number(id), likes: postData.selfLike });
+      postLike({ postId: Number(id), likes: !postData.selfLike });
     },
     [postData.selfLike, id, postLike, isAuthenticated],
   );

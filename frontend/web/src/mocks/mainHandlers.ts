@@ -112,6 +112,114 @@ export const dummy = [
     },
   },
 ];
+
+const influencerDummy = {
+  totalPages: 0,
+  totalElements: 0,
+  size: 0,
+  content: [
+    {
+      influencerId: 1,
+      influencerName: '성시경',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '모델',
+      likes: true,
+    },
+    {
+      influencerId: 2,
+      influencerName: '풍자',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '배우',
+      likes: false,
+    },
+    {
+      influencerId: 3,
+      influencerName: '아이유',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '가수',
+      likes: false,
+    },
+    {
+      influencerId: 4,
+      influencerName: '이영자',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '방송인',
+      likes: false,
+    },
+    {
+      influencerId: 5,
+      influencerName: '정해인',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '배우',
+      likes: false,
+    },
+    {
+      influencerId: 6,
+      influencerName: '황정민',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '배우',
+      likes: false,
+    },
+    {
+      influencerId: 7,
+      influencerName: '히밥',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '유튜버',
+      likes: false,
+    },
+    {
+      influencerId: 8,
+      influencerName: '백종원',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '유튜버',
+      likes: true,
+    },
+    {
+      influencerId: 9,
+      influencerName: '안성재',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '셰프',
+      likes: false,
+    },
+    {
+      influencerId: 10,
+      influencerName: '임영웅',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '배우',
+      likes: false,
+    },
+    {
+      influencerId: 11,
+      influencerName: '짱구 대디',
+      influencerImgUrl: 'https://via.placeholder.com/100',
+      influencerJob: '패션 유튜버',
+      likes: false,
+    },
+  ],
+  number: 0,
+  sort: {
+    empty: true,
+    sorted: true,
+    unsorted: true,
+  },
+  numberOfElements: 0,
+  pageable: {
+    offset: 0,
+    sort: {
+      empty: true,
+      sorted: true,
+      unsorted: true,
+    },
+    paged: true,
+    pageNumber: 0,
+    pageSize: 0,
+    unpaged: true,
+  },
+  first: true,
+  last: true,
+  empty: true,
+};
+
 export const mainHandlers = [
   rest.get(`${BASE_URL}${getBannerPath()}`, (_, res, ctx) => {
     return res(
@@ -171,125 +279,18 @@ export const mainHandlers = [
     return res(ctx.status(200), ctx.json(dummy));
   }),
   rest.get(`${BASE_URL}${getInfluencerPath()}`, (_, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.json({
-        totalPages: 0,
-        totalElements: 0,
-        size: 0,
-        content: [
-          {
-            influencerId: 1,
-            influencerName: '성시경',
-            influencerImgUrl: 'https://via.placeholder.com/100',
-            influencerJob: '모델',
-            likes: true,
-          },
-          {
-            influencerId: 2,
-            influencerName: '풍자',
-            influencerImgUrl: 'https://via.placeholder.com/100',
-            influencerJob: '배우',
-            likes: false,
-          },
-          {
-            influencerId: 3,
-            influencerName: '아이유',
-            influencerImgUrl: 'https://via.placeholder.com/100',
-            influencerJob: '가수',
-            likes: false,
-          },
-          {
-            influencerId: 4,
-            influencerName: '이영자',
-            influencerImgUrl: 'https://via.placeholder.com/100',
-            influencerJob: '방송인',
-            likes: false,
-          },
-          {
-            influencerId: 5,
-            influencerName: '정해인',
-            influencerImgUrl: 'https://via.placeholder.com/100',
-            influencerJob: '배우',
-            likes: false,
-          },
-          {
-            influencerId: 6,
-            influencerName: '황정민',
-            influencerImgUrl: 'https://via.placeholder.com/100',
-            influencerJob: '배우',
-            likes: false,
-          },
-          {
-            influencerId: 7,
-            influencerName: '히밥',
-            influencerImgUrl: 'https://via.placeholder.com/100',
-            influencerJob: '유튜버',
-            likes: false,
-          },
-          {
-            influencerId: 8,
-            influencerName: '백종원',
-            influencerImgUrl: 'https://via.placeholder.com/100',
-            influencerJob: '유튜버',
-            likes: true,
-          },
-          {
-            influencerId: 9,
-            influencerName: '안성재',
-            influencerImgUrl: 'https://via.placeholder.com/100',
-            influencerJob: '셰프',
-            likes: false,
-          },
-          {
-            influencerId: 10,
-            influencerName: '임영웅',
-            influencerImgUrl: 'https://via.placeholder.com/100',
-            influencerJob: '배우',
-            likes: false,
-          },
-          {
-            influencerId: 11,
-            influencerName: '짱구 대디',
-            influencerImgUrl: 'https://via.placeholder.com/100',
-            influencerJob: '패션 유튜버',
-            likes: false,
-          },
-        ],
-        number: 0,
-        sort: {
-          empty: true,
-          sorted: true,
-          unsorted: true,
-        },
-        numberOfElements: 0,
-        pageable: {
-          offset: 0,
-          sort: {
-            empty: true,
-            sorted: true,
-            unsorted: true,
-          },
-          paged: true,
-          pageNumber: 0,
-          pageSize: 0,
-          unpaged: true,
-        },
-        first: true,
-        last: true,
-        empty: true,
-      }),
-    );
+    return res(ctx.status(200), ctx.json(influencerDummy));
   }),
-  rest.post(`${BASE_URL}/influencers/likes`, (req, res, ctx) => {
-    const { influencerId, likes } = req.body as { influencerId: string; likes: boolean };
-    return res(
-      ctx.status(200),
-      ctx.json({
-        influencerId,
-        likes,
-      }),
-    );
+  rest.post(`${BASE_URL}/influencers/likes`, async (req, res, ctx) => {
+    const { influencerId, likes } = req.body as { influencerId: string | number; likes: boolean };
+
+    const targetId = Number(influencerId);
+
+    const targetIndex = influencerDummy.content.findIndex((item) => item.influencerId === targetId);
+
+    influencerDummy.content[targetIndex].likes = likes;
+
+    return res(ctx.status(200), ctx.json({ success: true }));
   }),
 ];
 export default mainHandlers;

@@ -1,6 +1,20 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
-import { RequestInfluencerLike, InfluencerData } from '@/types';
+import { RequestInfluencerLike, InfluencerData, PageableData } from '@/types';
+
+interface PaginatedData {
+  content: InfluencerData[];
+  [key: string]: unknown;
+}
+interface InfiniteQueryData {
+  pages: PageableData<InfluencerData>[];
+  pageParams: number[];
+}
+
+interface InfiniteDataStructure {
+  pages: (PaginatedData | InfluencerData[])[];
+  pageParams: unknown[];
+}
 
 export const postInfluencerLikePath = () => `/influencers/likes`;
 const postInfluencerLike = async ({ influencerId, likes }: RequestInfluencerLike) => {
@@ -12,19 +26,50 @@ const postInfluencerLike = async ({ influencerId, likes }: RequestInfluencerLike
   return response.data;
 };
 
-const updateInfluencerList = (
-  list: InfluencerData[] | undefined,
-  targetId: number,
-  likes: boolean,
-): InfluencerData[] => {
-  if (!list) return [];
-  return list.map((item) => (item.influencerId === targetId ? { ...item, likes } : item));
+const isPaginated = (data: unknown): data is PaginatedData => {
+  return (
+    !!data && typeof data === 'object' && 'content' in data && Array.isArray((data as { content: unknown }).content)
+  );
 };
 
-interface SnapShotContext {
-  prevUserInfluencers: InfluencerData[] | undefined;
-  prevMyInfluencers: InfluencerData[] | undefined;
-}
+const isInfinite = (data: unknown): data is InfiniteDataStructure => {
+  return !!data && typeof data === 'object' && 'pages' in data && Array.isArray((data as { pages: unknown }).pages);
+};
+
+const updateInfluencerList = (oldData: unknown, targetId: number, likes: boolean): unknown => {
+  if (!oldData) return oldData;
+
+  if (Array.isArray(oldData)) {
+    return (oldData as InfluencerData[]).map((item) => (item.influencerId === targetId ? { ...item, likes } : item));
+  }
+
+  if (isPaginated(oldData)) {
+    return {
+      ...oldData,
+      content: oldData.content.map((item) => (item.influencerId === targetId ? { ...item, likes } : item)),
+    };
+  }
+
+  if (isInfinite(oldData)) {
+    return {
+      ...oldData,
+      pages: oldData.pages.map((page) => {
+        if (Array.isArray(page)) {
+          return (page as InfluencerData[]).map((item) => (item.influencerId === targetId ? { ...item, likes } : item));
+        }
+        if (isPaginated(page)) {
+          return {
+            ...page,
+            content: page.content.map((item) => (item.influencerId === targetId ? { ...item, likes } : item)),
+          };
+        }
+        return page;
+      }),
+    };
+  }
+
+  return oldData;
+};
 
 export const usePostInfluencerLike = () => {
   const queryClient = useQueryClient();
@@ -34,27 +79,33 @@ export const usePostInfluencerLike = () => {
 
     onMutate: async ({ influencerId, likes }) => {
       await Promise.all([
+        queryClient.cancelQueries({ queryKey: ['influencers'] }),
         queryClient.cancelQueries({ queryKey: ['UserInfluencer'] }),
         queryClient.cancelQueries({ queryKey: ['myInfluencerVideo'] }),
       ]);
-
-      const prevUserInfluencers = queryClient.getQueryData<InfluencerData[]>(['UserInfluencer']);
+      const prevInfluencers = queryClient.getQueryData<InfluencerData[]>(['influencers']);
+      const prevUserInfluencers = queryClient.getQueriesData({ queryKey: ['UserInfluencer'] });
       const prevMyInfluencers = queryClient.getQueryData<InfluencerData[]>(['myInfluencerVideo']);
 
-      queryClient.setQueryData(['UserInfluencer'], (old: InfluencerData[] | undefined) =>
+      queryClient.setQueryData(['influencers'], (old: InfluencerData[] | undefined) =>
         updateInfluencerList(old, influencerId, likes),
       );
+
+      queryClient.setQueriesData({ queryKey: ['UserInfluencer'] }, (old: InfiniteQueryData) => {
+        return updateInfluencerList(old, influencerId, likes);
+      });
 
       queryClient.setQueryData(['myInfluencerVideo'], (old: InfluencerData[] | undefined) =>
         updateInfluencerList(old, influencerId, likes),
       );
 
-      return { prevUserInfluencers, prevMyInfluencers };
+      return { prevInfluencers, prevUserInfluencers, prevMyInfluencers };
     },
 
     onError: (_err, _vars, context) => {
       if (context) {
-        const { prevUserInfluencers, prevMyInfluencers } = context as SnapShotContext;
+        const { prevInfluencers, prevUserInfluencers, prevMyInfluencers } = context;
+        queryClient.setQueryData(['influencers'], prevInfluencers);
         queryClient.setQueryData(['UserInfluencer'], prevUserInfluencers);
         queryClient.setQueryData(['myInfluencerVideo'], prevMyInfluencers);
       }
@@ -62,7 +113,7 @@ export const usePostInfluencerLike = () => {
     },
 
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['UserInfluencer'] });
+      queryClient.invalidateQueries({ queryKey: ['influencers'] });
       queryClient.invalidateQueries({ queryKey: ['myInfluencerVideo'] });
     },
   });

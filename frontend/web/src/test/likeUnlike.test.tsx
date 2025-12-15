@@ -95,27 +95,36 @@ describe('좋아요/취소 기능 테스트', () => {
   function PlaceTestWrapper() {
     const { data } = useQuery({
       queryKey: ['UserPlace'],
-      initialData: [
-        {
-          placeId: 2,
-          placeName: '료코',
-          address: {
-            address1: '대구',
-            address2: '북구',
-            address3: '대학로',
+      initialData: {
+        pages: [
+          {
+            content: [
+              {
+                placeId: 2,
+                placeName: '료코',
+                address: {
+                  address1: '대구',
+                  address2: '북구',
+                  address3: '대학로',
+                },
+                category: '맛집',
+                videos: [{ influencerName: '성시경', videoUrl: '' }],
+                longitude: '126.570667',
+                latitude: '33.450701',
+                likes: false,
+                likedCount: 0,
+              },
+            ],
           },
-          category: '맛집',
-          videos: [{ influencerName: '성시경', videoUrl: '' }],
-          longitude: '126.570667',
-          latitude: '33.450701',
-          likes: false,
-          likedCount: 0,
-        },
-      ],
+        ],
+        pageParams: [0],
+      },
     });
 
     if (!data) return null;
-    return <PlaceItem {...data[0]} onClick={() => {}} />;
+    const placeData = data.pages[0].content[0];
+
+    return <PlaceItem {...placeData} onClick={() => {}} />;
   }
 
   test('장소 좋아요/좋아요 취소가 반영되는지 확인', async () => {

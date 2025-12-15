@@ -73,7 +73,7 @@ export default function DetailPage() {
         setShowLoginModal(true);
         return;
       }
-      postLike({ placeId: Number(id), likes: infoData.likes });
+      postLike({ placeId: Number(id), likes: !infoData.likes });
     },
     [infoData.likes, id, postLike, isAuthenticated],
   );
