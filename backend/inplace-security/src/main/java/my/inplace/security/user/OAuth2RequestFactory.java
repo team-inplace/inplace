@@ -18,18 +18,13 @@ public class OAuth2RequestFactory {
         this.clientRegistrationRepository = clientRegistrationRepository;
     }
     
-    /**
-     * 이미 발급받은 access token 으로 Kakao 사용자 정보를 가져오기 위한 OAuth2UserRequest 생성
-     */
     public OAuth2UserRequest createKakaoUserRequest(String accessTokenValue) {
-        // 🔹 application.yml에 등록된 kakao ClientRegistration 가져오기
         ClientRegistration kakaoRegistration = clientRegistrationRepository.findByRegistrationId("kakao");
         
         if (kakaoRegistration == null) {
             throw new IllegalStateException("Kakao ClientRegistration not found in configuration");
         }
         
-        // 🔹 Access Token 구성
         OAuth2AccessToken accessToken = new OAuth2AccessToken(
             OAuth2AccessToken.TokenType.BEARER,
             accessTokenValue,
@@ -37,7 +32,6 @@ public class OAuth2RequestFactory {
             Instant.now().plusSeconds(3600)
         );
         
-        // 🔹 OAuth2UserRequest 생성 (additional parameters는 생략 가능)
         return new OAuth2UserRequest(kakaoRegistration, accessToken, Collections.emptyMap());
     }
 }

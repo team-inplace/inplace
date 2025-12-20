@@ -1,7 +1,13 @@
 package my.inplace.security.config;
 
 import lombok.RequiredArgsConstructor;
+import my.inplace.security.application.CustomOAuth2UserService;
+import my.inplace.security.filter.AuthorizationFilter;
+import my.inplace.security.filter.ExceptionHandlingFilter;
+import my.inplace.security.handler.CustomAccessDeniedHandler;
+import my.inplace.security.handler.CustomFailureHandler;
 import my.inplace.security.handler.FormLoginSuccessHandler;
+import my.inplace.security.handler.OAuth2SuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,12 +19,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
-import my.inplace.security.application.CustomOAuth2UserService;
-import my.inplace.security.filter.AuthorizationFilter;
-import my.inplace.security.filter.ExceptionHandlingFilter;
-import my.inplace.security.handler.CustomAccessDeniedHandler;
-import my.inplace.security.handler.CustomFailureHandler;
-import my.inplace.security.handler.OAuth2SuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -36,19 +36,6 @@ public class SecurityConfig {
     private final AuthorizationFilter authorizationFilter;
     private final CorsFilter corsFilter;
     
-    /**
-     *   Spring Security Filter Chain Definition
-     * - csrf 설정 해제
-     * - http basic 설정 해제
-     * - 어드인 페이지 접근 권한 설정
-     * - 어드민 로그인 핸들러 정의
-     * - 어드민 로그인 처리를 위한 매니저 설정
-     * - Oauth2 로그인 핸들러 정의
-     * - 인가 실패 핸들러 정의
-     * - 인증 필터 추가
-     * - 예외 처리용 필터 추가
-     * - CORS 설정 필터 추가
-     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
         throws Exception {
