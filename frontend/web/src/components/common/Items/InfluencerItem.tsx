@@ -3,8 +3,7 @@ import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
 
 import styled from 'styled-components';
 
-import { useCallback, useEffect, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useCallback, useState } from 'react';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import { InfluencerData } from '@/types';
 import { usePostInfluencerLike } from '@/api/hooks/usePostInfluencerLike';
@@ -21,10 +20,9 @@ export default function InfluencerItem({
 }: InfluencerData) {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
-  const [isLike, setIsLike] = useState(likes);
   const [showLoginModal, setShowLoginModal] = useState(false);
+
   const { mutate: postLike } = usePostInfluencerLike();
-  const queryClient = useQueryClient();
 
   const handleLikeClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -34,27 +32,11 @@ export default function InfluencerItem({
         setShowLoginModal(true);
         return;
       }
-      const newLikeStatus = !isLike;
-      postLike(
-        { influencerId, likes: newLikeStatus },
-        {
-          onSuccess: () => {
-            setIsLike(newLikeStatus);
-            queryClient.invalidateQueries({ queryKey: ['myInfluencerVideo'] }); // 내 인플루언서가 좋아한 그곳
-            queryClient.invalidateQueries({ queryKey: ['UserInfluencer'] }); // 내가 좋아요 한 인플루언서
-          },
-          onError: () => {
-            alert('좋아요 등록에 실패했어요. 다시 시도해주세요!');
-          },
-        },
-      );
+      postLike({ influencerId, likes: !likes });
     },
-    [isLike, influencerId, postLike],
-  );
 
-  useEffect(() => {
-    setIsLike(likes);
-  }, [likes]);
+    [likes, influencerId, isAuthenticated, postLike],
+  );
 
   return (
     <>
@@ -65,7 +47,7 @@ export default function InfluencerItem({
             aria-label="인플루언서 좋아요"
             onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
           >
-            {isLike ? (
+            {likes ? (
               <PiHeartFill color="#fe7373" size={32} data-testid="PiHeartFill" />
             ) : (
               <PiHeartLight

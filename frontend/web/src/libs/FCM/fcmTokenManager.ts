@@ -1,5 +1,14 @@
 import { getToken } from 'firebase/messaging';
 import { messaging } from './firebaseSetting';
+import { AlarmTokenData } from '@/types';
+
+type NotificationPermission = {
+  token?: string;
+  granted: boolean;
+};
+interface NotificationPermissionEvent extends CustomEvent {
+  detail: NotificationPermission;
+}
 
 // 서비스 워커 실행 함수
 async function registerServiceWorker() {
@@ -22,9 +31,14 @@ async function getDeviceToken() {
   });
   return token;
 }
+const isReactNativeWebView = typeof window !== 'undefined' && window.ReactNativeWebView != null;
 
 export async function requestNotificationPermission() {
   try {
+    if (isReactNativeWebView) {
+      window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'NOTIFICATION_PERMISSION' }));
+      return true; // 모바일에서는 메시지 전송 성공을 의미 (실제 권한 결과는 react native에서 처리)
+    }
     const { permission } = Notification;
     let currentPermission = permission;
     if (currentPermission === 'default') {
@@ -40,7 +54,7 @@ export async function requestNotificationPermission() {
   }
 }
 
-export async function setupFCMToken(postDeviceToken: (token: string) => Promise<void>) {
+export async function setupFCMToken(postDeviceToken: (token: AlarmTokenData) => Promise<void>) {
   try {
     if (!messaging || (typeof window !== 'undefined' && window.ReactNativeWebView)) {
       console.log('FCM not available in this environment');
@@ -51,11 +65,35 @@ export async function setupFCMToken(postDeviceToken: (token: string) => Promise<
       return null;
     }
     await registerServiceWorker();
-    const token = await getDeviceToken();
-    await postDeviceToken(token);
-    return token;
+    const fcmToken = await getDeviceToken();
+    await postDeviceToken({
+      fcmToken,
+      expoToken: null,
+    });
+    return fcmToken;
   } catch (error) {
     console.error('FCM 토큰 설정 중 오류 발생:', error);
     throw error;
   }
+}
+
+export function setupNotificationTokenListener(postDeviceToken: (token: AlarmTokenData) => Promise<void>) {
+  window.addEventListener('mobileNotificationPermission', async (event: Event) => {
+    const notificationEvent = event as NotificationPermissionEvent;
+    const { token: expoToken, granted } = notificationEvent.detail || {};
+    if (!granted) {
+      console.log('알림 권한이 거부되었습니다');
+      return;
+    }
+    try {
+      if (isReactNativeWebView && expoToken) {
+        await postDeviceToken({
+          fcmToken: null,
+          expoToken,
+        });
+      }
+    } catch (error) {
+      console.error('토큰 서버 전송 실패:', error);
+    }
+  });
 }

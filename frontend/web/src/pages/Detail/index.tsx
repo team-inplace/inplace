@@ -4,7 +4,6 @@ import { FaYoutube } from 'react-icons/fa';
 import { GrPrevious, GrNext } from 'react-icons/gr';
 import styled from 'styled-components';
 import { useLocation, useParams } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
 // import { ErrorBoundary } from 'react-error-boundary';
 import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
 // import Button from '@/components/common/Button';
@@ -31,11 +30,9 @@ export default function DetailPage() {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const { id } = useParams() as { id: string };
   const { data: infoData } = useGetPlaceInfo(id);
-  const [isLike, setIsLike] = useState(infoData.likes);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const isMobile = useIsMobile();
   const { mutate: postLike } = usePostPlaceLike();
-  const queryClient = useQueryClient();
 
   const currentVideoUrl = infoData?.videos[currentVideoIndex]?.videoUrl || '';
 
@@ -76,22 +73,9 @@ export default function DetailPage() {
         setShowLoginModal(true);
         return;
       }
-      const newLikeStatus = !isLike;
-      postLike(
-        { placeId: Number(id), likes: newLikeStatus },
-        {
-          onSuccess: () => {
-            setIsLike(newLikeStatus);
-            queryClient.invalidateQueries({ queryKey: ['UserPlace'] });
-            queryClient.invalidateQueries({ queryKey: ['placeInfo', id] });
-          },
-          onError: () => {
-            alert('좋아요 등록에 실패했어요. 다시 시도해주세요!');
-          },
-        },
-      );
+      postLike({ placeId: Number(id), likes: !infoData.likes });
     },
-    [isLike, id, postLike],
+    [infoData.likes, id, postLike, isAuthenticated],
   );
 
   return (
@@ -139,7 +123,7 @@ export default function DetailPage() {
                   aria-label="디테일 좋아요"
                   onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}
                 >
-                  {isLike ? (
+                  {infoData.likes ? (
                     <PiHeartFill color="#fe7373" size={30} data-testid="PiHeartFill" />
                   ) : (
                     <PiHeartLight color="white" size={30} data-testid="PiHeartLight" />

@@ -3,6 +3,8 @@ package my.inplace.application.post.query.dto;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import my.inplace.application.user.dto.UserResult;
 import my.inplace.domain.post.Comment;
 import my.inplace.domain.post.Post;
 import my.inplace.domain.post.query.PostQueryResult;
@@ -103,7 +105,48 @@ public class PostResult {
                 post.createdAt()
             );
         }
-
+        
+        public static DetailedPost of(SimplePost simplePost, UserResult.Info userResult) {
+            return new DetailedPost(
+                simplePost.postId(),
+                userResult.nickname(),
+                userResult.profileImageUrl(),
+                userResult.tierImageUrl(),
+                userResult.mainBadgeImageUrl(),
+                simplePost.title(),
+                simplePost.content(),
+                simplePost.postImages().images(),
+                simplePost.selfLiked(),
+                simplePost.totalLike(),
+                simplePost.totalComment(),
+                Boolean.TRUE,
+                simplePost.createdAt()
+            );
+        }
+    }
+    
+    public record SimplePost(
+        Long postId,
+        String title,
+        String content,
+        PostImages postImages,
+        Boolean selfLiked,
+        Integer totalLike,
+        Integer totalComment,
+        LocalDateTime createdAt
+    ) {
+        public static SimplePost of(Post post, Boolean selfLiked) {
+            return new SimplePost(
+                post.getId(),
+                post.getTitle(),
+                post.getContent(),
+                PostImages.from(post),
+                selfLiked,
+                post.getTotalLikeCount(),
+                post.getTotalCommentCount(),
+                post.getCreatedAt()
+            );
+        }
     }
 
     public record CursorDetailedPost(

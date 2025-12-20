@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { fetchInstance } from '../instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 import { SearchUserComplete } from '@/types';
 
 export const getSearchUserCompletePath = (postId: string) => `/posts/${postId}/comments/complete`;
@@ -8,9 +8,12 @@ const getSearchUserComplete = async (postId: string, value: string) => {
   const params = new URLSearchParams({
     value: value.toString(),
   });
-  const response = await fetchInstance.get<SearchUserComplete[]>(`${getSearchUserCompletePath(postId)}?${params}`, {
-    withCredentials: true,
-  });
+  const response = await getFetchInstance().get<SearchUserComplete[]>(
+    `${getSearchUserCompletePath(postId)}?${params}`,
+    {
+      withCredentials: true,
+    },
+  );
   return response.data;
 };
 

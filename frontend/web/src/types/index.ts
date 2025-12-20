@@ -153,12 +153,14 @@ export type UserInfoData = {
     name: string;
     imgUrl: string;
   };
-  badges: [
-    {
-      name: string;
-      imgUrl: string;
-    },
-  ];
+  badge: BadgeData;
+};
+export type BadgeData = {
+  id: number;
+  name: string;
+  imgUrl: string;
+  description: string;
+  isOwned: boolean;
 };
 export type UserPlaceData = {
   placeId: number;
@@ -266,6 +268,7 @@ export type CursorData<T> = {
   posts: T[];
   cursor: {
     hasNext: boolean;
+    nextCursorValue: number;
     nextCursorId: number;
   };
 };
@@ -319,6 +322,7 @@ export type CommentData = {
     nickname: string;
     imgUrl: string;
     tierImageUrl: string;
+    titleImageUrl: string;
   };
   content: string;
   createdAt: string;
@@ -373,4 +377,9 @@ export type AlarmData = {
 export type RequestReport = {
   id: number;
   reason: string;
+};
+
+export type AlarmTokenData = {
+  fcmToken: string | null;
+  expoToken: string | null;
 };

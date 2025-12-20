@@ -12,6 +12,7 @@ import MobileNav from './MobileNav';
 import SearchBar from '../../SearchBarB';
 import AuthButtonsA from './AuthButtonsA';
 import AuthButtonsB from './AuthButtonsB';
+import AlarmButton from './Alarm/AlarmButton';
 
 export default function Header() {
   const { theme, toggleTheme } = useTheme();
@@ -66,6 +67,7 @@ export default function Header() {
                 <ThemeButton onClick={toggleTheme} aria-label="모바일 테마 변경" $isDarkMode={isDarkMode}>
                   {isDarkMode ? <FiSun size={20} color="white" /> : <FiMoon size={20} color="black" />}
                 </ThemeButton>
+                <AlarmButton />
                 <MobileMenuButton onClick={() => setIsMenuOpen(true)} aria-label="모바일 메뉴 열기">
                   <RiMenuLine size={24} color={isDarkMode ? 'white' : 'grey'} />
                 </MobileMenuButton>
@@ -107,7 +109,7 @@ const HeaderContentWrapper = styled.div`
   min-height: 60px;
   margin-top: 10px;
 
-  @media (max-width: 768px) {
+  @media screen and (max-width: 768px) {
     position: relative;
     padding: 0 20px;
     width: 90%;
@@ -131,7 +133,7 @@ const NavItemsWrapper = styled.div`
   align-items: center;
   margin-left: auto;
 
-  @media (max-width: 768px) {
+  @media screen and (max-width: 768px) {
     display: none;
   }
 `;
@@ -160,11 +162,13 @@ const MobileOnlyIcons = styled.div`
   @media screen and (max-width: 768px) {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
   }
 `;
 
 const MobileMenuButton = styled.button`
+  display: flex;
+  align-items: center;
   background: none;
   border: none;
   cursor: pointer;

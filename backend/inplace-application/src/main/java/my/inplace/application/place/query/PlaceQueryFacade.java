@@ -6,9 +6,12 @@ import java.util.concurrent.Executor;
 import my.inplace.application.annotation.Facade;
 import my.inplace.application.place.query.dto.PlaceParam;
 import my.inplace.application.place.query.dto.PlaceResult;
+import my.inplace.application.place.query.dto.PlaceResult.Region;
+import my.inplace.application.place.query.dto.PlaceResult.Simple;
 import my.inplace.application.review.ReviewService;
 import my.inplace.application.video.query.VideoQueryService;
 import my.inplace.application.video.query.dto.VideoParam.SquareBound;
+import my.inplace.common.cursor.CursorResult;
 import my.inplace.domain.place.query.PlaceQueryResult;
 import my.inplace.domain.place.query.PlaceQueryResult.MarkerDetail;
 import my.inplace.security.util.AuthorizationUtil;
@@ -78,27 +81,42 @@ public class PlaceQueryFacade {
             surroundVideos);
     }
 
-    public Page<PlaceResult.Simple> getPlacesInMapRange(
+    public CursorResult<Simple> getPlacesInMapRange(
         PlaceParam.Coordinate coordinate,
         PlaceParam.Filter filterParams,
-        Pageable pageable
+        int size,
+        String orderBy,
+        Long cursorValue,
+        Long cursorId
     ) {
         var userId = AuthorizationUtil.getUserIdOrNull();
 
-        var placeSimpleInfos = placeQueryService.getPlacesInMapRange(
+        var detailedPlaces = placeQueryService.getPlacesInMapRange(
             userId,
             coordinate,
             filterParams,
-            pageable
+            size,
+            orderBy,
+            cursorValue,
+            cursorId
         );
-        var placeIds = placeSimpleInfos.getContent()
+
+        var placeIds = detailedPlaces.value()
             .stream()
             .map(PlaceQueryResult.DetailedPlace::placeId)
             .toList();
         var placeVideos = videoQueryService.getVideosByPlaceId(placeIds);
 
-        return placeSimpleInfos.map(
-            place -> PlaceResult.Simple.of(place, placeVideos.get(place.placeId()))
+        var result = detailedPlaces.value()
+            .stream()
+            .map(place -> PlaceResult.Simple.of(place, placeVideos.get(place.placeId())))
+            .toList();
+
+        return new CursorResult<>(
+            result,
+            detailedPlaces.hasNext(),
+            detailedPlaces.nextCursorValue(),
+            detailedPlaces.nextCursorId()
         );
     }
 
@@ -183,5 +201,9 @@ public class PlaceQueryFacade {
             .stream()
             .map(PlaceResult.Marker::from)
             .toList();
+    }
+
+    public List<PlaceResult.Region> getRegions() {
+        return placeQueryService.getRegions();
     }
 }

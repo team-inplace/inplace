@@ -15,7 +15,7 @@ import my.inplace.api.user.dto.UserResponse;
 
 public class PostResponse {
 
-    private static String formatCreatedAt(LocalDateTime createdAt) {
+    public static String formatCreatedAt(LocalDateTime createdAt) {
         var now = LocalDateTime.now();
         var duration = Duration.between(createdAt, now);
 

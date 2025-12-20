@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 
-import { fetchInstance } from '../instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 
 type DeleteCommentProps = {
   postId: string;
@@ -8,7 +8,7 @@ type DeleteCommentProps = {
 };
 export const deleteCommentPath = ({ postId, id }: DeleteCommentProps) => `/posts/${postId}/comments/${id}`;
 const deleteComment = async ({ postId, id }: DeleteCommentProps) => {
-  const response = await fetchInstance.delete(deleteCommentPath({ postId, id }), { withCredentials: true });
+  const response = await getFetchInstance().delete(deleteCommentPath({ postId, id }), { withCredentials: true });
   return response.data;
 };
 

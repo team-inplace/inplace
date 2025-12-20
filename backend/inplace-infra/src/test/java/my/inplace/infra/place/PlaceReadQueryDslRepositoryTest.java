@@ -1,8 +1,15 @@
 package my.inplace.infra.place;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
+
+import java.util.List;
+import java.util.Optional;
+import my.inplace.common.cursor.CursorResult;
 import my.inplace.domain.place.query.PlaceQueryParam;
 import my.inplace.domain.place.query.PlaceQueryResult;
 import my.inplace.domain.place.query.PlaceQueryResult.DetailedPlace;
+import my.inplace.domain.place.query.PlaceQueryResult.Marker;
 import my.inplace.domain.place.query.PlaceQueryResult.SimplePlace;
 import my.inplace.infra.config.AbstractMySQLContainer;
 import my.inplace.infra.global.MySQLContainerJpaTest;
@@ -12,11 +19,6 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @MySQLContainerJpaTest(
     includeFilters = @Filter(
@@ -48,13 +50,13 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
     }
 
     @Test
-    void findPlacesInMapRangeWithPagingWhenRegionExists() {
+    void findPlacesInMapRangeWithCursorPagingWhenRegionExists() {
         // then
         PlaceQueryParam.Coordinate coordinate = new PlaceQueryParam.Coordinate( // 어차피 사용되지 않는다.
             null, null, null, null
         );
         PlaceQueryParam.Filter filter = new PlaceQueryParam.Filter(
-            List.of(new PlaceQueryParam.Region("주소1", "주소2")),
+            List.of(3L, 4L),
             List.of(1L, 2L),
             List.of("인플루언서5")
         );
@@ -71,52 +73,87 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
         );
 
         // when
-        Page<DetailedPlace> actual = placeReadRepository.findPlacesInMapRangeWithPaging(
+        CursorResult<DetailedPlace> actual = placeReadRepository.findPlacesInMapRangeOrderBy(
             coordinate,
             filter,
-            Pageable.ofSize(5),
-            userId
+            userId,
+            5,
+            null,
+            null,
+            null
         );
 
         // then
-        assertThat(actual.getTotalElements()).isEqualTo(expected.size());
-        assertThat(actual.getContent()).containsExactlyInAnyOrderElementsOf(expected);
+        assertThat(actual.value().size()).isEqualTo(expected.size());
+        assertThat(actual.hasNext()).isEqualTo(false);
+        assertThat(actual.nextCursorId()).isEqualTo(null);
+        assertThat(actual.nextCursorValue()).isEqualTo(null);
+        assertAdjustedDetailedPlaces(actual.value(), expected);
     }
 
     @Test
-    void findPlacesInMapRangeWithPagingWhenRegionDoesNotExist() {
+    void findPlacesInMapRangeWithCursorPagingWhenRegionDoesNotExist() {
         // then
-        PlaceQueryParam.Coordinate coordinate = new PlaceQueryParam.Coordinate( // 어차피 사용되지 않는다.
+        PlaceQueryParam.Coordinate coordinate = new PlaceQueryParam.Coordinate(
             126.2, 37.5, 127.5, 36.2
         );
         PlaceQueryParam.Filter filter = new PlaceQueryParam.Filter(
             List.of(),
             List.of(1L, 2L),
-            List.of("인플루언서3")
+            List.of("인플루언서3", "인플루언서4")
         );
         Long userId = 1L;
-        List<PlaceQueryResult.DetailedPlace> expected = List.of(
+        List<PlaceQueryResult.DetailedPlace> expected1 = List.of(
             new PlaceQueryResult.DetailedPlace(9L, "테스트장소9", "주소1-2", "주소2-3", "주소3", 126.8, 36.8, "일식", "googlePlaceId9", 9L, 1L,
                 false),
-            new PlaceQueryResult.DetailedPlace(10L, "테스트장소10", "주소1-2", "주소2-3", "주소3", 126.9, 36.9, "한식", "googlePlaceId10", 10L,
-                1L, false),
+            new PlaceQueryResult.DetailedPlace(10L, "테스트장소10", "주소1-2", "주소2-3", "주소3", 126.9, 36.9, "한식", "googlePlaceId10", 10L, 1L,
+                false),
             new PlaceQueryResult.DetailedPlace(11L, "테스트장소11", "주소1", "주소2", "주소3", 127.0, 37.0, "카페", "googlePlaceId11", 11L, 1L,
                 false),
             new PlaceQueryResult.DetailedPlace(12L, "테스트장소12", "주소1", "주소2", "주소3", 127.1, 37.1, "카페", "googlePlaceId12", 12L, 1L,
+                true),
+            new PlaceQueryResult.DetailedPlace(13L, "테스트장소13", "주소1", "주소2", "주소3", 127.2, 37.2, "양식", "googlePlaceId13", 13L, 1L,
                 true)
+        );
+        List<PlaceQueryResult.DetailedPlace> expected2 = List.of(
+            new PlaceQueryResult.DetailedPlace(14L, "테스트장소14", "주소1", "주소2", "주소3", 127.3, 37.3, "일식", "googlePlaceId14", 14L, 1L,
+                false),
+            new PlaceQueryResult.DetailedPlace(15L, "테스트장소15", "주소1", "주소2", "주소3", 127.4, 37.4, "한식", "googlePlaceId15", 15L, 1L,
+                false)
         );
 
         // when
-        Page<DetailedPlace> actual = placeReadRepository.findPlacesInMapRangeWithPaging(
+        CursorResult<DetailedPlace> actual1 = placeReadRepository.findPlacesInMapRangeOrderBy(
             coordinate,
             filter,
-            Pageable.ofSize(5),
-            userId
+            userId,
+            5,
+            null,
+            null,
+            null
+        );
+        CursorResult<DetailedPlace> actual2 = placeReadRepository.findPlacesInMapRangeOrderBy(
+            coordinate,
+            filter,
+            userId,
+            5,
+            null,
+            null,
+            13L
         );
 
         // then
-        assertThat(actual.getTotalElements()).isEqualTo(expected.size());
-        assertThat(actual.getContent()).containsExactlyInAnyOrderElementsOf(expected);
+        assertThat(actual1.value().size()).isEqualTo(expected1.size());
+        assertAdjustedDetailedPlaces(actual1.value(), expected1);
+        assertThat(actual1.hasNext()).isEqualTo(true);
+        assertThat(actual1.nextCursorId()).isEqualTo(13L);
+        assertThat(actual1.nextCursorValue()).isEqualTo(null);
+
+        assertThat(actual2.value().size()).isEqualTo(expected2.size());
+        assertAdjustedDetailedPlaces(actual2.value(), expected2);
+        assertThat(actual2.hasNext()).isEqualTo(false);
+        assertThat(actual2.nextCursorId()).isEqualTo(null);
+        assertThat(actual2.nextCursorValue()).isEqualTo(null);
     }
 
     @Test
@@ -126,13 +163,13 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
             null, null, null, null
         );
         PlaceQueryParam.Filter filter = new PlaceQueryParam.Filter(
-            List.of(new PlaceQueryParam.Region("주소1", "주소2")),
+            List.of(1L, 2L),
             List.of(1L, 2L),
             List.of("인플루언서3")
         );
         List<PlaceQueryResult.Marker> expected = List.of(
-            new PlaceQueryResult.Marker(11L, "eats", 127.0, 37.0),
-            new PlaceQueryResult.Marker(12L, "eats", 127.1, 37.1)
+            new PlaceQueryResult.Marker(9L, "eats", 126.8, 36.8),
+            new PlaceQueryResult.Marker(10L, "eats", 126.9, 36.9)
         );
 
         // when
@@ -140,13 +177,13 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
         // then
 
         assertThat(actual).isNotNull();
-        assertThat(actual).hasSameElementsAs(expected);
+        assertAdjustedMarkers(actual, expected);
     }
 
     @Test
     void findPlaceLocationsInMapRangeWhenRegionDoesNotExist() {
         // given
-        PlaceQueryParam.Coordinate coordinate = new PlaceQueryParam.Coordinate( // 어차피 사용되지 않는다.
+        PlaceQueryParam.Coordinate coordinate = new PlaceQueryParam.Coordinate(
             126.2, 37.5, 127.5, 36.2
         );
         PlaceQueryParam.Filter filter = new PlaceQueryParam.Filter(
@@ -157,8 +194,7 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
         List<PlaceQueryResult.Marker> expected = List.of(
             new PlaceQueryResult.Marker(13L, "eats", 127.2, 37.2),
             new PlaceQueryResult.Marker(14L, "eats", 127.3, 37.3),
-            new PlaceQueryResult.Marker(15L, "eats", 127.4, 37.4),
-            new PlaceQueryResult.Marker(16L, "eats", 127.5, 37.5)
+            new PlaceQueryResult.Marker(15L, "eats", 127.4, 37.4)
         );
 
         // when
@@ -166,7 +202,7 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
         // then
 
         assertThat(actual).isNotNull();
-        assertThat(actual).hasSameElementsAs(expected);
+        assertAdjustedMarkers(actual, expected);
     }
 
     @Test
@@ -204,7 +240,7 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
 
         // then
         assertThat(actual.getTotalElements()).isEqualTo(expected.size());
-        assertThat(actual.getContent()).containsExactlyInAnyOrderElementsOf(expected);
+        assertAdjustedDetailedPlaces(actual.getContent(), expected);
     }
 
     @Test
@@ -226,12 +262,14 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
         // given
         String name = "테스트장소";
         PlaceQueryParam.Filter filter = new PlaceQueryParam.Filter(
-            List.of(new PlaceQueryParam.Region("주소1-1", "주소2-2")),
+            List.of(1L, 2L),
             List.of(1L, 2L),
             List.of("인플루언서2")
         );
         List<PlaceQueryResult.Marker> expected = List.of(
-            new PlaceQueryResult.Marker(6L, "eats", 126.5, 36.5)
+            new PlaceQueryResult.Marker(5L, "eats", 126.4, 36.4),
+            new PlaceQueryResult.Marker(7L, "eats", 126.6, 36.6),
+            new PlaceQueryResult.Marker(8L, "eats", 126.7, 36.7)
         );
 
         // when
@@ -239,7 +277,7 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
 
         // then
         assertThat(actual).isNotNull();
-        assertThat(actual).hasSameElementsAs(expected);
+        assertAdjustedMarkers(actual, expected);
     }
 
     @Test
@@ -272,7 +310,7 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
         Long userId = 1L;
         String name = "소1";
         PlaceQueryParam.Filter filter = new PlaceQueryParam.Filter(
-            List.of(new PlaceQueryParam.Region("주소1-1", "주소2-1")),
+            List.of(1L, 2L),
             List.of(1L, 2L),
             List.of("인플루언서1")
         );
@@ -327,5 +365,27 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
 
         // then
         assertThat(actual).isEqualTo(expected);
+    }
+
+    private void assertAdjustedDetailedPlaces(List<DetailedPlace> list, List<DetailedPlace> expected) {
+        assertThat(list.size()).isEqualTo(expected.size());
+        for (int i = 0; i < list.size(); i++) {
+            DetailedPlace actualPlace = list.get(i);
+            DetailedPlace expectedPlace = expected.get(i);
+            assertThat(actualPlace).usingRecursiveComparison().ignoringFields("longitude", "latitude").isEqualTo(expectedPlace);
+            assertThat(actualPlace.longitude()).isCloseTo(expectedPlace.longitude(), within(0.00000001));
+            assertThat(actualPlace.latitude()).isCloseTo(expectedPlace.latitude(), within(0.00000001));
+        }
+    }
+
+    private void assertAdjustedMarkers(List<Marker> actual, List<Marker> expected) {
+        assertThat(actual.size()).isEqualTo(expected.size());
+        for (int i = 0; i < actual.size(); i++) {
+            Marker actualMarker = actual.get(i);
+            Marker expectedMarker = expected.get(i);
+            assertThat(actualMarker).usingRecursiveComparison().ignoringFields("longitude", "latitude").isEqualTo(expectedMarker);
+            assertThat(actualMarker.longitude()).isCloseTo(expectedMarker.longitude(), within(0.00000001));
+            assertThat(actualMarker.latitude()).isCloseTo(expectedMarker.latitude(), within(0.00000001));
+        }
     }
 }

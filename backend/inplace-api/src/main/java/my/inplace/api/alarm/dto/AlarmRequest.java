@@ -1,7 +1,8 @@
 package my.inplace.api.alarm.dto;
 
 public record AlarmRequest(
-    String token
+    String fcmToken,
+    String expoToken
 ) {
 
 }

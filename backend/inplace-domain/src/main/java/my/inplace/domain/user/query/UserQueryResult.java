@@ -2,7 +2,7 @@ package my.inplace.domain.user.query;
 
 public class UserQueryResult {
 
-    public record Simple(
+    public record Info(
         String nickname,
         String imgUrl,
         String tierName,
@@ -13,11 +13,12 @@ public class UserQueryResult {
 
     }
 
-    public record Badge(
+    public record BadgeWithOwnerShip(
         Long id,
         String name,
         String imgUrl,
-        String condition
+        String description,
+        Boolean isOwned
     ) {
 
     }

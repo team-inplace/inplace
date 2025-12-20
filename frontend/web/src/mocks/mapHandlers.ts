@@ -1,8 +1,11 @@
 import { rest } from 'msw';
-import { BASE_URL } from '@/api/instance';
+import { getConfig } from '@inplace-frontend-monorepo/shared/api/config';
 import { MarkerInfo, PlaceData } from '@/types';
 import { getAllMarkersPath } from '@/api/hooks/useGetAllMarkers';
 import { getSearchPlaceMarkersPath } from '@/api/hooks/useGetSearchPlaceMarker';
+
+const config = getConfig();
+const BASE_URL = config.baseURL;
 
 const dummyInfluencers = [
   { influencerName: '성시경' },
@@ -504,16 +507,7 @@ export const mapHandlers = [
       }),
     );
   }),
-  rest.post(`${BASE_URL}/places/likes`, (req, res, ctx) => {
-    const { placeId, likes } = req.body as { placeId: string; likes: boolean };
-    return res(
-      ctx.status(200),
-      ctx.json({
-        placeId,
-        likes,
-      }),
-    );
-  }),
+
   rest.get(`${BASE_URL}/places/categories`, (_, res, ctx) => {
     return res(ctx.status(200), ctx.json(dummyCategoryData));
   }),

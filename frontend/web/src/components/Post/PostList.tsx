@@ -7,7 +7,7 @@ interface Props {
   items:
     | {
         pages: CursorData<PostListData>[];
-        pageParams: (number | null)[];
+        pageParams: ({ cursorId: number; cursorValue: number } | null)[];
       }
     | undefined;
   activeCategory: string;

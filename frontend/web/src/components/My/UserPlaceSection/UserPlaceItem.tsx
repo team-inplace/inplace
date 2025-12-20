@@ -4,7 +4,6 @@ import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 
 import { useCallback, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
 import { Text } from '@/components/common/typography/Text';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 
@@ -26,10 +25,8 @@ export default function UserPlaceItem({ placeId, placeName, videoUrl, influencer
 
   const { isAuthenticated } = useAuth();
   const location = useLocation();
-  const [isLike, setIsLike] = useState(likes);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { mutate: postLike } = usePostPlaceLike();
-  const queryClient = useQueryClient();
 
   const handleLikeClick = useCallback(
     (event: React.MouseEvent<HTMLDivElement>) => {
@@ -39,22 +36,9 @@ export default function UserPlaceItem({ placeId, placeName, videoUrl, influencer
         setShowLoginModal(true);
         return;
       }
-      const newLikeStatus = !isLike;
-      postLike(
-        { placeId, likes: newLikeStatus },
-        {
-          onSuccess: () => {
-            setIsLike(newLikeStatus);
-            queryClient.invalidateQueries({ queryKey: ['UserPlace'] }); // 내가 좋아요 한 장소
-            queryClient.invalidateQueries({ queryKey: ['placeInfo', placeId] });
-          },
-          onError: (error) => {
-            console.error('Error:', error);
-          },
-        },
-      );
+      postLike({ placeId, likes: !likes });
     },
-    [isLike, placeId, postLike],
+    [likes, placeId, postLike, isAuthenticated],
   );
   return (
     <>
@@ -64,7 +48,7 @@ export default function UserPlaceItem({ placeId, placeName, videoUrl, influencer
             <FallbackImage src={thumbnailUrl} alt={String(placeId)} />
           </ImageWrapper>
           <LikeIcon onClick={(e: React.MouseEvent<HTMLDivElement>) => handleLikeClick(e)}>
-            {isLike ? (
+            {likes ? (
               <PiHeartFill color="#fe7373" size={32} />
             ) : (
               <PiHeartLight

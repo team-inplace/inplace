@@ -1,12 +1,17 @@
 package my.inplace.api.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import my.inplace.application.influencer.query.dto.InfluencerResult;
+
 import java.time.LocalDate;
-import java.util.List;
 import java.util.stream.Collectors;
 import my.inplace.application.place.query.dto.PlaceResult;
+import my.inplace.application.post.query.dto.PostResult;
 import my.inplace.application.user.dto.UserResult;
 import my.inplace.application.video.query.dto.VideoResult;
+
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static my.inplace.api.post.dto.PostResponse.formatCreatedAt;
 
 public class UserResponse {
 
@@ -17,46 +22,56 @@ public class UserResponse {
         String mainBadgeImageUrl
     ) {
 
-        public static Simple from(UserResult.Simple simple) {
+        public static Simple from(UserResult.Info info) {
             return new Simple(
-                simple.nickname(),
-                simple.profileImageUrl(),
-                simple.tierImageUrl(),
-                simple.mainBadgeImageUrl()
+                info.nickname(),
+                info.profileImageUrl(),
+                info.tierImageUrl(),
+                info.mainBadgeImageUrl()
             );
         }
     }
 
-    public record Detail(
+    public record Info(
         String nickname,
         String imgUrl,
         Tier tier,
-        List<Badge> badges
+        Badge badge
     ) {
 
-        public static Detail from(UserResult.Detail detail) {
-            return new Detail(
-                detail.nickname(),
-                detail.profileImageUrl(),
-                new Tier(detail.tierName(), detail.tierImageUrl()),
-                detail.badges().stream().map(Badge::from).toList()
+        public static Info from(UserResult.Info info) {
+            return new Info(
+                info.nickname(),
+                info.profileImageUrl(),
+                new Tier(info.tierName(), info.tierImageUrl()),
+                new Badge(info.mainBadgeName(), info.mainBadgeImageUrl())
+            );
+        }
+    }
+
+    public record BadgeWithOwnerShip(
+        Long id,
+        String name,
+        String imgUrl,
+        String description,
+        Boolean isOwned
+    ) {
+
+        public static BadgeWithOwnerShip from(UserResult.BadgeWithOwnerShip badge) {
+            return new BadgeWithOwnerShip(
+                badge.id(),
+                badge.name(),
+                badge.imgUrl(),
+                badge.description(),
+                badge.isOwned()
             );
         }
     }
 
     public record Badge(
-        Long id,
         String name,
         String imgUrl
     ) {
-
-        public static Badge from(UserResult.Badge badge) {
-            return new Badge(
-                badge.id(),
-                badge.name(),
-                badge.img_url()
-            );
-        }
     }
 
     public record Tier(
@@ -171,6 +186,43 @@ public class UserResponse {
                 influencerResult.imgUrl(),
                 influencerResult.job(),
                 influencerResult.isLiked()
+            );
+        }
+    }
+    
+    public record SimplePost(
+        Long postId,
+        UserResponse.Simple author,
+        String title,
+        String content,
+        @JsonInclude(NON_NULL)
+        String imageUrl,
+        Boolean selfLike,
+        Integer totalLikeCount,
+        Integer totalCommentCount,
+        Boolean isMine,
+        String createdAt
+    ) {
+        
+        public static UserResponse.SimplePost from(PostResult.DetailedPost postResult) {
+            return new UserResponse.SimplePost(
+                postResult.postId(),
+                new UserResponse.Simple(
+                    postResult.userNickname(),
+                    postResult.userImageUrl(),
+                    postResult.tierImageUrl(),
+                    postResult.mainBadgeImageUrl()
+                ),
+                postResult.title(),
+                postResult.content(),
+                postResult.imageInfos().isEmpty()
+                    ? null
+                    : postResult.imageInfos().get(0).imageUrl(),
+                postResult.selfLike(),
+                postResult.totalLikeCount(),
+                postResult.totalCommentCount(),
+                postResult.isMine(),
+                formatCreatedAt(postResult.createdAt())
             );
         }
     }

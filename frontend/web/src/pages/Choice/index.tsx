@@ -85,9 +85,9 @@ export default function ChoicePage() {
           likes: true,
         });
       }
-      navigate('/');
     } catch (error) {
       console.error('좋아요 처리 중 오류 발생:', error);
+    } finally {
       navigate('/');
     }
   };

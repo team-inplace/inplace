@@ -1,6 +1,9 @@
 package my.inplace.api.user;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import my.inplace.api.user.dto.UserRequest;
+import my.inplace.api.user.dto.UserResponse;
 import my.inplace.application.user.UserFacade;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,8 +17,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import my.inplace.api.user.dto.UserRequest;
-import my.inplace.api.user.dto.UserResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,6 +32,36 @@ public class UserController implements UserControllerApiSpec {
     ) {
         userFacade.updateNickname(request.nickname());
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+    
+    @GetMapping("/posts/my")
+    public ResponseEntity<Page<UserResponse.SimplePost>> getMyPosts(
+        @PageableDefault(page = 0, size = 10) Pageable pageable
+    ) {
+        var posts = userFacade.getMyPosts(pageable);
+        
+        var response = posts.map(UserResponse.SimplePost::from);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    
+    @GetMapping("/posts/likes")
+    public ResponseEntity<Page<UserResponse.SimplePost>> getMyLikedPosts(
+        @PageableDefault(page = 0, size = 10) Pageable pageable
+    ) {
+        var posts = userFacade.getMyLikedPosts(pageable);
+        
+        var response = posts.map(UserResponse.SimplePost::from);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    
+    @GetMapping("/posts/comments")
+    public ResponseEntity<Page<UserResponse.SimplePost>> getMyCommentedPosts(
+        @PageableDefault(page = 0, size = 10) Pageable pageable
+    ) {
+        var posts = userFacade.getMyCommentedPosts(pageable);
+        
+        var response = posts.map(UserResponse.SimplePost::from);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/influencers")
@@ -63,10 +94,17 @@ public class UserController implements UserControllerApiSpec {
     }
 
     @GetMapping("/info")
-    public ResponseEntity<UserResponse.Detail> getUserDetail() {
-        var userInfo = userFacade.getUserDetail();
+    public ResponseEntity<UserResponse.Info> getUserDetail() {
+        var userInfo = userFacade.getUserInfo();
 
-        var response = UserResponse.Detail.from(userInfo);
+        var response = UserResponse.Info.from(userInfo);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/all-badges")
+    public ResponseEntity<List<UserResponse.BadgeWithOwnerShip>> getAllBadgesWithOwnerShip() {
+        var response = userFacade.getAllBadges()
+            .stream().map(UserResponse.BadgeWithOwnerShip::from).toList();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -88,7 +126,7 @@ public class UserController implements UserControllerApiSpec {
         userFacade.updateReportResent(resent.isResented());
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    
+
     @PatchMapping("/resent/mention")
     public ResponseEntity<Void> updateMentionPushResent(UserRequest.UpdatePushResent resent) {
         userFacade.updateMentionResent(resent.isResented());

@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { fetchInstance } from '../instance';
+import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
 
 export const getMobileMapQRPath = () => `/qrcodes`;
 export const getMobileMapQR = async (placeId: number, width: number, height: number) => {
@@ -8,7 +8,7 @@ export const getMobileMapQR = async (placeId: number, width: number, height: num
     width: width.toString(),
     height: height.toString(),
   });
-  const response = await fetchInstance.get(`${getMobileMapQRPath()}?${params}`, {
+  const response = await getFetchInstance().get(`${getMobileMapQRPath()}?${params}`, {
     responseType: 'arraybuffer',
   });
   return new Blob([response.data], { type: 'image/png' });

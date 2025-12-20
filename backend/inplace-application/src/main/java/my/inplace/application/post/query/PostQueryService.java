@@ -1,6 +1,8 @@
 package my.inplace.application.post.query;
 
 import java.util.List;
+import java.util.Set;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import my.inplace.application.post.query.dto.CommentResult;
@@ -8,6 +10,7 @@ import my.inplace.application.post.query.dto.PostResult;
 import my.inplace.common.cursor.CursorResult;
 import my.inplace.common.exception.InplaceException;
 import my.inplace.common.exception.code.PostErrorCode;
+import my.inplace.domain.post.Post;
 import my.inplace.domain.post.PostTitle;
 import my.inplace.domain.post.query.CommentQueryResult.DetailedComment;
 import my.inplace.domain.post.query.PostQueryResult.DetailedPost;
@@ -15,8 +18,10 @@ import my.inplace.domain.post.query.PostQueryResult.UserSuggestion;
 import my.inplace.infra.post.CommentReadQueryDslRepository;
 import my.inplace.infra.post.PostReadQueryDslRepository;
 import my.inplace.infra.post.jpa.CommentJpaRepository;
+import my.inplace.infra.post.jpa.LikedPostJpaRepository;
 import my.inplace.infra.post.jpa.PostJpaRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostQueryService {
 
     private final PostJpaRepository postJpaRepository;
+    private final LikedPostJpaRepository likedPostJpaRepository;
     private final PostReadQueryDslRepository postReadRepository;
 
     private final CommentJpaRepository commentJpaRepository;
@@ -38,7 +44,40 @@ public class PostQueryService {
     ) {
         return postReadRepository.findPostsOrderBy(userId, cursorValue, cursorId, size, orderBy);
     }
-
+    
+    @Transactional(readOnly = true)
+    public Page<PostResult.SimplePost> getMyPosts(Long userId, Pageable pageable) {
+        var posts = postJpaRepository.findPostsByAuthorId(userId, pageable);
+        
+        var postIds = posts.getContent().stream()
+             .map(Post::getId)
+             .toList();
+        
+        var likedPostIds = likedPostJpaRepository.findLikedPostIdsByUserIdAndPostIds(userId, postIds);
+        
+        return posts.map(post -> PostResult.SimplePost.of(post, likedPostIds.contains(post.getId())));
+    }
+    
+    @Transactional(readOnly = true)
+    public Page<PostResult.SimplePost> getLikedPosts(Long userId, Pageable pageable) {
+        var postIds = likedPostJpaRepository.findLikedPostIdsByUserId(userId);
+        
+        return postJpaRepository.findAllByIdIn(postIds, pageable)
+            .map(post -> PostResult.SimplePost.of(post, true));
+    }
+    
+    @Transactional(readOnly = true)
+    public Page<PostResult.SimplePost> getCommentedPosts(Long userId, Pageable pageable) {
+        var commentIds = commentJpaRepository.findCommentIdsByUserId(userId);
+        var postIds = postJpaRepository.findPostsByCommentIds(commentIds);
+        
+        var likedPostIds = likedPostJpaRepository.findLikedPostIdsByUserIdAndPostIds(userId, postIds);
+        
+        var posts = postJpaRepository.findAllByIdIn(postIds, pageable);
+        
+        return posts.map(post -> PostResult.SimplePost.of(post, likedPostIds.contains(post.getId())));
+    }
+    
     @Transactional(readOnly = true)
     public DetailedPost getPostById(Long postId, Long userId) {
         return postReadRepository.findPostById(postId, userId)
@@ -130,11 +169,7 @@ public class PostQueryService {
             .toList();
     }
     
-    public CommentResult.CommentIndex getCommentIndexByPostIdAndCommentId(Long postId, Long commentId) {
-        long indexOfComment = postJpaRepository.findIndexOfComment(postId, commentId);
-        int pageNumber = (int) indexOfComment / 10;
-        int offset = (int) indexOfComment % 10;
-        
-        return CommentResult.CommentIndex.of(pageNumber, offset);
+    public Long getCommentIndexByPostIdAndCommentId(Long postId, Long commentId) {
+        return postJpaRepository.findIndexOfComment(postId, commentId);
     }
 }

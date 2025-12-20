@@ -1,14 +1,13 @@
 package my.inplace.application.alarm.event.dto;
 
-import my.inplace.domain.alarm.AlarmType;
-
-import jakarta.annotation.Nullable;
+import my.inplace.domain.alarm.AlarmOutBox;
 
 public record AlarmEvent(
-    Long postId,
-    Long commentId,
-    @Nullable String sender,
-    @Nullable String receiver,
-    AlarmType alarmType
+    Long id
 ) {
+    public static AlarmEvent from(AlarmOutBox alarmEvent) {
+        return new AlarmEvent(
+            alarmEvent.getId()
+        );
+    }
 }

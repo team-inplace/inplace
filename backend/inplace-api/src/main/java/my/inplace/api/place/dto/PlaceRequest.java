@@ -79,15 +79,10 @@ public class PlaceRequest {
 
         public PlaceParam.Filter toParam() {
 
-            List<PlaceParam.Region> regionParamList = Arrays.stream(regions.split(","))
+            List<Long> regionList = Arrays.stream(regions.split(","))
                 .filter(StringUtils::isNotEmpty)
-                .map((region -> {
-                    var parts = regions.split("-");
-                    return new PlaceParam.Region(
-                        parts[0],
-                        "전체".equals(parts[1]) ? null : parts[1]
-                    );
-                })).toList();
+                .map(Long::valueOf)
+                .toList();
 
             List<Long> categoryList = Arrays.stream(categories.split(","))
                 .map(String::trim)
@@ -99,7 +94,7 @@ public class PlaceRequest {
                 .toList();
 
             return new PlaceParam.Filter(
-                regionParamList,
+                regionList,
                 categoryList,
                 influencerList
             );
