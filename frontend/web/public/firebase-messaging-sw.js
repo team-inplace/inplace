@@ -18,6 +18,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
   const { title, body, icon } = payload.notification || {};
