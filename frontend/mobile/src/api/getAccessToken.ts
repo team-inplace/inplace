@@ -1,11 +1,17 @@
 import { getConfig } from "@inplace-frontend-monorepo/shared/src/api/config";
 
+type UserInfo = {
+  nickname: string;
+  username: string;
+  profile_image_url: string;
+};
+
 type Tokens = {
   accessToken: string;
   refreshToken: string;
 };
 
-export const getAccessToken = async (token: string) => {
+export const getAccessToken = async (userInfo: UserInfo) => {
   const config = getConfig();
   try {
     const response = await fetch(
@@ -15,7 +21,7 @@ export const getAccessToken = async (token: string) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ kakaoAccessToken: token }),
+        body: JSON.stringify({ userInfo }),
       }
     );
 

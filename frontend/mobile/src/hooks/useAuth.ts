@@ -1,4 +1,4 @@
-import { login } from "@react-native-kakao/user";
+import { login, me } from "@react-native-kakao/user";
 import { getAccessToken } from "../api/getAccessToken";
 import * as SecureStore from "expo-secure-store";
 import WebView from "react-native-webview";
@@ -6,9 +6,17 @@ import WebView from "react-native-webview";
 export const useAuth = (webViewRef: React.RefObject<WebView | null>) => {
   const handleKakaoLogin = async () => {
     try {
-      const kakaoToken = await login();
+      await login();
 
-      const tokens = await getAccessToken(kakaoToken.accessToken);
+      const userProfile = await me();
+
+      const userInfo = {
+        nickname: userProfile.nickname ?? "Guest",
+        username: userProfile.email ?? "",
+        profile_image_url: userProfile.thumbnailImageUrl ?? "",
+      };
+
+      const tokens = await getAccessToken(userInfo);
 
       if (tokens) {
         const { accessToken, refreshToken } = tokens;
