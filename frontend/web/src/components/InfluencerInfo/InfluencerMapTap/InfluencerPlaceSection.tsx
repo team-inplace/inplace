@@ -61,6 +61,7 @@ export default function InfluencerPlaceSection({
       filters,
       center,
       size: 10,
+      sort: 'createdAt',
     },
     shouldFetchPlaces || isInitialLoad,
   );
