@@ -39,7 +39,7 @@ public class PostResponse {
     }
 
     public record SimpleList(
-        List<SimplePost> posts,
+        List<SimplePost> contents,
         CursorResponse cursor
     ) {
 
