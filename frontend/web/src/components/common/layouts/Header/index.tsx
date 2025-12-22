@@ -3,15 +3,12 @@ import styled from 'styled-components';
 import { RiMenuLine, RiCloseLine } from 'react-icons/ri';
 import { FiSun, FiMoon } from 'react-icons/fi';
 import useTheme from '@/hooks/useTheme';
-import { useABTest } from '@/provider/ABTest';
 
 import LogoSection from './LogoSection';
-import DesktopNavA from './DesktopNavA';
-import DesktopNavB from './DesktopNavB';
+import DesktopNav from './DesktopNav';
 import MobileNav from './MobileNav';
-import SearchBar from '../../SearchBarB';
-import AuthButtonsA from './AuthButtonsA';
-import AuthButtonsB from './AuthButtonsB';
+import SearchBar from '../../SearchBar';
+import AuthButtons from './AuthButtons';
 import AlarmButton from './Alarm/AlarmButton';
 
 export default function Header() {
@@ -19,7 +16,6 @@ export default function Header() {
   const isDarkMode = theme === 'dark';
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
-  const testGroup = useABTest('map_ui_test');
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -31,9 +27,6 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleOutsideClick);
   }, []);
 
-  const DesktopNav = testGroup === 'A' ? DesktopNavA : DesktopNavB;
-  const AuthButtons = testGroup === 'A' ? AuthButtonsA : AuthButtonsB;
-
   return (
     <HeaderContainer ref={headerRef}>
       <HeaderContentWrapper>
@@ -43,24 +36,13 @@ export default function Header() {
           </LeftSection>
         )}
 
-        {testGroup === 'A' && (
-          <NavItemsWrapper>
-            <DesktopNav />
-            <AuthButtons />
-          </NavItemsWrapper>
-        )}
+        <DesktopNav />
 
-        {testGroup === 'B' && <DesktopNav />}
-
-        <RightSection $testGroup={testGroup}>
-          {testGroup === 'B' && (
-            <>
-              <DesktopOnlySearchBar>
-                <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" onClose={() => setIsMenuOpen(false)} />
-              </DesktopOnlySearchBar>
-              <AuthButtons />
-            </>
-          )}
+        <RightSection>
+          <DesktopOnlySearchBar>
+            <SearchBar placeholder="인플루언서, 장소를 검색해주세요!" onClose={() => setIsMenuOpen(false)} />
+          </DesktopOnlySearchBar>
+          <AuthButtons />
           <MobileOnlyIcons>
             {!isMenuOpen ? (
               <>
@@ -74,15 +56,13 @@ export default function Header() {
               </>
             ) : (
               <>
-                {testGroup === 'B' && (
-                  <FixedMarginSearchBar>
-                    <SearchBar
-                      placeholder="인플루언서, 장소를 검색해주세요!"
-                      width="100%"
-                      onClose={() => setIsMenuOpen(false)}
-                    />
-                  </FixedMarginSearchBar>
-                )}
+                <FixedMarginSearchBar>
+                  <SearchBar
+                    placeholder="인플루언서, 장소를 검색해주세요!"
+                    width="100%"
+                    onClose={() => setIsMenuOpen(false)}
+                  />
+                </FixedMarginSearchBar>
                 <MobileMenuButton onClick={() => setIsMenuOpen(false)} aria-label="모바일 메뉴 닫기">
                   <RiCloseLine size={26} color={isDarkMode ? 'white' : 'grey'} />
                 </MobileMenuButton>
@@ -128,20 +108,10 @@ const LeftSection = styled.div`
   align-items: center;
 `;
 
-const NavItemsWrapper = styled.div`
+const RightSection = styled.div`
   display: flex;
   align-items: center;
   margin-left: auto;
-
-  @media screen and (max-width: 768px) {
-    display: none;
-  }
-`;
-
-const RightSection = styled.div<{ $testGroup: string }>`
-  display: flex;
-  align-items: center;
-  margin-left: ${({ $testGroup }) => ($testGroup === 'A' ? '0' : 'auto')};
   gap: 26px;
 `;
 
