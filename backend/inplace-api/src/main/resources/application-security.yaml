@@ -29,3 +29,5 @@ spring:
     salt: ${OAUTH_SALT}
 cors:
   origins: ${CORS_ORIGINS}
+server:
+  forward-headers-strategy: framework

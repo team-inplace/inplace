@@ -1,6 +1,6 @@
 package my.inplace.security.admin.dto;
 
-import my.inplace.security.admin.dto.AdminCommand.Register;
+import my.inplace.security.application.dto.AdminCommand.Register;
 
 public class AdminRequest {
     public record Login(
@@ -8,7 +8,7 @@ public class AdminRequest {
         String password
     ) {
 
-        public static AdminCommand.Register toRegisterCommand(Login login) {
+        public static Register toRegisterCommand(Login login) {
             return new Register(login.username, login.password);
         }
     }

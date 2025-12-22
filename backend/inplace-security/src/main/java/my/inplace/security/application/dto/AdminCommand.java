@@ -1,4 +1,4 @@
-package my.inplace.security.admin.dto;
+package my.inplace.security.application.dto;
 
 public class AdminCommand {
 

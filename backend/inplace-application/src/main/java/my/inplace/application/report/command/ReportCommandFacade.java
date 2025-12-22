@@ -6,9 +6,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import my.inplace.application.post.command.PostCommandService;
 import my.inplace.application.report.event.dto.ReportEvent.CommentReportEvent;
 import my.inplace.application.report.event.dto.ReportEvent.PostReportEvent;
+import org.springframework.transaction.annotation.Transactional;
 
 @Facade
 @RequiredArgsConstructor
+@Transactional
 public class ReportCommandFacade {
     private final ApplicationEventPublisher eventPublisher;
     private final PostCommandService postCommandService;
@@ -22,5 +24,6 @@ public class ReportCommandFacade {
         postCommandService.reportComment(commentId);
         eventPublisher.publishEvent(new CommentReportEvent(commentId));
     }
-
+    
+    
 }

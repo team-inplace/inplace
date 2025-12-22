@@ -1,30 +1,13 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { Text } from '@/components/common/typography/Text';
-import { useABTest } from '@/provider/ABTest';
-import { sendGAEvent } from '@/utils/test/googleTestUtils';
 
-export default function DesktopNavB() {
+export default function DesktopNav() {
   const location = useLocation();
-  const navigate = useNavigate();
-  const testGroup = useABTest('map_ui_test');
 
   const isActive = (path: string) => {
     if (path.startsWith('http')) return false;
     return location.pathname === path;
-  };
-
-  const handleMapNavigation = () => {
-    sendGAEvent('map_navigation_click_header', {
-      test_name: 'map_ui_test',
-      variation: testGroup,
-      from_path: location.pathname,
-      to_path: '/map',
-      component: 'header_nav_b',
-    });
-
-    // 페이지 이동
-    navigate('/map');
   };
 
   return (
@@ -33,26 +16,26 @@ export default function DesktopNavB() {
         href="https://docs.google.com/forms/d/e/1FAIpQLSeBJcQg0gcVv2au5oFZ1aCLF9O_qbEiJCvnLEd0d1SSLLpDUA/viewform?pli=1"
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="헤더 설문조사_B"
+        aria-label="헤더 설문조사"
       >
         <Text size="m" weight="normal">
           설문조사
         </Text>
       </NavExternalLink>
 
-      <NavButton aria-label="헤더 지도_B" onClick={handleMapNavigation} $isActive={isActive('/map')}>
+      <NavItem to="/map" aria-label="헤더 지도" $isActive={isActive('/map')}>
         <Text size="m" weight="normal">
           지도
         </Text>
-      </NavButton>
+      </NavItem>
 
-      <NavItem to="/influencer" aria-label="헤더 인플루언서_B" $isActive={isActive('/influencer')}>
+      <NavItem to="/influencer" aria-label="헤더 인플루언서" $isActive={isActive('/influencer')}>
         <Text size="m" weight="normal">
           인플루언서
         </Text>
       </NavItem>
 
-      <NavItem to="/post" aria-label="헤더 커뮤니티_B" $isActive={isActive('/post')}>
+      <NavItem to="/post" aria-label="헤더 커뮤니티" $isActive={isActive('/post')}>
         <Text size="m" weight="normal">
           커뮤니티
         </Text>
@@ -112,34 +95,6 @@ const NavExternalLink = styled.a`
     height: 3px;
     background-color: #47c8d9;
     transform: scaleX(0);
-    transition: transform 0.3s ease;
-  }
-
-  &:hover::after {
-    transform: scaleX(1);
-  }
-`;
-
-const NavButton = styled.button<{ $isActive: boolean }>`
-  margin-left: 20px;
-  background: none;
-  border: none;
-  padding: 0;
-  font: inherit;
-  cursor: pointer;
-  color: inherit;
-  text-align: left;
-  position: relative;
-
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -6px;
-    width: 100%;
-    height: 3px;
-    background-color: #47c8d9;
-    transform: ${({ $isActive }) => ($isActive ? 'scaleX(1)' : 'scaleX(0)')};
     transition: transform 0.3s ease;
   }
 

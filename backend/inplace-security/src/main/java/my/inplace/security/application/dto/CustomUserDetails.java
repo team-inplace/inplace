@@ -1,9 +1,9 @@
 package my.inplace.security.application.dto;
 
-import my.inplace.security.admin.dto.AdminResult;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

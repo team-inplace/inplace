@@ -37,8 +37,8 @@ public class AsyncConfig {
         return executor;
     }
 
-    @Bean(name = "fcmExecutor")
-    public Executor fcmExecutor() {
+    @Bean(name = "alarmExecutor")
+    public Executor alarmExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(5);
         executor.setMaxPoolSize(10);

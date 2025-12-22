@@ -4,16 +4,15 @@ import my.inplace.security.filter.TokenType;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import my.inplace.security.token.dto.TokenRequest;
+import my.inplace.security.token.dto.TokenResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import my.inplace.security.token.dto.TokenResult;
 import my.inplace.security.util.CookieUtil;
 import my.inplace.security.util.JwtUtil;
@@ -51,6 +50,18 @@ public class RefreshTokenController implements RefreshTokenControllerApiSpec {
 
         response.addHeader(HttpHeaders.SET_COOKIE, accessTokenCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+    }
+    
+    @PostMapping("/refresh-token")
+    public ResponseEntity<TokenResponse> mobileRefreshToken(
+        @RequestBody TokenRequest tokenRequest
+    ) {
+        TokenResult.ReIssued reIssuedToken = refreshTokenFacade.getReIssuedRefreshTokenCookie(
+            jwtUtil.getUsername(tokenRequest.refreshToken()), tokenRequest.refreshToken()
+        );
+        TokenResponse response = TokenResponse.from(reIssuedToken);
+        
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/refresh-token")

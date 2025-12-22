@@ -4,8 +4,6 @@ import { FaChevronRight } from 'react-icons/fa6';
 import VisitPlace from '@/assets/images/visit-place.png';
 import { Paragraph } from '@/components/common/typography/Paragraph';
 import useIsMobile from '@/hooks/useIsMobile';
-import { useABTest } from '@/provider/ABTest';
-import { sendGAEvent } from '@/utils/test/googleTestUtils';
 
 interface MapSectionProps {
   mainText?: string;
@@ -15,17 +13,10 @@ interface MapSectionProps {
 export default function MapSection({ highlightText, mainText }: MapSectionProps) {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const testGroup = useABTest('map_ui_test');
   const highlight = highlightText || '';
   const paragraph = mainText || '인플루언서가 방문한 장소는 어디일까요?';
 
   const handleConfirmClick = () => {
-    sendGAEvent('map_navigation_click_main', {
-      test_name: 'map_ui_test',
-      variation: testGroup,
-      from_path: window.location.pathname,
-      to_path: '/map',
-    });
     navigate('/map');
   };
 

@@ -38,6 +38,9 @@ public class User extends BaseEntity {
 
     @Column(name = "fcm_token")
     private String fcmToken;
+    
+    @Column(name = "expo_token")
+    private String expoToken;
 
     @Column(name = "tier_id")
     private Long tierId;
@@ -87,8 +90,9 @@ public class User extends BaseEntity {
         this.profileImageUrl = profileImageUrl;
     }
 
-    public void updateFcmToken(String fcmToken) {
-        this.fcmToken = fcmToken;
+    public void upsertAlarmToken(String fcmToken, String expoToken) {
+        this.fcmToken = fcmToken == null ? this.fcmToken : fcmToken;
+        this.expoToken = expoToken == null ? this.expoToken : expoToken;
     }
     
     public void deleteFcmToken() {

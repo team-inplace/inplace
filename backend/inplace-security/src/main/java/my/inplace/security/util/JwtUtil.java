@@ -67,16 +67,7 @@ public class JwtUtil {
             throw InplaceException.of(AuthorizationErrorCode.INVALID_TOKEN);
         }
     }
-
-    public boolean isRefreshToken(String token) throws InplaceException {
-        try {
-            return jwtParser.parseSignedClaims(token).getPayload().get("tokenType", String.class)
-                    .equals("refreshToken");
-        } catch (JwtException | IllegalArgumentException e) {
-            throw InplaceException.of(AuthorizationErrorCode.INVALID_TOKEN);
-        }
-    }
-
+    
     public Long getId(String token) throws InplaceException {
         try {
             return jwtParser.parseSignedClaims(token).getPayload().get("id", Long.class);

@@ -38,25 +38,36 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         HttpServletResponse response,
         FilterChain filterChain
     ) throws ServletException, IOException {
-        if (hasNoTokenCookie(request)) {
+        if (hasTokenCookie(request)) {
+            doCookieUser(request);
             filterChain.doFilter(request, response);
             return;
         }
-
-        String accessToken = getAccessToken(request);
-        if (StringUtils.isNotEmpty(accessToken) && jwtUtil.isNotExpired(accessToken)) {
-            addUserToAuthentication(accessToken);
+        
+        if (hasTokenAuthorization(request)) {
+            doAuthorizationUser(request);
+            filterChain.doFilter(request, response);
+            return;
         }
-
-        String refreshToken = getRefreshToken(request);
-        if (StringUtils.isNotEmpty(refreshToken) && jwtUtil.isNotExpired(refreshToken)) {
-            addUserToAuthentication(refreshToken);
-        }
-
+        
         filterChain.doFilter(request, response);
     }
+    
+    private boolean hasTokenAuthorization(HttpServletRequest request) {
+        String header = request.getHeader("Authorization");
+        
+        return header != null && header.startsWith("Bearer ");
+    }
+    
+    private void doAuthorizationUser(HttpServletRequest request) {
+        String accessToken = request.getHeader("Authorization")
+                            .substring(7)
+                            .trim();
+        
+        addUserToAuthentication(accessToken);
+    }
 
-    private boolean hasNoTokenCookie(HttpServletRequest request) {
+    private boolean hasTokenCookie(HttpServletRequest request) {
         return Optional.ofNullable(request.getCookies())
             .flatMap(cookies -> Arrays.stream(cookies)
                 .filter(
@@ -64,7 +75,19 @@ public class AuthorizationFilter extends OncePerRequestFilter {
                         || cookie.getName().equals(TokenType.REFRESH_TOKEN.getValue())
                 )
                 .findAny())
-            .isEmpty();
+            .isPresent();
+    }
+    
+    private void doCookieUser(HttpServletRequest request) {
+        String accessToken = getAccessToken(request);
+        if (StringUtils.isNotEmpty(accessToken) && jwtUtil.isNotExpired(accessToken)) {
+            addUserToAuthentication(accessToken);
+        }
+        
+        String refreshToken = getRefreshToken(request);
+        if (StringUtils.isNotEmpty(refreshToken) && jwtUtil.isNotExpired(refreshToken)) {
+            addUserToAuthentication(refreshToken);
+        }
     }
 
     private String getAccessToken(HttpServletRequest request) throws InplaceException {

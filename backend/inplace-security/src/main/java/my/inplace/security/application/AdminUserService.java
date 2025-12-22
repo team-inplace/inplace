@@ -1,19 +1,19 @@
-package my.inplace.security.admin;
+package my.inplace.security.application;
 
-import my.inplace.security.admin.dto.AdminCommand;
-import my.inplace.security.admin.dto.AdminResult;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import my.inplace.domain.user.AdminUser;
+import my.inplace.security.application.dto.AdminCommand;
+import my.inplace.security.application.dto.AdminResult;
+import my.inplace.infra.user.jpa.AdminUserJpaRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import my.inplace.domain.user.AdminUser;
-import my.inplace.infra.user.jpa.AdminUserJpaRepository;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class AdminUserService {
-
     private final AdminUserJpaRepository adminUserRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -25,10 +25,10 @@ public class AdminUserService {
 
     @Transactional
     public void registerAdminUser(AdminCommand.Register registerCommand) {
-        AdminUser adminUser = new AdminUser(
-            registerCommand.username(),
-            passwordEncoder.encode(registerCommand.password())
-        );
-        adminUserRepository.save(adminUser);
+        adminUserRepository.save(
+            new AdminUser(
+                registerCommand.username(),
+                passwordEncoder.encode(registerCommand.password())
+        ));
     }
 }

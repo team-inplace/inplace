@@ -4,7 +4,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import my.inplace.domain.user.User;
 import my.inplace.domain.user.UserBadge;
-import my.inplace.domain.user.query.UserReadRepository;
 import my.inplace.application.user.dto.TierConditions;
 import my.inplace.common.exception.InplaceException;
 import my.inplace.common.exception.code.UserErrorCode;
@@ -90,11 +89,11 @@ public class UserCommandService {
     }
 
     @Transactional
-    public void updateFcmToken(Long userId, String fcmToken) {
+    public void updateAlarmToken(Long userId, String fcmToken, String expoToken) {
         User user = userJpaRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
 
-        user.updateFcmToken(fcmToken);
+        user.upsertAlarmToken(fcmToken, expoToken);
     }
     
     @Transactional

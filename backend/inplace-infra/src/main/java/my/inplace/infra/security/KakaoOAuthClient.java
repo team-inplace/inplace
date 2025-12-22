@@ -1,6 +1,5 @@
-package my.inplace.infra.token;
+package my.inplace.infra.security;
 
-import my.inplace.infra.annotation.Client;
 import my.inplace.common.exception.InplaceException;
 import my.inplace.common.exception.code.UserErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -9,11 +8,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.web.client.RestTemplate;
-import my.inplace.domain.security.OauthSecurityClient;
+import my.inplace.domain.security.OAuthSecurityClient;
 
-@Client
 @RequiredArgsConstructor
-public class KakaoOauthClient implements OauthSecurityClient {
+public class KakaoOAuthClient implements OAuthSecurityClient {
 
     private final String UNLINK_URL = "https://kapi.kakao.com/v1/user/unlink";
     private final RestTemplate restTemplate;

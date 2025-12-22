@@ -17,7 +17,6 @@ import my.inplace.application.place.query.PlaceQueryService;
 import my.inplace.application.place.query.dto.PlaceResult;
 import my.inplace.application.review.ReviewService;
 import my.inplace.domain.review.query.ReviewQueryResult;
-import my.inplace.security.token.OauthTokenService;
 import my.inplace.application.user.command.UserCommandService;
 import my.inplace.application.user.dto.UserResult;
 import my.inplace.application.user.query.UserQueryService;
