@@ -14,7 +14,7 @@ export interface PlaceListProps {
 }
 export default function usePlaceList({ data, onGetPlaceData }: PlaceListProps) {
   const filteredPlaces = useMemo(() => {
-    return data?.pages?.flatMap((page) => page.posts) ?? [];
+    return data?.pages?.flatMap((page) => page.contents) ?? [];
   }, [data]);
 
   useEffect(() => {

@@ -265,7 +265,7 @@ export type CategoryOption = {
 };
 
 export type CursorData<T> = {
-  posts: T[];
+  contents: T[];
   cursor: {
     hasNext: boolean;
     nextCursorValue: number;

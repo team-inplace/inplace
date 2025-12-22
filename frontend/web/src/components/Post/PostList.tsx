@@ -19,7 +19,7 @@ export default function PostList({ items, activeCategory, scrollRef, isFetchingN
   return (
     <Wrapper>
       {items?.pages.flatMap((page) =>
-        page.posts.map((item) => (
+        page.contents.map((item) => (
           <div key={item.postId}>
             <Postitem item={item} activeCategory={activeCategory} />
             <Separator />
