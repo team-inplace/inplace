@@ -4,7 +4,6 @@ import { MemoryRouter } from 'react-router-dom';
 import InfluencerItem from '@/components/common/Items/InfluencerItem';
 import { AuthContext } from '@/provider/Auth';
 import PlaceItem from '@/components/Map/PlaceSection/PlaceItem';
-import { DataLayerEvent } from '@/utils/test/googleTestUtils';
 
 jest.mock('@inplace-frontend-monorepo/shared', () => ({
   getFetchInstance: jest.fn().mockReturnValue({
@@ -12,12 +11,6 @@ jest.mock('@inplace-frontend-monorepo/shared', () => ({
     get: jest.fn().mockResolvedValue({ data: {} }),
   }),
 }));
-
-declare global {
-  interface Window {
-    dataLayer: DataLayerEvent[];
-  }
-}
 
 describe('좋아요/취소 기능 테스트', () => {
   let queryClient: QueryClient;
@@ -31,7 +24,6 @@ describe('좋아요/취소 기능 테스트', () => {
         },
       },
     });
-    (window as Window).dataLayer = [];
   });
 
   const renderWithProviders = (ui: React.ReactNode) => {

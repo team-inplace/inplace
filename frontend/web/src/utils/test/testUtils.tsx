@@ -7,8 +7,6 @@ import { getConfig } from '@inplace-frontend-monorepo/shared/api/config';
 import { AuthContext } from '@/provider/Auth';
 import { PlaceInfo, SpotData } from '@/types';
 import ErrorComponent from '@/components/common/layouts/Error';
-import { ABTestContext } from '@/provider/ABTest';
-import { ABTestGroup } from './googleTestUtils';
 
 const config = getConfig();
 const BASE_URL = config.baseURL;
@@ -32,18 +30,7 @@ export function renderWithQueryClient(children: React.ReactNode) {
     >
       <MemoryRouter future={{ v7_relativeSplatPath: true }}>
         <ErrorBoundary FallbackComponent={ErrorComponent}>
-          <QueryClientProvider client={queryClient}>
-            <ABTestContext.Provider
-              value={{
-                testGroups: {
-                  map_ui_test: 'A' as ABTestGroup,
-                },
-                getTestGroup: () => 'A' as ABTestGroup,
-              }}
-            >
-              {children}
-            </ABTestContext.Provider>
-          </QueryClientProvider>
+          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         </ErrorBoundary>
       </MemoryRouter>
     </AuthContext.Provider>,

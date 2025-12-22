@@ -5,7 +5,6 @@ import { AuthContext } from '@/provider/Auth';
 import MainPage from '@/pages/Main';
 import * as locationHook from '@/hooks/useGetLocation';
 import * as api from '@/api/hooks/useGetAroundVideo';
-import ABTestProvider from '@/provider/ABTest';
 
 jest.mock('@inplace-frontend-monorepo/shared/api/config', () => ({
   initializeConfig: jest.fn(),
@@ -57,22 +56,19 @@ test('사용자 위치 기반 내주변 비디오 호출 확인', async () => {
   });
 
   render(
-    <ABTestProvider>
-      <AuthContext.Provider
-        value={{
-          isAuthenticated: true,
-          handleLoginSuccess: jest.fn(),
-          handleLogout: jest.fn(),
-        }}
-      >
-        <MemoryRouter>
-          <QueryClientProvider client={queryClient}>
-            <MainPage />
-          </QueryClientProvider>
-        </MemoryRouter>
-      </AuthContext.Provider>
-      ,
-    </ABTestProvider>,
+    <AuthContext.Provider
+      value={{
+        isAuthenticated: true,
+        handleLoginSuccess: jest.fn(),
+        handleLogout: jest.fn(),
+      }}
+    >
+      <MemoryRouter>
+        <QueryClientProvider client={queryClient}>
+          <MainPage />
+        </QueryClientProvider>
+      </MemoryRouter>
+    </AuthContext.Provider>,
   );
 
   await waitFor(() => {
