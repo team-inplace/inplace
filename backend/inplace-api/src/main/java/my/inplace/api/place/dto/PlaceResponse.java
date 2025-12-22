@@ -20,7 +20,7 @@ import my.inplace.common.cursor.CursorResult;
 public class PlaceResponse {
 
     public record SimpleList(
-        List<Simple> places,
+        List<Simple> contents,
         CursorResponse cursor
     ) {
 
