@@ -1,14 +1,16 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { getFetchInstance } from '@inplace-frontend-monorepo/shared';
-import { LocationData, FilterParams, PlaceData, PageableData } from '@/types';
+import { LocationData, FilterParams, PlaceData, CursorData } from '@/types';
 
 export const getPlaceList = async (
   location: LocationData,
   filters: FilterParams,
   center: { lat: number; lng: number },
-  page: number,
+  cursorId: number | null,
+  cursorValue: number | null,
   size: number,
-): Promise<PageableData<PlaceData>> => {
+  sort: string,
+): Promise<CursorData<PlaceData>> => {
   const { topLeftLongitude, topLeftLatitude, bottomRightLongitude, bottomRightLatitude } = location;
   const { categories, influencers } = filters;
 
@@ -19,13 +21,20 @@ export const getPlaceList = async (
     bottomRightLatitude: bottomRightLatitude.toString(),
     longitude: center.lng.toString(),
     latitude: center.lat.toString(),
-    page: page.toString(),
     size: size.toString(),
+    sort: sort.toString(),
     categories: categories.join(','),
     influencers: influencers.join(','),
   });
 
-  const response = await getFetchInstance().get<PageableData<PlaceData>>(`/places?${params}`);
+  if (cursorId) {
+    params.append('cursorId', cursorId.toString());
+  }
+  if (cursorValue) {
+    params.append('cursorValue', cursorValue.toString());
+  }
+
+  const response = await getFetchInstance().get<CursorData<PlaceData>>(`/places?${params}`);
   return response.data;
 };
 
@@ -34,23 +43,28 @@ interface QueryParams {
   filters: FilterParams;
   center: { lat: number; lng: number };
   size: number;
+  sort: string;
 }
 
-export const useGetInfinitePlaceList = ({ location, filters, center, size }: QueryParams, enabled?: boolean) => {
+export const useGetInfinitePlaceList = ({ location, filters, center, size, sort }: QueryParams, enabled?: boolean) => {
   return useInfiniteQuery<
-    PageableData<PlaceData>,
+    CursorData<PlaceData>,
     Error,
-    { pages: PageableData<PlaceData>[]; pageParams: number[] },
-    [string, LocationData, FilterParams, { lat: number; lng: number }, number],
-    number
+    { pages: CursorData<PlaceData>[]; pageParams: ({ cursorId: number; cursorValue: number } | null)[] },
+    [string, LocationData, FilterParams, { lat: number; lng: number }, number, string],
+    { cursorId: number; cursorValue: number } | null
   >({
-    queryKey: ['infinitePlaceList', location, filters, center, size],
-    // pageParam = 각 페이지를 가져올 때마다 사용되는 현재 페이지 번호
-    queryFn: ({ pageParam = 0 }) => getPlaceList(location, filters, center, pageParam, size),
-    initialPageParam: 0, // 초기 페이지 번호(0부터 시작)
-    // 다음페이지 있으면 다음 페이지 번호 반환
+    queryKey: ['infinitePlaceList', location, filters, center, size, sort],
+
+    queryFn: ({ pageParam = null }) =>
+      getPlaceList(location, filters, center, pageParam?.cursorId || null, pageParam?.cursorValue || null, size, sort),
+
+    initialPageParam: null,
+
     getNextPageParam: (lastPage) => {
-      return lastPage.last ? undefined : lastPage.number + 1;
+      return lastPage.cursor.hasNext
+        ? { cursorId: lastPage.cursor.nextCursorId, cursorValue: lastPage.cursor.nextCursorValue }
+        : undefined;
     },
     enabled,
     staleTime: 1000 * 60 * 5,

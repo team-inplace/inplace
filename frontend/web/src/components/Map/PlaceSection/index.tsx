@@ -42,7 +42,6 @@ export default function PlaceSection({
   setShouldRestoreScroll,
 }: PlaceSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null); // 무한 스크롤을 위한 ref와 observer 설정
-  const previousPlacesRef = useRef<PlaceData[]>([]);
 
   const { ref: loadMoreRef, inView } = useInView({
     root: sectionRef.current,
@@ -50,7 +49,6 @@ export default function PlaceSection({
     threshold: 0, // 요소가 조금이라도 보이면 감지
   });
 
-  // 데이터 fetching hook
   const {
     data: placeList,
     isLoading: isLoadingPlaceList,
@@ -64,7 +62,8 @@ export default function PlaceSection({
       location: mapBounds,
       filters,
       center,
-      size: 10, // 한 페이지에 보여줄 아이템 개수; 변경하며 api 잘 받아오는지 확인 가능
+      size: 10,
+      sort: 'createdAt',
     },
     !isInitialLoad && !filtersWithPlaceName.placeName,
   );
@@ -81,6 +80,7 @@ export default function PlaceSection({
     {
       filters: filtersWithPlaceName,
       size: 10,
+      sort: 'createdAt',
     },
     !!filtersWithPlaceName.placeName,
   );
@@ -175,12 +175,7 @@ export default function PlaceSection({
     [onPlaceSelect, isListExpanded, onListExpand],
   );
 
-  if (
-    isLoading &&
-    !isFetchingNextPagePlaceList &&
-    !isFetchingNextPageSearchPlaceList &&
-    previousPlacesRef.current.length === 0
-  ) {
+  if (isLoading && !isFetchingNextPagePlaceList && !isFetchingNextPageSearchPlaceList && filteredPlaces.length === 0) {
     return (
       <SectionContainer ref={sectionRef}>
         <LoadingContainer>

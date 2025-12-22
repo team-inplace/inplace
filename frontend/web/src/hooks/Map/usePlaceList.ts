@@ -1,18 +1,20 @@
 import { useMemo, useEffect } from 'react';
-import { PageableData, PlaceData } from '@/types';
+import { CursorData, PlaceData } from '@/types';
+
+type PlaceCursorParam = { cursorId: number; cursorValue: number } | null;
 
 export interface PlaceListProps {
   data:
     | {
-        pages: PageableData<PlaceData>[];
-        pageParams: number[];
+        pages: CursorData<PlaceData>[];
+        pageParams: PlaceCursorParam[];
       }
     | undefined;
   onGetPlaceData: (data: PlaceData[]) => void;
 }
 export default function usePlaceList({ data, onGetPlaceData }: PlaceListProps) {
   const filteredPlaces = useMemo(() => {
-    return data?.pages?.flatMap((page) => page.content) || [];
+    return data?.pages?.flatMap((page) => page.posts) ?? [];
   }, [data]);
 
   useEffect(() => {
