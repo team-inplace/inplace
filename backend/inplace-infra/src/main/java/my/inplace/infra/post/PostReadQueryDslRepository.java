@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import my.inplace.common.cursor.CursorResult;
 import my.inplace.domain.post.QComment;
 import my.inplace.domain.post.QLikedPost;
@@ -28,6 +29,7 @@ import my.inplace.domain.user.QTier;
 import my.inplace.domain.user.QUser;
 import org.springframework.stereotype.Repository;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class PostReadQueryDslRepository implements PostReadRepository {
@@ -113,8 +115,8 @@ public class PostReadQueryDslRepository implements PostReadRepository {
                 )
             )
             .from(QPost.post)
-            .innerJoin(QUser.user).on(QPost.post.authorId.eq(QUser.user.id))
-            .innerJoin(QTier.tier).on(QUser.user.tierId.eq(QTier.tier.id))
+            .leftJoin(QUser.user).on(QPost.post.authorId.eq(QUser.user.id))
+            .leftJoin(QTier.tier).on(QUser.user.tierId.eq(QTier.tier.id))
             .leftJoin(QBadge.badge).on(QUser.user.mainBadgeId.eq(QBadge.badge.id))
             .where(QPost.post.id.in(orderedPostIds));
 
