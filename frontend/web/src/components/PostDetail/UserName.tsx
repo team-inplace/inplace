@@ -13,7 +13,7 @@ export default function UserName({ userNickname, tierImageUrl, badgeImageUrl }: 
       <MobileUserUI>
         {tierImageUrl && <UserTier src={tierImageUrl} alt={`${userNickname} Tier`} />}
         <Text size="s" weight="normal">
-          {userNickname}
+          {userNickname || '탈퇴한 사용자'}
         </Text>
       </MobileUserUI>
       {badgeImageUrl && <UserTitle src={badgeImageUrl} alt={`${userNickname} Title`} />}

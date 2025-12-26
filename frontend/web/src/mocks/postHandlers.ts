@@ -18,10 +18,10 @@ const BASE_URL = config.baseURL;
 const detailDummy = {
   postId: 1,
   author: {
-    nickname: '랄라스윗칩고구마',
-    imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
-    tierImageUrl: silver,
-    badgeImageUrl: TestImg,
+    nickname: null,
+    imgUrl: null,
+    tierImageUrl: null,
+    badgeImageUrl: null,
   },
   title: '성시경 먹을텐데 질문',
   content:
@@ -59,7 +59,7 @@ const postListDummy = [
   {
     postId: 1,
     author: {
-      nickname: '랄라스윗칩',
+      nickname: null,
       imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
       tierImageUrl: bronze,
       badgeImageUrl: TestImg,
@@ -198,7 +198,7 @@ const commentListDummy = [
   {
     commentId: 1,
     author: {
-      nickname: '이효은',
+      nickname: null,
       imgUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSEH9YJyZ8cIW7fXHzSw3N_PpYE6JFkcrUtKw&s',
       tierImageUrl: 'https://img.icons8.com/?size=100&id=12782&format=png&color=55ebff',
     },
@@ -371,7 +371,7 @@ export const postHandlers = [
     return res(
       ctx.status(200),
       ctx.json({
-        posts: paginatedContent,
+        contents: paginatedContent,
         cursor: {
           hasNext,
           nextCursorId: nextCursor,
