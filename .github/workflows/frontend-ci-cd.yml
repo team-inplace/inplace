@@ -78,7 +78,7 @@ jobs:
           SENTRY_ORG: inplace-na
           SENTRY_PROJECT: inplace
         run: |
-          pnpm install @sentry/cli
+          pnpm --filter web install @sentry/cli
           sentry-cli releases new -p $SENTRY_PROJECT ${{ github.sha }}
           sentry-cli releases set-commits --auto ${{ github.sha }} --ignore-missing
           sentry-cli releases files ${{ github.sha }} upload-sourcemaps ./web/dist
