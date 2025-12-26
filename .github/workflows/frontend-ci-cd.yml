@@ -80,7 +80,7 @@ jobs:
         run: |
           pnpx @sentry/cli releases new -p $SENTRY_PROJECT ${{ github.sha }}
           pnpx @sentry/cli releases set-commits --auto ${{ github.sha }} --ignore-missing
-          pnpx @sentry/cli releases files ${{ github.sha }} upload-sourcemaps ./web/dist
+          pnpx @sentry/cli sourcemaps upload -r ${{ github.sha }} ./web/dist
           pnpx @sentry/cli releases finalize ${{ github.sha }}
 
       - name: Configure AWS credentials
