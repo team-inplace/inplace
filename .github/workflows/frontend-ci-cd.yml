@@ -78,11 +78,10 @@ jobs:
           SENTRY_ORG: inplace-na
           SENTRY_PROJECT: inplace
         run: |
-          pnpm --filter web install @sentry/cli
-          sentry-cli releases new -p $SENTRY_PROJECT ${{ github.sha }}
-          sentry-cli releases set-commits --auto ${{ github.sha }} --ignore-missing
-          sentry-cli releases files ${{ github.sha }} upload-sourcemaps ./web/dist
-          sentry-cli releases finalize ${{ github.sha }}
+          pnpx @sentry/cli releases new -p $SENTRY_PROJECT ${{ github.sha }}
+          pnpx @sentry/cli releases set-commits --auto ${{ github.sha }} --ignore-missing
+          pnpx @sentry/cli releases files ${{ github.sha }} upload-sourcemaps ./web/dist
+          pnpx @sentry/cli releases finalize ${{ github.sha }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
