@@ -48,19 +48,6 @@ jobs:
       - name: Run tests
         run: pnpm --filter web run test
 
-      - name: Create and Upload Sentry Release
-        if: github.ref == 'refs/heads/main'
-        env:
-          SENTRY_AUTH_TOKEN: ${{ secrets.VITE_SENTRY_AUTH_TOKEN }}
-          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
-          SENTRY_ORG: inplace-na
-          SENTRY_PROJECT: inplace
-        run: |
-          pnpm install -g @sentry/cli
-          sentry-cli releases new -p $SENTRY_PROJECT ${{ github.sha }}
-          sentry-cli releases set-commits --auto ${{ github.sha }} --ignore-missing
-          sentry-cli releases files ${{ github.sha }} upload-sourcemaps ./web/dist
-          sentry-cli releases finalize ${{ github.sha }}
 
       - name: Build project
         run: |
@@ -82,6 +69,20 @@ jobs:
           VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
           VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
           VITE_FIREBASE_MEASUREMENT_ID: ${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}
+
+      - name: Create and Upload Sentry Release
+        if: github.ref == 'refs/heads/main'
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.VITE_SENTRY_AUTH_TOKEN }}
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          SENTRY_ORG: inplace-na
+          SENTRY_PROJECT: inplace
+        run: |
+          pnpm install @sentry/cli
+          sentry-cli releases new -p $SENTRY_PROJECT ${{ github.sha }}
+          sentry-cli releases set-commits --auto ${{ github.sha }} --ignore-missing
+          sentry-cli releases files ${{ github.sha }} upload-sourcemaps ./web/dist
+          sentry-cli releases finalize ${{ github.sha }}
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
