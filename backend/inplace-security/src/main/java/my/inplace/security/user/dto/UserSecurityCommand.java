@@ -1,9 +1,9 @@
 package my.inplace.security.user.dto;
 
-import my.inplace.security.application.dto.KakaoOAuthResponse;
 import my.inplace.domain.user.Role;
 import my.inplace.domain.user.User;
 import my.inplace.domain.user.UserType;
+import my.inplace.security.application.dto.KakaoOAuthResponse;
 
 public class UserSecurityCommand {
 
@@ -19,6 +19,10 @@ public class UserSecurityCommand {
             return new UserSecurityCommand.Create(kakaoOAuthResponse.getEmail(),
                 kakaoOAuthResponse.getNickname(), kakaoOAuthResponse.getProfileImageUrl(),
                 UserType.KAKAO, Role.USER);
+        }
+        
+        public static UserSecurityCommand.Create from(String email,String nickname, String profileImageUrl) {
+            return new UserSecurityCommand.Create(email, nickname, profileImageUrl, UserType.KAKAO, Role.USER);
         }
 
         public User toEntity() {
