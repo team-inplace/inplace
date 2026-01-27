@@ -22,8 +22,8 @@ public class MobileUserFacade {
         if(userByUsername.isEmpty()) {
             UserSecurityResult.Info info = userSecurityService.registerUser(
                 UserSecurityCommand.Create.from(username, nickname, profileImageUrl));
-            
-            return makeToken(info.username(), info.id(), info.username());
+
+            return makeToken(info.username(), info.id(), info.role().getRoles());
         }
         
         userSecurityService.updateProfileImageUrl(userByUsername.get().id(), profileImageUrl);
