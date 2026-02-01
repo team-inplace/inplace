@@ -129,19 +129,22 @@ jobs:
             echo "metro.config.js not found"
           fi
 
-      - name: 📱 Build APK
-        if: github.event.inputs.buildType == 'all' || github.event.inputs.buildType == 'prod-apk' || github.event_name == 'push'
+      - name: 📱 Build Development APK (for dev branch)
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/dev') || github.event.inputs.buildType == 'all'
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
-          if [[ ${{ github.ref }} == 'refs/heads/dev' ]]; then
-            echo "Building for development environment (dev branch)"
-            eas build --platform android --profile development --local --non-interactive --output=./app-dev.apk
-          else
-            echo "Building for production environment (main branch)"
-            eas build --platform android --profile production-apk --local --non-interactive --output=./app-prod.apk
-          fi
+          eas build --platform android --profile development --local --non-interactive --output=./app-dev.apk
         env:
-          NODE_ENV: ${{ github.ref == 'refs/heads/dev' && 'development' || 'production' }}
+          NODE_ENV: development
+          EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY }}
+
+      - name: 📱 Build Production APK (for main branch)
+        if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event.inputs.buildType == 'prod-apk'
+        run: |
+          export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
+          eas build --platform android --profile production-apk --local --non-interactive --output=./app-prod.apk
+        env:
+          NODE_ENV: production
           EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY }}
 
       - name: 🚀 Publish to Expo
