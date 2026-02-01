@@ -1,5 +1,12 @@
 import { initializeConfig } from "@inplace-frontend-monorepo/shared/src/api/config/index";
-initializeConfig(__DEV__ ? "development" : "production");
+
+const environment = process.env.EXPO_PUBLIC_ENV === "development"
+  ? "development"
+  : process.env.EXPO_PUBLIC_ENV === "production"
+  ? "production"
+  : __DEV__ ? "development" : "production";
+
+initializeConfig(environment);
 
 import WebViewScreen from "./src/components/common/WebViewScreen";
 
