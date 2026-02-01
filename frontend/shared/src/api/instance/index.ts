@@ -8,10 +8,7 @@ let accessToken: string | null = null;
 let instance: AxiosInstance | null = null;
 
 const isWebView = (): boolean => {
-  return (
-    typeof window !== "undefined" &&
-    /ReactNativeWebView/.test(window.navigator.userAgent)
-  );
+  return typeof window !== "undefined" && window.ReactNativeWebView != null;
 };
 
 export const setAuthToken = (token: string | null) => {
