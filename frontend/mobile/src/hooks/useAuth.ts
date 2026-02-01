@@ -13,7 +13,7 @@ export const useAuth = (webViewRef: React.RefObject<WebView | null>) => {
       const userInfo = {
         nickname: userProfile.nickname ?? "Guest",
         username: userProfile.email ?? "",
-        profile_image_url: userProfile.thumbnailImageUrl ?? "",
+        profileImageUrl: userProfile.thumbnailImageUrl ?? "",
       };
 
       const tokens = await getAccessToken(userInfo);

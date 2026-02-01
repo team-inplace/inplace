@@ -3,7 +3,7 @@ import { getConfig } from "@inplace-frontend-monorepo/shared/src/api/config";
 type UserInfo = {
   nickname: string;
   username: string;
-  profile_image_url: string;
+  profileImageUrl: string;
 };
 
 type Tokens = {
