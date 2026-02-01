@@ -129,13 +129,19 @@ jobs:
             echo "metro.config.js not found"
           fi
 
-      - name: 📱 Build Production APK
+      - name: 📱 Build APK
         if: github.event.inputs.buildType == 'all' || github.event.inputs.buildType == 'prod-apk' || github.event_name == 'push'
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
-          eas build --platform android --profile production-apk --local --non-interactive --output=./app-prod.apk
+          if [[ ${{ github.ref }} == 'refs/heads/dev' ]]; then
+            echo "Building for development environment (dev branch)"
+            eas build --platform android --profile development --local --non-interactive --output=./app-dev.apk
+          else
+            echo "Building for production environment (main branch)"
+            eas build --platform android --profile production-apk --local --non-interactive --output=./app-prod.apk
+          fi
         env:
-          NODE_ENV: production
+          NODE_ENV: ${{ github.ref == 'refs/heads/dev' && 'development' || 'production' }}
           EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY }}
 
       - name: 🚀 Publish to Expo
@@ -164,10 +170,10 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           draft: true
-          name: "Release v${{ steps.build-info.outputs.version }}-${{ steps.build-info.outputs.build_number }}"
-          tag_name: "v${{ steps.build-info.outputs.version }}-${{ steps.build-info.outputs.build_number }}"
+          name: "Release v${{ steps.build-info.outputs.version }}-${{ steps.build-info.outputs.build_number }} (${{ github.ref == 'refs/heads/dev' && 'Dev' || 'Production' }})"
+          tag_name: "v${{ steps.build-info.outputs.version }}-${{ steps.build-info.outputs.build_number }}-${{ github.ref == 'refs/heads/dev' && 'dev' || 'prod' }}"
           files: |
-            ./frontend/mobile/app-prod.apk
+            ./frontend/mobile/app-*.apk
           body_path: ./frontend/mobile/changelog.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -176,5 +182,5 @@ jobs:
         with:
           name: app-builds
           path: |
-            ./app-prod.apk
+            ./frontend/mobile/app-*.apk
           retention-days: 7
