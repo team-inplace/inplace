@@ -21,7 +21,7 @@ export const getAccessToken = async (userInfo: UserInfo) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ userInfo }),
+        body: JSON.stringify(userInfo),
       }
     );
 
