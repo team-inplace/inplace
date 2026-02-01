@@ -28,10 +28,21 @@ export const useAuth = (webViewRef: React.RefObject<WebView | null>) => {
 
         if (webViewRef.current) {
           const script = `
-          window.localStorage.setItem('authToken', '${accessToken}');
-          window.setAuthToken('${accessToken}');
-          true;
-        `;
+            (function() {
+              window.localStorage.setItem('authToken', '${accessToken}');
+              window.localStorage.setItem('isAuthenticated', 'true');
+              window.setAuthToken('${accessToken}');
+
+              const redirectPath = window.localStorage.getItem('redirectPath');
+              if (redirectPath) {
+                window.localStorage.removeItem('redirectPath');
+                window.location.href = redirectPath;
+              } else {
+                window.location.reload();
+              }
+            })();
+            true;
+          `;
           webViewRef.current.injectJavaScript(script);
 
           console.log("로그인 성공 및 웹뷰에 토큰 주입 완료!");
