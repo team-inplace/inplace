@@ -72,7 +72,9 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const initialize = async () => {
       const savedAuthStatus = localStorage.getItem('isAuthenticated') === 'true';
-      if (savedAuthStatus) {
+      const isReactNativeWebView = typeof window !== 'undefined' && window.ReactNativeWebView != null;
+
+      if (savedAuthStatus && !isReactNativeWebView) {
         try {
           await refreshTokenRegularly();
         } catch (error) {
