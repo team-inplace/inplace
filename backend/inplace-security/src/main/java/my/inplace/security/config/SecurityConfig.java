@@ -44,7 +44,7 @@ public class SecurityConfig {
             .httpBasic(AbstractHttpConfigurer::disable)
             
             .sessionManagement((session) -> session
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             
             .authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/admin/register", "/admin/login").permitAll()
