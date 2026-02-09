@@ -26,9 +26,9 @@ public class RefreshTokenFacade {
         UserSecurityResult.Info userInfo = userSecurityService.findUserByUsername(username)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
         String reIssuedRefreshToken = jwtUtil
-            .createRefreshToken(userInfo.username(), userInfo.id(), userInfo.role().getRoles());
+            .createRefreshToken(userInfo.username(), userInfo.nickname(), userInfo.id(), userInfo.role().getRoles());
         String reIssuedAccessToken = jwtUtil
-            .createAccessToken(userInfo.username(), userInfo.id(), userInfo.role().getRoles());
+            .createAccessToken(userInfo.username(), userInfo.nickname(), userInfo.id(), userInfo.role().getRoles());
         refreshTokenService.saveRefreshToken(username, reIssuedRefreshToken);
 
         return TokenResult.ReIssued.of(reIssuedAccessToken, reIssuedRefreshToken);

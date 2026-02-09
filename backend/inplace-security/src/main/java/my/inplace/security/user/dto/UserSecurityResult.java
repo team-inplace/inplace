@@ -8,12 +8,14 @@ public class UserSecurityResult {
     public record Info(
         Long id,
         String username,
+        String nickname,
         Role role
     ) {
         public static Info from(User user) {
             return new Info(
                 user.getId(),
                 user.getUsername(),
+                user.getNickname(),
                 user.getRole()
             );
         }

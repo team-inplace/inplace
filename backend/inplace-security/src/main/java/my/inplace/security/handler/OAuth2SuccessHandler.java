@@ -63,10 +63,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     }
     
     private void setTokenToCookie(HttpServletResponse response, CustomOAuth2User user) {
-        String accessToken = jwtUtil.createAccessToken(user.username(), user.id(), user.roles());
+        String accessToken = jwtUtil.createAccessToken(user.username(), user.nickname(), user.id(), user.roles());
         setCookie(response, TokenType.ACCESS_TOKEN.getValue(), accessToken);
         
-        String refreshToken = jwtUtil.createRefreshToken(user.username(), user.id(), user.roles());
+        String refreshToken = jwtUtil.createRefreshToken(user.username(), user.nickname(), user.id(), user.roles());
         setCookie(response, TokenType.REFRESH_TOKEN.getValue(), refreshToken);
         refreshTokenService.saveRefreshToken(user.username(), refreshToken);
     }

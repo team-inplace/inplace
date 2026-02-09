@@ -36,8 +36,12 @@ public class FormLoginSuccessHandler implements AuthenticationSuccessHandler {
     ) throws IOException {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         
-        String accessToken = jwtUtil.createAccessToken(customUserDetails.username(),
-            customUserDetails.id(), customUserDetails.roles());
+        String accessToken = jwtUtil.createAccessToken(
+            customUserDetails.username(),
+            "관리자", // 임의 값
+            customUserDetails.id(),
+            customUserDetails.roles()
+        );
         setCookie(response, TokenType.ACCESS_TOKEN.getValue(), accessToken);
         response.sendRedirect("/admin/main");
     }

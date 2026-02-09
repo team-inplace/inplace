@@ -31,7 +31,7 @@ public class AuthorizationUtil {
         checkLoginUser();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-        return customOAuth2User.getName();
+        return customOAuth2User.nickname();
     }
 
     public static boolean isNotLoginUser() {

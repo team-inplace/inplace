@@ -11,14 +11,15 @@ import my.inplace.domain.user.Role;
 import my.inplace.security.user.dto.UserSecurityResult;
 
 public record CustomOAuth2User(
-    String username,
+    String username, // 이메일
+    String nickname,
     Long id,
     String roles,
     Collection<GrantedAuthority> authorities
 ) implements OAuth2User {
 
-    public CustomOAuth2User(String username, Long id, String roles) {
-        this(username, id, roles, createAuthorities(roles));
+    public CustomOAuth2User(String username, String nickname, Long id, String roles) {
+        this(username, nickname, id, roles, createAuthorities(roles));
     }
 
     private static Collection<GrantedAuthority> createAuthorities(String roles) {
@@ -34,12 +35,16 @@ public record CustomOAuth2User(
     }
 
     public static CustomOAuth2User makeExistUser(UserSecurityResult.Info user) {
-        return new CustomOAuth2User(user.username(), user.id(), user.role().getRoles());
+        return new CustomOAuth2User(user.username(), user.nickname(), user.id(), user.role().getRoles());
     }
 
     public static CustomOAuth2User makeNewUser(UserSecurityResult.Info user) {
-        return new CustomOAuth2User(user.username(), user.id(),
-            Role.addRole(Role.USER, Role.FIRST_USER));
+        return new CustomOAuth2User(
+            user.username(),
+            user.nickname(),
+            user.id(),
+            Role.addRole(Role.USER, Role.FIRST_USER)
+        );
     }
 
     @Override

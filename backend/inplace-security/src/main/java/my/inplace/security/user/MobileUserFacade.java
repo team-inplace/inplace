@@ -23,21 +23,28 @@ public class MobileUserFacade {
             UserSecurityResult.Info info = userSecurityService.registerUser(
                 UserSecurityCommand.Create.from(username, nickname, profileImageUrl));
 
-            return makeToken(info.username(), info.id(), info.role().getRoles(), true);
+            return makeToken(
+                info.username(),
+                info.nickname(),
+                info.id(),
+                info.role().getRoles(),
+                true
+            );
         }
         
         userSecurityService.updateProfileImageUrl(userByUsername.get().id(), profileImageUrl);
         return makeToken(
             userByUsername.get().username(),
+            userByUsername.get().nickname(),
             userByUsername.get().id(),
             userByUsername.get().role().getRoles(),
             false
         );
     }
     
-    private TokenResult makeToken(String username, Long id, String role, Boolean isFirstUser) {
-        String accessToken = jwtUtil.createAccessToken(username, id, role);
-        String refreshToken = jwtUtil.createRefreshToken(username, id, role);
+    private TokenResult makeToken(String username, String nickname, Long id, String role, Boolean isFirstUser) {
+        String accessToken = jwtUtil.createAccessToken(username, nickname, id, role);
+        String refreshToken = jwtUtil.createRefreshToken(username, nickname, id, role);
         
         return new TokenResult(accessToken, refreshToken, isFirstUser);
     }

@@ -2,6 +2,7 @@ package my.inplace.application.post.command;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import my.inplace.application.alarm.command.AlarmCommandService;
 import my.inplace.application.alarm.util.MentionMessageFactory;
 import my.inplace.application.annotation.Facade;
@@ -15,6 +16,7 @@ import my.inplace.security.util.AuthorizationUtil;
 
 import java.util.List;
 
+@Slf4j
 @Facade
 @RequiredArgsConstructor
 @Transactional
@@ -79,11 +81,11 @@ public class PostCommandFacade {
     private void mention(Long postId, Long commentId, String commentContent) {
         List<Long> receiverIds = receiverParser.parseMentionedUser(commentContent);
         String title = mentionMessageFactory.createTitle();
-        
+        String postTitle = postQueryService.getPostTitleById(postId).getTitle();
+        String senderNickname = AuthorizationUtil.getUserNicknameOrThrow();
+
         for (Long receiverId : receiverIds) {
-            String content = mentionMessageFactory.createMessage(
-                postQueryService.getPostTitleById(postId).getTitle(),
-                AuthorizationUtil.getUserNicknameOrThrow());
+            String content = mentionMessageFactory.createMessage( postTitle, senderNickname);
             
             // 비즈니스 데이터 저장
             alarmCommandService.saveAlarm(receiverId, postId, commentId, content, AlarmType.MENTION);

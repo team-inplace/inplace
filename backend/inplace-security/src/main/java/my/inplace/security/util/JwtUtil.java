@@ -33,24 +33,25 @@ public class JwtUtil {
         this.adminAccessTokenExpiredTime = jwtProperties.adminAccessTokenExpiredTime();
     }
 
-    public String createAccessToken(String username, Long userId, String roles) {
+    public String createAccessToken(String username, String nickname, Long userId, String roles) {
         Long expiredTime = roles.contains("ROLE_ADMIN")
             ? adminAccessTokenExpiredTime
             : accessTokenExpiredTime;
 
-        return createToken(username, userId, roles, "accessToken", expiredTime);
+        return createToken(username, nickname, userId, roles, "accessToken", expiredTime);
     }
 
-    public String createRefreshToken(String username, Long userId, String roles) {
-        return createToken(username, userId, roles, "refreshToken", refreshTokenExpiredTime);
+    public String createRefreshToken(String username, String nickname, Long userId, String roles) {
+        return createToken(username, nickname, userId, roles, "refreshToken", refreshTokenExpiredTime);
     }
 
     private String createToken(
-            String username, Long userId, String roles, String tokenType,
+            String username, String nickname, Long userId, String roles, String tokenType,
             Long expiredTime
     ) {
         return Jwts.builder()
                 .claim("username", username)
+                .claim("nickname", nickname)
                 .claim("id", userId)
                 .claim("roles", roles)
                 .claim("tokenType", tokenType)
@@ -63,6 +64,14 @@ public class JwtUtil {
     public String getUsername(String token) throws InplaceException {
         try {
             return jwtParser.parseSignedClaims(token).getPayload().get("username", String.class);
+        } catch (JwtException | IllegalArgumentException e) {
+            throw InplaceException.of(AuthorizationErrorCode.INVALID_TOKEN);
+        }
+    }
+
+    public String getNickname(String token) throws InplaceException {
+        try {
+            return jwtParser.parseSignedClaims(token).getPayload().get("nickname", String.class);
         } catch (JwtException | IllegalArgumentException e) {
             throw InplaceException.of(AuthorizationErrorCode.INVALID_TOKEN);
         }

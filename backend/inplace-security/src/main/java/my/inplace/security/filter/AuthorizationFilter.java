@@ -116,9 +116,10 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 
     private void addUserToAuthentication(String token) throws InplaceException {
         String username = jwtUtil.getUsername(token);
+        String nickname = jwtUtil.getNickname(token);
         Long id = jwtUtil.getId(token);
         String roles = jwtUtil.getRoles(token);
-        CustomOAuth2User customOAuth2User = new CustomOAuth2User(username, id, roles);
+        CustomOAuth2User customOAuth2User = new CustomOAuth2User(username, nickname, id, roles);
         Authentication authToken = new OAuth2AuthenticationToken(customOAuth2User,
             customOAuth2User.getAuthorities(), customOAuth2User.getRegistrationId());
         SecurityContextHolder.getContext().setAuthentication(authToken);
