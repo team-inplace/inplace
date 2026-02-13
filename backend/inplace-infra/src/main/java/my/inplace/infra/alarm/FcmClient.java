@@ -27,7 +27,8 @@ public class FcmClient {
     public void initialize() throws IOException {
         InputStream serviceAccount = new ClassPathResource(fcmProperties.serviceAccountFile()).getInputStream();
         GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
-        
+
+        // TODO: 에러코드 커스텀으로 변경
         if(credentials == null || fcmProperties.projectId() == null) {
             throw new IllegalStateException("Firebase 초기화 정보가 올바르지 않습니다.");
         }

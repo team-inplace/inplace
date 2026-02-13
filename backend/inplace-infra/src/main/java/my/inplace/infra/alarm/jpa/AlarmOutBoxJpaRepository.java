@@ -9,5 +9,5 @@ import java.util.List;
 public interface AlarmOutBoxJpaRepository extends JpaRepository<AlarmOutBox, Long> {
     List<AlarmOutBox> findAllByAlarmStatus(AlarmStatus alarmStatus);
     
-    List<AlarmOutBox> findAllByReceiverId(Long receiverId);
+    List<AlarmOutBox> findAllByReceiverIdAndAlarmStatus(Long receiverId, AlarmStatus alarmStatus);
 }

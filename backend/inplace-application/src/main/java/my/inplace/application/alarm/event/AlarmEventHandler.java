@@ -30,7 +30,7 @@ public class AlarmEventHandler {
         AlarmOutBox outBoxEvent = alarmOutBoxJpaRepository.findById(alarmEvent.id())
             .orElseThrow();
         
-        String fcmToken = userQueryService.getFcmTokenByUser(outBoxEvent.getReceiverId());
+        String fcmToken = userQueryService.getFcmTokenByUserId(outBoxEvent.getReceiverId());
         String expoToken = userQueryService.getExpoTokenByUserId(outBoxEvent.getReceiverId());
         if(fcmToken == null && expoToken == null) {
             outBoxEvent.pending();
@@ -39,8 +39,8 @@ public class AlarmEventHandler {
         
         boolean fcmSuccess = sendFcmMessage(outBoxEvent.getTitle(), outBoxEvent.getContent(), fcmToken);
         boolean expoSuccess = sendExpoMessage(outBoxEvent.getTitle(), outBoxEvent.getContent(), expoToken);
-        
-        if(fcmSuccess && expoSuccess) {
+
+        if(fcmSuccess || expoSuccess) {
             outBoxEvent.published();
             return;
         }

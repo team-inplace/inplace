@@ -31,7 +31,7 @@ public class UserQueryService {
         return UserResult.Info.from(userInfo);
     }
 
-    public String getFcmTokenByUser(Long userId) {
+    public String getFcmTokenByUserId(Long userId) {
         User user = userJpaRepository.findById(userId)
             .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
 
