@@ -31,12 +31,14 @@ export default function ChoicePage() {
   const isDarkMode = theme === 'dark';
 
   useEffect(() => {
-    const isFirstUser = document.cookie
+    const isFirstUserFromCookie = document.cookie
       .split('; ')
       .find((row) => row.startsWith('is_first_user='))
       ?.split('=')[1];
+    const isFirstUserFromStorage = localStorage.getItem('isFirstUser');
+    const isFirstUser = isFirstUserFromCookie === 'true' || isFirstUserFromStorage === 'true';
 
-    if (isFirstUser !== 'true') {
+    if (!isFirstUser) {
       navigate('/', { replace: true });
       return;
     }
@@ -49,7 +51,8 @@ export default function ChoicePage() {
     };
     setupFCMForNewUser();
     document.cookie = 'is_first_user=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.inplace.my; Secure';
-  }, [navigate]);
+    localStorage.removeItem('isFirstUser');
+  }, [navigate, postDeviceToken]);
 
   const debouncedInputValue = useDebounce(inputValue, DEBOUNCE_DELAY_MS);
 

@@ -9,6 +9,7 @@ type UserInfo = {
 type Tokens = {
   accessToken: string;
   refreshToken: string;
+  isFirstUser: boolean;
 };
 
 export const getAccessToken = async (userInfo: UserInfo) => {
@@ -29,9 +30,9 @@ export const getAccessToken = async (userInfo: UserInfo) => {
       throw new Error("서버 인증에 실패했습니다.");
     }
 
-    const { accessToken, refreshToken }: Tokens = await response.json();
+    const { accessToken, refreshToken, isFirstUser }: Tokens = await response.json();
 
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, isFirstUser };
   } catch (error) {
     console.error("API 통신 오류:", error);
     return null;
