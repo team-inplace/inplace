@@ -103,7 +103,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
 
-    if (isAuthenticated) {
+    if (isAuthenticated && !isReactNativeWebView) {
       intervalId = setInterval(() => {
         refreshTokenRegularly();
       }, ACCESS_TOKEN_REFRESH_INTERVAL);
