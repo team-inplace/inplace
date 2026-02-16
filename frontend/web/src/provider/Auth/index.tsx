@@ -18,6 +18,8 @@ interface AuthProviderProps {
 
 const ACCESS_TOKEN_REFRESH_INTERVAL = 10 * 60 * 1000;
 
+const isReactNativeWebView = typeof window !== 'undefined' && window.ReactNativeWebView != null;
+
 export default function AuthProvider({ children }: AuthProviderProps) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
     () => localStorage.getItem('isAuthenticated') === 'true',
@@ -72,7 +74,7 @@ export default function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const initialize = async () => {
       const savedAuthStatus = localStorage.getItem('isAuthenticated') === 'true';
-      const isReactNativeWebView = typeof window !== 'undefined' && window.ReactNativeWebView != null;
+      const hasMobileAuthToken = localStorage.getItem('authToken');
 
       if (savedAuthStatus && !isReactNativeWebView) {
         try {
@@ -80,6 +82,16 @@ export default function AuthProvider({ children }: AuthProviderProps) {
         } catch (error) {
           console.error('Failed to refresh token during initialization:', error);
           handleLogout();
+        }
+      } else if (savedAuthStatus && isReactNativeWebView) {
+        if (hasMobileAuthToken) {
+          setIsAuthenticated(true);
+        } else {
+          window.ReactNativeWebView?.postMessage(
+            JSON.stringify({
+              type: 'REQUEST_REFRESH_TOKEN',
+            }),
+          );
         }
       }
       setIsInitialized(true);
