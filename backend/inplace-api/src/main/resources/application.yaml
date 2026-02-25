@@ -3,7 +3,7 @@ spring:
     name: ${APP_NAME}
     domain: ${DOMAIN}
   profiles:
-    include: db, redis, s3, monitoring, security, google, kakao, crawling, fcm
+    include: db, redis, s3, monitoring, security, google, kakao, crawling, fcm, openai, expo
   servlet:
     multipart:
       max-file-size: 10MB
@@ -70,8 +70,3 @@ logging:
 springdoc:
   swagger-ui:
     enabled: false
----
-spring:
-  ai:
-    openai:
-      api-key: ${OPENAI_API_KEY}

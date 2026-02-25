@@ -21,7 +21,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
 
     // OpenAI
-    implementation platform("org.springframework.ai:spring-ai-bom:1.0.0")
+    implementation platform("org.springframework.ai:spring-ai-bom:1.1.2")
     implementation 'org.springframework.ai:spring-ai-starter-model-openai'
 
     // QR code

@@ -1,3 +1,7 @@
-openai:
-  api:
-    key: ${OPENAI_API_KEY}
+spring:
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}
+      moderation:
+        options:
+          model: omni-moderation-latest
