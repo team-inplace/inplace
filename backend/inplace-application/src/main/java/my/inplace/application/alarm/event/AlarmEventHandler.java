@@ -26,7 +26,10 @@ public class AlarmEventHandler {
     private final ExpoClient expoClient;
     
     @Async("alarmExecutor")
-    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @TransactionalEventListener(
+        phase = TransactionPhase.AFTER_COMMIT,
+        fallbackExecution = true
+    )
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void processMentionAlarm(AlarmEvent alarmEvent) {
         AlarmOutBox outBoxEvent = alarmOutBoxJpaRepository.findById(alarmEvent.id())
