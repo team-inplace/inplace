@@ -8,10 +8,12 @@ import my.inplace.domain.alarm.AlarmOutBox;
 import my.inplace.infra.alarm.ExpoClient;
 import my.inplace.infra.alarm.FcmClient;
 import my.inplace.infra.alarm.jpa.AlarmOutBoxJpaRepository;
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Slf4j
 @Component
@@ -24,8 +26,8 @@ public class AlarmEventHandler {
     private final ExpoClient expoClient;
     
     @Async("alarmExecutor")
-    @EventListener
-    @Transactional
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void processMentionAlarm(AlarmEvent alarmEvent) {
         AlarmOutBox outBoxEvent = alarmOutBoxJpaRepository.findById(alarmEvent.id())
             .orElseThrow();
@@ -49,7 +51,7 @@ public class AlarmEventHandler {
     }
     
     public boolean sendFcmMessage(String title, String body, String token) {
-        if (token == null) return true;
+        if (token == null) return false;
         
         try {
             fcmClient.sendMessageByToken(title, body, token);
@@ -60,7 +62,7 @@ public class AlarmEventHandler {
     }
     
     public boolean sendExpoMessage(String title, String body, String token) {
-        if (token == null) return true;
+        if (token == null) return false;
         
         try {
             expoClient.sendMessageByToken(title, body, token);

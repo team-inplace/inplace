@@ -20,9 +20,7 @@ public class AlarmCommandFacade {
     private final AlarmCommandService alarmCommandService;
     private final AlarmQueryService alarmQueryService;
 
-    /* TODO: pending 조회후 상태 변경 필요한지 판단 필요
-        updateAlarmToken이 실행된 후에 이벤트가 발행돼야함
-     */
+
     public void updateAlarmToken(String fcmToken, String expoToken) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         
