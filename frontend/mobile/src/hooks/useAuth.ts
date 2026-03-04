@@ -54,18 +54,14 @@ export const useAuth = (
         if (webViewRef.current) {
           const script = `
             (function() {
-              alert('[DEBUG] WebView script 시작 - isFirstUser: ${isFirstUser}');
-
               window.localStorage.setItem('authToken', '${accessToken}');
               window.localStorage.setItem('isAuthenticated', 'true');
               window.setAuthToken('${accessToken}');
 
               ${isFirstUser
-                ? `alert('[DEBUG] isFirstUser=true - /choice로 이동 예정');
-                   window.localStorage.setItem('isFirstUser', 'true');
+                ? `window.localStorage.setItem('isFirstUser', 'true');
                    window.location.href = '/choice';`
-                : `alert('[DEBUG] isFirstUser=false - 기존 사용자');
-                   const redirectPath = window.localStorage.getItem('redirectPath');
+                : `const redirectPath = window.localStorage.getItem('redirectPath');
                   if (redirectPath) {
                     window.localStorage.removeItem('redirectPath');
                     window.location.href = redirectPath;
@@ -85,7 +81,7 @@ export const useAuth = (
       }
     } catch (error) {
       console.error("카카오 로그인 실패:", error);
-      alert(`[ERROR] 카카오 로그인 실패: ${error}`);
+      alert(`카카오 로그인에 실패했습니다.`);
     }
   };
   return { handleKakaoLogin };
