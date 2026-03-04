@@ -83,6 +83,21 @@ jobs:
 
       - name: 🏗 Build shared library
         run: pnpm --filter shared build
+
+      - name: 🔧 Setup google-services.json
+        run: |
+          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > google-services.json
+          echo "✅ Created google-services.json in project root"
+
+          # 파일이 생성되었는지 확인
+          if [ -f google-services.json ]; then
+            echo "✓ google-services.json exists in project root"
+            echo "File size: $(wc -c < google-services.json) bytes"
+          else
+            echo "❌ google-services.json NOT found in project root"
+            exit 1
+          fi
+
       - name: 🔄 Verify EAS CLI installation
         run: |
           echo "EAS CLI version:"
@@ -133,7 +148,57 @@ jobs:
         if: (github.event_name == 'push' && github.ref == 'refs/heads/dev') || github.event.inputs.buildType == 'all'
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
+
+          echo "🔍 [INFO] Building with EAS..."
+          echo "  - .easignore will include google-services.json in archive"
+          echo "  - EAS will automatically run prebuild"
+          echo "  - googleServicesFile config will copy to android/app/"
+
           eas build --platform android --profile development --local --non-interactive --output=./app-dev.apk
+
+          echo ""
+          echo "✅ Build completed! Verifying Google Services integration..."
+          echo ""
+
+          # APK 내부의 Firebase/Google Services 관련 파일 확인
+          echo "📦 Checking APK contents for Firebase resources:"
+          if unzip -l app-dev.apk | grep -i "google.*firebase\|firebase\|google.*services" | head -10; then
+            echo "✓ Found Firebase/Google Services files in APK"
+          else
+            echo "⚠️ No obvious Firebase files found (this might be OK if they're compiled into resources)"
+          fi
+
+          echo ""
+          echo "📦 Checking for Google Services generated values:"
+          # Google Services Plugin이 성공적으로 실행되면 values.xml에 Firebase 설정이 들어감
+          if unzip -l app-dev.apk | grep -E "res/values.*\.xml" | head -5; then
+            echo "✓ Resource values found in APK (Google Services Plugin likely ran successfully)"
+          else
+            echo "⚠️ No resource values found"
+          fi
+
+          echo ""
+          echo "📦 Checking AndroidManifest.xml settings:"
+          # AndroidManifest.xml에서 allowBackup 설정 확인
+          if command -v aapt &> /dev/null; then
+            echo "Using aapt to check AndroidManifest.xml..."
+            if aapt dump xmltree app-dev.apk AndroidManifest.xml | grep -i "allowBackup"; then
+              echo "✓ allowBackup setting found in manifest"
+            else
+              echo "⚠️ allowBackup setting not found in manifest"
+            fi
+          else
+            echo "⚠️ aapt not available, skipping AndroidManifest.xml check"
+            echo "Attempting alternative check with unzip..."
+            if unzip -p app-dev.apk AndroidManifest.xml 2>/dev/null | strings | grep -i "allowBackup"; then
+              echo "✓ Found allowBackup reference in manifest"
+            else
+              echo "⚠️ Could not verify allowBackup setting"
+            fi
+          fi
+
+          echo ""
+          echo "📦 APK file size: $(du -h app-dev.apk | cut -f1)"
         env:
           NODE_ENV: development
           EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY }}
@@ -143,6 +208,12 @@ jobs:
         if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event.inputs.buildType == 'prod-apk'
         run: |
           export NODE_OPTIONS="--openssl-legacy-provider --max_old_space_size=4096"
+
+          echo "🔍 [INFO] Building with EAS..."
+          echo "  - .easignore will include google-services.json in archive"
+          echo "  - EAS will automatically run prebuild"
+          echo "  - googleServicesFile config will copy to android/app/"
+
           eas build --platform android --profile production-apk --local --non-interactive --output=./app-prod.apk
         env:
           NODE_ENV: production
