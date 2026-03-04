@@ -73,17 +73,16 @@ jobs:
       - name: 🏗 Setup EAS CLI
         run: npm install -g eas-cli@latest
 
-      - name: 🏗 Build shared library
-        run: pnpm --filter shared build
-
       - name: 📱 Setup EAS build cache
         uses: actions/cache@v3
         with:
           path: ~/.eas-build-local
-          key: ${{ runner.os }}-eas-build-local-${{ hashFiles('**/package.json') }}
+          key: ${{ runner.os }}-eas-build-local-${{ hashFiles('**/package.json', '**/app.json') }}
           restore-keys: |
             ${{ runner.os }}-eas-build-local-
 
+      - name: 🏗 Build shared library
+        run: pnpm --filter shared build
       - name: 🔄 Verify EAS CLI installation
         run: |
           echo "EAS CLI version:"
@@ -96,6 +95,7 @@ jobs:
           npx expo install --fix
         env:
           EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY }}
+          EXPO_PUBLIC_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_PROJECT_ID }}
 
       - name: 📋 Update metro.config.js for SVG support
         run: |
@@ -137,6 +137,7 @@ jobs:
         env:
           NODE_ENV: development
           EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY }}
+          EXPO_PUBLIC_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_PROJECT_ID }}
 
       - name: 📱 Build Production APK (for main branch)
         if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event.inputs.buildType == 'prod-apk'
@@ -146,6 +147,7 @@ jobs:
         env:
           NODE_ENV: production
           EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY: ${{ secrets.EXPO_PUBLIC_KAKAO_NATIVE_APP_KEY }}
+          EXPO_PUBLIC_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_PROJECT_ID }}
 
       - name: 🚀 Publish to Expo
         if: github.event.inputs.buildType == 'all' || github.event.inputs.buildType == 'publish-expo'
