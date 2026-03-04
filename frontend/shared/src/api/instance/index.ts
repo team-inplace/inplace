@@ -61,7 +61,7 @@ const initInstance = (config: AxiosRequestConfig): AxiosInstance => {
       }
       if (isWebView() && error.response?.status === 401) {
         if (window.ReactNativeWebView) {
-          window.ReactNativeWebView.postMessage("REQUEST_REFRESH_TOKEN");
+          window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'REQUEST_REFRESH_TOKEN' }));
         }
         return Promise.reject(error);
       }
