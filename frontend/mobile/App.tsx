@@ -1,4 +1,6 @@
 import { initializeConfig } from "@inplace-frontend-monorepo/shared/src/api/config/index";
+import * as Notifications from "expo-notifications";
+import WebViewScreen from "./src/components/common/WebViewScreen";
 
 const environment = process.env.EXPO_PUBLIC_ENV === "development"
   ? "development"
@@ -8,7 +10,14 @@ const environment = process.env.EXPO_PUBLIC_ENV === "development"
 
 initializeConfig(environment);
 
-import WebViewScreen from "./src/components/common/WebViewScreen";
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: true,
+    shouldSetBadge: true, // ios용 옵션
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
 
 export default function App() {
   return <WebViewScreen />;
