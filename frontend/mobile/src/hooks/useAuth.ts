@@ -14,6 +14,7 @@ export const useAuth = (
     try {
       const expoToken = await getExpoPushToken();
       if (!expoToken) return;
+      const rawToken = expoToken.match(/ExponentPushToken\[(.+)\]/)?.[1] ?? expoToken;
 
       const config = getConfig();
       await fetch(`${config.baseURL}/alarms`, {
@@ -22,7 +23,7 @@ export const useAuth = (
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({ fcmToken: null, expoToken }),
+        body: JSON.stringify({ fcmToken: null, expoToken: rawToken }),
       });
     } catch (error) {
       console.error("디바이스 토큰 전송 실패:", error);
