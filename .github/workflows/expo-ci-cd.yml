@@ -230,7 +230,7 @@ jobs:
       - name: 🏷️ Generate build information
         id: build-info
         run: |
-          VERSION=$(node -p "require('./app.json').expo.version")
+          VERSION=$(grep -oP 'version:\s*"\K[^"]+' app.config.js | head -1)
           BUILD_NUMBER=$(date +%Y%m%d%H%M)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "build_number=$BUILD_NUMBER" >> $GITHUB_OUTPUT
