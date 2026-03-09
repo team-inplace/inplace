@@ -238,4 +238,13 @@ public class PostResponse {
             );
         }
     }
+
+    public record CommentPosition(
+        int commentPage
+    ) {
+
+        public static CommentPosition from(int pageNumber) {
+            return new CommentPosition(pageNumber);
+        }
+    }
 }

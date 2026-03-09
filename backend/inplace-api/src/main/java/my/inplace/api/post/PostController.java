@@ -2,6 +2,7 @@ package my.inplace.api.post;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import my.inplace.api.post.dto.PostResponse.CommentPosition;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -176,6 +177,18 @@ public class PostController implements PostControllerApiSpec {
         var response = userSuggestions.stream()
             .map(UserSuggestion::from)
             .toList();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @Override
+    @GetMapping("/{postId}/comments/{commentId}/position")
+    public ResponseEntity<CommentPosition> getCommentPosition(
+        @PathVariable(value = "postId") Long postId,
+        @PathVariable(value = "commentId") Long commentId
+    ) {
+        var pageNumber = postQueryFacade.getCommentPageNumber(postId, commentId);
+        var response = CommentPosition.from(pageNumber);
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

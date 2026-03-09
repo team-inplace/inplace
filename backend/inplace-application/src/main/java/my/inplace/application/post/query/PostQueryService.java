@@ -1,11 +1,8 @@
 package my.inplace.application.post.query;
 
 import java.util.List;
-import java.util.Set;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import my.inplace.application.post.query.dto.CommentResult;
 import my.inplace.application.post.query.dto.PostResult;
 import my.inplace.common.cursor.CursorResult;
 import my.inplace.common.exception.InplaceException;
@@ -21,7 +18,6 @@ import my.inplace.infra.post.jpa.CommentJpaRepository;
 import my.inplace.infra.post.jpa.LikedPostJpaRepository;
 import my.inplace.infra.post.jpa.PostJpaRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -171,5 +167,10 @@ public class PostQueryService {
     
     public Long getCommentIndexByPostIdAndCommentId(Long postId, Long commentId) {
         return postJpaRepository.findIndexOfComment(postId, commentId);
+    }
+
+    public int getCommentPageNumber(Long postId, Long commentId) {
+        var index = getCommentIndexByPostIdAndCommentId(postId, commentId);
+        return index.intValue() / 10;
     }
 }

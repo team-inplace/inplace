@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+import my.inplace.api.post.dto.PostResponse.CommentPosition;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -121,4 +122,11 @@ public interface PostControllerApiSpec {
         @PathVariable(value = "postId") Long postId,
         @RequestParam(value = "value", required = true) String value
     );
+
+    @GetMapping("/{postId}/comments/{commentId}/position")
+    ResponseEntity<CommentPosition> getCommentPosition(
+        @PathVariable(value = "postId") Long postId,
+        @PathVariable(value = "commentId") Long commentId
+    );
+
 }

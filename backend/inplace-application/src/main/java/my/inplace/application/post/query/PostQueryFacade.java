@@ -68,4 +68,8 @@ public class PostQueryFacade {
     public List<PostResult.ReportedComment> findReportedComments() {
         return postQueryService.findReportedComment();
     }
+
+    public int getCommentPageNumber(Long postId, Long commentId) {
+        return postQueryService.getCommentPageNumber(postId, commentId);
+    }
 }
