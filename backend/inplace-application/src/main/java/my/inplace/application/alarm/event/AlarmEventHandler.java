@@ -7,6 +7,8 @@ import my.inplace.application.user.query.UserQueryService;
 import my.inplace.domain.alarm.AlarmOutBox;
 import my.inplace.infra.alarm.ExpoClient;
 import my.inplace.infra.alarm.FcmClient;
+import my.inplace.infra.alarm.dto.AlarmData;
+import my.inplace.infra.alarm.dto.AlarmData.Comment;
 import my.inplace.infra.alarm.jpa.AlarmOutBoxJpaRepository;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -43,7 +45,12 @@ public class AlarmEventHandler {
         }
         
         boolean fcmSuccess = sendFcmMessage(outBoxEvent.getTitle(), outBoxEvent.getContent(), fcmToken);
-        boolean expoSuccess = sendExpoMessage(outBoxEvent.getTitle(), outBoxEvent.getContent(), expoToken);
+        boolean expoSuccess = sendExpoMessage(
+            outBoxEvent.getTitle(),
+            outBoxEvent.getContent(),
+            expoToken,
+            new Comment(outBoxEvent.getPostId(), outBoxEvent.getCommentId())
+        );
 
         if(fcmSuccess || expoSuccess) {
             outBoxEvent.published();
@@ -64,11 +71,11 @@ public class AlarmEventHandler {
         }
     }
     
-    public boolean sendExpoMessage(String title, String body, String token) {
+    public boolean sendExpoMessage(String title, String body, String token, AlarmData.Comment data) {
         if (token == null) return false;
         
         try {
-            expoClient.sendMessageByToken(title, body, token);
+            expoClient.sendMessageByToken(title, body, token, data);
             return true;
         } catch (RuntimeException e) {
             return false;

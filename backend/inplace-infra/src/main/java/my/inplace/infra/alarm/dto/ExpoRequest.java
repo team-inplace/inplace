@@ -3,9 +3,10 @@ package my.inplace.infra.alarm.dto;
 public record ExpoRequest(
     String to,
     String title,
-    String body
+    String body,
+    AlarmData.Comment data
 ) {
-    public static ExpoRequest of(String to, String title, String body) {
-        return new ExpoRequest(to, title, body);
+    public static ExpoRequest of(String to, String title, String body, AlarmData.Comment data) {
+        return new ExpoRequest(to, title, body, data);
     }
 }

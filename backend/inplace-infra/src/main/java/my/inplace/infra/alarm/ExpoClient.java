@@ -1,6 +1,7 @@
 package my.inplace.infra.alarm;
 
 import lombok.extern.slf4j.Slf4j;
+import my.inplace.infra.alarm.dto.AlarmData;
 import my.inplace.infra.alarm.dto.ExpoRequest;
 import my.inplace.infra.annotation.Client;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,15 +19,16 @@ public class ExpoClient {
     private String EXPO_URL;
     private final RestTemplate restTemplate = new RestTemplate();
     
-    public void sendMessageByToken(String title, String body, String token) {
+    public void sendMessageByToken(String title, String body, String token, AlarmData.Comment data) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        
-        HttpEntity<ExpoRequest> entity = new HttpEntity<>(ExpoRequest.of(token, title, body), httpHeaders);
+
+        ExpoRequest request = ExpoRequest.of(token, title, body, data);
+        HttpEntity<ExpoRequest> entity = new HttpEntity<>(request, httpHeaders);
         
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(EXPO_URL, entity, String.class);
-            log.info("Expo 메세지 전송 성공 : {}", response.getBody());
+            log.info("Expo 메세지 전송 성공 : requset={} response={}", request, response.getBody());
         } catch (Exception e) {
             log.error("Expo 메세지 전송 실패 : ", e);
             throw new RuntimeException();
