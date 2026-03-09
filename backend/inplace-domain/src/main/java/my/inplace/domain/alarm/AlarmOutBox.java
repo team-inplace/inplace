@@ -8,8 +8,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,12 +18,16 @@ public class AlarmOutBox {
     private Long receiverId;
     private String title;
     private String content;
+    private Long postId;
+    private Long commentId;
     private AlarmStatus alarmStatus;
     
-    public AlarmOutBox(Long receiverId, String title, String content) {
+    public AlarmOutBox(Long receiverId, String title, String content, Long postId, Long commentId) {
         this.receiverId = receiverId;
         this.title = title;
         this.content = content;
+        this.postId = postId;
+        this.commentId = commentId;
         this.alarmStatus = AlarmStatus.READY;
     }
     

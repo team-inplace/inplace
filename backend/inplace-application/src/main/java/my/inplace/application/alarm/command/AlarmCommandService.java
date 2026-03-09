@@ -35,9 +35,9 @@ public class AlarmCommandService {
     
     @Transactional
     public void saveAlarmEvent(
-        Long receiverId, String title, String content
+        Long receiverId, String title, String content, Long postId, Long commentId
     ) {
-        AlarmOutBox alarmEvent = new AlarmOutBox(receiverId, title, content);
+        AlarmOutBox alarmEvent = new AlarmOutBox(receiverId, title, content, postId, commentId);
         alarmOutBoxJpaRepository.save(alarmEvent);
 
         eventPublisher.publishEvent(AlarmEvent.from(alarmEvent));

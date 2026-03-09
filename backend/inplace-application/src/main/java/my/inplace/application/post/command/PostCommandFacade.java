@@ -91,7 +91,7 @@ public class PostCommandFacade {
             alarmCommandService.saveAlarm(receiverId, postId, commentId, content, AlarmType.MENTION);
             
             // 이벤트 데이터 저장
-            alarmCommandService.saveAlarmEvent(receiverId, title, content);
+            alarmCommandService.saveAlarmEvent(receiverId, title, content, postId, commentId);
         }
     }
 
