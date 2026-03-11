@@ -30,8 +30,9 @@ public class CommentReadQueryDslRepository implements CommentReadRepository {
         Long total = jpaQueryFactory
             .select(QComment.comment.count())
             .from(QComment.comment)
-            .where(QComment.comment.postId.eq(postId))
+            .where(QComment.comment.postId.eq(postId).and(QComment.comment.deleteAt.isNull()))
             .fetchOne();
+
         if (total == null || total == 0) {
             return Page.empty(pageable);
         }

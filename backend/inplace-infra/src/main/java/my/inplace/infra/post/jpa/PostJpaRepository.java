@@ -2,8 +2,7 @@ package my.inplace.infra.post.jpa;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-
+import my.inplace.domain.post.Post;
 import my.inplace.domain.post.PostTitle;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +11,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import my.inplace.domain.post.Post;
 
 @Repository
 public interface PostJpaRepository extends JpaRepository<Post, Long> {
@@ -60,10 +58,11 @@ public interface PostJpaRepository extends JpaRepository<Post, Long> {
     
     
     @Query("""
-        SELECT COUNT(c)
-        FROM Comment c
-        WHERE c.postId = :postId
-        AND c.createdAt < (SELECT c2.createdAt FROM Comment c2 WHERE c2.id = :commentId)
+      SELECT COUNT(c)
+      FROM Comment c
+      WHERE c.postId = :postId
+        AND c.deleteAt IS NULL
+        AND c.id < :commentId
     """)
     long findIndexOfComment(@Param("postId") Long postId, @Param("commentId") Long commentId);
 }
