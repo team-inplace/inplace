@@ -174,7 +174,13 @@ export default function Comment({ id }: { id: string }) {
         ) : (
           <>
             {commentList.content.map((item) => (
-              <CommentItem key={item.commentId} item={item} postId={id} currentPage={currentPage} />
+              <CommentItem
+                key={item.commentId}
+                item={item}
+                postId={id}
+                currentPage={currentPage}
+                isHighlighted={commentId !== null && item.commentId === Number(commentId)}
+              />
             ))}
             <Pagination
               currentPage={currentPage}

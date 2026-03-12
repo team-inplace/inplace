@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { PiHeartFill, PiHeartLight } from 'react-icons/pi';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -25,10 +25,12 @@ export default function CommentItem({
   item,
   postId,
   currentPage,
+  isHighlighted = false,
 }: {
   item: CommentData;
   postId: string;
   currentPage: number;
+  isHighlighted?: boolean;
 }) {
   const { isAuthenticated } = useAuth();
   const location = useLocation();
@@ -176,7 +178,7 @@ export default function CommentItem({
   }, [isEditing, handleResizeHeight]);
 
   return (
-    <Wrapper data-comment-id={item.commentId}>
+    <Wrapper data-comment-id={item.commentId} $isHighlighted={isHighlighted}>
       <CommentTop>
         <UserInfo>
           <ProfileImg>
@@ -270,7 +272,13 @@ export default function CommentItem({
   );
 }
 
-const Wrapper = styled.div`
+const highlightFade = keyframes`
+  0% { background-color: transparent; }
+  20% { background-color: rgba(100, 200, 200, 0.18); }
+  100% { background-color: transparent; }
+`;
+
+const Wrapper = styled.div<{ $isHighlighted?: boolean }>`
   display: flex;
   flex-direction: column;
   padding: 14px;
@@ -279,6 +287,7 @@ const Wrapper = styled.div`
   border: none;
   justify-content: space-between;
   gap: 8px;
+  animation: ${({ $isHighlighted }) => ($isHighlighted ? highlightFade : 'none')} 2s ease-out;
 
   @media screen and (max-width: 768px) {
     padding: 8px 0px;
