@@ -78,7 +78,7 @@ export default function AlarmList({ alarms, isVisible, onClose }: AlarmListProps
 
       <AlarmScrollContainer>
         {alarms.length > 0 ? (
-          alarms.map((alarm) => <AlarmItem key={alarm.alarmId} {...alarm} />)
+          alarms.map((alarm) => <AlarmItem key={alarm.alarmId} {...alarm} onClose={handleClose} />)
         ) : (
           <EmptyMessage>알림이 없습니다.</EmptyMessage>
         )}

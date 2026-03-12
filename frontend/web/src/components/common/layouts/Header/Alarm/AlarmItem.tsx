@@ -41,7 +41,8 @@ export default function AlarmItem({
   type,
   createdAt,
   commentPage,
-}: AlarmData) {
+  onClose,
+}: AlarmData & { onClose?: () => void }) {
   const { mutate: postAlarmCheck } = usePostAlarmCheck();
   const { mutate: deleteAlarm } = useDeleteAlarm();
   const navigate = useNavigate();
@@ -76,10 +77,11 @@ export default function AlarmItem({
   };
 
   const handleAlarmClick = () => {
+    if (type === 'MENTION' && commentPage != null) {
+      navigate(`/post/${postId}?commentPage=${commentPage}&commentId=${commentId}`);
+      onClose?.();
+    }
     if (!isChecked) {
-      if (type === 'MENTION' && commentPage !== null) {
-        navigate(`/post/${postId}?commentPage=${commentPage}&commentId=${commentId}`);
-      }
       postAlarmCheck(
         { alarmId },
         {
