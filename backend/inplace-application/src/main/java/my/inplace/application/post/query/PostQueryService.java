@@ -3,6 +3,7 @@ package my.inplace.application.post.query;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import my.inplace.application.post.query.dto.CommentResult;
 import my.inplace.application.post.query.dto.PostResult;
 import my.inplace.common.cursor.CursorResult;
 import my.inplace.common.exception.InplaceException;
@@ -164,13 +165,9 @@ public class PostQueryService {
             .map(PostResult.ReportedComment::from)
             .toList();
     }
-    
-    public Long getCommentIndexByPostIdAndCommentId(Long postId, Long commentId) {
-        return postJpaRepository.findIndexOfComment(postId, commentId);
-    }
 
-    public int getCommentPageNumber(Long postId, Long commentId) {
-        var index = getCommentIndexByPostIdAndCommentId(postId, commentId);
-        return index.intValue() / 10;
+    public CommentResult.Position getCommentPosition(Long postId, Long commentId) {
+        var position = commentReadRepository.findCommentPosition(postId, commentId);
+        return CommentResult.Position.from(position);
     }
 }

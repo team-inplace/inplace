@@ -19,4 +19,12 @@ public class CommentQueryResult {
 
     }
 
+    public record Position (
+        Long pageNumber,
+        Boolean postDeleted,
+        Boolean commentDeleted
+    ) {
+
+    }
+
 }

@@ -186,7 +186,7 @@ public class PostController implements PostControllerApiSpec {
         @PathVariable(value = "postId") Long postId,
         @PathVariable(value = "commentId") Long commentId
     ) {
-        var pageNumber = postQueryFacade.getCommentPageNumber(postId, commentId);
+        var pageNumber = postQueryFacade.getCommentPosition(postId, commentId);
         var response = CommentPosition.from(pageNumber);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
