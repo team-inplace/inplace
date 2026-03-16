@@ -8,14 +8,14 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import jakarta.annotation.PostConstruct;
+import java.io.IOException;
+import java.io.InputStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import my.inplace.infra.alarm.dto.AlarmData;
 import my.inplace.infra.annotation.Client;
 import my.inplace.infra.properties.FcmProperties;
 import org.springframework.core.io.ClassPathResource;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 @Slf4j
 @Client
@@ -43,16 +43,20 @@ public class FcmClient {
         }
     }
     
-    public void sendMessageByToken(String title, String body, String token) {
+    public void sendMessageByToken(String title, String body, String token, AlarmData.Comment data) {
+        Message message = Message.builder()
+            .setNotification(Notification.builder()
+                .setTitle(title)
+                .setBody(body)
+                .build())
+            .putData("postId", String.valueOf(data.postId()))
+            .putData("commentId", String.valueOf(data.commentId()))
+            .setToken(token)
+            .build();
+
         try {
-            String response = FirebaseMessaging.getInstance().send(Message.builder()
-                .setNotification(Notification.builder()
-                    .setTitle(title)
-                    .setBody(body)
-                    .build())
-                .setToken(token)
-                .build());
-            log.info("FCM 알림 메시지 전송 성공, response={}", response);
+            String response = FirebaseMessaging.getInstance().send(message);
+            log.info("FCM 메세지 전송 성공 : requset={} response={}", message, response);
         } catch (FirebaseMessagingException e) {
             log.error("FCM 알림 메시지 전송 실패 code={} msg={}", e.getErrorCode(), e.getMessage());
             throw new RuntimeException();

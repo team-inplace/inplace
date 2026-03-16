@@ -44,7 +44,12 @@ public class AlarmEventHandler {
             return;
         }
         
-        boolean fcmSuccess = sendFcmMessage(outBoxEvent.getTitle(), outBoxEvent.getContent(), fcmToken);
+        boolean fcmSuccess = sendFcmMessage(
+            outBoxEvent.getTitle(),
+            outBoxEvent.getContent(),
+            fcmToken,
+            new Comment(outBoxEvent.getPostId(), outBoxEvent.getCommentId())
+        );
         boolean expoSuccess = sendExpoMessage(
             outBoxEvent.getTitle(),
             outBoxEvent.getContent(),
@@ -60,11 +65,11 @@ public class AlarmEventHandler {
         outBoxEvent.ready();
     }
     
-    public boolean sendFcmMessage(String title, String body, String token) {
+    public boolean sendFcmMessage(String title, String body, String token, AlarmData.Comment data) {
         if (token == null) return false;
         
         try {
-            fcmClient.sendMessageByToken(title, body, token);
+            fcmClient.sendMessageByToken(title, body, token, data);
             return true;
         } catch (RuntimeException e) {
             return false;
