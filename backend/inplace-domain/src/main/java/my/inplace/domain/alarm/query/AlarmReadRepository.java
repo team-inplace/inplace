@@ -5,5 +5,5 @@ import my.inplace.domain.alarm.query.AlarmQueryResult.Detail;
 
 public interface AlarmReadRepository {
 
-    List<Detail> getAlarms(Long userId);
+    List<Detail> findAlarms(Long userId);
 }

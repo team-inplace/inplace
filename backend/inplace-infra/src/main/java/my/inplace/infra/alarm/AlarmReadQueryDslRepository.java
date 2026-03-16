@@ -19,7 +19,7 @@ public class AlarmReadQueryDslRepository implements AlarmReadRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<Detail> getAlarms(Long userId) {
+    public List<Detail> findAlarms(Long userId) {
         QComment prevComment = new QComment("prevComment");
 
         return queryFactory

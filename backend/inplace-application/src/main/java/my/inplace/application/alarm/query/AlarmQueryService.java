@@ -21,7 +21,7 @@ public class AlarmQueryService {
 
     @Transactional(readOnly = true)
     public List<AlarmResult> getAlarms(Long userId) {
-        var alarms = alarmReadRepository.getAlarms(userId);
+        var alarms = alarmReadRepository.findAlarms(userId);
         return alarms.stream().map(AlarmResult::from).toList();
     }
     
