@@ -2,9 +2,10 @@ package my.inplace.application.alarm.query;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import my.inplace.domain.alarm.Alarm;
+import my.inplace.application.alarm.query.dto.AlarmResult;
 import my.inplace.domain.alarm.AlarmOutBox;
 import my.inplace.domain.alarm.AlarmStatus;
+import my.inplace.domain.alarm.query.AlarmReadRepository;
 import my.inplace.infra.alarm.jpa.AlarmJpaRepository;
 import my.inplace.infra.alarm.jpa.AlarmOutBoxJpaRepository;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,12 @@ public class AlarmQueryService {
 
     private final AlarmJpaRepository alarmJpaRepository;
     private final AlarmOutBoxJpaRepository alarmOutBoxJpaRepository;
+    private final AlarmReadRepository alarmReadRepository;
 
     @Transactional(readOnly = true)
-    public List<Alarm> getAlarmInfos(Long userId) {
-        return alarmJpaRepository.findByUserId(userId);
+    public List<AlarmResult> getAlarms(Long userId) {
+        var alarms = alarmReadRepository.getAlarms(userId);
+        return alarms.stream().map(AlarmResult::from).toList();
     }
     
     @Transactional(readOnly = true)

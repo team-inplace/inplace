@@ -10,7 +10,9 @@ public record AlarmResponse(
     String content,
     Boolean checked,
     String type,
-    String createdAt
+    String createdAt,
+    Boolean postDeleted,
+    Boolean commentDeleted
 ) {
 
     public static AlarmResponse from(AlarmResult alarmResult) {
@@ -22,7 +24,9 @@ public record AlarmResponse(
             alarmResult.content(),
             alarmResult.checked(),
             alarmResult.type(),
-            alarmResult.createdAt()
+            alarmResult.createdAt(),
+            alarmResult.postDeleted(),
+            alarmResult.commentDeleted()
         );
     }
 }
