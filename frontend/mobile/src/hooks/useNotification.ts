@@ -1,8 +1,25 @@
+import { useEffect } from "react";
 import { Platform } from "react-native";
 import WebView from "react-native-webview";
 import * as Notifications from "expo-notifications";
 
 export const useNotification = (webViewRef: React.RefObject<WebView | null>) => {
+  useEffect(() => {
+    const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
+      const data = response.notification.request.content.data as { postId?: number; commentId?: number };
+      const { postId, commentId } = data;
+      if (postId != null && commentId != null && webViewRef.current) {
+        webViewRef.current.injectJavaScript(`
+          window.dispatchEvent(new CustomEvent('expoNotificationNavigate', {
+            detail: { postId: ${postId}, commentId: ${commentId} }
+          }));
+          true;
+        `);
+      }
+    });
+    return () => subscription.remove();
+  }, [webViewRef]);
+
   const handleNotificationPermission = async (): Promise<void> => {
     try {
       const { status: existingStatus } =
