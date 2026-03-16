@@ -1,2 +1,2 @@
 export { messaging } from './firebaseSetting';
-export { requestNotificationPermission, setupFCMToken } from './fcmTokenManager';
+export { requestNotificationPermission, setupFCMToken, setupForegroundNotificationHandler } from './fcmTokenManager';

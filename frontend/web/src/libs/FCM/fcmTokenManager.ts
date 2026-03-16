@@ -1,4 +1,4 @@
-import { getToken } from 'firebase/messaging';
+import { getToken, onMessage } from 'firebase/messaging';
 import { messaging } from './firebaseSetting';
 import { AlarmTokenData } from '@/types';
 
@@ -75,6 +75,22 @@ export async function setupFCMToken(postDeviceToken: (token: AlarmTokenData) => 
     console.error('FCM 토큰 설정 중 오류 발생:', error);
     throw error;
   }
+}
+
+export function setupForegroundNotificationHandler() {
+  if (!messaging) return;
+
+  onMessage(messaging, async (payload) => {
+    const { title, body } = payload.notification || {};
+    const { postId, commentId } = payload.data || {};
+    if (!postId || !commentId) return;
+
+    const registration = await navigator.serviceWorker.ready;
+    registration.showNotification(title || '알림', {
+      body: body || '',
+      data: { postId, commentId },
+    });
+  });
 }
 
 export function setupNotificationTokenListener(postDeviceToken: (token: AlarmTokenData) => Promise<void>) {
