@@ -383,3 +383,9 @@ export type AlarmTokenData = {
   fcmToken: string | null;
   expoToken: string | null;
 };
+
+export type CommentPositionData = {
+  commentPage: number;
+  postDeleted?: boolean;
+  commentDeleted?: boolean;
+};
