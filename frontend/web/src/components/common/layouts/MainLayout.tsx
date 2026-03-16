@@ -10,9 +10,11 @@ import MainSkeleton from '@/components/Main/MainSkeleton';
 import DetailSkeleton from '@/components/Detail/DetailSkeleton';
 import useScrollToTop from '@/hooks/useScrollToTop';
 import ErrorComponent from '@/components/common/layouts/Error';
+import useFCMNotificationNavigator from '@/hooks/useFCMNotificationNavigator';
 
 export default function MainLayout() {
   const location = useLocation();
+  useFCMNotificationNavigator();
   const renderSkeleton = () => {
     if (location.pathname === '/') {
       return <MainSkeleton />;
