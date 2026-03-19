@@ -17,17 +17,22 @@ public record AlarmResult(
 ) {
 
     public static AlarmResult from(AlarmQueryResult.Detail alarm) {
+        var postDeleted = alarm.postDeleted();
+        var commentDeleted = alarm.commentDeleted();
+        var postId = postDeleted ? null : alarm.postId();
+        var commentId = (postDeleted || commentDeleted) ? null : alarm.commentId();
+
         return new AlarmResult(
             alarm.id(),
-            alarm.postId(),
-            alarm.commentId(),
+            postId,
+            commentId,
             alarm.pageNumber().intValue() / 10,
             alarm.content(),
             alarm.checked(),
             alarm.alarmType().name(),
             TimeUtil.betweenTime(alarm.createdAt()),
-            alarm.postDeleted(),
-            alarm.commentDeleted()
+            postDeleted,
+            commentDeleted
         );
     }
 
