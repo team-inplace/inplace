@@ -36,7 +36,7 @@ public class AlarmController implements AlarmControllerApiSpec {
 
     @GetMapping
     public ResponseEntity<List<AlarmResponse>> getAlarmList() {
-        var response = alarmQueryFacade.getAlarmInfos().stream()
+        var response = alarmQueryFacade.getAlarms().stream()
             .map(AlarmResponse::from)
             .toList();
 

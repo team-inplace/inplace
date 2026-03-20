@@ -2,11 +2,13 @@ package my.inplace.infra.post;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import my.inplace.domain.post.QComment;
 import my.inplace.domain.post.QLikedComment;
+import my.inplace.domain.post.QPost;
 import my.inplace.domain.post.query.CommentQueryResult;
 import my.inplace.domain.post.query.CommentReadRepository;
 import my.inplace.domain.user.QBadge;
@@ -81,5 +83,34 @@ public class CommentReadQueryDslRepository implements CommentReadRepository {
         }
 
         return query;
+    }
+
+    public CommentQueryResult.Position findCommentPosition(Long postId, Long commentId) {
+
+        QPost post = QPost.post;
+        QComment comment = QComment.comment;
+        QComment prevComment = new QComment("prevComment");
+
+        return jpaQueryFactory
+            .select(Projections.constructor(
+                CommentQueryResult.Position.class,
+                JPAExpressions
+                    .select(prevComment.count())
+                    .from(prevComment)
+                    .where(
+                        prevComment.postId.eq(postId),
+                        prevComment.deleteAt.isNull(),
+                        prevComment.id.lt(commentId)
+                    ),
+                QPost.post.deleteAt.isNotNull(),
+                QComment.comment.deleteAt.isNotNull()
+            ))
+            .from(comment)
+            .leftJoin(post).on(post.id.eq(comment.postId))
+            .where(
+                comment.id.eq(commentId),
+                comment.postId.eq(postId)
+            )
+            .fetchOne();
     }
 }

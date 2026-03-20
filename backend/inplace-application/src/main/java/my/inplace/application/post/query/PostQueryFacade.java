@@ -4,6 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import my.inplace.application.annotation.Facade;
 import my.inplace.application.post.query.dto.CommentResult;
+import my.inplace.application.post.query.dto.CommentResult.Position;
 import my.inplace.application.post.query.dto.PostResult;
 import my.inplace.common.cursor.CursorResult;
 import my.inplace.security.util.AuthorizationUtil;
@@ -69,7 +70,7 @@ public class PostQueryFacade {
         return postQueryService.findReportedComment();
     }
 
-    public int getCommentPageNumber(Long postId, Long commentId) {
-        return postQueryService.getCommentPageNumber(postId, commentId);
+    public Position getCommentPosition(Long postId, Long commentId) {
+        return postQueryService.getCommentPosition(postId, commentId);
     }
 }

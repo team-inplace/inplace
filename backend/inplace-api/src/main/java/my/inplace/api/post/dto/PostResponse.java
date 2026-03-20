@@ -240,11 +240,17 @@ public class PostResponse {
     }
 
     public record CommentPosition(
-        int commentPage
+        int commentPage,
+        Boolean postDeleted,
+        Boolean commentDeleted
     ) {
 
-        public static CommentPosition from(int pageNumber) {
-            return new CommentPosition(pageNumber);
+        public static CommentPosition from(CommentResult.Position position) {
+            return new CommentPosition(
+                position.pageNumber(),
+                position.postDeleted(),
+                position.commentDeleted()
+            );
         }
     }
 }

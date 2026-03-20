@@ -1,7 +1,7 @@
 package my.inplace.application.alarm.query.dto;
 
-import my.inplace.domain.alarm.Alarm;
 import my.inplace.application.alarm.util.TimeUtil;
+import my.inplace.domain.alarm.query.AlarmQueryResult;
 
 public record AlarmResult(
     Long alarmId,
@@ -11,19 +11,24 @@ public record AlarmResult(
     String content,
     Boolean checked,
     String type,
-    String createdAt
+    String createdAt,
+    Boolean postDeleted,
+    Boolean commentDeleted
 ) {
 
-    public static AlarmResult from(Alarm alarm, Long index) {
+    public static AlarmResult from(AlarmQueryResult.Detail alarm) {
         return new AlarmResult(
-            alarm.getId(),
-            alarm.getPostId(),
-            alarm.getCommentId(),
-            index.intValue() / 10,
-            alarm.getContent(),
-            alarm.isChecked(),
-            alarm.getAlarmType().name(),
-            TimeUtil.betweenTime(alarm.getCreatedAt())
+            alarm.id(),
+            alarm.postId(),
+            alarm.commentId(),
+            alarm.pageNumber().intValue() / 10,
+            alarm.content(),
+            alarm.checked(),
+            alarm.alarmType().name(),
+            TimeUtil.betweenTime(alarm.createdAt()),
+            alarm.postDeleted(),
+            alarm.commentDeleted()
         );
     }
+
 }

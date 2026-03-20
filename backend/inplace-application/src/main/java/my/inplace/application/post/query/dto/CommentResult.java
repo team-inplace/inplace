@@ -34,13 +34,18 @@ public class CommentResult {
         }
 
     }
-    
-    public record CommentIndex(
+
+    public record Position (
         int pageNumber,
-        int offset
+        Boolean postDeleted,
+        Boolean commentDeleted
     ) {
-        public static CommentIndex of(int pageNumber, int offset) {
-            return new CommentIndex(pageNumber, offset);
+        public static Position from (CommentQueryResult.Position position) {
+            return new Position(
+                position.pageNumber().intValue() / 10,
+                position.postDeleted(),
+                position.commentDeleted()
+            );
         }
     }
 }
