@@ -109,12 +109,6 @@ public class PostQueryService {
     }
 
     @Transactional(readOnly = true)
-    public Long getPostAuthorIdById(Long postId) {
-        return postJpaRepository.findUserIdById(postId)
-            .orElseThrow(() -> InplaceException.of(PostErrorCode.POST_NOT_FOUND));
-    }
-
-    @Transactional(readOnly = true)
     public Long getCommentAuthorIdById(Long commentId) {
         return commentJpaRepository.findAuthorIdById(commentId)
             .orElseThrow(() -> InplaceException.of(PostErrorCode.COMMENT_NOT_FOUND));

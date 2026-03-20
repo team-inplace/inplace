@@ -26,8 +26,7 @@ public class AlarmCommandService {
     }
 
     @Transactional
-    public void saveAlarm(
-        Long userId, Long postId, Long commentId, String content, AlarmType alarmType) {
+    public void saveAlarm(Long userId, Long postId, Long commentId, String content, AlarmType alarmType) {
         Alarm alarm = new Alarm(userId, postId, commentId, content, alarmType);
 
         alarmJpaRepository.save(alarm);
@@ -35,9 +34,14 @@ public class AlarmCommandService {
     
     @Transactional
     public void saveAlarmEvent(
-        Long receiverId, String title, String content, Long postId, Long commentId
+        Long receiverId,
+        String title,
+        String content,
+        Long postId,
+        Long commentId,
+        AlarmType alarmType
     ) {
-        AlarmOutBox alarmEvent = new AlarmOutBox(receiverId, title, content, postId, commentId);
+        AlarmOutBox alarmEvent = new AlarmOutBox(receiverId, title, content, postId, commentId, alarmType);
         alarmOutBoxJpaRepository.save(alarmEvent);
 
         eventPublisher.publishEvent(AlarmEvent.from(alarmEvent));

@@ -1,7 +1,7 @@
 package my.inplace.infra.alarm;
 
 import lombok.extern.slf4j.Slf4j;
-import my.inplace.infra.alarm.dto.AlarmData;
+import my.inplace.domain.alarm.AlarmOutBox;
 import my.inplace.infra.alarm.dto.ExpoRequest;
 import my.inplace.infra.annotation.Client;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,11 +19,11 @@ public class ExpoClient {
     private String EXPO_URL;
     private final RestTemplate restTemplate = new RestTemplate();
     
-    public void sendMessageByToken(String title, String body, String token, AlarmData.Comment data) {
+    public void sendMessageByToken(AlarmOutBox alarmOutBox, String token) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-        ExpoRequest request = ExpoRequest.of(token, title, body, data);
+        ExpoRequest request = createRequest(token, alarmOutBox);
         HttpEntity<ExpoRequest> entity = new HttpEntity<>(request, httpHeaders);
         
         try {
@@ -33,5 +33,22 @@ public class ExpoClient {
             log.error("Expo 메세지 전송 실패 : ", e);
             throw new RuntimeException();
         }
+    }
+
+    private ExpoRequest createRequest(String token, AlarmOutBox outBoxEvent) {
+        return switch (outBoxEvent.getAlarmType()) {
+            case MENTION -> ExpoRequest.ofComment(
+                token,
+                outBoxEvent.getTitle(),
+                outBoxEvent.getContent(),
+                outBoxEvent.getPostId(),
+                outBoxEvent.getCommentId()
+            );
+            case REPORT -> ExpoRequest.of(
+                token,
+                outBoxEvent.getTitle(),
+                outBoxEvent.getContent()
+            );
+        };
     }
 }

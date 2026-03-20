@@ -7,8 +7,6 @@ import my.inplace.application.user.query.UserQueryService;
 import my.inplace.domain.alarm.AlarmOutBox;
 import my.inplace.infra.alarm.ExpoClient;
 import my.inplace.infra.alarm.FcmClient;
-import my.inplace.infra.alarm.dto.AlarmData;
-import my.inplace.infra.alarm.dto.AlarmData.Comment;
 import my.inplace.infra.alarm.jpa.AlarmOutBoxJpaRepository;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -44,18 +42,8 @@ public class AlarmEventHandler {
             return;
         }
         
-        boolean fcmSuccess = sendFcmMessage(
-            outBoxEvent.getTitle(),
-            outBoxEvent.getContent(),
-            fcmToken,
-            new Comment(outBoxEvent.getPostId(), outBoxEvent.getCommentId())
-        );
-        boolean expoSuccess = sendExpoMessage(
-            outBoxEvent.getTitle(),
-            outBoxEvent.getContent(),
-            expoToken,
-            new Comment(outBoxEvent.getPostId(), outBoxEvent.getCommentId())
-        );
+        boolean fcmSuccess = sendFcmMessage(outBoxEvent, fcmToken);
+        boolean expoSuccess = sendExpoMessage(outBoxEvent, expoToken);
 
         if(fcmSuccess || expoSuccess) {
             outBoxEvent.published();
@@ -64,23 +52,23 @@ public class AlarmEventHandler {
         
         outBoxEvent.ready();
     }
-    
-    public boolean sendFcmMessage(String title, String body, String token, AlarmData.Comment data) {
+
+    public boolean sendFcmMessage(AlarmOutBox alarmOutBox, String token) {
         if (token == null) return false;
-        
+
         try {
-            fcmClient.sendMessageByToken(title, body, token, data);
+            fcmClient.sendMessageByToken(alarmOutBox, token);
             return true;
         } catch (RuntimeException e) {
             return false;
         }
     }
-    
-    public boolean sendExpoMessage(String title, String body, String token, AlarmData.Comment data) {
+
+    public boolean sendExpoMessage(AlarmOutBox alarmOutBox, String token) {
         if (token == null) return false;
         
         try {
-            expoClient.sendMessageByToken(title, body, token, data);
+            expoClient.sendMessageByToken(alarmOutBox, token);
             return true;
         } catch (RuntimeException e) {
             return false;

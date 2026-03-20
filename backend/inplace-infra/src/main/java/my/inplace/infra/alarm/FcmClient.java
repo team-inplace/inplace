@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import my.inplace.infra.alarm.dto.AlarmData;
+import my.inplace.domain.alarm.AlarmOutBox;
 import my.inplace.infra.annotation.Client;
 import my.inplace.infra.properties.FcmProperties;
 import org.springframework.core.io.ClassPathResource;
@@ -43,23 +43,34 @@ public class FcmClient {
         }
     }
     
-    public void sendMessageByToken(String title, String body, String token, AlarmData.Comment data) {
-        Message message = Message.builder()
+    public void sendMessageByToken(AlarmOutBox alarmOutBox, String token) {
+        Message.Builder builder = Message.builder()
             .setNotification(Notification.builder()
-                .setTitle(title)
-                .setBody(body)
+                .setTitle(alarmOutBox.getTitle())
+                .setBody(alarmOutBox.getContent())
                 .build())
-            .putData("postId", String.valueOf(data.postId()))
-            .putData("commentId", String.valueOf(data.commentId()))
-            .setToken(token)
-            .build();
+            .setToken(token);
+
+        applyFcmData(builder, alarmOutBox);
 
         try {
+            Message message = builder.build();
             String response = FirebaseMessaging.getInstance().send(message);
             log.info("FCM 메세지 전송 성공 : requset={} response={}", message, response);
         } catch (FirebaseMessagingException e) {
             log.error("FCM 알림 메시지 전송 실패 code={} msg={}", e.getErrorCode(), e.getMessage());
             throw new RuntimeException();
+        }
+    }
+
+    private void applyFcmData(Message.Builder builder, AlarmOutBox alarmOutBox) {
+        switch (alarmOutBox.getAlarmType()) {
+            case MENTION -> {
+                builder.putData("postId", String.valueOf(alarmOutBox.getPostId()));
+                builder.putData("commentId", String.valueOf(alarmOutBox.getCommentId()));
+            }
+            case REPORT -> {
+            }
         }
     }
     

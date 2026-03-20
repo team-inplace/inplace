@@ -9,12 +9,14 @@ import my.inplace.application.annotation.Facade;
 import my.inplace.application.post.command.dto.PostCommand;
 import my.inplace.application.post.query.PostQueryService;
 import my.inplace.application.post.util.ReceiverParser;
+import my.inplace.application.report.event.dto.ModerationEvent;
 import my.inplace.application.user.command.UserCommandService;
 import my.inplace.application.user.query.UserQueryService;
 import my.inplace.domain.alarm.AlarmType;
 import my.inplace.security.util.AuthorizationUtil;
 
 import java.util.List;
+import org.springframework.context.ApplicationEventPublisher;
 
 @Slf4j
 @Facade
@@ -31,7 +33,9 @@ public class PostCommandFacade {
     private final AlarmCommandService alarmCommandService;
     private final ReceiverParser receiverParser;
     private final MentionMessageFactory mentionMessageFactory;
-    
+
+    private final ApplicationEventPublisher eventPublisher;
+
     public void createPost(PostCommand.CreatePost command) {
         var userId = AuthorizationUtil.getUserIdOrThrow();
         postCommandService.createPost(command, userId);
@@ -91,7 +95,7 @@ public class PostCommandFacade {
             alarmCommandService.saveAlarm(receiverId, postId, commentId, content, AlarmType.MENTION);
             
             // 이벤트 데이터 저장
-            alarmCommandService.saveAlarmEvent(receiverId, title, content, postId, commentId);
+            alarmCommandService.saveAlarmEvent(receiverId, title, content, postId, commentId, AlarmType.MENTION);
         }
     }
 
@@ -107,8 +111,13 @@ public class PostCommandFacade {
         userCommandService.addToReceivedCommentByUserId(authorId, -1);
     }
 
-    public void deletePostSoftly(Long postId) {
+    public void deletePostSoftlyByAdmin(Long postId) {
+        Long receiverId = postQueryService.getAuthorIdByPostId(postId);
+        String postTitle = postQueryService.getPostTitleById(postId).getTitle();
+
         postCommandService.deletePostSoftly(postId);
+
+        eventPublisher.publishEvent(new ModerationEvent.PostDeleted(postId, receiverId, postTitle));
     }
 
     public void unreportPost(Long postId) {
@@ -116,7 +125,15 @@ public class PostCommandFacade {
     }
 
     public void deleteCommentSoftly(Long commentId) {
+        Long postId = postQueryService.getPostIdById(commentId);
+        Long receiverId = postQueryService.getCommentAuthorIdById(commentId);
+        String postTitle = postQueryService.getPostTitleById(postId).getTitle();
+
         postCommandService.deleteCommentSoftly(commentId);
+
+        eventPublisher.publishEvent(
+            new ModerationEvent.CommentDeleted(postId, commentId, receiverId, postTitle)
+        );
     }
 
     public void unreportComment(Long commentId) {

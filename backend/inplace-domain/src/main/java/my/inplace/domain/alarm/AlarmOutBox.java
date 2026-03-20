@@ -20,14 +20,16 @@ public class AlarmOutBox {
     private String content;
     private Long postId;
     private Long commentId;
+    private AlarmType alarmType;
     private AlarmStatus alarmStatus;
-    
-    public AlarmOutBox(Long receiverId, String title, String content, Long postId, Long commentId) {
+
+    public AlarmOutBox(Long receiverId, String title, String content, Long postId, Long commentId, AlarmType alarmType) {
         this.receiverId = receiverId;
         this.title = title;
         this.content = content;
         this.postId = postId;
         this.commentId = commentId;
+        this.alarmType = alarmType;
         this.alarmStatus = AlarmStatus.READY;
     }
     

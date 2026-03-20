@@ -153,7 +153,7 @@ public class AdminPageController {
 
     @PostMapping("/post/delete/{postId}") // TODO - Post Controller 로 옮기는게 어떤가
     public String deletePost(@PathVariable Long postId) {
-        postCommandFacade.deletePostSoftly(postId);
+        postCommandFacade.deletePostSoftlyByAdmin(postId);
         return "redirect:/admin/report";
     }
 
