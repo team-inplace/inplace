@@ -16,7 +16,7 @@ interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-const ACCESS_TOKEN_REFRESH_INTERVAL = 10 * 60 * 1000;
+const ACCESS_TOKEN_REFRESH_INTERVAL = 9 * 60 * 1000;
 
 const isReactNativeWebView = typeof window !== 'undefined' && window.ReactNativeWebView != null;
 
