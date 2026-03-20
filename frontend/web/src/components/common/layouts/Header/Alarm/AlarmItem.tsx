@@ -41,6 +41,8 @@ export default function AlarmItem({
   type,
   createdAt,
   commentPage,
+  postDeleted,
+  commentDeleted,
   onClose,
 }: AlarmData & { onClose?: () => void }) {
   const { mutate: postAlarmCheck } = usePostAlarmCheck();
@@ -77,9 +79,21 @@ export default function AlarmItem({
   };
 
   const handleAlarmClick = () => {
-    if (type === 'MENTION' && commentPage != null) {
-      navigate(`/post/${postId}?commentPage=${commentPage}&commentId=${commentId}`);
-      onClose?.();
+    if (type === 'MENTION') {
+      if (postDeleted) {
+        alert('삭제된 게시글입니다.');
+        return;
+      }
+      if (commentDeleted) {
+        alert('삭제된 댓글입니다.');
+        navigate(`/post/${postId}`);
+        onClose?.();
+        return;
+      }
+      if (commentPage != null) {
+        navigate(`/post/${postId}?commentPage=${commentPage}&commentId=${commentId}`);
+        onClose?.();
+      }
     }
     if (!isChecked) {
       postAlarmCheck(

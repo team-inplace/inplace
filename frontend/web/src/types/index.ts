@@ -372,6 +372,8 @@ export type AlarmData = {
   type: string;
   createdAt: string;
   commentPage?: number;
+  postDeleted?: boolean;
+  commentDeleted?: boolean;
 };
 
 export type RequestReport = {
