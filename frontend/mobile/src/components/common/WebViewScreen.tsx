@@ -19,10 +19,10 @@ export default function WebViewScreen() {
 
   const { modalVisible, modalContent, showLocationModal, hideModal } =
     useLocation(webViewRef);
-  const { handleKakaoLogin } = useAuth(webViewRef);
+  const { handleNotificationPermission, getExpoPushToken } = useNotification(webViewRef);
+  const { handleKakaoLogin } = useAuth(webViewRef, getExpoPushToken);
   const { handleRefreshToken } = useRefreshToken(webViewRef);
   const { handleLogout } = useLogout(webViewRef);
-  const { handleNotificationPermission } = useNotification(webViewRef);
   const { handleMessage } = useWebViewMessageHandler({
     onGpsPermissionRequest: showLocationModal,
     onLoginWithKakao: handleKakaoLogin,

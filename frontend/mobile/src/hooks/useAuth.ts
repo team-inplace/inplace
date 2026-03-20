@@ -2,13 +2,12 @@ import { login, me } from "@react-native-kakao/user";
 import { getAccessToken } from "../api/getAccessToken";
 import * as SecureStore from "expo-secure-store";
 import WebView from "react-native-webview";
-import { useNotification } from "./useNotification";
 import { getConfig } from "@inplace-frontend-monorepo/shared/src/api/config";
 
 export const useAuth = (
-  webViewRef: React.RefObject<WebView | null>
+  webViewRef: React.RefObject<WebView | null>,
+  getExpoPushToken: () => Promise<string | null>,
 ) => {
-  const { getExpoPushToken } = useNotification(webViewRef);
 
   const sendDeviceToken = async (accessToken: string) => {
     try {
