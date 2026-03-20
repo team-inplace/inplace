@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCommentPosition } from '@/api/hooks/useGetCommentPage';
 import { setupForegroundNotificationHandler } from '@/libs/FCM';
@@ -6,9 +6,12 @@ import { setupForegroundNotificationHandler } from '@/libs/FCM';
 export default function useFCMNotificationNavigator() {
   const navigate = useNavigate();
   const isReactNativeWebView = typeof window !== 'undefined' && window.ReactNativeWebView != null;
+  const isNavigating = useRef(false);
 
   const navigateToComment = useCallback(
     async (postId: string | number, commentId: string | number) => {
+      if (isNavigating.current) return;
+      isNavigating.current = true;
       try {
         const result = await getCommentPosition(postId, commentId);
         if (result.postDeleted) {
@@ -23,6 +26,8 @@ export default function useFCMNotificationNavigator() {
         navigate(`/post/${postId}?commentPage=${result.commentPage}&commentId=${commentId}`);
       } catch (error) {
         console.error('댓글 위치 조회 실패:', error);
+      } finally {
+        isNavigating.current = false;
       }
     },
     [navigate],
