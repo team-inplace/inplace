@@ -1,5 +1,8 @@
 package my.inplace.infra.alarm.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record ExpoRequest(
     String to,
     String title,

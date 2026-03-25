@@ -56,7 +56,7 @@ public class FcmClient {
         try {
             Message message = builder.build();
             String response = FirebaseMessaging.getInstance().send(message);
-            log.info("FCM 메세지 전송 성공 : requset={} response={}", message, response);
+            log.info("FCM 메세지 전송 성공 : request={} response={}", message, response);
         } catch (FirebaseMessagingException e) {
             log.error("FCM 알림 메시지 전송 실패 code={} msg={}", e.getErrorCode(), e.getMessage());
             throw new RuntimeException();
