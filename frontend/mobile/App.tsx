@@ -12,6 +12,7 @@ initializeConfig(environment);
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
+    shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true, // ios용 옵션
     shouldShowBanner: true,
