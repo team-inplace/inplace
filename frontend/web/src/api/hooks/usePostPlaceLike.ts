@@ -74,7 +74,7 @@ export const usePostPlaceLike = () => {
             ...page,
             contents: page.contents.map((place) => {
               if (place.placeId === Number(placeId)) {
-                return { ...place, likes };
+                return { ...place, likes, likeCount: likes ? place.likeCount + 1 : Math.max(0, place.likeCount - 1) };
               }
               return place;
             }),
