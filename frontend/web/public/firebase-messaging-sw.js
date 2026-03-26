@@ -33,7 +33,6 @@ messaging.onBackgroundMessage((payload) => {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   const { postId, commentId, alarmId } = event.notification.data || {};
-  if (!postId || !commentId) return;
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
@@ -43,6 +42,7 @@ self.addEventListener('notificationclick', (event) => {
           return client.focus();
         }
       }
+      if (!postId || !commentId) return;
       return fetch(`/posts/${postId}/comments/${commentId}/position`, { credentials: 'include' })
         .then((res) => res.json())
         .then((data) => clients.openWindow(`/post/${postId}?commentPage=${data.commentPage}&commentId=${commentId}`))

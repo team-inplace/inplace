@@ -58,7 +58,9 @@ export default function useFCMNotificationNavigator() {
               },
             },
           );
-        await navigateToComment(postId, commentId);
+        if (postId != null && commentId != null) {
+          await navigateToComment(postId, commentId);
+        }
       }
     };
 
