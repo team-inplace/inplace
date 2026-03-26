@@ -71,7 +71,7 @@ export type PlaceData = {
   longitude: string;
   latitude: string;
   likes: boolean;
-  likedCount: number;
+  likeCount: number;
 };
 
 export type LocationData = {
@@ -110,7 +110,7 @@ export type PlaceInfo = {
   latitude: string;
   facility: FacilityInfo;
   reviewLikes: PlaceLikes;
-  likedCount: number;
+  likeCount: number;
   likes: boolean;
   surroundVideos: SpotData[];
 };

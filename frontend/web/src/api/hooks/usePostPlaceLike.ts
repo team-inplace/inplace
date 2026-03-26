@@ -56,7 +56,7 @@ export const usePostPlaceLike = () => {
         return {
           ...old,
           likes,
-          likedCount: likes ? old.likedCount + 1 : Math.max(0, old.likedCount - 1),
+          likeCount: likes ? old.likeCount + 1 : Math.max(0, old.likeCount - 1),
         };
       });
 

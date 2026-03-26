@@ -131,7 +131,7 @@ describe('세부페이지 ErrorBoundary 테스트', () => {
             like: 0,
             dislike: 0,
           },
-          likedCount: 100,
+          likeCount: 100,
           likes: true,
           googleReviews: [
             {

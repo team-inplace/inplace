@@ -203,7 +203,7 @@ const infodummy = {
     like: 240,
     dislike: 100,
   },
-  likedCount: 100,
+  likeCount: 100,
   likes: false,
   surroundVideos: dummy,
 };
@@ -308,7 +308,7 @@ export const detailHandlers = [
     console.log(`📢 [MSW] 장소 좋아요 요청: ID ${targetId}, Likes: ${likes}`);
 
     infodummy.likes = likes;
-    infodummy.likedCount = likes ? infodummy.likedCount + 1 : Math.max(0, infodummy.likedCount - 1);
+    infodummy.likeCount = likes ? infodummy.likeCount + 1 : Math.max(0, infodummy.likeCount - 1);
 
     return res(ctx.status(200), ctx.json({ success: true }));
   }),

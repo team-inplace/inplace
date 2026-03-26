@@ -25,7 +25,7 @@ export default function PlaceItem({
   address,
   videos,
   likes,
-  likedCount,
+  likeCount,
   onClick,
   isSelected = false,
 }: PlaceItemProps) {
@@ -86,7 +86,7 @@ export default function PlaceItem({
           </LikeIcon>
           <LikeCount>
             <Text size="xxs" weight="normal">
-              {likedCount}
+              {likeCount}
             </Text>
           </LikeCount>
         </LikeContainer>

@@ -130,7 +130,7 @@ export default function DetailPage() {
                   )}
                 </LikeIcon>
                 <Text size="xs" weight="normal" variant="white">
-                  {infoData.likedCount}
+                  {infoData.likeCount}
                 </Text>
               </LikeContainer>
             </AlignWrapper>
