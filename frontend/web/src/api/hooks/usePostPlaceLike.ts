@@ -28,11 +28,11 @@ export const usePostPlaceLike = () => {
     onMutate: async ({ placeId, likes }) => {
       await queryClient.cancelQueries({ queryKey: ['UserPlace'] });
       await queryClient.cancelQueries({ queryKey: ['placeInfo', String(placeId)] });
-      await queryClient.cancelQueries({ queryKey: ['placeList'] });
+      await queryClient.cancelQueries({ queryKey: ['infinitePlaceList'] });
 
       const prevUserPlace = queryClient.getQueryData<PageableData<UserPlaceData>>(['UserPlace']);
       const prevPlaceInfo = queryClient.getQueryData<PlaceData>(['placeInfo', String(placeId)]);
-      const prevPlaceList = queryClient.getQueryData<PageableData<PlaceData>>(['placeList']);
+      const prevPlaceList = queryClient.getQueryData<PageableData<PlaceData>>(['infinitePlaceList']);
 
       queryClient.setQueriesData({ queryKey: ['UserPlace'] }, (oldData: InfiniteQueryData | undefined) => {
         if (!oldData) return oldData;
@@ -60,7 +60,7 @@ export const usePostPlaceLike = () => {
         };
       });
 
-      queryClient.setQueriesData({ queryKey: ['placeList'] }, (oldData: InfiniteQueryData | undefined) => {
+      queryClient.setQueriesData({ queryKey: ['infinitePlaceList'] }, (oldData: InfiniteQueryData | undefined) => {
         if (!oldData) return oldData;
 
         return {
@@ -84,7 +84,7 @@ export const usePostPlaceLike = () => {
       if (context) {
         queryClient.setQueryData(['UserPlace'], context.prevUserPlace);
         queryClient.setQueryData(['placeInfo', String(placeId)], context.prevPlaceInfo);
-        queryClient.setQueryData(['placeList'], context.prevPlaceList);
+        queryClient.setQueryData(['infinitePlaceList'], context.prevPlaceList);
       }
       alert('좋아요 처리에 실패했습니다.');
     },
