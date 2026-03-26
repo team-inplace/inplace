@@ -61,7 +61,7 @@ module.exports = {
       [
         "expo-notifications",
         {
-          icon: "./assets/icon.png",
+          icon: "./assets/InplaceLogo.png",
           defaultChannel: "default",
         },
       ],
