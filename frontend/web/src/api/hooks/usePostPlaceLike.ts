@@ -67,7 +67,7 @@ export const usePostPlaceLike = () => {
           ...oldData,
           pages: oldData.pages.map((page) => ({
             ...page,
-            content: page.content.map((place) => {
+            contents: page.content.map((place) => {
               if (place.placeId === Number(placeId)) {
                 return { ...place, likes };
               }
