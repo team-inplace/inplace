@@ -79,6 +79,20 @@ export default function AlarmItem({
   };
 
   const handleAlarmClick = () => {
+    if (!isChecked) {
+      postAlarmCheck(
+        { alarmId },
+        {
+          onSuccess: () => {
+            setIsChecked(true);
+            queryClient.invalidateQueries({ queryKey: ['alarms'] });
+          },
+          onError: () => {
+            alert('알림 읽음 처리에 실패했습니다. 다시 시도해주세요.');
+          },
+        },
+      );
+    }
     if (type === 'MENTION') {
       if (postDeleted) {
         alert('삭제된 게시글입니다.');
@@ -94,20 +108,6 @@ export default function AlarmItem({
         navigate(`/post/${postId}?commentPage=${commentPage}&commentId=${commentId}`);
         onClose?.();
       }
-    }
-    if (!isChecked) {
-      postAlarmCheck(
-        { alarmId },
-        {
-          onSuccess: () => {
-            setIsChecked(true);
-            queryClient.invalidateQueries({ queryKey: ['alarms'] });
-          },
-          onError: () => {
-            alert('알림 읽음 처리에 실패했습니다. 다시 시도해주세요.');
-          },
-        },
-      );
     }
   };
 
