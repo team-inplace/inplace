@@ -6,12 +6,12 @@ import * as Notifications from "expo-notifications";
 export const useNotification = (webViewRef: React.RefObject<WebView | null>) => {
   useEffect(() => {
     const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
-      const data = response.notification.request.content.data as { postId?: number; commentId?: number };
-      const { postId, commentId } = data;
-      if (postId != null && commentId != null && webViewRef.current) {
+      const data = response.notification.request.content.data as { postId?: number; commentId?: number; alarmId: number };
+      const { postId, commentId, alarmId } = data;
+      if (webViewRef.current) {
         webViewRef.current.injectJavaScript(`
           window.dispatchEvent(new CustomEvent('expoNotificationNavigate', {
-            detail: { postId: ${postId}, commentId: ${commentId} }
+            detail: { postId: ${postId ?? null}, commentId: ${commentId ?? null}, alarmId: ${alarmId} }
           }));
           true;
         `);

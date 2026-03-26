@@ -82,12 +82,12 @@ export function setupForegroundNotificationHandler() {
 
   onMessage(messaging, async (payload) => {
     const { title, body } = payload.notification || {};
-    const { postId, commentId } = payload.data || {};
+    const { postId, commentId, alarmId } = payload.data || {};
 
     const registration = await navigator.serviceWorker.ready;
     registration.showNotification(title || '알림', {
       body: body || '',
-      data: postId && commentId ? { postId, commentId } : null,
+      data: postId && commentId ? { postId, commentId, alarmId } : { alarmId },
     });
   });
 }

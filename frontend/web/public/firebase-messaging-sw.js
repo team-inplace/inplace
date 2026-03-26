@@ -22,24 +22,24 @@ const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
   const { title, body, icon } = payload.notification || {};
-  const { postId, commentId } = payload.data || {};
+  const { postId, commentId, alarmId } = payload.data || {};
   self.registration.showNotification(title || '알림', {
     body,
     icon,
-    data: postId && commentId ? { postId, commentId } : null,
+    data: postId && commentId ? { postId, commentId, alarmId } : { alarmId },
   });
 });
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  const { postId, commentId } = event.notification.data || {};
+  const { postId, commentId, alarmId } = event.notification.data || {};
   if (!postId || !commentId) return;
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {
         if ('focus' in client) {
-          client.postMessage({ type: 'FCM_NOTIFICATION_NAVIGATE', postId, commentId });
+          client.postMessage({ type: 'FCM_NOTIFICATION_NAVIGATE', postId, commentId, alarmId });
           return client.focus();
         }
       }

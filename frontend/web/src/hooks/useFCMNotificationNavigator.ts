@@ -1,10 +1,14 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { getCommentPosition } from '@/api/hooks/useGetCommentPage';
 import { setupForegroundNotificationHandler } from '@/libs/FCM';
+import { usePostAlarmCheck } from '@/api/hooks/usePostAlarmCheck';
 
 export default function useFCMNotificationNavigator() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { mutate: postAlarmCheck } = usePostAlarmCheck();
   const isReactNativeWebView = typeof window !== 'undefined' && window.ReactNativeWebView != null;
   const isNavigating = useRef(false);
 
@@ -44,7 +48,16 @@ export default function useFCMNotificationNavigator() {
 
     const handleSWMessage = async (event: MessageEvent) => {
       if (event.data?.type === 'FCM_NOTIFICATION_NAVIGATE') {
-        const { postId, commentId } = event.data;
+        const { postId, commentId, alarmId } = event.data;
+        if (alarmId != null)
+          postAlarmCheck(
+            { alarmId },
+            {
+              onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ['alarms'] });
+              },
+            },
+          );
         await navigateToComment(postId, commentId);
       }
     };
@@ -57,7 +70,17 @@ export default function useFCMNotificationNavigator() {
     if (!isReactNativeWebView) return undefined;
 
     const handleExpoNotification = async (event: Event) => {
-      const { postId, commentId } = (event as CustomEvent<{ postId: number; commentId: number }>).detail || {};
+      const { postId, commentId, alarmId } =
+        (event as CustomEvent<{ postId: number; commentId: number; alarmId: number }>).detail || {};
+      if (alarmId != null)
+        postAlarmCheck(
+          { alarmId },
+          {
+            onSuccess: () => {
+              queryClient.invalidateQueries({ queryKey: ['alarms'] });
+            },
+          },
+        );
       if (postId != null && commentId != null) {
         await navigateToComment(postId, commentId);
       }
