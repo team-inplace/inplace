@@ -17,13 +17,17 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig)
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage((payload) => {
   const { title, body, icon } = payload.notification || {};
   const { postId, commentId } = payload.data || {};
-  self.registration.showNotification(title || '알림', { body, icon, data: { postId, commentId } });
+  self.registration.showNotification(title || '알림', {
+    body,
+    icon,
+    data: postId && commentId ? { postId, commentId } : null,
+  });
 });
 
 self.addEventListener('notificationclick', (event) => {
