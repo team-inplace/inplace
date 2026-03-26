@@ -24,9 +24,9 @@ public class ModerationEventHandler {
         String title = reportMessageFactory.createPostTitle();
         String content = reportMessageFactory.createPostMessage(event.postTitle());
 
-        alarmCommandService.saveAlarm(event.receiverId(), event.postId(), null, content, AlarmType.REPORT);
+        Long alarmId = alarmCommandService.saveAlarm(event.receiverId(), event.postId(), null, content, AlarmType.REPORT);
 
-        alarmCommandService.saveAlarmEvent(event.receiverId(), title, content, event.postId(), null, AlarmType.REPORT);
+        alarmCommandService.saveAlarmEvent(event.receiverId(), title, content, alarmId, event.postId(), null, AlarmType.REPORT);
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -35,9 +35,9 @@ public class ModerationEventHandler {
         String title = reportMessageFactory.createCommentTitle();
         String content = reportMessageFactory.createCommentMessage(event.postTitle());
 
-        alarmCommandService.saveAlarm(event.receiverId(), event.postId(), event.commentId(), content, AlarmType.REPORT);
+        Long alarmId = alarmCommandService.saveAlarm(event.receiverId(), event.postId(), event.commentId(), content, AlarmType.REPORT);
 
-        alarmCommandService.saveAlarmEvent(event.receiverId(), title, content, event.postId(), event.commentId(), AlarmType.REPORT);
+        alarmCommandService.saveAlarmEvent(event.receiverId(), title, content, alarmId, event.postId(), event.commentId(), AlarmType.REPORT);
     }
 
 }

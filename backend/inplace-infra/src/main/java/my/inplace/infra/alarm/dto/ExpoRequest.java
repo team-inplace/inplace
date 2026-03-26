@@ -9,14 +9,12 @@ public record ExpoRequest(
     String body,
     Object data
 ) {
-    public static ExpoRequest of(String token, String title, String body) {
-        return new ExpoRequest(token, title, body, null);
-    }
 
     public static ExpoRequest ofComment(
         String token,
         String title,
         String body,
+        Long alarmId,
         Long postId,
         Long commentId
     ) {
@@ -24,13 +22,33 @@ public record ExpoRequest(
             token,
             title,
             body,
-            new CommentData(postId, commentId)
+            new CommentData(alarmId, postId, commentId)
+        );
+    }
+
+    public static ExpoRequest ofReport(
+        String token,
+        String title,
+        String body,
+        Long alarmId
+    ) {
+        return new ExpoRequest(
+            token,
+            title,
+            body,
+            new ReportData(alarmId)
         );
     }
 
     public record CommentData(
+        Long alarmId,
         Long postId,
         Long commentId
+    ) {
+    }
+
+    public record ReportData(
+        Long alarmId
     ) {
     }
 }

@@ -165,6 +165,7 @@ public class PostCommandService {
             throw InplaceException.of(PostErrorCode.POST_NOT_FOUND);
         }
         comment.deleteSoftly();
+        postJpaRepository.decreaseCommentCount(comment.getPostId());
     }
 
     @Transactional

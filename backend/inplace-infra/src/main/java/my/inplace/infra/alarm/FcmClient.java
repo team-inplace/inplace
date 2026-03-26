@@ -49,6 +49,7 @@ public class FcmClient {
                 .setTitle(alarmOutBox.getTitle())
                 .setBody(alarmOutBox.getContent())
                 .build())
+            .putData("alarmId", String.valueOf(alarmOutBox.getAlarmId()))
             .setToken(token);
 
         applyFcmData(builder, alarmOutBox);

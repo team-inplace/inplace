@@ -92,10 +92,10 @@ public class PostCommandFacade {
             String content = mentionMessageFactory.createMessage( postTitle, senderNickname);
             
             // 비즈니스 데이터 저장
-            alarmCommandService.saveAlarm(receiverId, postId, commentId, content, AlarmType.MENTION);
+            Long alarmId = alarmCommandService.saveAlarm(receiverId, postId, commentId, content, AlarmType.MENTION);
             
             // 이벤트 데이터 저장
-            alarmCommandService.saveAlarmEvent(receiverId, title, content, postId, commentId, AlarmType.MENTION);
+            alarmCommandService.saveAlarmEvent(receiverId, title, content, alarmId, postId, commentId, AlarmType.MENTION);
         }
     }
 

@@ -41,13 +41,15 @@ public class ExpoClient {
                 token,
                 outBoxEvent.getTitle(),
                 outBoxEvent.getContent(),
+                outBoxEvent.getAlarmId(),
                 outBoxEvent.getPostId(),
                 outBoxEvent.getCommentId()
             );
-            case REPORT -> ExpoRequest.of(
+            case REPORT -> ExpoRequest.ofReport(
                 token,
                 outBoxEvent.getTitle(),
-                outBoxEvent.getContent()
+                outBoxEvent.getContent(),
+                outBoxEvent.getAlarmId()
             );
         };
     }

@@ -18,15 +18,17 @@ public class AlarmOutBox {
     private Long receiverId;
     private String title;
     private String content;
+    private Long alarmId;
     private Long postId;
     private Long commentId;
     private AlarmType alarmType;
     private AlarmStatus alarmStatus;
 
-    public AlarmOutBox(Long receiverId, String title, String content, Long postId, Long commentId, AlarmType alarmType) {
+    public AlarmOutBox(Long receiverId, String title, String content, Long alarmId, Long postId, Long commentId, AlarmType alarmType) {
         this.receiverId = receiverId;
         this.title = title;
         this.content = content;
+        this.alarmId = alarmId;
         this.postId = postId;
         this.commentId = commentId;
         this.alarmType = alarmType;
