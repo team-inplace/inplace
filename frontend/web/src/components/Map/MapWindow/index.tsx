@@ -166,12 +166,12 @@ export default function MapWindow({
   // 초기 접속 시
   useEffect(() => {
     if (isReactNativeWebView) {
-      // Alert 표시 후 바로 지도 로딩 완료 처리
       setIsLoading(false);
-      updateMapBounds();
-      setIsInitialLoad(false);
-      setHasInitialLoad(true);
-
+      if (isMapReady) {
+        updateMapBounds();
+        setIsInitialLoad(false);
+        setHasInitialLoad(true);
+      }
       return;
     }
 
