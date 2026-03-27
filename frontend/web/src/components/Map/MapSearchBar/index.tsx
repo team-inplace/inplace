@@ -43,7 +43,7 @@ export default function MapSearchBar({ setIsChangedLocation, setSelectedPlaceNam
   const { data: searchPlaceResults } = useGetSearchComplete(
     debouncedInput,
     'place',
-    searchType === 'place' && !!debouncedInput,
+    searchType === 'place' && !!debouncedInput && !preventDropdownOpen,
   );
   const { data: searchLocationResults } = useGetSearchKakaoKeyword(
     debouncedInput,
