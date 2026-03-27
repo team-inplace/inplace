@@ -137,7 +137,7 @@ export default function PostDetailPage() {
               <UserName
                 userNickname={postData.author.nickname}
                 tierImageUrl={postData.author.tierImageUrl}
-                badgeImageUrl={postData.author.badgeImageUrl}
+                mainBadgeImageUrl={postData.author.mainBadgeImageUrl}
               />
               <StyledText size="s" weight="normal">
                 {postData.createdAt}

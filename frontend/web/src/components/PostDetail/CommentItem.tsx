@@ -187,7 +187,7 @@ export default function CommentItem({
           <UserName
             userNickname={item.author.nickname}
             tierImageUrl={item.author.tierImageUrl}
-            badgeImageUrl={item.author.titleImageUrl}
+            mainBadgeImageUrl={item.author.mainBadgeImageUrl}
           />
         </UserInfo>
         {!isEditing && (

@@ -4,10 +4,10 @@ import { Text } from '../common/typography/Text';
 interface UserTitleProps {
   userNickname: string;
   tierImageUrl?: string;
-  badgeImageUrl?: string;
+  mainBadgeImageUrl?: string;
 }
 
-export default function UserName({ userNickname, tierImageUrl, badgeImageUrl }: UserTitleProps) {
+export default function UserName({ userNickname, tierImageUrl, mainBadgeImageUrl }: UserTitleProps) {
   return (
     <UserTitleWrapper>
       <MobileUserUI>
@@ -16,7 +16,7 @@ export default function UserName({ userNickname, tierImageUrl, badgeImageUrl }: 
           {userNickname || '탈퇴한 사용자'}
         </Text>
       </MobileUserUI>
-      {badgeImageUrl && <UserTitle src={badgeImageUrl} alt={`${userNickname} Title`} />}
+      {mainBadgeImageUrl && <UserTitle src={mainBadgeImageUrl} alt={`${userNickname} Title`} />}
     </UserTitleWrapper>
   );
 }

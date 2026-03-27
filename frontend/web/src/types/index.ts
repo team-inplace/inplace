@@ -279,7 +279,7 @@ export type PostListData = {
     nickname: string;
     imgUrl: string;
     tierImageUrl: string;
-    badgeImageUrl: string;
+    mainBadgeImageUrl: string;
   };
   title: string;
   content: string;
@@ -296,7 +296,7 @@ export type PostData = {
     nickname: string;
     imgUrl: string;
     tierImageUrl: string;
-    badgeImageUrl: string;
+    mainBadgeImageUrl: string;
   };
   title: string;
   content: string;
@@ -322,7 +322,7 @@ export type CommentData = {
     nickname: string;
     imgUrl: string;
     tierImageUrl: string;
-    titleImageUrl: string;
+    mainBadgeImageUrl: string;
   };
   content: string;
   createdAt: string;

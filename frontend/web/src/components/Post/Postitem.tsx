@@ -29,7 +29,7 @@ export default function Postitem({ item, activeCategory }: { item: PostListData;
           <UserName
             userNickname={item.author.nickname}
             tierImageUrl={item.author.tierImageUrl}
-            badgeImageUrl={item.author.badgeImageUrl}
+            mainBadgeImageUrl={item.author.mainBadgeImageUrl}
           />
         </UserInfo>
         <Content>
