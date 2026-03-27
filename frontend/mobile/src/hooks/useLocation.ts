@@ -17,9 +17,7 @@ export const useLocation = (webViewRef: React.RefObject<WebView | null>) => {
   const [modalContent, setModalContent] = useState<ModalContent | null>(null);
 
   const showLocationModal = async () => {
-    alert("[DEBUG] showLocationModal 시작");
     const servicesEnabled = await checkLocation();
-    alert(`[DEBUG] checkLocation: ${servicesEnabled}`);
     if (!servicesEnabled) {
       setModalContent({
         title: "위치 서비스 필요",
@@ -32,7 +30,6 @@ export const useLocation = (webViewRef: React.RefObject<WebView | null>) => {
     }
 
     const permissionsGranted = await requestPermissions();
-    alert(`[DEBUG] requestPermissions: ${permissionsGranted}`);
     if (!permissionsGranted) {
       setModalContent({
         title: "위치 정보 접근 권한 필요",
@@ -45,7 +42,6 @@ export const useLocation = (webViewRef: React.RefObject<WebView | null>) => {
     }
 
     if (webViewRef.current) {
-      alert("[DEBUG] getLocation 호출");
       getLocation(webViewRef.current, () => {});
     } else {
       console.warn("WebView ref가 아직 설정되지 않았습니다.");

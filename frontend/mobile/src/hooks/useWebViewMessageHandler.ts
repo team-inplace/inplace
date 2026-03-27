@@ -13,7 +13,6 @@ export const useWebViewMessageHandler = (handlers: MessageHandlers) => {
     async (event: any) => {
       try {
         const message = JSON.parse(event.nativeEvent.data);
-        alert(`[DEBUG] native onMessage 수신: type=${message.type}`);
 
         switch (message.type) {
           case "GPS_PERMISSIONS":

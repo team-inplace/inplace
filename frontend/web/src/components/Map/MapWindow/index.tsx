@@ -159,7 +159,6 @@ export default function MapWindow({
   // 1번만 postMessage 보내도록
   useEffect(() => {
     if (isReactNativeWebView) {
-      alert('[DEBUG] GPS_PERMISSIONS 전송');
       window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'GPS_PERMISSIONS' }));
     }
   }, [isReactNativeWebView]);
@@ -266,16 +265,13 @@ export default function MapWindow({
     if (!isReactNativeWebView) return undefined;
 
     const handleNativeMessage = (event: MessageEvent) => {
-      alert(`[DEBUG] message 수신: ${JSON.stringify(event.data)}`);
       try {
         const data = JSON.parse(event.data);
-        alert(`[DEBUG] 파싱 결과: type=${data.type}, payload=${JSON.stringify(data.payload)}`);
         if (data.type === 'NATIVE_LOCATION' && data.payload) {
           const userLoc = {
             lat: data.payload.latitude,
             lng: data.payload.longitude,
           };
-          alert(`[DEBUG] NATIVE_LOCATION 처리: ${JSON.stringify(userLoc)}, mapReady=${!!mapRef.current}`);
           setUserLocation(userLoc);
           if (mapRef.current) {
             mapRef.current.setCenter(new kakao.maps.LatLng(userLoc.lat, userLoc.lng));
@@ -284,7 +280,7 @@ export default function MapWindow({
           }
         }
       } catch (e) {
-        alert(`[DEBUG] 파싱 에러: ${e}`);
+        console.error('NATIVE_LOCATION 파싱 에러:', e);
       }
     };
 
