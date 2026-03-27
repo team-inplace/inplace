@@ -3,11 +3,18 @@ import WebView from "react-native-webview";
 import { getRefreshAuthToken } from "../api/getRefreshAuthToken";
 import { useLogout } from "./useLogout";
 
+let isRefreshing = false;
+
 export const useRefreshToken = (
   webViewRef: React.RefObject<WebView | null>
 ) => {
   const { handleLogout } = useLogout(webViewRef);
   const handleRefreshToken = async () => {
+    if (isRefreshing) {
+      console.log("토큰 갱신 중복 요청 무시");
+      return;
+    }
+    isRefreshing = true;
     try {
       const refreshToken = await SecureStore.getItemAsync("refreshToken");
       if (!refreshToken) {
@@ -39,6 +46,8 @@ export const useRefreshToken = (
     } catch (error) {
       console.error("토큰 갱신 실패, 로그아웃을 실행합니다:", error);
       await handleLogout();
+    } finally {
+      isRefreshing = false;
     }
   };
 
