@@ -130,25 +130,23 @@ export default function InfluencerMapWindow({
   useEffect(() => {
     if (isReactNativeWebView) {
       window.ReactNativeWebView?.postMessage(JSON.stringify({ type: 'GPS_PERMISSIONS' }));
-      window.addEventListener('message', (event) => {
-        const message = JSON.parse(event.data);
-        if (message.latitude && message.longitude) {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const newCenter = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-              };
-              setUserLocation(newCenter);
-            },
-            (error) => {
-              console.error('Error fetching location', error);
-            },
-          );
-        }
-      });
 
-      return;
+      const handleNativeMessage = (event: MessageEvent) => {
+        try {
+          const message = JSON.parse(event.data);
+          if (message.type === 'NATIVE_LOCATION' && message.payload?.latitude && message.payload?.longitude) {
+            setUserLocation({
+              lat: message.payload.latitude,
+              lng: message.payload.longitude,
+            });
+          }
+        } catch (e) {
+          // ignore parse errors
+        }
+      };
+
+      window.addEventListener('message', handleNativeMessage);
+      return () => window.removeEventListener('message', handleNativeMessage);
     }
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -166,6 +164,7 @@ export default function InfluencerMapWindow({
     } else {
       console.warn('Geolocation is not supported by this browser.');
     }
+    return undefined;
   }, []);
 
   useEffect(() => {
