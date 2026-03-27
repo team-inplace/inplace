@@ -18,10 +18,12 @@ const getLocation = async (
     };
 
     alert(`[DEBUG] 위치 획득: ${JSON.stringify(location)}`);
-    webView.postMessage(
-      JSON.stringify({ type: "NATIVE_LOCATION", payload: location })
-    );
-    alert("[DEBUG] NATIVE_LOCATION postMessage 전송 완료");
+    const messageData = JSON.stringify({ type: "NATIVE_LOCATION", payload: location });
+    webView.injectJavaScript(`
+      window.dispatchEvent(new MessageEvent('message', { data: ${JSON.stringify(messageData)} }));
+      true;
+    `);
+    alert("[DEBUG] NATIVE_LOCATION injectJavaScript 전송 완료");
   } catch (error) {
     alert(`[DEBUG] getLocation 에러: ${error}`);
     console.error("위치 정보를 가져오는 데 실패했습니다:", error);
