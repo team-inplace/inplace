@@ -42,7 +42,7 @@ export const useGetInfinitPostList = ({ size, sort }: QueryParams, enabled?: boo
   >({
     queryKey: ['infinitePostList', size, sort],
     queryFn: ({ pageParam = null }) =>
-      getInfinitPostList(pageParam?.cursorId || null, pageParam?.cursorValue || null, size, sort),
+      getInfinitPostList(pageParam?.cursorId ?? null, pageParam?.cursorValue ?? null, size, sort),
     initialPageParam: null,
     getNextPageParam: (lastPage) => {
       return lastPage.cursor.hasNext
