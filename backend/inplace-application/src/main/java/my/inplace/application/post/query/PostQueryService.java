@@ -36,7 +36,7 @@ public class PostQueryService {
     private final CommentReadQueryDslRepository commentReadRepository;
 
     @Transactional(readOnly = true)
-    public CursorResult<DetailedPost> getPosts(
+    public CursorResult<DetailedPost, Long> getPosts(
         Long userId, Long cursorValue, Long cursorId, int size, String orderBy
     ) {
         return postReadRepository.findPostsOrderBy(userId, cursorValue, cursorId, size, orderBy);

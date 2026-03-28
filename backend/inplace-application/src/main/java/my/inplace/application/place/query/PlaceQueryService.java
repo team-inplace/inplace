@@ -45,7 +45,7 @@ public class PlaceQueryService {
         return placeReadRepository.getDetailedPlacesByVideoId(videoId);
     }
 
-    public CursorResult<DetailedPlace> getPlacesInMapRange(
+    public CursorResult<DetailedPlace, Long> getPlacesInMapRange(
         Long userId,
         PlaceParam.Coordinate coordinateParam,
         PlaceParam.Filter filterParam,
@@ -71,12 +71,12 @@ public class PlaceQueryService {
         return placeQueryResult;
     }
 
-    public CursorResult<DetailedPlace> getPlacesByName(
+    public CursorResult<DetailedPlace, Double> getPlacesByName(
         Long userId,
         String name,
         PlaceParam.Filter filterParam,
         int size,
-        Long cursorValue,
+        Double cursorValue,
         Long cursorId,
         String orderBy
     ) {

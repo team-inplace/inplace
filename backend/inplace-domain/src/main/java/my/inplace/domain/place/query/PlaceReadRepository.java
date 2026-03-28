@@ -13,7 +13,7 @@ public interface PlaceReadRepository {
 
     Optional<PlaceQueryResult.SimplePlace> findSimplePlaceById(Long placeId);
 
-    CursorResult<DetailedPlace> findPlacesInMapRangeOrderBy(
+    CursorResult<DetailedPlace, Long> findPlacesInMapRangeOrderBy(
         PlaceQueryParam.Coordinate coordinateParams,
         PlaceQueryParam.Filter filterParams,
         Long userId,
@@ -40,12 +40,12 @@ public interface PlaceReadRepository {
         PlaceQueryParam.Filter filterParams
     );
 
-    CursorResult<PlaceQueryResult.DetailedPlace> findPlacesByNameOrderBy(
+    CursorResult<PlaceQueryResult.DetailedPlace, Double> findPlacesByNameOrderBy(
         Long userId,
         String name,
         PlaceQueryParam.Filter filterParams,
         int size,
-        Long cursorValue,
+        Double cursorValue,
         Long cursorId,
         String orderBy
     );

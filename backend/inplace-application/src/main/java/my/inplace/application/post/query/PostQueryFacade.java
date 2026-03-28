@@ -19,7 +19,7 @@ public class PostQueryFacade {
 
     private final PostQueryService postQueryService;
 
-    public CursorResult<PostResult.DetailedPost> getPosts(Long cursorValue, Long cursorId, int size, String orderBy) {
+    public CursorResult<PostResult.DetailedPost, Long> getPosts(Long cursorValue, Long cursorId, int size, String orderBy) {
         var userId = AuthorizationUtil.getUserIdOrNull();
         var queryResult = postQueryService.getPosts(userId, cursorValue, cursorId, size, orderBy);
         var result = queryResult.value().stream()

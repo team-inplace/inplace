@@ -54,7 +54,7 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
     }
 
     @Override
-    public CursorResult<DetailedPlace> findPlacesInMapRangeOrderBy(
+    public CursorResult<DetailedPlace, Long> findPlacesInMapRangeOrderBy(
         PlaceQueryParam.Coordinate coordinateParams,
         PlaceQueryParam.Filter filterParams,
         Long userId,
@@ -195,12 +195,12 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
     }
 
     @Override
-    public CursorResult<PlaceQueryResult.DetailedPlace> findPlacesByNameOrderBy(
+    public CursorResult<PlaceQueryResult.DetailedPlace, Double> findPlacesByNameOrderBy(
         Long userId,
         String name,
         PlaceQueryParam.Filter filterParams,
         int size,
-        Long cursorValue,
+        Double cursorValue,
         Long cursorId,
         String orderBy
     ) {
@@ -221,14 +221,10 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
 
         NumberTemplate<Double> scoreExpr = getMatchScore(name);
 
-        Double cursorScore = cursorValue != null
-            ? Double.longBitsToDouble(cursorValue)
-            : null;
-
         var results = buildCursorDetailedQuery(userId, scoreExpr)
             .where(
                 QPlace.place.id.in(ids),
-                cursorId == null ? null : getCursorWhere(scoreExpr, cursorScore, cursorId, orderBy)
+                cursorId == null ? null : getCursorWhere(scoreExpr, cursorValue, cursorId, orderBy)
             )
             .groupBy(QPlace.place.id)
             .orderBy(scoreExpr.desc(), QPlace.place.id.desc())
@@ -241,7 +237,7 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
         return new CursorResult<>(
             places.subList(0, Math.min(size, places.size())),
             hasNext,
-            hasNext ? Double.doubleToRawLongBits(results.get(size - 1).cursorValue()) : null,
+            hasNext ? results.get(size - 1).cursorValue() : null,
             hasNext ? results.get(size - 1).cursorId() : null
         );
     }

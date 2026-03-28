@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface PostReadRepository {
 
-    CursorResult<PostQueryResult.DetailedPost> findPostsOrderBy(
+    CursorResult<PostQueryResult.DetailedPost, Long> findPostsOrderBy(
         Long userId,
         Long cursorValue,
         Long cursorId,

@@ -79,7 +79,7 @@ public class PlaceQueryFacade {
             surroundVideos);
     }
 
-    public CursorResult<Simple> getPlacesInMapRange(
+    public CursorResult<Simple, Long> getPlacesInMapRange(
         PlaceParam.Coordinate coordinate,
         PlaceParam.Filter filterParams,
         int size,
@@ -102,11 +102,11 @@ public class PlaceQueryFacade {
         return getSimpleCursorResult(detailedPlaces);
     }
 
-    public CursorResult<PlaceResult.Simple> getPlacesByName(
+    public CursorResult<PlaceResult.Simple, Double> getPlacesByName(
         String name,
         PlaceParam.Filter filterParams,
         int size,
-        Long cursorValue,
+        Double cursorValue,
         Long cursorId,
         String orderBy
     ) {
@@ -126,7 +126,7 @@ public class PlaceQueryFacade {
     }
 
     @NotNull
-    private CursorResult<Simple> getSimpleCursorResult(CursorResult<DetailedPlace> detailedPlaces) {
+    private <C> CursorResult<Simple, C> getSimpleCursorResult (CursorResult<DetailedPlace, C> detailedPlaces) {
         var placeIds = detailedPlaces.value()
             .stream()
             .map(DetailedPlace::placeId)

@@ -1,8 +1,8 @@
 package my.inplace.api.global;
 
-public record CursorResponse(
+public record CursorResponse<C>(
     boolean hasNext,
-    Long nextCursorValue,
+    C nextCursorValue,
     Long nextCursorId
 ) {
 

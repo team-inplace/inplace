@@ -73,7 +73,7 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
         );
 
         // when
-        CursorResult<DetailedPlace> actual = placeReadRepository.findPlacesInMapRangeOrderBy(
+        CursorResult<DetailedPlace, Long> actual = placeReadRepository.findPlacesInMapRangeOrderBy(
             coordinate,
             filter,
             userId,
@@ -123,7 +123,7 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
         );
 
         // when
-        CursorResult<DetailedPlace> actual1 = placeReadRepository.findPlacesInMapRangeOrderBy(
+        CursorResult<DetailedPlace, Long> actual1 = placeReadRepository.findPlacesInMapRangeOrderBy(
             coordinate,
             filter,
             userId,
@@ -132,7 +132,7 @@ class PlaceReadQueryDslRepositoryTest extends AbstractMySQLContainer {
             null,
             null
         );
-        CursorResult<DetailedPlace> actual2 = placeReadRepository.findPlacesInMapRangeOrderBy(
+        CursorResult<DetailedPlace, Long> actual2 = placeReadRepository.findPlacesInMapRangeOrderBy(
             coordinate,
             filter,
             userId,

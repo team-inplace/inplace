@@ -38,21 +38,21 @@ public class PostResponse {
         return createdAt.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"));
     }
 
-    public record SimpleList(
+    public record SimpleList<C>(
         List<SimplePost> contents,
-        CursorResponse cursor
+        CursorResponse<C> cursor
     ) {
 
-        public static SimpleList from(
-            CursorResult<PostResult.DetailedPost> postResult
+        public static <C> SimpleList<C> from(
+            CursorResult<PostResult.DetailedPost, C> postResult
         ) {
             List<SimplePost> posts = postResult.value().stream()
                 .map(SimplePost::from)
                 .toList();
 
-            return new SimpleList(
+            return new SimpleList<>(
                 posts,
-                new CursorResponse(
+                new CursorResponse<>(
                     postResult.hasNext(),
                     postResult.nextCursorValue(),
                     postResult.nextCursorId()

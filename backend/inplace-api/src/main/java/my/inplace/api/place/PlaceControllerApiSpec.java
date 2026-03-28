@@ -42,7 +42,7 @@ public interface PlaceControllerApiSpec {
     ResponseEntity<PlaceResponse.SimpleList> getPlacesByName(
         @RequestParam String placeName,
         @ModelAttribute PlaceRequest.Filter placeFilter,
-        @RequestParam(required = false) Long cursorValue,
+        @RequestParam(required = false) Double cursorValue,
         @RequestParam(required = false) Long cursorId,
         @RequestParam(defaultValue = "10") int size,
         @RequestParam(defaultValue = "score") String sort

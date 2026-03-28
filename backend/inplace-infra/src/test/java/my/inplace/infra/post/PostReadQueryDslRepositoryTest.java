@@ -36,7 +36,7 @@ class PostReadQueryDslRepositoryTest extends AbstractMySQLContainer {
         Long cursorId = null;
         Integer size = 5;
         String orderBy = "default";
-        CursorResult<PostQueryResult.DetailedPost> expected = new CursorResult<>(
+        CursorResult<PostQueryResult.DetailedPost, Long> expected = new CursorResult<>(
             List.of(
                 new PostQueryResult.DetailedPost(8L, "nickname4", "img_url4", "silver.png", "badge1.png", "여덟 번째 게시글", "여덟 번째 게시글 내용",
                     List.of(new PostQueryResult.Image("https://example.com/image8.jpg", "vwx234")), false, 1, 0, false, LocalDateTime.of(2025, 9, 1, 0, 0, 7)),
@@ -54,7 +54,7 @@ class PostReadQueryDslRepositoryTest extends AbstractMySQLContainer {
             4L
         );
         // when
-        CursorResult<PostQueryResult.DetailedPost> actual = postReadRepository.findPostsOrderBy(userId, cursorValue, cursorId, size, orderBy);
+        CursorResult<PostQueryResult.DetailedPost, Long> actual = postReadRepository.findPostsOrderBy(userId, cursorValue, cursorId, size, orderBy);
 
         // then
         assertThat(actual.value()).isEqualTo(expected.value());
@@ -72,7 +72,7 @@ class PostReadQueryDslRepositoryTest extends AbstractMySQLContainer {
         Long cursorId = null;
         Integer size = 5;
         String orderBy = "popularity";
-        CursorResult<PostQueryResult.DetailedPost> expected = new CursorResult<>(
+        CursorResult<PostQueryResult.DetailedPost, Long> expected = new CursorResult<>(
             List.of(
                 new PostQueryResult.DetailedPost(6L, "nickname3", "img_url3", "silver.png", "badge3.png", "여섯 번째 게시글", "여섯 번째 게시글 내용",
                     List.of(new PostQueryResult.Image("https://example.com/image6.jpg", "pqr678")), false, 2, 0, false, LocalDateTime.of(2025, 9, 1, 0, 0, 5)),
@@ -90,7 +90,7 @@ class PostReadQueryDslRepositoryTest extends AbstractMySQLContainer {
             1L
         );
         // when
-        CursorResult<PostQueryResult.DetailedPost> actual = postReadRepository.findPostsOrderBy(userId, cursorValue, cursorId, size, orderBy);
+        CursorResult<PostQueryResult.DetailedPost, Long> actual = postReadRepository.findPostsOrderBy(userId, cursorValue, cursorId, size, orderBy);
 
         // then
         assertThat(actual.value()).isEqualTo(expected.value());
@@ -109,7 +109,7 @@ class PostReadQueryDslRepositoryTest extends AbstractMySQLContainer {
         Long cursorId = 1L;
         Integer size = 5;
         String orderBy = "popularity";
-        CursorResult<PostQueryResult.DetailedPost> expected = new CursorResult<>(
+        CursorResult<PostQueryResult.DetailedPost, Long> expected = new CursorResult<>(
             List.of(
                 new PostQueryResult.DetailedPost(8L, "nickname4", "img_url4", "silver.png", "badge1.png", "여덟 번째 게시글", "여덟 번째 게시글 내용",
                     List.of(new PostQueryResult.Image("https://example.com/image8.jpg", "vwx234")), false, 1, 0, false, LocalDateTime.of(2025, 9, 1, 0, 0, 7)),
@@ -123,7 +123,7 @@ class PostReadQueryDslRepositoryTest extends AbstractMySQLContainer {
             null
         );
         // when
-        CursorResult<PostQueryResult.DetailedPost> actual = postReadRepository.findPostsOrderBy(userId, cursorValue, cursorId, size, orderBy);
+        CursorResult<PostQueryResult.DetailedPost, Long> actual = postReadRepository.findPostsOrderBy(userId, cursorValue, cursorId, size, orderBy);
 
         // then
         assertThat(actual.value()).isEqualTo(expected.value());

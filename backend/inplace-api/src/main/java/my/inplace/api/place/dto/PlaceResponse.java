@@ -19,21 +19,21 @@ import my.inplace.common.cursor.CursorResult;
 
 public class PlaceResponse {
 
-    public record SimpleList(
+    public record SimpleList<C>(
         List<Simple> contents,
-        CursorResponse cursor
+        CursorResponse<C> cursor
     ) {
 
-        public static PlaceResponse.SimpleList from(
-            CursorResult<PlaceResult.Simple> placeResults
+        public static <C> PlaceResponse.SimpleList<C> from(
+            CursorResult<PlaceResult.Simple, C> placeResults
         ) {
             List<Simple> places = placeResults.value().stream()
                 .map(Simple::from)
                 .toList();
 
-            return new PlaceResponse.SimpleList(
+            return new PlaceResponse.SimpleList<>(
                 places,
-                new CursorResponse(
+                new CursorResponse<>(
                     placeResults.hasNext(),
                     placeResults.nextCursorValue(),
                     placeResults.nextCursorId()

@@ -37,7 +37,7 @@ public class PostReadQueryDslRepository implements PostReadRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public CursorResult<PostQueryResult.DetailedPost> findPostsOrderBy(
+    public CursorResult<PostQueryResult.DetailedPost, Long> findPostsOrderBy(
         Long userId,
         Long cursorValue,
         Long cursorId,
