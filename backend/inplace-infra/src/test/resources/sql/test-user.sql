@@ -10,10 +10,10 @@ VALUES (1, NOW(), NULL, NOW(), '유저1', 'pass1', 'user1@gmail.com', 'FIRST_USE
        (3, NOW(), NULL, NOW(), '유저3', 'pass3', 'user3@gmail.com', 'ADMIN', 'KAKAO', 'img3.png', 2, 3, 101, 123, 1230);
 
 -- 3. badges
-INSERT INTO badges (conditions, name, img_url)
-VALUES ('5개 글 작성', '글쟁이', 'badge1.png'),
-       ('10개 댓글 작성', '수다쟁이', 'badge2.png'),
-       ('50개 좋아요', '인기인', 'badge3.png');
+INSERT INTO badges (id, conditions, name, img_url)
+VALUES (1, '5개 글 작성', '글쟁이', 'badge1.png'),
+       (2, '10개 댓글 작성', '수다쟁이', 'badge2.png'),
+       (3, '50개 좋아요', '인기인', 'badge3.png');
 
 -- 4. user_badges
 INSERT INTO user_badges (user_id, badge_id)

@@ -1,5 +1,9 @@
 package my.inplace.infra.user;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+import java.util.Optional;
 import my.inplace.domain.user.query.UserQueryResult;
 import my.inplace.domain.user.query.UserQueryResult.Info;
 import my.inplace.infra.config.AbstractMySQLContainer;
@@ -8,11 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @MySQLContainerJpaTest(
     includeFilters = @Filter(
@@ -30,7 +29,7 @@ class UserReadQueryDslRepositoryTest extends AbstractMySQLContainer {
     void findUserInfoById() {
         // given
         Long userId = 1L;
-        Info expected = new Info("유저1", "img1.png", "브론즈", "bronze.png", "글쟁이", "badge1.png");
+        Info expected = new Info("유저1", "img1.png", "브론즈", "bronze.png", 1L, "글쟁이", "badge1.png");
 
         // when
         Optional<Info> actual = userReadRepository.findUserInfoById(userId);
