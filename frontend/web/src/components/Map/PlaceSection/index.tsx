@@ -80,7 +80,7 @@ export default function PlaceSection({
     {
       filters: filtersWithPlaceName,
       size: 10,
-      sort: 'createdAt',
+      sort: 'score',
     },
     !!filtersWithPlaceName.placeName,
   );
