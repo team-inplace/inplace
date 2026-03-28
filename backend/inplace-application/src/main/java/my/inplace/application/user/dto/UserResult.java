@@ -9,6 +9,7 @@ public class UserResult {
     public record Info(
         String nickname,
         String profileImageUrl,
+        Long mainBadgeId,
         String mainBadgeName,
         String mainBadgeImageUrl,
         String tierName,
@@ -19,6 +20,7 @@ public class UserResult {
             return new Info(
                 user.nickname(),
                 user.imgUrl(),
+                user.mainBadgeId(),
                 user.mainBadgeName(),
                 user.mainBadgeImgUrl(),
                 user.tierName(),

@@ -1,17 +1,16 @@
 package my.inplace.api.user.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import my.inplace.application.influencer.query.dto.InfluencerResult;
+import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static my.inplace.api.post.dto.PostResponse.formatCreatedAt;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
+import my.inplace.application.influencer.query.dto.InfluencerResult;
 import my.inplace.application.place.query.dto.PlaceResult;
 import my.inplace.application.post.query.dto.PostResult;
 import my.inplace.application.user.dto.UserResult;
 import my.inplace.application.video.query.dto.VideoResult;
-
-import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
-import static my.inplace.api.post.dto.PostResponse.formatCreatedAt;
 
 public class UserResponse {
 
@@ -44,7 +43,7 @@ public class UserResponse {
                 info.nickname(),
                 info.profileImageUrl(),
                 new Tier(info.tierName(), info.tierImageUrl()),
-                new Badge(info.mainBadgeName(), info.mainBadgeImageUrl())
+                new Badge(info.mainBadgeId(), info.mainBadgeName(), info.mainBadgeImageUrl())
             );
         }
     }
@@ -69,6 +68,7 @@ public class UserResponse {
     }
 
     public record Badge(
+        Long id,
         String name,
         String imgUrl
     ) {

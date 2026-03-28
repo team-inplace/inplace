@@ -7,6 +7,7 @@ public class UserQueryResult {
         String imgUrl,
         String tierName,
         String tierImgUrl,
+        Long mainBadgeId,
         String mainBadgeName,
         String mainBadgeImgUrl
     ) {

@@ -29,6 +29,7 @@ public class UserReadQueryDslRepository implements UserReadRepository {
                 QUser.user.profileImageUrl,
                 QTier.tier.name,
                 QTier.tier.imgUrl,
+                QBadge.badge.id,
                 QBadge.badge.name,
                 QBadge.badge.imgUrl
             ))
