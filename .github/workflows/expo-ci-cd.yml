@@ -11,7 +11,7 @@ on:
           - publish-expo
           - all
   push:
-    branches: [dev]
+    branches: [dev, main]
 
 env:
   EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
