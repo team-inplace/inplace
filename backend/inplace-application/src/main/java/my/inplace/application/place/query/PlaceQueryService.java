@@ -1,29 +1,28 @@
 package my.inplace.application.place.query;
 
-import my.inplace.application.place.query.dto.PlaceResult.Region;
+import java.util.List;
+import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import my.inplace.application.place.query.dto.PlaceParam;
+import my.inplace.application.place.query.dto.PlaceResult;
+import my.inplace.application.place.query.dto.PlaceResult.Category;
 import my.inplace.common.cursor.CursorResult;
 import my.inplace.common.exception.InplaceException;
 import my.inplace.common.exception.code.CategoryErrorCode;
 import my.inplace.common.exception.code.PlaceErrorCode;
-import java.util.List;
-import java.util.Optional;
-import lombok.RequiredArgsConstructor;
+import my.inplace.domain.place.client.GooglePlaceClient;
+import my.inplace.domain.place.client.GooglePlaceClientResponse;
 import my.inplace.domain.place.query.PlaceQueryResult;
 import my.inplace.domain.place.query.PlaceQueryResult.DetailedPlace;
 import my.inplace.domain.place.query.PlaceReadRepository;
+import my.inplace.domain.video.query.VideoReadRepository;
+import my.inplace.infra.place.jpa.CategoryJpaRepository;
+import my.inplace.infra.place.jpa.PlaceJpaRepository;
 import my.inplace.infra.region.jpa.RegionJpaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import my.inplace.domain.place.client.GooglePlaceClient;
-import my.inplace.domain.place.client.GooglePlaceClientResponse;
-import my.inplace.infra.place.jpa.CategoryJpaRepository;
-import my.inplace.infra.place.jpa.PlaceJpaRepository;
-import my.inplace.application.place.query.dto.PlaceParam;
-import my.inplace.application.place.query.dto.PlaceResult;
-import my.inplace.application.place.query.dto.PlaceResult.Category;
-import my.inplace.domain.video.query.VideoReadRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -72,16 +71,25 @@ public class PlaceQueryService {
         return placeQueryResult;
     }
 
-    public Page<PlaceQueryResult.DetailedPlace> getPlacesByName(
-        Long userId, String name, PlaceParam.Filter filterParam, Pageable pageable
+    public CursorResult<DetailedPlace> getPlacesByName(
+        Long userId,
+        String name,
+        PlaceParam.Filter filterParam,
+        int size,
+        Long cursorValue,
+        Long cursorId,
+        String orderBy
     ) {
         var filterQueryParam = filterParam.toQueryParam();
 
-        return placeReadRepository.findPlacesByNameWithPaging(
+        return placeReadRepository.findPlacesByNameOrderBy(
             userId,
             name,
             filterQueryParam,
-            pageable
+            size,
+            cursorValue,
+            cursorId,
+            orderBy
         );
     }
 

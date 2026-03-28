@@ -6,19 +6,17 @@ import java.util.concurrent.Executor;
 import my.inplace.application.annotation.Facade;
 import my.inplace.application.place.query.dto.PlaceParam;
 import my.inplace.application.place.query.dto.PlaceResult;
-import my.inplace.application.place.query.dto.PlaceResult.Region;
 import my.inplace.application.place.query.dto.PlaceResult.Simple;
 import my.inplace.application.review.ReviewService;
 import my.inplace.application.video.query.VideoQueryService;
 import my.inplace.application.video.query.dto.VideoParam.SquareBound;
 import my.inplace.common.cursor.CursorResult;
-import my.inplace.domain.place.query.PlaceQueryResult;
+import my.inplace.domain.place.query.PlaceQueryResult.DetailedPlace;
 import my.inplace.domain.place.query.PlaceQueryResult.MarkerDetail;
 import my.inplace.security.util.AuthorizationUtil;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 @Facade
 public class PlaceQueryFacade {
@@ -101,15 +99,43 @@ public class PlaceQueryFacade {
             cursorId
         );
 
+        return getSimpleCursorResult(detailedPlaces);
+    }
+
+    public CursorResult<PlaceResult.Simple> getPlacesByName(
+        String name,
+        PlaceParam.Filter filterParams,
+        int size,
+        Long cursorValue,
+        Long cursorId,
+        String orderBy
+    ) {
+        var userId = AuthorizationUtil.getUserIdOrNull();
+
+        var detailedPlaces = placeQueryService.getPlacesByName(
+            userId,
+            name,
+            filterParams,
+            size,
+            cursorValue,
+            cursorId,
+            orderBy
+        );
+
+        return getSimpleCursorResult(detailedPlaces);
+    }
+
+    @NotNull
+    private CursorResult<Simple> getSimpleCursorResult(CursorResult<DetailedPlace> detailedPlaces) {
         var placeIds = detailedPlaces.value()
             .stream()
-            .map(PlaceQueryResult.DetailedPlace::placeId)
+            .map(DetailedPlace::placeId)
             .toList();
         var placeVideos = videoQueryService.getVideosByPlaceId(placeIds);
 
         var result = detailedPlaces.value()
             .stream()
-            .map(place -> PlaceResult.Simple.of(place, placeVideos.get(place.placeId())))
+            .map(place -> Simple.of(place, placeVideos.get(place.placeId())))
             .toList();
 
         return new CursorResult<>(
@@ -117,26 +143,6 @@ public class PlaceQueryFacade {
             detailedPlaces.hasNext(),
             detailedPlaces.nextCursorValue(),
             detailedPlaces.nextCursorId()
-        );
-    }
-
-    public Page<PlaceResult.Simple> getPlacesByName(
-        String name,
-        PlaceParam.Filter filterParams,
-        Pageable pageable
-    ) {
-        var userId = AuthorizationUtil.getUserIdOrNull();
-
-        var placeSimpleInfos = placeQueryService.getPlacesByName(userId, name, filterParams,
-            pageable);
-        var placeIds = placeSimpleInfos.getContent()
-            .stream()
-            .map(PlaceQueryResult.DetailedPlace::placeId)
-            .toList();
-        var placeVideos = videoQueryService.getVideosByPlaceId(placeIds);
-
-        return placeSimpleInfos.map(
-            place -> PlaceResult.Simple.of(place, placeVideos.get(place.placeId()))
         );
     }
 

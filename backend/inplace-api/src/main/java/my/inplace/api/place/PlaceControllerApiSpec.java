@@ -2,7 +2,6 @@ package my.inplace.api.place;
 
 import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
-import my.inplace.api.place.dto.PlaceResponse.Regions;
 import my.inplace.api.place.dto.PlaceRequest;
 import my.inplace.api.place.dto.PlaceRequest.Upsert;
 import my.inplace.api.place.dto.PlaceResponse;
@@ -10,13 +9,13 @@ import my.inplace.api.place.dto.PlaceResponse.Admin;
 import my.inplace.api.place.dto.PlaceResponse.AdminCategory;
 import my.inplace.api.place.dto.PlaceResponse.Categories;
 import my.inplace.api.place.dto.PlaceResponse.Marker;
+import my.inplace.api.place.dto.PlaceResponse.Regions;
 import my.inplace.api.place.dto.ReviewResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,15 +34,18 @@ public interface PlaceControllerApiSpec {
         @ModelAttribute PlaceRequest.Filter filterParams,
         @RequestParam(required = false) Long cursorValue,
         @RequestParam(required = false) Long cursorId,
-        @RequestParam(defaultValue = "5") int size,
+        @RequestParam(defaultValue = "10") int size,
         @RequestParam(defaultValue = "createdAt") String sort
     );
 
     @Operation(summary = "장소 조회(장소 이름으로 검색했을 때)", description = "장소 이름으로 검색한 장소 페이지네이션 목록을 조회합니다.")
-    ResponseEntity<Page<PlaceResponse.Simple>> getPlacesByName(
+    ResponseEntity<PlaceResponse.SimpleList> getPlacesByName(
         @RequestParam String placeName,
-        @ModelAttribute PlaceRequest.Filter filterParams,
-        @PageableDefault(page = 0, size = 10) Pageable pageable
+        @ModelAttribute PlaceRequest.Filter placeFilter,
+        @RequestParam(required = false) Long cursorValue,
+        @RequestParam(required = false) Long cursorId,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(defaultValue = "score") String sort
     );
 
     @Operation(summary = "모든 장소 위치 조회(필터링만)", description = "지도 반경 내 혹은 필터링 기준의 모든 장소 목록을 조회합니다.")

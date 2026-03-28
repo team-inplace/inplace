@@ -40,6 +40,16 @@ public interface PlaceReadRepository {
         PlaceQueryParam.Filter filterParams
     );
 
+    CursorResult<PlaceQueryResult.DetailedPlace> findPlacesByNameOrderBy(
+        Long userId,
+        String name,
+        PlaceQueryParam.Filter filterParams,
+        int size,
+        Long cursorValue,
+        Long cursorId,
+        String orderBy
+    );
+
     Page<PlaceQueryResult.DetailedPlace> findPlacesByNameWithPaging(
         Long userId,
         String name,

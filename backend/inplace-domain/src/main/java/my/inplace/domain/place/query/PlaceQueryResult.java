@@ -19,6 +19,14 @@ public class PlaceQueryResult {
 
     }
 
+    public record CursorDetailedPlace(
+        DetailedPlace detailedPlace,
+        Double cursorValue,
+        Long cursorId
+    ) {
+
+    }
+
     public record SimplePlace(
         Long placeId,
         String placeName,

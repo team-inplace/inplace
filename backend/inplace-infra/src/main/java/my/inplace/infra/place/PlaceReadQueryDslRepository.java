@@ -5,7 +5,6 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberTemplate;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.querydsl.spatial.locationtech.jts.JTSGeometryExpressions;
@@ -14,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import my.inplace.common.cursor.CursorResult;
 import my.inplace.domain.influencer.QInfluencer;
 import my.inplace.domain.place.QCategory;
@@ -22,6 +22,7 @@ import my.inplace.domain.place.QPlace;
 import my.inplace.domain.place.QPlaceVideo;
 import my.inplace.domain.place.query.PlaceQueryParam;
 import my.inplace.domain.place.query.PlaceQueryResult;
+import my.inplace.domain.place.query.PlaceQueryResult.CursorDetailedPlace;
 import my.inplace.domain.place.query.PlaceQueryResult.DetailedPlace;
 import my.inplace.domain.place.query.PlaceQueryResult.Marker;
 import my.inplace.domain.place.query.PlaceQueryResult.MarkerDetail;
@@ -36,6 +37,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class PlaceReadQueryDslRepository implements PlaceReadRepository {
@@ -193,6 +195,58 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
     }
 
     @Override
+    public CursorResult<PlaceQueryResult.DetailedPlace> findPlacesByNameOrderBy(
+        Long userId,
+        String name,
+        PlaceQueryParam.Filter filterParams,
+        int size,
+        Long cursorValue,
+        Long cursorId,
+        String orderBy
+    ) {
+        var regionParams = filterParams.regions();
+        var categories = filterParams.categories();
+        var influencers = filterParams.influencers();
+
+        List<Long> ids = getFilteredPlaceIdsByName(name, regionParams, categories, influencers);
+
+        if (ids.isEmpty()) {
+            return new CursorResult<>(
+                List.of(),
+                false,
+                null,
+                null
+            );
+        }
+
+        NumberTemplate<Double> scoreExpr = getMatchScore(name);
+
+        Double cursorScore = cursorValue != null
+            ? Double.longBitsToDouble(cursorValue)
+            : null;
+
+        var results = buildCursorDetailedQuery(userId, scoreExpr)
+            .where(
+                QPlace.place.id.in(ids),
+                cursorId == null ? null : getCursorWhere(scoreExpr, cursorScore, cursorId, orderBy)
+            )
+            .groupBy(QPlace.place.id)
+            .orderBy(scoreExpr.desc(), QPlace.place.id.desc())
+            .limit(size + 1)
+            .fetch();
+
+        boolean hasNext = results.size() > size;
+        var places = results.stream().map(CursorDetailedPlace::detailedPlace).toList();
+
+        return new CursorResult<>(
+            places.subList(0, Math.min(size, places.size())),
+            hasNext,
+            hasNext ? Double.doubleToRawLongBits(results.get(size - 1).cursorValue()) : null,
+            hasNext ? results.get(size - 1).cursorId() : null
+        );
+    }
+
+    @Override
     public Page<DetailedPlace> findPlacesByNameWithPaging(
         Long userId,
         String name,
@@ -293,6 +347,57 @@ public class PlaceReadQueryDslRepository implements PlaceReadRepository {
             .leftJoin(category).on(QPlace.place.categoryId.eq(category.id))
             .leftJoin(parentCategory).on(QCategory.category.parentId.eq(parentCategory.id));
 
+    }
+
+    private JPAQuery<PlaceQueryResult.CursorDetailedPlace> buildCursorDetailedQuery(
+        Long userId,
+        NumberTemplate<Double> scoreExpr
+    ) {
+        QLikedPlace liked = new QLikedPlace("liked");
+        QLikedPlace selfLiked = new QLikedPlace("selfLiked");
+
+        return jpaQueryFactory
+            .select(Projections.constructor(PlaceQueryResult.CursorDetailedPlace.class,
+                Projections.constructor(
+                    PlaceQueryResult.DetailedPlace.class,
+                    QPlace.place.id,
+                    QPlace.place.name,
+                    QPlace.place.address.address1,
+                    QPlace.place.address.address2,
+                    QPlace.place.address.address3,
+                    Expressions.numberTemplate(Double.class, "ST_Y({0})", QPlace.place.location),
+                    Expressions.numberTemplate(Double.class, "ST_X({0})", QPlace.place.location),
+                    QCategory.category.name,
+                    QPlace.place.googlePlaceId,
+                    QPlace.place.kakaoPlaceId,
+                    liked.id.countDistinct(),
+                    Expressions.numberTemplate(
+                        Integer.class,
+                        "MAX(CASE WHEN {0} THEN 1 ELSE 0 END)",
+                        selfLiked.id.isNotNull()
+                    ).eq(1)
+                ),
+                scoreExpr,
+                QPlace.place.id
+            ))
+            .from(QPlace.place)
+            .leftJoin(QCategory.category).on(QPlace.place.categoryId.eq(QCategory.category.id))
+            .leftJoin(liked).on(liked.placeId.eq(QPlace.place.id).and(liked.isLiked.isTrue()))
+            .leftJoin(selfLiked).on(
+                selfLiked.placeId.eq(QPlace.place.id)
+                    .and(userId != null ? selfLiked.userId.eq(userId) : selfLiked.userId.isNull())
+                    .and(selfLiked.isLiked.isTrue())
+            );
+    }
+
+    private BooleanExpression getCursorWhere(
+        NumberTemplate<Double> scoreExpr,
+        Double cursorValue,
+        Long cursorId,
+        String orderBy
+    ) {
+        return scoreExpr.lt(cursorValue)
+            .or(scoreExpr.eq(cursorValue).and(QPlace.place.id.lt(cursorId)));
     }
 
     // ====================== 필터 처리 =========================
