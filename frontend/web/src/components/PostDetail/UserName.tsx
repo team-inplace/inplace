@@ -49,9 +49,12 @@ const UserTitle = styled.img`
   width: auto;
   object-fit: contain;
   vertical-align: middle;
+  margin-bottom: 4px;
 
   @media screen and (max-width: 768px) {
+    height: 16px;
     margin-left: 4px;
+    margin-bottom: 2px;
   }
 `;
 
