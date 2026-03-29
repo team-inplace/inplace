@@ -357,7 +357,7 @@ const SearchDropDownBox = styled.ul<{ $isSearchPage: boolean }>`
   list-style-type: none;
   color: ${({ theme }) => (theme.textColor === '#ffffff' ? '#ffffff' : '#333333')};
   box-sizing: border-box;
-  z-index: 40;
+  z-index: 103;
 
   @media screen and (max-width: 768px) {
     width: ${({ $isSearchPage }) => ($isSearchPage ? '90%' : 'calc(100% - 40px)')};
